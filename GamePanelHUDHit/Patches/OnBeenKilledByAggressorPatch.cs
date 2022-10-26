@@ -51,7 +51,7 @@ namespace GamePanelHUDHit.Patches
             }
         }
 
-        public class SettingsData
+        public class ReflectionData
         {
             public RefHelp.FieldRef<InfoClass, object> RefSettings;
             public RefHelp.FieldRef<object, int> RefExperience;
