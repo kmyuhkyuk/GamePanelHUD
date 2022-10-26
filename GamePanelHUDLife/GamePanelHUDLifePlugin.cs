@@ -89,9 +89,7 @@ namespace GamePanelHUDLife
 
         void LifeHUDPlugin()
         {
-            bool hasHealthController = HealthController != null;
-
-            LifeHUDSW = HUDCore.AllHUDSW && hasHealthController && HUDCore.HasPlayer && SettingsDatas.KeyLifeHUDSW.Value;
+            LifeHUDSW = HUDCore.AllHUDSW && HealthController != null && HUDCore.HasPlayer && SettingsDatas.KeyLifeHUDSW.Value;
 
             HUD.Set(Lifes, SettingsDatas, LifeHUDSW);
 
@@ -100,7 +98,7 @@ namespace GamePanelHUDLife
                 HealthController = HUDCore.IsYourPlayer.HealthController;
             }
 
-            if (hasHealthController)
+            if (HealthController != null)
             {
                 Lifes.Healths.Head = HealthController.GetBodyPartHealth(EBodyPart.Head);
                 Lifes.Healths.Chest = HealthController.GetBodyPartHealth(EBodyPart.Chest);
