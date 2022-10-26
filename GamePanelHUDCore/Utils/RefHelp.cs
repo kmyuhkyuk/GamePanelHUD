@@ -262,7 +262,7 @@ namespace GamePanelHUDCore.Utils
             }
         }
 
-        public class FieldRef<T, F> where T : class
+        public class FieldRef<T, F>
         {
             private AccessTools.FieldRef<T, F> HarmonyFieldRef;
 
