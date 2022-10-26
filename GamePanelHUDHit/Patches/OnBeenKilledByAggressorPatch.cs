@@ -10,13 +10,13 @@ namespace GamePanelHUDHit.Patches
 {
     public class OnBeenKilledByAggressorPatch : ModulePatch
     {
-        private static readonly SettingsData SettingsDatas = new SettingsData();
+        private static readonly ReflectionData ReflectionDatas = new ReflectionData();
 
         static OnBeenKilledByAggressorPatch()
         {
-            SettingsDatas.RefSettings = RefHelp.FieldRef<InfoClass, object>.Create(typeof(InfoClass), "Settings");
-            SettingsDatas.RefExperience = RefHelp.FieldRef<object, int>.Create(SettingsDatas.RefSettings.FieldType, "Experience" );
-            SettingsDatas.RefRole = RefHelp.FieldRef<object, WildSpawnType>.Create(SettingsDatas.RefSettings.FieldType, "Role");
+            ReflectionDatas.RefSettings = RefHelp.FieldRef<InfoClass, object>.Create(typeof(InfoClass), "Settings");
+            ReflectionDatas.RefExperience = RefHelp.FieldRef<object, int>.Create(ReflectionDatas.RefSettings.FieldType, "Experience" );
+            ReflectionDatas.RefRole = RefHelp.FieldRef<object, WildSpawnType>.Create(ReflectionDatas.RefSettings.FieldType, "Role");
         }
 
         protected override MethodBase GetTargetMethod()
@@ -38,10 +38,10 @@ namespace GamePanelHUDHit.Patches
                 info.Level = __instance.Profile.Info.Level;
                 info.Side = __instance.Profile.Info.Side;
 
-                object settings = SettingsDatas.RefSettings.GetValue(__instance.Profile.Info);
+                object settings = ReflectionDatas.RefSettings.GetValue(__instance.Profile.Info);
 
-                info.Exp = SettingsDatas.RefExperience.GetValue(settings);
-                info.Role = SettingsDatas.RefRole.GetValue(settings);
+                info.Exp = ReflectionDatas.RefExperience.GetValue(settings);
+                info.Role = ReflectionDatas.RefRole.GetValue(settings);
 
                 GamePanelHUDHitPlugin.Kills++;
 
