@@ -92,9 +92,9 @@ namespace GamePanelHUDCore.Utils
 
         public class AssetData<T>
         {
-            public Dictionary<string, T> Asset;
+            public readonly IReadOnlyDictionary<string, T> Asset;
 
-            public Dictionary<string, T> Init;
+            public readonly IReadOnlyDictionary<string, T> Init;
 
             public AssetData(Dictionary<string, T> asset, Dictionary<string, T> init)
             {
