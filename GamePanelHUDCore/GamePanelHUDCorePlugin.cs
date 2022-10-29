@@ -143,6 +143,28 @@ namespace GamePanelHUDCore
                 return new BundleHelp.AssetData<GameObject>(asset, init);
             }
 
+            public BundleHelp.AssetData<GameObject> LoadHUD(string bundlename, string initassetname)
+            {
+                AssetBundle assetBundle = BundleHelp.LoadBundle(GetBundlePath(bundlename));
+
+                Dictionary<string, GameObject> asset = BundleHelp.LoadAllAsset<GameObject>(assetBundle).ToDictionary(x => x.name.ToLower(), x => x);
+
+                Dictionary<string, GameObject> init = new Dictionary<string, GameObject>();
+
+                GameObject initAsset;
+
+                asset.TryGetValue(initassetname.ToLower(), out initAsset);
+
+                if (initAsset != null)
+                {
+                    BundleHelp.InitAsset(initAsset, HUDCore.GamePanlHUDPublic.transform);
+                }
+
+                assetBundle.Unload(false);
+
+                return new BundleHelp.AssetData<GameObject>(asset, init);
+            }
+
             public void Set(Player isyourplayer, bool hudsw)
             {
                 IsYourPlayer = isyourplayer;
