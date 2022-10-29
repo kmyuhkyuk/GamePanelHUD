@@ -39,7 +39,7 @@ namespace GamePanelHUDCore.Utils
 
         public static bool IsFollower(WildSpawnType role)
         {
-            return RefIsFollower.Invoke(role);
+            return RefIsFollower(role);
         }
 
         public static bool IsBossOrFollower(WildSpawnType role)
