@@ -161,7 +161,7 @@ namespace GamePanelHUDHit
 
         private void Awake()
         {
-            BundleHelp.AssetData<GameObject> prefabs = HUDCore.LoadHUD("gamepanlhithud.bundle", new string[] { "gamepanlhithud" });
+            BundleHelp.AssetData<GameObject> prefabs = HUDCore.LoadHUD("gamepanlhithud.bundle", "gamepanlhithud");
 
             KillPrefab = prefabs.Asset["kill"];
 
