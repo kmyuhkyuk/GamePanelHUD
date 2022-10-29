@@ -85,7 +85,6 @@ namespace GamePanelHUDMap
             }
         }
 
-
         public class MapData
         {
             public Transform PlayerTransform;

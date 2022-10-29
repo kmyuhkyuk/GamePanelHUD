@@ -46,9 +46,7 @@ namespace GamePanelHUDCore
             Canvas canvs = HUDCore.GamePanlHUDPublic.GetComponent<Canvas>();
 
             canvs.renderMode = RenderMode.ScreenSpaceOverlay;
-
             canvs.sortingOrder = 1;
-
             canvs.additionalShaderChannels = AdditionalCanvasShaderChannels.TexCoord1 | AdditionalCanvasShaderChannels.Normal | AdditionalCanvasShaderChannels.Tangent;
 
             DontDestroyOnLoad(HUDCore.GamePanlHUDPublic);
