@@ -183,7 +183,9 @@ namespace GamePanelHUDHit
 
                 hasKills.Add(AddKillInfo(killinfo, HUD.SettingsData, kills, baseExp));
 
-                int count = hasKills.Count - 1;
+                int hasKillsCount = hasKills.Count;
+
+                int count = hasKillsCount - 1;
 
                 if (!HUD.SettingsData.KeyKillWaitBottom.Value)
                 {
@@ -212,7 +214,7 @@ namespace GamePanelHUDHit
 
                 Previous = hasKills.Last();
 
-                if (hasKills.Count > 1)
+                if (hasKillsCount > 1)
                 {
                     for (int i = 0; i < count; i++)
                     {
