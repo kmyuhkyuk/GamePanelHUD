@@ -154,7 +154,7 @@ namespace GamePanelHUDGrenade
                 }
                 else
                 {
-                    grenadeamount.Clear();
+                    grenadeamount.MergeClear();
                     grenadeamount.Frag = items.Where(x => x.GetType() == GrenadeType.GrenadeItemType).Count();
                 }
             }
@@ -174,6 +174,11 @@ namespace GamePanelHUDGrenade
             public void Clear()
             {
                 Frag = 0;
+                MergeClear();
+            }
+
+            public void MergeClear()
+            {
                 Stun = 0;
                 Flash = 0;
                 Smoke = 0;
