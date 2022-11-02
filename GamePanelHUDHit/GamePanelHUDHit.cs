@@ -134,7 +134,9 @@ namespace GamePanelHUDHit
             _hit.Damage = hitinfo.Damage;
             _hit.ArmorDamage = hitinfo.ArmorDamage;
 
-            if (settingsdata.KeyHitHasHead.Value && hitinfo.DamagePart == EBodyPart.Head && hitinfo.HitType != GamePanelHUDHitPlugin.HitInfo.Hit.Dead)
+            bool isHead = hitinfo.DamagePart == EBodyPart.Head;
+
+            if (settingsdata.KeyHitHasHead.Value && isHead && hitinfo.HitType != GamePanelHUDHitPlugin.HitInfo.Hit.Dead)
             {
                 hitinfo.HitType = GamePanelHUDHitPlugin.HitInfo.Hit.Head;
             }
@@ -153,7 +155,7 @@ namespace GamePanelHUDHit
                 hitinfo.HitDirectionType = GamePanelHUDHitPlugin.HitInfo.Direction.Center;
             }
 
-            _hit.HitTirgger(hitinfo.DamagePart == EBodyPart.Head, hitinfo);
+            _hit.HitTirgger(isHead, hitinfo);
         }
 #endif
     }
