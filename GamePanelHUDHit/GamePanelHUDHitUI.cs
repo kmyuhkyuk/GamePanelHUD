@@ -208,53 +208,33 @@ namespace GamePanelHUDHit
 
         public void HitTirgger(bool ishead, GamePanelHUDHitPlugin.HitInfo hitinfo)
         {
+            Color hitColor = Color.white;
+
             switch (hitinfo.HitType)
             {
                 case GamePanelHUDHitPlugin.HitInfo.Hit.OnlyHp:
-                    _LeftUp.color = DamageColor;
-                    _LeftDown.color = DamageColor;
-                    _RightUp.color = DamageColor;
-                    _RightDowm.color = DamageColor;
-
-                    _LeftUpHead.color = DamageColor;
-                    _LeftDownHead.color = DamageColor;
-                    _RightUpHead.color = DamageColor;
-                    _RightDowmHead.color = DamageColor;
+                    hitColor = DamageColor;
                     break;
                 case GamePanelHUDHitPlugin.HitInfo.Hit.HasArmorHit:
-                    _LeftUp.color = ArmorDamageColor;
-                    _LeftDown.color = ArmorDamageColor;
-                    _RightUp.color = ArmorDamageColor;
-                    _RightDowm.color = ArmorDamageColor;
-
-                    _LeftUpHead.color = ArmorDamageColor;
-                    _LeftDownHead.color = ArmorDamageColor;
-                    _RightUpHead.color = ArmorDamageColor;
-                    _RightDowmHead.color = ArmorDamageColor;
+                    hitColor = ArmorDamageColor;
                     break;
                 case GamePanelHUDHitPlugin.HitInfo.Hit.Dead:
-                    _LeftUp.color = DeadColor;
-                    _LeftDown.color = DeadColor;
-                    _RightUp.color = DeadColor;
-                    _RightDowm.color = DeadColor;
-
-                    _LeftUpHead.color = DeadColor;
-                    _LeftDownHead.color = DeadColor;
-                    _RightUpHead.color = DeadColor;
-                    _RightDowmHead.color = DeadColor;
+                    hitColor = DeadColor;
                     break;
                 case GamePanelHUDHitPlugin.HitInfo.Hit.Head:
-                    _LeftUp.color = HeadColor;
-                    _LeftDown.color = HeadColor;
-                    _RightUp.color = HeadColor;
-                    _RightDowm.color = HeadColor;
-
-                    _LeftUpHead.color = HeadColor;
-                    _LeftDownHead.color = HeadColor;
-                    _RightUpHead.color = HeadColor;
-                    _RightDowmHead.color = HeadColor;
+                    hitColor = HeadColor;
                     break;
             }
+
+            _LeftUp.color = hitColor;
+            _LeftDown.color = hitColor;
+            _RightUp.color = hitColor;
+            _RightDowm.color = hitColor;
+
+            _LeftUpHead.color = hitColor;
+            _LeftDownHead.color = hitColor;
+            _RightUpHead.color = hitColor;
+            _RightDowmHead.color = hitColor;
 
             _LeftUpHead.gameObject.SetActive(ishead);
             _LeftDownHead.gameObject.SetActive(ishead);
