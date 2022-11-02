@@ -72,6 +72,7 @@ namespace GamePanelHUDLife
                 _OverallHealth.ArrowAnimation = HUD.SettingsData.KeyArrowAnimation.Value;
                 _OverallHealth.ArrowAnimationReverse = HUD.SettingsData.KeyArrowAnimationReverse.Value;
                 _OverallHealth.IsHealth = true;
+                _OverallHealth.AtMaximum = HUD.Info.Healths.Common.AtMaximum;
 
                 _OverallHealth.Current = HUD.Info.Healths.Common.Current;
                 _OverallHealth.Maximum = HUD.Info.Healths.Common.Maximum;
@@ -99,6 +100,7 @@ namespace GamePanelHUDLife
                 _Hydration.ArrowAnimation = HUD.SettingsData.KeyArrowAnimation.Value;
                 _Hydration.ArrowAnimationReverse = HUD.SettingsData.KeyArrowAnimationReverse.Value;
                 _Hydration.IsHealth = false;
+                _Hydration.AtMaximum = HUD.Info.Hydrations.AtMaximum;
 
                 _Hydration.Current = HUD.Info.Hydrations.Current;
                 _Hydration.Maximum = HUD.Info.Hydrations.Maximum;
@@ -126,6 +128,7 @@ namespace GamePanelHUDLife
                 _Energy.ArrowAnimation = HUD.SettingsData.KeyArrowAnimation.Value;
                 _Energy.ArrowAnimationReverse = HUD.SettingsData.KeyArrowAnimationReverse.Value;
                 _Energy.IsHealth = false;
+                _Energy.AtMaximum = HUD.Info.Energys.AtMaximum;
 
                 _Energy.Current = HUD.Info.Energys.Current;
                 _Energy.Maximum = HUD.Info.Energys.Maximum;
