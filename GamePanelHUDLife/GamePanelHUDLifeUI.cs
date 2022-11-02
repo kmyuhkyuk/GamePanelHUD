@@ -23,6 +23,8 @@ namespace GamePanelHUDLife
 
         public bool IsHealth;
 
+        public bool AtMaximum;
+
         public float Current;
 
         public float Maximum;
@@ -168,7 +170,7 @@ namespace GamePanelHUDLife
             _BuffValue.text = StringBuilderdDatas._BuffValue.StringConcat("<color=", buffColor, ">", BuffRate.ToString("F2"), "</color>");
 
             //Arrow Animation display
-            bool Arrow = Current != Maximum && ArrowAnimation;
+            bool Arrow = !AtMaximum && ArrowAnimation;
             Animator_UpBuffArrow.SetBool(AnimatorHash.Active, Arrow);
             Animator_DownBuffArrow.SetBool(AnimatorHash.Active, Arrow);
 
