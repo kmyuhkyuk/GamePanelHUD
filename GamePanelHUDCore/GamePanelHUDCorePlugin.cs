@@ -132,7 +132,7 @@ namespace GamePanelHUDCore
 
                     if (initAsset != null)
                     {
-                        BundleHelp.InitAsset(initAsset, HUDCore.GamePanlHUDPublic.transform);
+                        init.Add(initAssetName, BundleHelp.InitAsset(initAsset, HUDCore.GamePanlHUDPublic.transform));
                     }
                 }
 
@@ -151,11 +151,13 @@ namespace GamePanelHUDCore
 
                 GameObject initAsset;
 
+                string initAssetName = initassetname.ToLower();
+
                 asset.TryGetValue(initassetname.ToLower(), out initAsset);
 
                 if (initAsset != null)
                 {
-                    BundleHelp.InitAsset(initAsset, HUDCore.GamePanlHUDPublic.transform);
+                    init.Add(initAssetName, BundleHelp.InitAsset(initAsset, HUDCore.GamePanlHUDPublic.transform));
                 }
 
                 assetBundle.Unload(false);
