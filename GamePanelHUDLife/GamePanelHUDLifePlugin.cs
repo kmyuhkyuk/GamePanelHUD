@@ -123,11 +123,11 @@ namespace GamePanelHUDLife
         {
             public Health Healths = new Health();
 
-            public ValueStruct Hydrations = new ValueStruct();
+            public ValueStruct Hydrations;
 
-            public ValueStruct Energys = new ValueStruct();
+            public ValueStruct Energys;
 
-            public Rate Rates = new Rate();
+            public Rate Rates;
 
             public class Health
             {
