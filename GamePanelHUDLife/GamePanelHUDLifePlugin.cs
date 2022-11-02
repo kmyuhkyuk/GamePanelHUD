@@ -30,7 +30,7 @@ namespace GamePanelHUDLife
 
         private readonly Life Lifes = new Life();
 
-        private SettingsData SettingsDatas = new SettingsData();
+        private readonly SettingsData SettingsDatas = new SettingsData();
 
         private void Start()
         {
