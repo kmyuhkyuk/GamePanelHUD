@@ -152,15 +152,25 @@ namespace GamePanelHUDHit
             RightUp.sizeDelta = HitSizeDelta;
             RightDowm.sizeDelta = HitSizeDelta;
 
-            LeftUp.anchoredPosition = new Vector2(-HitAnchoredPosition.x, HitAnchoredPosition.y);
-            LeftDown.anchoredPosition = new Vector2(-HitAnchoredPosition.x, -HitAnchoredPosition.y);
-            RightUp.anchoredPosition = new Vector2(HitAnchoredPosition.x, HitAnchoredPosition.y);
-            RightDowm.anchoredPosition = new Vector2(HitAnchoredPosition.x, -HitAnchoredPosition.y);
+            Vector2 leftUpPos = new Vector2(-HitAnchoredPosition.x, HitAnchoredPosition.y);
+            Vector2 leftDownPos = new Vector2(-HitAnchoredPosition.x, -HitAnchoredPosition.y);
+            Vector2 rightUpPos = new Vector2(HitAnchoredPosition.x, HitAnchoredPosition.y);
+            Vector2 rightDownPos = new Vector2(HitAnchoredPosition.x, -HitAnchoredPosition.y);
 
-            LeftUp.localEulerAngles = new Vector3(-HitLocalRotation.x, HitLocalRotation.y, HitLocalRotation.z);
-            LeftDown.localEulerAngles = new Vector3(-HitLocalRotation.x, -HitLocalRotation.y, -HitLocalRotation.z);
-            RightUp.localEulerAngles = new Vector3(HitLocalRotation.x, HitLocalRotation.y, -HitLocalRotation.z);
-            RightDowm.localEulerAngles = new Vector3(HitLocalRotation.x, -HitLocalRotation.y, HitLocalRotation.z);
+            Vector3 leftUpRot = new Vector3(-HitLocalRotation.x, HitLocalRotation.y, HitLocalRotation.z);
+            Vector3 leftDownRot = new Vector3(-HitLocalRotation.x, -HitLocalRotation.y, -HitLocalRotation.z);
+            Vector3 rightUpRot = new Vector3(HitLocalRotation.x, HitLocalRotation.y, -HitLocalRotation.z);
+            Vector3 rightDownRot = new Vector3(HitLocalRotation.x, -HitLocalRotation.y, HitLocalRotation.z);
+
+            LeftUp.anchoredPosition = leftUpPos;
+            LeftDown.anchoredPosition = leftDownPos;
+            RightUp.anchoredPosition = rightUpPos;
+            RightDowm.anchoredPosition = rightDownPos;
+
+            LeftUp.localEulerAngles = leftUpRot;
+            LeftDown.localEulerAngles = leftDownRot;
+            RightUp.localEulerAngles = rightUpRot;
+            RightDowm.localEulerAngles = rightDownRot;
 
             LeftUp.localScale = HitLocalScale;
             LeftDown.localScale = HitLocalScale;
@@ -172,15 +182,15 @@ namespace GamePanelHUDHit
             RightUpHead.sizeDelta = HitHeadSizeDelta;
             RightDowmHead.sizeDelta = HitHeadSizeDelta;
 
-            LeftUpHead.anchoredPosition = new Vector2(-HitAnchoredPosition.x, HitAnchoredPosition.y);
-            LeftDownHead.anchoredPosition = new Vector2(-HitAnchoredPosition.x, -HitAnchoredPosition.y);
-            RightUpHead.anchoredPosition = new Vector2(HitAnchoredPosition.x, HitAnchoredPosition.y);
-            RightDowmHead.anchoredPosition = new Vector2(HitAnchoredPosition.x, -HitAnchoredPosition.y);
+            LeftUpHead.anchoredPosition = leftUpPos;
+            LeftDownHead.anchoredPosition = leftDownPos;
+            RightUpHead.anchoredPosition = rightUpPos;
+            RightDowmHead.anchoredPosition = rightDownPos;
 
-            LeftUpHead.localEulerAngles = new Vector3(-HitLocalRotation.x, HitLocalRotation.y, HitLocalRotation.z);
-            LeftDownHead.localEulerAngles = new Vector3(-HitLocalRotation.x, -HitLocalRotation.y, -HitLocalRotation.z);
-            RightUpHead.localEulerAngles = new Vector3(HitLocalRotation.x, HitLocalRotation.y, -HitLocalRotation.z);
-            RightDowmHead.localEulerAngles = new Vector3(HitLocalRotation.x, -HitLocalRotation.y, HitLocalRotation.z);
+            LeftUpHead.localEulerAngles = leftUpRot;
+            LeftDownHead.localEulerAngles = leftDownRot;
+            RightUpHead.localEulerAngles = rightUpRot;
+            RightDowmHead.localEulerAngles = rightDownRot;
 
             LeftUpHead.localScale = HitLocalScale;
             LeftDownHead.localScale = HitLocalScale;
