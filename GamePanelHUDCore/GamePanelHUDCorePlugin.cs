@@ -38,10 +38,10 @@ namespace GamePanelHUDCore
 
             LogLogger = Logger;
 
-            string nainSettings = "主设置 Main Settings";
+            string mainSettings = "主设置 Main Settings";
 
-            SettingsDatas.KeyAllHUDAlways = Config.Bind<bool>(nainSettings, "所有指示栏始终显示 All HUD Always display", false);
-            SettingsDatas.KeyDebugMethodTime = Config.Bind<bool>(nainSettings, "调试所有指示栏调用时间 Debug All HUD Mehod Invoke Time", false, new ConfigDescription("", null, new ConfigurationManagerAttributes() { IsAdvanced = true }));
+            SettingsDatas.KeyAllHUDAlways = Config.Bind<bool>(mainSettings, "所有指示栏始终显示 All HUD Always display", false);
+            SettingsDatas.KeyDebugMethodTime = Config.Bind<bool>(mainSettings, "调试所有指示栏调用时间 Debug All HUD Mehod Invoke Time", false, new ConfigDescription("", null, new ConfigurationManagerAttributes() { IsAdvanced = true }));
 
             Canvas canvs = HUDCore.GamePanlHUDPublic.GetComponent<Canvas>();
 
