@@ -9,17 +9,17 @@ namespace GamePanelHUDCore.Utils
 
         public static string ColorToHtml(this Color color)
         {
-            string hexClor;
+            string hexColor;
 
-            HexColorPool.TryGetValue(color, out hexClor);
+            HexColorPool.TryGetValue(color, out hexColor);
 
-            if (hexClor != null)
+            if (hexColor != null)
             {
-                return hexClor;
+                return hexColor;
             }
             else
             {
-                string hexColor = string.Concat("#", ColorUtility.ToHtmlStringRGBA(color));
+                hexColor = string.Concat("#", ColorUtility.ToHtmlStringRGBA(color));
 
                 HexColorPool.Add(color, hexColor);
 
