@@ -12,9 +12,9 @@ namespace GamePanelHUDCore.Utils
 
     public class IUpdateManger
     {
-        private List<IUpdate> Updates = new List<IUpdate>();
+        private readonly List<IUpdate> Updates = new List<IUpdate>();
 
-        private List<IUpdate> RemoveUpdates = new List<IUpdate>();
+        private readonly List<IUpdate> RemoveUpdates = new List<IUpdate>();
 
         private readonly Debug Debugs = new Debug();
 
