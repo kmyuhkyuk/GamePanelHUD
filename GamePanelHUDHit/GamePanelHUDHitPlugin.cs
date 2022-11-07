@@ -43,7 +43,7 @@ namespace GamePanelHUDHit
 
         internal static GameObject KillPrefab { get; private set; }
 
-        internal static ArmorInfo Armor = new ArmorInfo();
+        internal static readonly ArmorInfo Armor = new ArmorInfo();
 
         internal static int Kills;
 
