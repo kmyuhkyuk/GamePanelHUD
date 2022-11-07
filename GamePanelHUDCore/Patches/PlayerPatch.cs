@@ -11,7 +11,12 @@ namespace GamePanelHUDCore.Patches
 {
     public class PlayerPatch : ModulePatch
     {
-        private static bool? Is231Up;
+        private static bool Is231Up;
+
+        static PlayerPatch()
+        {
+            Is231Up = typeof(Player).GetProperty("IsYourPlayer").GetSetMethod() == null;
+        }
 
         protected override MethodBase GetTargetMethod()
         {
@@ -23,14 +28,9 @@ namespace GamePanelHUDCore.Patches
         {
             await __result;
 
-            if (!Is231Up.HasValue)
-            {
-                Is231Up = typeof(Player).GetProperty("IsYourPlayer").GetSetMethod() == null;
-            }
-
             bool isYouPlayer;
 
-            if ((bool)Is231Up)
+            if (Is231Up)
             {
                 isYouPlayer = __instance.IsYourPlayer;
             }
