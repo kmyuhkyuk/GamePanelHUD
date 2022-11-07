@@ -218,7 +218,7 @@ namespace GamePanelHUDHit
 
         public void HitTirgger(bool ishead, GamePanelHUDHitPlugin.HitInfo hitinfo)
         {
-            Color hitColor = Color.white;
+            Color hitColor = DamageColor;
 
             switch (hitinfo.HitType)
             {
