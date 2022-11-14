@@ -62,6 +62,8 @@ namespace GamePanelHUDMag
         {
             Logger.LogInfo("Loaded: kmyuhkyuk-GamePanelHUDMag");
 
+            ModUpdateCheck.DrawNeedUpdate(Config, Info.Metadata.Version);
+
             string mainSettings = "主设置 Main Settings";
             string positionScaleSettings = "位置大小设置 Position Scale Settings";
             string colorSettings = "颜色设置 Color Settings";
