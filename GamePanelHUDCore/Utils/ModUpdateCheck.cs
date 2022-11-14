@@ -13,7 +13,7 @@ namespace GamePanelHUDCore.Utils
     {
         private static readonly HUDVersion HUDVersions = new HUDVersion();
 
-        private static readonly string UpdateDataUrl = "https://dev.sp-tarkov.com/kmyuhkyuk/GamePanelHUD/raw/branch/master/GamePanelHUDCore/Version.json";
+        private static readonly string UpdateDataUrl = "https://dev.sp-tarkov.com/kmyuhkyuk/GamePanelHUD/raw/branch/master/Version.json";
 
         private static readonly List<UpdateData> UpdateDatas = new List<UpdateData>();
 
