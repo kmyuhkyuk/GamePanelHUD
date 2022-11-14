@@ -72,7 +72,7 @@ namespace GamePanelHUDCore.Utils
             {
                 FileVersionInfo exeInfo = Process.GetCurrentProcess().MainModule.FileVersionInfo;
 
-                Version exeVersion = new Version(string.Concat(exeInfo.FileMajorPart, ".", exeInfo.ProductMinorPart, ".", exeInfo.ProductBuildPart, ".", exeInfo.ProductPrivatePart));
+                Version exeVersion = new Version(string.Concat(exeInfo.FileMajorPart, ".", exeInfo.ProductMinorPart, ".", exeInfo.ProductBuildPart, ".", exeInfo.FilePrivatePart));
 
                 if (HUDVersions.FirstGameVersion > exeVersion)
                 {
@@ -137,11 +137,7 @@ namespace GamePanelHUDCore.Utils
         {
             private static readonly GUIStyle Red = new GUIStyle();
 
-            private static readonly GUIStyle RedSmall = new GUIStyle();
-
             private static readonly GUIStyle Yellow = new GUIStyle();
-
-            private static readonly GUIStyle YellowSmall = new GUIStyle();
 
             private static readonly GUIStyle Green = new GUIStyle();
 
@@ -150,12 +146,8 @@ namespace GamePanelHUDCore.Utils
                 Red.normal.textColor = Color.red;
                 Red.fontStyle = FontStyle.Bold;
 
-                RedSmall.normal.textColor = Color.red;
-
                 Yellow.normal.textColor = Color.yellow;
                 Yellow.fontStyle = FontStyle.Bold;
-
-                YellowSmall.normal.textColor = Color.yellow;
 
                 Green.normal.textColor = Color.green;
                 Green.fontStyle = FontStyle.Bold;
@@ -224,8 +216,8 @@ namespace GamePanelHUDCore.Utils
             {
                 GUILayout.BeginVertical();
 
-                GUILayout.Label("游戏版本低于模组支持版本, 它可能不会工作", RedSmall);
-                GUILayout.Label("Game Version Below Mod Support Version, It Maybe Can't Work", RedSmall);
+                GUILayout.Label("游戏版本低于模组支持版本, 它可能不会工作", Red);
+                GUILayout.Label("Game Version Below Mod Support Version, It Maybe Can't Work", Red);
 
                 GUILayout.EndVertical();
             }
@@ -234,8 +226,8 @@ namespace GamePanelHUDCore.Utils
             {
                 GUILayout.BeginVertical();
 
-                GUILayout.Label("游戏版本高于模组支持版本, 它可能会有些问题", RedSmall);
-                GUILayout.Label("Game Version Below Mod Support Version, It Maybe Will Be Problems", RedSmall);
+                GUILayout.Label("游戏版本高于模组支持版本, 它可能会有些问题", Yellow);
+                GUILayout.Label("Game Version Higher than Mod Support Version, It Maybe Will Be Problems", Yellow);
 
                 GUILayout.EndVertical();
             }
@@ -274,7 +266,7 @@ namespace GamePanelHUDCore.Utils
 
                         FileVersionInfo exeInfo = Process.GetCurrentProcess().MainModule.FileVersionInfo;
 
-                        Version exeVersion = new Version(string.Concat(exeInfo.FileMajorPart, ".", exeInfo.ProductMinorPart, ".", exeInfo.ProductBuildPart, ".", exeInfo.ProductPrivatePart));
+                        Version exeVersion = new Version(string.Concat(exeInfo.FileMajorPart, ".", exeInfo.ProductMinorPart, ".", exeInfo.ProductBuildPart, ".", exeInfo.FilePrivatePart));
 
                         if (HUDVersions.FirstGameVersion > exeVersion)
                         {
