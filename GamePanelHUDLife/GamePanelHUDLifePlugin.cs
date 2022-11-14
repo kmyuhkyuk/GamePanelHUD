@@ -10,7 +10,7 @@ using GamePanelHUDLife.Patches;
 
 namespace GamePanelHUDLife
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDLife", "kmyuhkyuk-GamePanelHUDLife", "2.3.0")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDLife", "kmyuhkyuk-GamePanelHUDLife", "2.3.1")]
     [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore")]
     public class GamePanelHUDLifePlugin : BaseUnityPlugin, IUpdate
     {

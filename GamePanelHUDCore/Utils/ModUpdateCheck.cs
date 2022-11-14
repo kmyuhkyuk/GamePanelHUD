@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
 using System.Xml.Schema;
+using static GamePanelHUDCore.Utils.ModUpdateCheck;
 
 namespace GamePanelHUDCore.Utils
 {
@@ -190,13 +191,11 @@ namespace GamePanelHUDCore.Utils
 
                 if ((bool)HUDVersions.ServerConnect)
                 {
-                    for (int i = 0; i < UpdateDatas.Count; i++)
+                    foreach (UpdateData data in UpdateDatas)
                     {
-                        UpdateData updateData = UpdateDatas[i];
-
                         Action<ConfigEntryBase> draw;
 
-                        if (HUDVersions.ModVersion > updateData.ModVersion)
+                        if (HUDVersions.ModVersion > data.ModVersion)
                         {
                             draw = NeedUpdate;
                         }
@@ -205,9 +204,8 @@ namespace GamePanelHUDCore.Utils
                             draw = NotNeedUpdate;
                         }
 
-                        updateData.ModConfigFile.Remove(updateData.ModConfigEntry.Definition);
-
-                        updateData.ModConfigEntry = updateData.ModConfigFile.Bind("主更新检查 Update Check", "Update", "", new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 1, HideDefaultButton = true, CustomDrawer = draw, HideSettingName = true }));
+                        data.ModConfigFile.Remove(data.ModConfigEntry.Definition);
+                        data.ModConfigEntry = data.ModConfigFile.Bind("主更新检查 Update Check", "Update", "", new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 1, HideDefaultButton = true, CustomDrawer = draw, HideSettingName = true }));
                     }
                 }
             }
