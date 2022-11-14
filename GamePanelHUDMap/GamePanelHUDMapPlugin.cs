@@ -5,8 +5,10 @@ using System;
 using System.IO;
 using Newtonsoft.Json;
 using UnityEngine;
+using UnityEngine.Networking;
 using GamePanelHUDCore;
 using GamePanelHUDCore.Utils;
+using System.Threading.Tasks;
 
 namespace GamePanelHUDMap
 {
@@ -40,7 +42,7 @@ namespace GamePanelHUDMap
 
         internal static Action UnloadMap;
 
-        private readonly string ServerVersionUrl = "";
+        private readonly string ServerVersionUrl = "https://dev.sp-tarkov.com/kmyuhkyuk/GamePanelHUD/raw/branch/master/GamePanelHUDMap/MapData/Version.json";
 
         private void Start()
         {
@@ -61,9 +63,37 @@ namespace GamePanelHUDMap
             MapPlugin();
         }
 
-        void AutoUpdate()
+        async void AutoUpdate()
         {
-            MapVersionData serverVersionData = JsonConvert.DeserializeObject<MapVersionData>();
+            UnityWebRequest www = UnityWebRequest.Get(ServerVersionUrl);
+
+            www.SendWebRequest();
+
+            while (!www.isDone)
+                await Task.Yield();
+
+            if (www.isHttpError || www.isNetworkError)
+            {
+
+            }
+            else
+            {
+                MapVersionData[] serverVersionData = JsonConvert.DeserializeObject<MapVersionData[]>(www.downloadHandler.text);
+
+                MapVersionData[] localVersionData = JsonConvert.DeserializeObject<MapVersionData[]>(new StreamReader(Path.Combine(MapPath, "Version.json")).ReadToEnd());
+
+                for (int i = 0; i < serverVersionData.Length; i++)
+                {
+                    MapVersionData serverData = serverVersionData[i];
+
+                    MapVersionData localData = localVersionData[i];
+
+                    if (localData == null || (serverData.MapVersion > localData.MapVersion && serverData.GameVersion >= localData.GameVersion))
+                    {
+
+                    }
+                }
+            }
         }
 
         void MapPlugin()
@@ -104,7 +134,7 @@ namespace GamePanelHUDMap
             public bool IsLoadMap;
         }
 
-        public struct MapVersionData
+        public class MapVersionData
         {
             public string MapName;
 
