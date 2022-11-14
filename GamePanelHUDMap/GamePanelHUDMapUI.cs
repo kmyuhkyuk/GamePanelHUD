@@ -3,6 +3,7 @@ using GamePanelHUDCore.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -19,11 +20,10 @@ namespace GamePanelHUDMap
 
         public Vector3 PlayerAngles;
 
-        [SerializeField]
-        private Vector2 Offset;
+        public TexData[] TexDatas;
 
         [SerializeField]
-        private TexData[] TexDatas;
+        private Vector2 Offset;
 
         private RectTransform MapRect;
 
@@ -44,21 +44,13 @@ namespace GamePanelHUDMap
         {
             MapRect.anchoredPosition = new Vector2(PlayerPosition.x, PlayerPosition.y) + Offset;
 
-            MapRect.eulerAngles = PlayerAngles;
+            MapRect.eulerAngles = new Vector3(0, 0, PlayerAngles.y);
 
-            foreach (TexData data in TexDatas)
+            /*foreach (TexData data in TexDatas)
             {
                 data.Image.gameObject.SetActive(PlayerPosition.y > data.MinhHigher);
-            }
+            }*/
         }
 #endif
-
-        [Serializable]
-        public struct TexData
-        {
-            public float MinhHigher;
-
-            public RawImage Image;
-        }
     }
 }
