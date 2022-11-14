@@ -13,7 +13,7 @@ using GamePanelHUDCore.Utils;
 
 namespace GamePanelHUDCore
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCore", "kmyuhkyuk-GamePanelHUDCore", "2.3.0")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCore", "kmyuhkyuk-GamePanelHUDCore", "2.3.1")]
     public class GamePanelHUDCorePlugin : BaseUnityPlugin
     {
         public static readonly IUpdateManger UpdateManger = new IUpdateManger();
