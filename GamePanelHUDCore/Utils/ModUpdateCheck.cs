@@ -21,7 +21,7 @@ namespace GamePanelHUDCore.Utils
 
         public static async void ServerCheck()
         {
-            HUDVersions.ServerConnect = null;
+            HUDVersions.ServerConnect = default;
 
             UnityWebRequest www = UnityWebRequest.Get(UpdateDataUrl);
 
