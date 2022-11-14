@@ -144,7 +144,7 @@ namespace GamePanelHUDHit
                     }
 
                     text.maxVisibleCharacters = current;
-                    current += 1;
+                    current++;
 
                     await Task.Delay(speed);
                 }
@@ -166,7 +166,7 @@ namespace GamePanelHUDHit
                     }
 
                     text.firstVisibleCharacter = current;
-                    current -= 1;
+                    current--;
 
                     await Task.Delay(speed);
                 }
