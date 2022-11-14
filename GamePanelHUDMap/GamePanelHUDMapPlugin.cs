@@ -3,7 +3,6 @@ using BepInEx;
 using BepInEx.Configuration;
 using System;
 using System.IO;
-using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
 using GamePanelHUDCore;
@@ -42,8 +41,6 @@ namespace GamePanelHUDMap
 
         internal static Action UnloadMap;
 
-        private readonly string ServerVersionUrl = "https://dev.sp-tarkov.com/kmyuhkyuk/GamePanelHUD/raw/branch/master/GamePanelHUDMap/MapData/Version.json";
-
         private void Start()
         {
             Logger.LogInfo("Loaded: kmyuhkyuk-GamePanelHUDMap");
@@ -61,39 +58,6 @@ namespace GamePanelHUDMap
         public void IUpdate()
         {
             MapPlugin();
-        }
-
-        async void AutoUpdate()
-        {
-            UnityWebRequest www = UnityWebRequest.Get(ServerVersionUrl);
-
-            www.SendWebRequest();
-
-            while (!www.isDone)
-                await Task.Yield();
-
-            if (www.isHttpError || www.isNetworkError)
-            {
-
-            }
-            else
-            {
-                MapVersionData[] serverVersionData = JsonConvert.DeserializeObject<MapVersionData[]>(www.downloadHandler.text);
-
-                MapVersionData[] localVersionData = JsonConvert.DeserializeObject<MapVersionData[]>(new StreamReader(Path.Combine(MapPath, "Version.json")).ReadToEnd());
-
-                for (int i = 0; i < serverVersionData.Length; i++)
-                {
-                    MapVersionData serverData = serverVersionData[i];
-
-                    MapVersionData localData = localVersionData[i];
-
-                    if (localData == null || (serverData.MapVersion > localData.MapVersion && serverData.GameVersion >= localData.GameVersion))
-                    {
-
-                    }
-                }
-            }
         }
 
         void MapPlugin()
@@ -132,15 +96,6 @@ namespace GamePanelHUDMap
             public Vector3 PlayerRotation;
 
             public bool IsLoadMap;
-        }
-
-        public class MapVersionData
-        {
-            public string MapName;
-
-            public int GameVersion;
-
-            public int MapVersion;
         }
 
         public class SettingsData
