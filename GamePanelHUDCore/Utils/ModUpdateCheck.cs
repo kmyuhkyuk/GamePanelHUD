@@ -5,8 +5,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
-using System.Xml.Schema;
-using static GamePanelHUDCore.Utils.ModUpdateCheck;
 
 namespace GamePanelHUDCore.Utils
 {
