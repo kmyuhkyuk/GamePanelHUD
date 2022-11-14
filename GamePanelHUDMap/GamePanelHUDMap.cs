@@ -27,9 +27,10 @@ namespace GamePanelHUDMap
         private GameObject MapAsset;
 
         [SerializeField]
-        private Transform _MapUI;
+        private Transform _Map;
 
-        private GamePanelHUDMapUI _Map;
+        [SerializeField]
+        private GamePanelHUDMapUI _MapUI;
 
         #if !UNITY_EDITOR
         void Start()
@@ -50,9 +51,12 @@ namespace GamePanelHUDMap
             if (_Map != null)
             {
                 _Map.gameObject.SetActive(HUD.HUDSW);
+            }
 
-                _Map.PlayerPosition = HUD.Info.PlayerTransform.localPosition;
-                _Map.PlayerAngles = HUD.Info.PlayerTransform.eulerAngles;
+            if (MapUI != null)
+            {
+                MapUI.PlayerPosition = HUD.Info.PlayerPosition;
+                MapUI.PlayerAngles = HUD.Info.PlayerRotation;
             }
         }
 
@@ -60,25 +64,11 @@ namespace GamePanelHUDMap
         {
             HUD.Info.IsLoadMap = true;
 
-            AssetBundle = await BundleHelp.LoadAsyncBundle(mappath);
-
-            MapAsset = (await BundleHelp.LoadAsyncAllAsset<GameObject>(AssetBundle))[0];
-
-            GameObject mapAsset = Instantiate(MapAsset, _MapUI);
-
-            _Map = mapAsset.GetComponent<GamePanelHUDMapUI>();
-
             HUD.Info.IsLoadMap = false;
         }
 
         void UnloadMapAsset()
         {
-            if (AssetBundle != null && MapAsset != null)
-            {
-                Destroy(MapAsset);
-
-                AssetBundle.Unload(true);
-            }
         }
 #endif
     }

@@ -3,6 +3,7 @@ using BepInEx;
 using BepInEx.Configuration;
 using System;
 using System.IO;
+using Newtonsoft.Json;
 using UnityEngine;
 using GamePanelHUDCore;
 using GamePanelHUDCore.Utils;
@@ -39,11 +40,13 @@ namespace GamePanelHUDMap
 
         internal static Action UnloadMap;
 
+        private readonly string ServerVersionUrl = "";
+
         private void Start()
         {
             Logger.LogInfo("Loaded: kmyuhkyuk-GamePanelHUDMap");
 
-            MapPath = Path.Combine(HUDCore.ModPath, "bundles", "map");
+            MapPath = Path.Combine(HUDCore.ModPath, "map");
 
             GamePanelHUDCorePlugin.UpdateManger.Register(this);
         }
@@ -58,6 +61,11 @@ namespace GamePanelHUDMap
             MapPlugin();
         }
 
+        void AutoUpdate()
+        {
+            MapVersionData serverVersionData = JsonConvert.DeserializeObject<MapVersionData>();
+        }
+
         void MapPlugin()
         {
             MapHUDSW = HUDCore.AllHUDSW && HasMap && !MapDatas.IsLoadMap && HUDCore.HasPlayer;
@@ -70,12 +78,14 @@ namespace GamePanelHUDMap
 
                 if (!HasMap)
                 {
-                    LoadMap(Path.Combine(MapPath, Infiltration));
+                    LoadMap(Path.Combine(MapPath, string.Concat(Infiltration, ".json")));
 
                     HasMap = true;
                 }
 
-                MapDatas.PlayerTransform = HUDCore.IsYourPlayer.Transform.Original;
+                MapDatas.PlayerPosition = HUDCore.IsYourPlayer.Transform.Original.position;
+
+                MapDatas.PlayerRotation = HUDCore.IsYourPlayer.CameraPosition.eulerAngles;
             }
             else
             {
@@ -87,9 +97,20 @@ namespace GamePanelHUDMap
 
         public class MapData
         {
-            public Transform PlayerTransform;
+            public Vector3 PlayerPosition;
+
+            public Vector3 PlayerRotation;
 
             public bool IsLoadMap;
+        }
+
+        public struct MapVersionData
+        {
+            public string MapName;
+
+            public int GameVersion;
+
+            public int MapVersion;
         }
 
         public class SettingsData
