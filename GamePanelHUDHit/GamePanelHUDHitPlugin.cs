@@ -55,6 +55,8 @@ namespace GamePanelHUDHit
         {
             Logger.LogInfo("Loaded: kmyuhkyuk-GamePanelHUDHit");
 
+            ModUpdateCheck.DrawNeedUpdate(Config, Info.Metadata.Version);
+
             string mainSettings = "主设置 Main Settings";
             string prsSettings = "位置旋转大小设置 Position Rotation Scale Settings";
             string hitColorSettings = "击中颜色设置 Hit Color Settings";
