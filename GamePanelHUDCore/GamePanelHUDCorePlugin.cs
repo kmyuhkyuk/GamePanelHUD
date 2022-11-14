@@ -38,6 +38,10 @@ namespace GamePanelHUDCore
 
             LogLogger = Logger;
 
+            ModUpdateCheck.ServerCheck();
+
+            ModUpdateCheck.DrawNeedUpdate(Config, Info.Metadata.Version);
+
             string mainSettings = "主设置 Main Settings";
 
             SettingsDatas.KeyAllHUDAlways = Config.Bind<bool>(mainSettings, "所有指示栏始终显示 All HUD Always display", false);
