@@ -3,6 +3,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections.Generic;
 #if !UNITY_EDITOR
 using GamePanelHUDCore;
 using GamePanelHUDCore.Utils;
@@ -66,7 +67,26 @@ namespace GamePanelHUDCompass
 
             AngleTexts = _AzimuthsAngle.Select(x => x.text).ToArray();
 
+            List<StringBuilderHelp.StringChange> changes = new List<StringBuilderHelp.StringChange>();
+
+            for (int i = 0; i < AngleTexts.Length; i++)
+            {
+                changes.Add(new StringBuilderHelp.StringChange(128));
+            }
+
+            StringBuilderDatas._AzimuthsAngle = changes.ToArray();
+
             GamePanelHUDCorePlugin.UpdateManger.Register(this);
+        }
+
+        void OnEnable()
+        {
+            GamePanelHUDCorePlugin.UpdateManger.Run(this);
+        }
+
+        void OnDisable()
+        {
+            GamePanelHUDCorePlugin.UpdateManger.Stop(this);
         }
 
         public void IUpdate()
@@ -86,7 +106,7 @@ namespace GamePanelHUDCompass
             for (int i = 0; i < _AzimuthsAngle.Length; i++)
             {
                 _AzimuthsAngle[i].fontStyle = AzimuthsAngleStyles;
-                _AzimuthsAngle[i].text = StringBuilderDatas._AzimuthsAngle.StringConcat("<color=", AzimuthsAngleColor, ">", AngleTexts[i], "</color>");
+                _AzimuthsAngle[i].text = StringBuilderDatas._AzimuthsAngle[i].Chcek("<color=", AzimuthsAngleColor, ">", AngleTexts[i], "</color>");
             }
 
             _AzimuthsValue.anchoredPosition = new Vector2(-(AngleNum / 15 * 120), 0);
@@ -128,18 +148,18 @@ namespace GamePanelHUDCompass
             _AnglePanel.gameObject.SetActive(AngleHUDSW);
 
             _DirectionValue.fontStyle = DirectionStyles;
-            _DirectionValue.text = StringBuilderDatas._DirectionValue.StringConcat("<color=", DirectionColor, ">", direction, "</color>");
+            _DirectionValue.text = StringBuilderDatas._DirectionValue.Chcek("<color=", DirectionColor, ">", direction, "</color>");
 
             _AngleValue.fontStyle = AngleStyles;
-            _AngleValue.text = StringBuilderDatas._AngleValue.StringConcat("<color=", AngleColor, ">", (int)AngleNum, "</color>");
+            _AngleValue.text = StringBuilderDatas._AngleValue.Chcek("<color=", AngleColor, ">", (int)AngleNum, "</color>");
         }
 #endif
 
         public class StringBuilderData
         {
-            public StringBuilder _AzimuthsAngle = new StringBuilder(128);
-            public StringBuilder _DirectionValue = new StringBuilder(128);
-            public StringBuilder _AngleValue = new StringBuilder(128);
+            public StringBuilderHelp.StringChange[] _AzimuthsAngle;
+            public StringBuilderHelp.StringChange _DirectionValue = new StringBuilderHelp.StringChange(128);
+            public StringBuilderHelp.StringChange _AngleValue = new StringBuilderHelp.StringChange(128);
         }
     }
 }
