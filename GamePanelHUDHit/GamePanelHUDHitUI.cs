@@ -5,8 +5,8 @@ using UnityEngine.UI;
 using TMPro;
 #if !UNITY_EDITOR
 using GamePanelHUDCore;
-using GamePanelHUDCore.Utils;
 #endif
+using GamePanelHUDCore.Utils;
 
 namespace GamePanelHUDHit
 {
@@ -146,6 +146,8 @@ namespace GamePanelHUDHit
         }
 
         void HitUI()
+#endif
+        void Update()
         {
             LeftUp.sizeDelta = HitSizeDelta;
             LeftDown.sizeDelta = HitSizeDelta;
@@ -215,6 +217,7 @@ namespace GamePanelHUDHit
             Animator_HitUI.SetFloat(AnimatorHash.EndSpeed, EndSpeed);
             Animator_HitUI.SetFloat(AnimatorHash.DeadSpeed, DeadSpeed);
         }
+#if !UNITY_EDITOR
 
         public void HitTirgger(bool ishead, GamePanelHUDHitPlugin.HitInfo hitinfo)
         {

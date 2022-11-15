@@ -1,4 +1,5 @@
-﻿using Aki.Reflection.Patching;
+﻿#if !UNITY_EDITOR
+using Aki.Reflection.Patching;
 using Aki.Reflection.Utils;
 using System.Reflection;
 using EFT.Hideout;
@@ -19,3 +20,4 @@ namespace GamePanelHUDCore.Patches
         }
     }
 }
+#endif
