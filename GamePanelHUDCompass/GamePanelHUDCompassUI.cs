@@ -1,9 +1,8 @@
-﻿using System.Text;
-using System.Linq;
+﻿using System.Linq;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using System.Collections.Generic;
 #if !UNITY_EDITOR
 using GamePanelHUDCore;
 using GamePanelHUDCore.Utils;
