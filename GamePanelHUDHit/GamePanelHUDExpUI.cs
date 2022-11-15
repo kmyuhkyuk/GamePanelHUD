@@ -47,7 +47,9 @@ namespace GamePanelHUDHit
 
         void ExpUI()
 #endif
+#if UNITY_EDITOR
         void Update()
+#endif
         {
             _XpValue.fontStyle = XPStyles;
 
