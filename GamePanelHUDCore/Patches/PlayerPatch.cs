@@ -1,4 +1,5 @@
-﻿using Aki.Reflection.Patching;
+﻿#if !UNITY_EDITOR
+using Aki.Reflection.Patching;
 using Aki.Reflection.Utils;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -46,3 +47,4 @@ namespace GamePanelHUDCore.Patches
         }
     }
 }
+#endif

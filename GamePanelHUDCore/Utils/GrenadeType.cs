@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !UNITY_EDITOR
+using System;
 using System.Reflection;
 
 namespace GamePanelHUDCore.Utils
@@ -15,3 +16,4 @@ namespace GamePanelHUDCore.Utils
         }
     }
 }
+#endif

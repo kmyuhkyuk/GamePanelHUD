@@ -20,7 +20,7 @@ namespace GamePanelHUDMap
 
         public Vector3 PlayerAngles;
 
-        public TexData[] TexDatas;
+        //public TexData[] TexDatas;
 
         [SerializeField]
         private Vector2 Offset;

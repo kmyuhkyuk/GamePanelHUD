@@ -1,4 +1,5 @@
-﻿using Aki.Reflection.Patching;
+﻿#if !UNITY_EDITOR
+using Aki.Reflection.Patching;
 using HarmonyLib;
 using System.Linq;
 using System.Reflection;
@@ -21,3 +22,4 @@ namespace GamePanelHUDCore.Patches
         }
     }
 }
+#endif

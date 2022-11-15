@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !UNITY_EDITOR
+using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
@@ -104,3 +105,4 @@ namespace GamePanelHUDCore.Utils
         }
     }
 }
+#endif

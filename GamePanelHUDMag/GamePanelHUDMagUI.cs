@@ -3,8 +3,8 @@ using UnityEngine;
 using TMPro;
 #if !UNITY_EDITOR
 using GamePanelHUDCore;
-using GamePanelHUDCore.Utils;
 #endif
+using GamePanelHUDCore.Utils;
 
 namespace GamePanelHUDMag
 {
@@ -122,6 +122,8 @@ namespace GamePanelHUDMag
         }
 
         void MagUI()
+#endif
+        void Update()
         {
             //Set Current float and color and Style to String
             string addZeros;
@@ -187,7 +189,6 @@ namespace GamePanelHUDMag
                 WeaponTirgger = false;
             }
         }
-#endif
 
         public class StringBuilderData
         {
