@@ -1,4 +1,5 @@
-﻿using BepInEx;
+﻿#if !UNITY_EDITOR
+using BepInEx;
 using BepInEx.Logging;
 using BepInEx.Configuration;
 using System;
@@ -199,3 +200,4 @@ namespace GamePanelHUDCore
         }
     }
 }
+#endif

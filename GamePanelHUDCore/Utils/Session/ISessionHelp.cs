@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿#if !UNITY_EDITOR
+using HarmonyLib;
 
 namespace GamePanelHUDCore.Utils
 {
@@ -19,3 +20,4 @@ namespace GamePanelHUDCore.Utils
         }
     }
 }
+#endif

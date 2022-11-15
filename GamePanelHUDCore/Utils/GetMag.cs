@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿#if !UNITY_EDITOR
+using HarmonyLib;
 using System;
 using System.Reflection;
 using EFT.InventoryLogic;
@@ -20,3 +21,4 @@ namespace GamePanelHUDCore.Utils
         }
     }
 }
+#endif

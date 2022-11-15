@@ -3,8 +3,8 @@ using UnityEngine;
 using TMPro;
 #if !UNITY_EDITOR
 using GamePanelHUDCore;
-using GamePanelHUDCore.Utils;
 #endif
+using GamePanelHUDCore.Utils;
 
 namespace GamePanelHUDHit
 {
@@ -46,6 +46,8 @@ namespace GamePanelHUDHit
         }
 
         void ExpUI()
+#endif
+        void Update()
         {
             _XpValue.fontStyle = XPStyles;
 
@@ -100,7 +102,6 @@ namespace GamePanelHUDHit
         {
             return Animator_ExpUI.GetCurrentAnimatorStateInfo(0).shortNameHash == AnimatorHash.Clear;
         }
-#endif
 
         public class StringBuilderData
         {

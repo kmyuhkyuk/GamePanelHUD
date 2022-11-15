@@ -3,8 +3,8 @@ using UnityEngine;
 using TMPro;
 #if !UNITY_EDITOR
 using GamePanelHUDCore;
-using GamePanelHUDCore.Utils;
 #endif
+using GamePanelHUDCore.Utils;
 
 namespace GamePanelHUDGrenade
 {
@@ -50,6 +50,8 @@ namespace GamePanelHUDGrenade
         }
 
         void GrenadeUI()
+#endif
+        void Update()
         {
             //Set GrenadeAmount int and color and Style to String
             string grenadeColor;
@@ -65,7 +67,6 @@ namespace GamePanelHUDGrenade
             _GrenadeValue.fontStyle = GrenadeStyles;
             _GrenadeValue.text = StringBuilderDatas._GrenadeValue.Chcek("</color>", "<color=", grenadeColor, ">", GrenadeAmount, "</color>");
         }
-#endif
 
         public class StringBuilderData
         {

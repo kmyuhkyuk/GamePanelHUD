@@ -5,8 +5,8 @@ using UnityEngine.UI;
 using TMPro;
 #if !UNITY_EDITOR
 using GamePanelHUDCore;
-using GamePanelHUDCore.Utils;
 #endif
+using GamePanelHUDCore.Utils;
 
 namespace GamePanelHUDLife
 {
@@ -106,6 +106,8 @@ namespace GamePanelHUDLife
         }
 
         void LifeUI()
+#endif
+        void Update()
         {
             //Set Current float and color and Style to String
             double current;
@@ -197,7 +199,6 @@ namespace GamePanelHUDLife
                 _Glow.gameObject.SetActive(Normalized < WarningRate);
             }
         }
-#endif
 
         public class StringBuilderData
         {

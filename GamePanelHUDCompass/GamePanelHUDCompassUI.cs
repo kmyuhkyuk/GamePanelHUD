@@ -5,8 +5,8 @@ using UnityEngine.UI;
 using TMPro;
 #if !UNITY_EDITOR
 using GamePanelHUDCore;
-using GamePanelHUDCore.Utils;
 #endif
+using GamePanelHUDCore.Utils;
 
 namespace GamePanelHUDCompass
 {
@@ -94,6 +94,8 @@ namespace GamePanelHUDCompass
         }
 
         void CompassUI()
+#endif
+        void Update()
         {
             _Arrow.color = ArrowColor;
 
@@ -152,7 +154,6 @@ namespace GamePanelHUDCompass
             _AngleValue.fontStyle = AngleStyles;
             _AngleValue.text = StringBuilderDatas._AngleValue.Chcek("<color=", AngleColor, ">", (int)AngleNum, "</color>");
         }
-#endif
 
         public class StringBuilderData
         {
