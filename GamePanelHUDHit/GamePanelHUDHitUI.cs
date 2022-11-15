@@ -147,7 +147,9 @@ namespace GamePanelHUDHit
 
         void HitUI()
 #endif
+#if UNITY_EDITOR
         void Update()
+#endif
         {
             LeftUp.sizeDelta = HitSizeDelta;
             LeftDown.sizeDelta = HitSizeDelta;
