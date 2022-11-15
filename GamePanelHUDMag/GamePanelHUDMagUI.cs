@@ -123,7 +123,9 @@ namespace GamePanelHUDMag
 
         void MagUI()
 #endif
+#if UNITY_EDITOR
         void Update()
+#endif
         {
             //Set Current float and color and Style to String
             string addZeros;

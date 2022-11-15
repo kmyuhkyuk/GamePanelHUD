@@ -53,11 +53,11 @@ namespace GamePanelHUDMap
                 _Map.gameObject.SetActive(HUD.HUDSW);
             }
 
-            if (MapUI != null)
+            /*if (MapUI != null)
             {
                 MapUI.PlayerPosition = HUD.Info.PlayerPosition;
                 MapUI.PlayerAngles = HUD.Info.PlayerRotation;
-            }
+            }*/
         }
 
         async void LoadMapAsset(string mappath)

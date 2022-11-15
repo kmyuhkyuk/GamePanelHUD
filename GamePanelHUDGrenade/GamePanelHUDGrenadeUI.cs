@@ -51,7 +51,9 @@ namespace GamePanelHUDGrenade
 
         void GrenadeUI()
 #endif
+#if UNITY_EDITOR
         void Update()
+#endif
         {
             //Set GrenadeAmount int and color and Style to String
             string grenadeColor;
