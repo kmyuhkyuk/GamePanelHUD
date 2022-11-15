@@ -1,4 +1,5 @@
-﻿/// <summary>
+﻿#if !UNITY_EDITOR
+/// <summary>
 /// Class that specifies how a setting should be displayed inside the ConfigurationManager settings window.
 /// 
 /// Usage:
@@ -101,3 +102,4 @@ public sealed class ConfigurationManagerAttributes
     /// </summary>
     public System.Func<string, object> StrToObj;
 }
+#endif

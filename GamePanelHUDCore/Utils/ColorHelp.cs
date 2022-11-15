@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+#if !UNITY_EDITOR
 using UnityEngine;
 
 namespace GamePanelHUDCore.Utils
@@ -28,3 +29,4 @@ namespace GamePanelHUDCore.Utils
         }
     }
 }
+#endif

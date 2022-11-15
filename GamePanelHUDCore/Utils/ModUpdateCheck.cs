@@ -1,4 +1,5 @@
-﻿using BepInEx.Configuration;
+﻿#if !UNITY_EDITOR
+using BepInEx.Configuration;
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -284,3 +285,4 @@ namespace GamePanelHUDCore.Utils
         }
     }
 }
+#endif

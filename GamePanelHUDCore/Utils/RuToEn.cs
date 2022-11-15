@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿#if !UNITY_EDITOR
+using HarmonyLib;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -24,3 +25,4 @@ namespace GamePanelHUDCore.Utils
         }
     }
 }
+#endif
