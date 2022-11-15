@@ -34,6 +34,16 @@ namespace GamePanelHUDGrenade
             GamePanelHUDCorePlugin.UpdateManger.Register(this);
         }
 
+        void OnEnable()
+        {
+            GamePanelHUDCorePlugin.UpdateManger.Run(this);
+        }
+
+        void OnDisable()
+        {
+            GamePanelHUDCorePlugin.UpdateManger.Stop(this);
+        }
+
         public void IUpdate()
         {
             GrenadeUI();
@@ -53,13 +63,13 @@ namespace GamePanelHUDGrenade
             }
 
             _GrenadeValue.fontStyle = GrenadeStyles;
-            _GrenadeValue.text = StringBuilderDatas._GrenadeValue.StringConcat("</color>", "<color=", grenadeColor, ">", GrenadeAmount, "</color>");
+            _GrenadeValue.text = StringBuilderDatas._GrenadeValue.Chcek("</color>", "<color=", grenadeColor, ">", GrenadeAmount, "</color>");
         }
 #endif
 
         public class StringBuilderData
         {
-            public StringBuilder _GrenadeValue = new StringBuilder(128);
+            public StringBuilderHelp.StringChange _GrenadeValue = new StringBuilderHelp.StringChange(128);
         }
     }
 }

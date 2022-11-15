@@ -57,7 +57,7 @@ namespace GamePanelHUDHit
 
                 WaitXP = 0;
 
-                _XpValue.text = StringBuilderDatas._XpValue.StringConcat("<color=", XPColor, ">", XP, "</color>");
+                _XpValue.text = StringBuilderDatas._XpValue.Chcek("<color=", XPColor, ">", XP, "</color>");
 
                 Animator_ExpUI.SetTrigger(AnimatorHash.Active);
 
@@ -104,7 +104,7 @@ namespace GamePanelHUDHit
 
         public class StringBuilderData
         {
-            public StringBuilder _XpValue = new StringBuilder(128);
+            public StringBuilderHelp.StringChange _XpValue = new StringBuilderHelp.StringChange(128);
         }
 
         void ClearXp()

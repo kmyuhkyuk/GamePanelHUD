@@ -77,7 +77,7 @@ namespace GamePanelHUDHit
 
             if (HasXp)
             {
-                _XpValue.text = StringBuilderDatas._XpValue.StringConcat("<color=", HUD.SettingsData.KeyKillXpColor.Value.ColorToHtml(), ">", Xp, "</color>");
+                _XpValue.text = StringBuilderDatas._XpValue.Chcek("<color=", HUD.SettingsData.KeyKillXpColor.Value.ColorToHtml(), ">", Xp, "</color>");
             }
 
             Animator_KillUI.SetFloat(AnimatorHash.Speed, HUD.SettingsData.KeyKillWaitSpeed.Value);
@@ -177,7 +177,7 @@ namespace GamePanelHUDHit
 
         public class StringBuilderData
         {
-            public StringBuilder _XpValue = new StringBuilder(128);
+            public StringBuilderHelp.StringChange _XpValue = new StringBuilderHelp.StringChange(128);
         }
 
         void Destroy()
