@@ -106,6 +106,16 @@ namespace GamePanelHUDMag
             GamePanelHUDCorePlugin.UpdateManger.Register(this);
         }
 
+        void OnEnable()
+        {
+            GamePanelHUDCorePlugin.UpdateManger.Run(this);
+        }
+
+        void OnDisable()
+        {
+            GamePanelHUDCorePlugin.UpdateManger.Stop(this);
+        }
+
         public void IUpdate()
         {
             MagUI();
@@ -135,22 +145,22 @@ namespace GamePanelHUDMag
             }
 
             _CurrentValue.fontStyle = CurrentStyles;
-            _CurrentValue.text = StringBuilderDatas._CurrentValue.StringConcat("<color=", AddZerosColor, ">", addZeros, "</color>", "<color=", currentColor, ">", Current, "</color>");
+            _CurrentValue.text = StringBuilderDatas._CurrentValue.Chcek("<color=", AddZerosColor, ">", addZeros, "</color>", "<color=", currentColor, ">", Current, "</color>");
 
             //Set Maximum float and color and Style to String
             _MaxValue.fontStyle = MaximumStyles;
-            _MaxValue.text = StringBuilderDatas._MaxValue.StringConcat("<color=", MaxColor, ">", "/", Maximum, "</color>");
+            _MaxValue.text = StringBuilderDatas._MaxValue.Chcek("<color=", MaxColor, ">", "/", Maximum, "</color>");
 
             //Patron HUD display
             _PatronValue.gameObject.SetActive(Patron > 0);
 
             //Set Patron float and color and Style to String
             _PatronValue.fontStyle = PatronStyles;
-            _PatronValue.text = StringBuilderDatas._PatronValue.StringConcat("<color=", PatronColor, ">", "+", Patron, "</color>");
+            _PatronValue.text = StringBuilderDatas._PatronValue.Chcek("<color=", PatronColor, ">", "+", Patron, "</color>");
 
             //Set Weapon Name
             _WeaponValue.fontStyle = WeaponNameStyles;
-            _WeaponValue.text = StringBuilderDatas._WeaponValue.StringConcat("<color=", WeaponNameColor, ">", WeaponName, "</color>");
+            _WeaponValue.text = StringBuilderDatas._WeaponValue.Chcek("<color=", WeaponNameColor, ">", WeaponName, "</color>");
 
             Animator_Weapon.SetBool(AnimatorHash.Always, WeaponNameAlways);
             Animator_Weapon.SetFloat(AnimatorHash.Speed, WeaponNameSpeed);
@@ -163,14 +173,14 @@ namespace GamePanelHUDMag
 
             //Set Fire Mode
             _FiremodeValue.fontStyle = FireModeStyles;
-            _FiremodeValue.text = StringBuilderDatas._FiremodeValue.StringConcat("<color=", FireModeColor, ">", FireMode, "</color>");
+            _FiremodeValue.text = StringBuilderDatas._FiremodeValue.Chcek("<color=", FireModeColor, ">", FireMode, "</color>");
 
             _AmmoValue.gameObject.SetActive(AmmoTypeHUDSW);
 
             _AmmoValue.fontStyle = AmmoTypeStyles;
-            _AmmoValue.text = StringBuilderDatas._AmmoValue.StringConcat("<color=", AmmoTypeColor, ">", AmmoType, "</color>");
+            _AmmoValue.text = StringBuilderDatas._AmmoValue.Chcek("<color=", AmmoTypeColor, ">", AmmoType, "</color>");
 
-            if (WeaponTirgger && gameObject.activeSelf)
+            if (WeaponTirgger)
             {
                 Animator_Weapon.SetTrigger(AnimatorHash.Active);
 
@@ -181,12 +191,12 @@ namespace GamePanelHUDMag
 
         public class StringBuilderData
         {
-            public StringBuilder _CurrentValue = new StringBuilder(128);
-            public StringBuilder _MaxValue = new StringBuilder(128);
-            public StringBuilder _PatronValue = new StringBuilder(128);
-            public StringBuilder _WeaponValue = new StringBuilder(128);
-            public StringBuilder _FiremodeValue = new StringBuilder(128);
-            public StringBuilder _AmmoValue = new StringBuilder(128);
+            public StringBuilderHelp.StringChange _CurrentValue = new StringBuilderHelp.StringChange(128);
+            public StringBuilderHelp.StringChange _MaxValue = new StringBuilderHelp.StringChange(128);
+            public StringBuilderHelp.StringChange _PatronValue = new StringBuilderHelp.StringChange(128);
+            public StringBuilderHelp.StringChange _WeaponValue = new StringBuilderHelp.StringChange(128);
+            public StringBuilderHelp.StringChange _FiremodeValue = new StringBuilderHelp.StringChange(128);
+            public StringBuilderHelp.StringChange _AmmoValue = new StringBuilderHelp.StringChange(128);
         }
     }
 }

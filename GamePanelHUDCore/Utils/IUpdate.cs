@@ -14,6 +14,8 @@ namespace GamePanelHUDCore.Utils
     {
         private readonly List<IUpdate> Updates = new List<IUpdate>();
 
+        private readonly List<IUpdate> StopUpdates = new List<IUpdate>();
+
         private readonly List<IUpdate> RemoveUpdates = new List<IUpdate>();
 
         private readonly Debug Debugs = new Debug();
@@ -25,6 +27,22 @@ namespace GamePanelHUDCore.Utils
             if (!Updates.Contains(update))
             {
                 Updates.Add(update);
+            }
+        }
+
+        public void Run(IUpdate update)
+        {
+            if (StopUpdates.Contains(update))
+            {
+                StopUpdates.Remove(update);
+            }
+        }
+
+        public void Stop(IUpdate update)
+        {
+            if (!StopUpdates.Contains(update))
+            {
+                StopUpdates.Add(update);
             }
         }
 
@@ -54,7 +72,7 @@ namespace GamePanelHUDCore.Utils
 
                             RemoveUpdates.RemoveAt(num);
                         }
-                        else
+                        else if (!StopUpdates.Contains(update))
                         {
                             update.IUpdate();
                         }
@@ -77,7 +95,7 @@ namespace GamePanelHUDCore.Utils
 
                             RemoveUpdates.RemoveAt(num);
                         }
-                        else
+                        else if (!StopUpdates.Contains(update))
                         {
                             if (i == 0)
                             {
