@@ -90,6 +90,7 @@ namespace GamePanelHUDCore.Utils
 
         public class HUDVersion
         {
+            [NonSerialized]
             public bool? ServerConnect;
 
             public Version ModVersion;
