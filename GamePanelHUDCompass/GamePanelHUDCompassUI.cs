@@ -95,7 +95,9 @@ namespace GamePanelHUDCompass
 
         void CompassUI()
 #endif
+#if UNITY_EDITOR
         void Update()
+#endif
         {
             _Arrow.color = ArrowColor;
 
