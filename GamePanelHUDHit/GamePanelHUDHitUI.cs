@@ -208,12 +208,12 @@ namespace GamePanelHUDHit
             _Hp.gameObject.SetActive(DamageHUDSW);
 
             _HpValue.fontStyle = DamageStyles;
-            _HpValue.text = StringBuilderDatas._DamageValue.Chcek("<color=", DamageInfoColor, ">", Math.Round(Damage), "</color>");
+            _HpValue.text = StringBuilderDatas._DamageValue.StringConcat("<color=", DamageInfoColor, ">", Math.Round(Damage), "</color>");
 
             _Armor.gameObject.SetActive(HasArmorHit && DamageHUDSW);
 
             _ArmorValue.fontStyle = ArmorDamageStyles;
-            _ArmorValue.text = StringBuilderDatas._ArmorValue.Chcek("<color=", ArmorDamageInfoColor, ">", ArmorDamage.ToString("F2"), "</color>");
+            _ArmorValue.text = StringBuilderDatas._ArmorValue.StringConcat("<color=", ArmorDamageInfoColor, ">", ArmorDamage.ToString("F2"), "</color>");
 
             Animator_HitUI.SetFloat(AnimatorHash.ActiveSpeed, ActiveSpeed);
             Animator_HitUI.SetFloat(AnimatorHash.EndSpeed, EndSpeed);
@@ -279,8 +279,8 @@ namespace GamePanelHUDHit
 
         public class StringBuilderData
         {
-            public StringBuilderHelp.StringChange _DamageValue = new StringBuilderHelp.StringChange(128);
-            public StringBuilderHelp.StringChange _ArmorValue = new StringBuilderHelp.StringChange(128);
+            public StringBuilder _DamageValue = new StringBuilder(128);
+            public StringBuilder _ArmorValue = new StringBuilder(128);
         }
     }
 }
