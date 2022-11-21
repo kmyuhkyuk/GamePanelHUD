@@ -81,7 +81,6 @@ Global
 		{584889B0-F5DD-4D62-AE31-B4F4571BAE90}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{584889B0-F5DD-4D62-AE31-B4F4571BAE90}.Release|Any CPU.Build.0 = Release|Any CPU
 		{584889B0-F5DD-4D62-AE31-B4F4571BAE90}.UNITY_EDITOR|Any CPU.ActiveCfg = UNITY_EDITOR|Any CPU
-		{584889B0-F5DD-4D62-AE31-B4F4571BAE90}.UNITY_EDITOR|Any CPU.Build.0 = UNITY_EDITOR|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
