@@ -73,7 +73,7 @@ namespace GamePanelHUDCore.Utils
             {
                 FileVersionInfo exeInfo = Process.GetCurrentProcess().MainModule.FileVersionInfo;
 
-                Version exeVersion = new Version(string.Concat(exeInfo.FileMajorPart, ".", exeInfo.ProductMinorPart, ".", exeInfo.ProductBuildPart, ".", exeInfo.FilePrivatePart));
+                Version exeVersion = new Version(exeInfo.FileMajorPart, exeInfo.ProductMinorPart, exeInfo.ProductBuildPart, exeInfo.FilePrivatePart);
 
                 if (HUDVersions.FirstGameVersion > exeVersion)
                 {
@@ -268,7 +268,7 @@ namespace GamePanelHUDCore.Utils
 
                         FileVersionInfo exeInfo = Process.GetCurrentProcess().MainModule.FileVersionInfo;
 
-                        Version exeVersion = new Version(string.Concat(exeInfo.FileMajorPart, ".", exeInfo.ProductMinorPart, ".", exeInfo.ProductBuildPart, ".", exeInfo.FilePrivatePart));
+                        Version exeVersion = new Version(exeInfo.FileMajorPart, exeInfo.ProductMinorPart, exeInfo.ProductBuildPart, exeInfo.FilePrivatePart);
 
                         if (HUDVersions.FirstGameVersion > exeVersion)
                         {
