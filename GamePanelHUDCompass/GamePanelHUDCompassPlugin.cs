@@ -39,10 +39,10 @@ namespace GamePanelHUDCompass
 
             ModUpdateCheck.DrawNeedUpdate(Config, Info.Metadata.Version);
 
-            string mainSettings = "主设置 Main Settings";
-            string positionScaleSettings = "位置大小设置 Position Scale Settings";
-            string colorSettings = "颜色设置 Color Settings";
-            string fontStylesSettings = "字体样式设置 Font Styles Settings";
+            const string mainSettings = "主设置 Main Settings";
+            const string positionScaleSettings = "位置大小设置 Position Scale Settings";
+            const string colorSettings = "颜色设置 Color Settings";
+            const string fontStylesSettings = "字体样式设置 Font Styles Settings";
 
             SettingsDatas.KeyCompassHUDSW = Config.Bind<bool>(mainSettings, "罗盘指示栏显示 Compass HUD display", true);
             SettingsDatas.KeyAngleHUDSW = Config.Bind<bool>(mainSettings, "罗盘角度显示 Compass Angle HUD display", true);

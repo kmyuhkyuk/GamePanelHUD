@@ -57,14 +57,14 @@ namespace GamePanelHUDHit
 
             ModUpdateCheck.DrawNeedUpdate(Config, Info.Metadata.Version);
 
-            string mainSettings = "主设置 Main Settings";
-            string prsSettings = "位置旋转大小设置 Position Rotation Scale Settings";
-            string hitColorSettings = "击中颜色设置 Hit Color Settings";
-            string killColorSettings = "击中颜色设置 Kill Color Settings";
-            string fontStylesSettings = "字体样式设置 Font Styles Settings";
-            string speedSettings = "动画速度设置 Animation Speed Settings";
-            string distanceSettings = "距离设置 Distance Settings";
-            string directionRateSettings = "方向率设置 Direction Rate Settings";
+            const string mainSettings = "主设置 Main Settings";
+            const string prsSettings = "位置旋转大小设置 Position Rotation Scale Settings";
+            const string hitColorSettings = "击中颜色设置 Hit Color Settings";
+            const string killColorSettings = "击中颜色设置 Kill Color Settings";
+            const string fontStylesSettings = "字体样式设置 Font Styles Settings";
+            const string speedSettings = "动画速度设置 Animation Speed Settings";
+            const string distanceSettings = "距离设置 Distance Settings";
+            const string directionRateSettings = "方向率设置 Direction Rate Settings";
 
             Config.Bind(mainSettings, "Test Hit", "", new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 2, HideDefaultButton = true, CustomDrawer = TestHit, HideSettingName = true }));
 

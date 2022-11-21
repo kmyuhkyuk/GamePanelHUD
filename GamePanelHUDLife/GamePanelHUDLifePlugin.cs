@@ -38,12 +38,12 @@ namespace GamePanelHUDLife
 
             ModUpdateCheck.DrawNeedUpdate(Config, Info.Metadata.Version);
 
-            string mainSettings = "主设置 Main Settings";
-            string positionScaleSettings = "位置高度大小设置 Position Size Scale Settings";
-            string colorSettings = "颜色设置 Color Settings";
-            string fontStylesSettings = "字体样式设置 Font Styles Settings";
-            string warningRateSettings = "警告率设置 Warning Rate Settings";
-            string speedSettings = "动画速度设置 Animation Speed Settings";
+            const string mainSettings = "主设置 Main Settings";
+            const string positionScaleSettings = "位置高度大小设置 Position Size Scale Settings";
+            const string colorSettings = "颜色设置 Color Settings";
+            const string fontStylesSettings = "字体样式设置 Font Styles Settings";
+            const string warningRateSettings = "警告率设置 Warning Rate Settings";
+            const string speedSettings = "动画速度设置 Animation Speed Settings";
 
             SettingsDatas.KeyLifeHUDSW = Config.Bind<bool>(mainSettings, "生命指示栏显示 Life HUD display", true);
             SettingsDatas.KeyBuffSw = Config.Bind<bool>(mainSettings, "Buff显示 Buff Rate display", true);
