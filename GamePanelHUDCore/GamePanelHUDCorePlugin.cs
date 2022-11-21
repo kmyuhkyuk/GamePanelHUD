@@ -43,7 +43,7 @@ namespace GamePanelHUDCore
 
             ModUpdateCheck.DrawNeedUpdate(Config, Info.Metadata.Version);
 
-            string mainSettings = "主设置 Main Settings";
+            const string mainSettings = "主设置 Main Settings";
 
             SettingsDatas.KeyAllHUDAlways = Config.Bind<bool>(mainSettings, "所有指示栏始终显示 All HUD Always display", false);
             SettingsDatas.KeyDebugMethodTime = Config.Bind<bool>(mainSettings, "调试所有指示栏调用时间 Debug All HUD Method Invoke Time", false, new ConfigDescription("", null, new ConfigurationManagerAttributes() { IsAdvanced = true }));

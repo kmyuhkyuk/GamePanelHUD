@@ -14,11 +14,11 @@ namespace GamePanelHUDCore.Utils
     {
         private static readonly HUDVersion HUDVersions = new HUDVersion();
 
-        private static readonly string UpdateDataUrl = "https://dev.sp-tarkov.com/kmyuhkyuk/GamePanelHUD/raw/branch/master/Version.json";
-
         private static readonly List<UpdateData> UpdateDatas = new List<UpdateData>();
 
-        private static readonly string Section = "主更新检查 Update Check";
+        private const string UpdateDataUrl = "https://dev.sp-tarkov.com/kmyuhkyuk/GamePanelHUD/raw/branch/master/Version.json";
+
+        private const string Section = "主更新检查 Update Check";
 
         public static async void ServerCheck()
         {

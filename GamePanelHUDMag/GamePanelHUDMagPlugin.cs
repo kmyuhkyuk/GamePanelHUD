@@ -64,12 +64,12 @@ namespace GamePanelHUDMag
 
             ModUpdateCheck.DrawNeedUpdate(Config, Info.Metadata.Version);
 
-            string mainSettings = "主设置 Main Settings";
-            string positionScaleSettings = "位置大小设置 Position Scale Settings";
-            string colorSettings = "颜色设置 Color Settings";
-            string fontStylesSettings = "字体样式设置 Font Styles Settings";
-            string warningRateSettings = "警告率设置 Warning Rate Settings";
-            string speedSettings = "动画速度设置 Animation Speed Settings";
+            const string mainSettings = "主设置 Main Settings";
+            const string positionScaleSettings = "位置大小设置 Position Scale Settings";
+            const string colorSettings = "颜色设置 Color Settings";
+            const string fontStylesSettings = "字体样式设置 Font Styles Settings";
+            const string warningRateSettings = "警告率设置 Warning Rate Settings";
+            const string speedSettings = "动画速度设置 Animation Speed Settings";
 
             SettingsDatas.KeyMagHUDSW = Config.Bind<bool>(mainSettings, "弹药计数器显示 Mag HUD display", true);
             SettingsDatas.KeyAmmoTypeHUDSW = Config.Bind<bool>(mainSettings, "弹药类型显示 Ammo Type HUD display", true);
