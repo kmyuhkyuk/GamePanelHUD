@@ -20,6 +20,16 @@ namespace GamePanelHUDCore.Utils
 
         private const string Section = "主更新检查 Update Check";
 
+        private static Version GameVersion
+        {
+            get
+            {
+                FileVersionInfo exeInfo = Process.GetCurrentProcess().MainModule.FileVersionInfo;
+
+                return new Version(exeInfo.FileMajorPart, exeInfo.ProductMinorPart, exeInfo.ProductBuildPart, exeInfo.FilePrivatePart);
+            }
+        }
+
         public static async void ServerCheck()
         {
             HUDVersions.ServerConnect = default;
@@ -71,15 +81,13 @@ namespace GamePanelHUDCore.Utils
 
             if (serverConnect)
             {
-                FileVersionInfo exeInfo = Process.GetCurrentProcess().MainModule.FileVersionInfo;
+                Version gameVersion = GameVersion;
 
-                Version exeVersion = new Version(exeInfo.FileMajorPart, exeInfo.ProductMinorPart, exeInfo.ProductBuildPart, exeInfo.FilePrivatePart);
-
-                if (HUDVersions.FirstGameVersion > exeVersion)
+                if (HUDVersions.FirstGameVersion > gameVersion)
                 {
                     warn = config.Bind(Section, "First Update", "", new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 1, HideDefaultButton = true, CustomDrawer = Draw.FirstUpdate, HideSettingName = true }));
                 }
-                else if (HUDVersions.LastGameVersion < exeVersion)
+                else if (HUDVersions.LastGameVersion < gameVersion)
                 {
                     warn = config.Bind(Section, "Last Update", "", new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 1, HideDefaultButton = true, CustomDrawer = Draw.LastUpdate, HideSettingName = true }));
                 }
@@ -246,7 +254,6 @@ namespace GamePanelHUDCore.Utils
                     foreach (UpdateData data in UpdateDatas)
                     {
                         Action<ConfigEntryBase> draw;
-
                         if (HUDVersions.ModVersion > data.ModVersion)
                         {
                             draw = NeedUpdate;
@@ -266,15 +273,13 @@ namespace GamePanelHUDCore.Utils
 
                         ConfigEntry<string> warn = default;
 
-                        FileVersionInfo exeInfo = Process.GetCurrentProcess().MainModule.FileVersionInfo;
+                        Version gameVersion = GameVersion;
 
-                        Version exeVersion = new Version(exeInfo.FileMajorPart, exeInfo.ProductMinorPart, exeInfo.ProductBuildPart, exeInfo.FilePrivatePart);
-
-                        if (HUDVersions.FirstGameVersion > exeVersion)
+                        if (HUDVersions.FirstGameVersion > gameVersion)
                         {
                             warn = data.ModConfigFile.Bind(Section, "First Update", "", new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 1, HideDefaultButton = true, CustomDrawer = FirstUpdate, HideSettingName = true }));
                         }
-                        else if (HUDVersions.LastGameVersion < exeVersion)
+                        else if (HUDVersions.LastGameVersion < gameVersion)
                         {
                             warn = data.ModConfigFile.Bind(Section, "Last Update", "", new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 1, HideDefaultButton = true, CustomDrawer = LastUpdate, HideSettingName = true }));
                         }
