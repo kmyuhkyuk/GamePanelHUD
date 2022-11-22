@@ -11,7 +11,6 @@ using UnityEngine.UI;
 using EFT;
 using GamePanelHUDCore.Patches;
 using GamePanelHUDCore.Utils;
-using UnityEngine.Assertions;
 
 namespace GamePanelHUDCore
 {
