@@ -43,7 +43,9 @@ namespace GamePanelHUDHit.Patches
                 info.Exp = ReflectionDatas.RefExperience.GetValue(settings);
                 info.Role = ReflectionDatas.RefRole.GetValue(settings);
 
-                info.Kills = GamePanelHUDHitPlugin.Kills++;
+                GamePanelHUDHitPlugin.Kills++;
+
+                info.Kills = GamePanelHUDHitPlugin.Kills;
 
                 GamePanelHUDHitPlugin.ShowKill(info);
             }
