@@ -11,6 +11,7 @@ using UnityEngine.UI;
 using EFT;
 using GamePanelHUDCore.Patches;
 using GamePanelHUDCore.Utils;
+using UnityEngine.Assertions;
 
 namespace GamePanelHUDCore
 {
@@ -129,16 +130,7 @@ namespace GamePanelHUDCore
 
                 foreach (string name in initassetname)
                 {
-                    string initAssetName = name.ToLower();
-
-                    GameObject initAsset;
-
-                    asset.TryGetValue(initAssetName, out initAsset);
-
-                    if (initAsset != null)
-                    {
-                        init.Add(initAssetName, BundleHelp.InitAsset(initAsset, HUDCore.GamePanlHUDPublic.transform));
-                    }
+                    InitAsset(asset, init, name);
                 }
 
                 assetBundle.Unload(false);
@@ -154,6 +146,15 @@ namespace GamePanelHUDCore
 
                 Dictionary<string, GameObject> init = new Dictionary<string, GameObject>();
 
+                InitAsset(asset, init, initassetname);
+
+                assetBundle.Unload(false);
+
+                return new BundleHelp.AssetData<GameObject>(asset, init);
+            }
+
+            private void InitAsset(Dictionary<string, GameObject> asset, Dictionary<string, GameObject> init, string initassetname)
+            {
                 GameObject initAsset;
 
                 string initAssetName = initassetname.ToLower();
@@ -164,10 +165,6 @@ namespace GamePanelHUDCore
                 {
                     init.Add(initAssetName, BundleHelp.InitAsset(initAsset, HUDCore.GamePanlHUDPublic.transform));
                 }
-
-                assetBundle.Unload(false);
-
-                return new BundleHelp.AssetData<GameObject>(asset, init);
             }
 
             public void Set(Player isyourplayer, bool hudsw)
