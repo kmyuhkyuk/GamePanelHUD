@@ -154,15 +154,9 @@ namespace GamePanelHUDCore
 
             private void InitAsset(Dictionary<string, GameObject> asset, Dictionary<string, GameObject> init, string initassetname)
             {
-                GameObject initAsset;
-
-                string initAssetName = initassetname.ToLower();
-
-                asset.TryGetValue(initassetname.ToLower(), out initAsset);
-
-                if (initAsset != null)
+                if (asset.TryGetValue(initassetname.ToLower(), out GameObject initAsset))
                 {
-                    init.Add(initAssetName, BundleHelp.InitAsset(initAsset, HUDCore.GamePanlHUDPublic.transform));
+                    init.Add(initassetname.ToLower(), BundleHelp.InitAsset(initAsset, HUDCore.GamePanlHUDPublic.transform));
                 }
             }
 

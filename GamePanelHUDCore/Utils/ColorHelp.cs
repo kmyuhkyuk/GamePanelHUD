@@ -10,11 +10,7 @@ namespace GamePanelHUDCore.Utils
 
         public static string ColorToHtml(this Color color)
         {
-            string hexColor;
-
-            HexColorPool.TryGetValue(color, out hexColor);
-
-            if (hexColor != null)
+            if (HexColorPool.TryGetValue(color, out string hexColor))
             {
                 return hexColor;
             }
