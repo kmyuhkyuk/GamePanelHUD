@@ -5,7 +5,6 @@ namespace GamePanelHUDCore.Utils
 {
     public static class StringBuilderHelp
     {
-
         public static string StringConcat(this StringBuilder sb, params object[] texts)
         {
             sb.Clear();
