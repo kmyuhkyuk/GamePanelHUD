@@ -109,8 +109,10 @@ namespace GamePanelHUDCompass
 
             for (int i = 0; i < _AzimuthsAngle.Length; i++)
             {
-                _AzimuthsAngle[i].fontStyle = AzimuthsAngleStyles;
-                _AzimuthsAngle[i].text = StringBuilderDatas._AzimuthsAngle[i].StringConcat("<color=", AzimuthsAngleColor, ">", AngleTexts[i], "</color>");
+                TMP_Text _azimuthsAngle = _AzimuthsAngle[i];
+
+                _azimuthsAngle.fontStyle = AzimuthsAngleStyles;
+                _azimuthsAngle.text = StringBuilderDatas._AzimuthsAngle[i].StringConcat("<color=", AzimuthsAngleColor, ">", AngleTexts[i], "</color>");
             }
 
             _AzimuthsValue.anchoredPosition = new Vector2(-(AngleNum / 15 * 120), 0);
