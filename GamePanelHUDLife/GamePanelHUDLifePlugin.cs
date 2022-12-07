@@ -115,12 +115,7 @@ namespace GamePanelHUDLife
 
                 Lifes.Energys = HealthController.Energy;
 
-                Lifes.Rates = new Life.Rate
-                {
-                    HealthRate = HealthController.HealthRate,
-                    HydrationRate = HealthController.HydrationRate,
-                    EnergyRate = HealthController.EnergyRate
-                };
+                Lifes.Rates = new Life.Rate(HealthController.HealthRate, HealthController.HydrationRate, HealthController.EnergyRate);
             }
         }
 
@@ -153,6 +148,13 @@ namespace GamePanelHUDLife
                 public float HealthRate;
                 public float HydrationRate;
                 public float EnergyRate;
+
+                public Rate(float health, float hydration, float energy)
+                {
+                    HealthRate = health;
+                    HydrationRate = hydration;
+                    EnergyRate = energy;
+                }
             }
         }
 
