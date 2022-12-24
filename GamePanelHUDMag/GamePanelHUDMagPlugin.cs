@@ -50,11 +50,11 @@ namespace GamePanelHUDMag
 
         private object FirearmsAnimator;
 
-        private bool AllReloadbool;
+        private bool AllReloadBool;
 
-        private bool WeaponCachebool = true;
+        private bool WeaponCacheBool = true;
 
-        private bool MagCachebool = true;
+        private bool MagCacheBool = true;
 
         internal static Action WeaponTirgger;
 
@@ -144,7 +144,7 @@ namespace GamePanelHUDMag
 
                 bool weaponActive = Weapon != null;
 
-                if (WeaponCachebool)
+                if (WeaponCacheBool)
                 {
                     OldWeapon = Weapon;
 
@@ -153,17 +153,16 @@ namespace GamePanelHUDMag
                         WeaponTirgger();
                     }
 
-                    WeaponCachebool = false;
+                    WeaponCacheBool = false;
                 }
-                //not same Weapon trigger
+                //Not same Weapon trigger
                 else if (Weapon != OldWeapon && weaponActive || !weaponActive)
                 {
-                    WeaponCachebool = true;
-                    MagCachebool = true;
+                    WeaponCacheBool = true;
+                    MagCacheBool = true;
                 }
 
                 //Get Ammon Count
-                
                 if (weaponActive)
                 {
                     Animator_Weapon = ReflectionDatas.RefAnimator.GetValue(ReflectionDatas.RefIAnimator.GetValue(FirearmsAnimator));
@@ -180,7 +179,7 @@ namespace GamePanelHUDMag
 
                     int currentState = Animator_Weapon.GetCurrentAnimatorStateInfo(1).fullPathHash;
 
-                    AllReloadbool = ReloadOperation.IsInReloadOperation((Player.FirearmController)FirearmController) || currentState == 1058993437;
+                    AllReloadBool = ReloadOperation.IsInReloadOperation((Player.FirearmController)FirearmController) || currentState == 1058993437;
 
                     WeaponDatas.WeaponNameAlways = SettingsDatas.KeyWeaponNameAlways.Value || currentState == 1355507738 && SettingsDatas.KeyLockWeaponName.Value;
 
@@ -192,14 +191,14 @@ namespace GamePanelHUDMag
 
                         Mag = GetMag.GetCurrentMagazine(Weapon);
 
-                        if (MagCachebool)
+                        if (MagCacheBool)
                         {
                             OldMag = Mag;
 
-                            MagCachebool = false;
+                            MagCacheBool = false;
                         }
 
-                        if (magInWeapon && !AllReloadbool && magSame)
+                        if (magInWeapon && !AllReloadBool && magSame)
                         {
                             int count = Weapon.GetCurrentMagazineCount();
                             int maxCount = Weapon.GetMaxMagazineCount();
@@ -212,7 +211,7 @@ namespace GamePanelHUDMag
 
                             WeaponDatas.MagMaxCount = maxCount;
                         }
-                        else if (!magInWeapon && AllReloadbool)
+                        else if (!magInWeapon && AllReloadBool)
                         {
                             WeaponDatas.Patron = (int)Animator_Weapon.GetFloat(AnimatorHash.AmmoInChamber);
 
@@ -224,7 +223,7 @@ namespace GamePanelHUDMag
 
                             OldMag = Mag;
                         }
-                        else if (magInWeapon && AllReloadbool && magSame)
+                        else if (magInWeapon && AllReloadBool && magSame)
                         {
                             int count = (int)Animator_Weapon.GetFloat(AnimatorHash.AmmoInMag);
                             int maxCount = Weapon.GetMaxMagazineCount();
@@ -237,7 +236,7 @@ namespace GamePanelHUDMag
 
                             WeaponDatas.MagMaxCount = maxCount;
                         }
-                        else if (!magInWeapon && Animator_Weapon.GetFloat(AnimatorHash.AmmoInChamber) != 0 && !AllReloadbool)
+                        else if (!magInWeapon && Animator_Weapon.GetFloat(AnimatorHash.AmmoInChamber) != 0 && !AllReloadBool)
                         {
                             WeaponDatas.Patron = Weapon.ChamberAmmoCount;
 
@@ -247,7 +246,7 @@ namespace GamePanelHUDMag
 
                             WeaponDatas.MagMaxCount = 0;
                         }
-                        else if (!magInWeapon && !AllReloadbool)
+                        else if (!magInWeapon && !AllReloadBool)
                         {
                             WeaponDatas.Patron = 0;
 
@@ -260,7 +259,7 @@ namespace GamePanelHUDMag
                     }
                     else
                     {
-                        if (!AllReloadbool && Animator_Weapon.GetFloat(AnimatorHash.AmmoInChamber) != 0)
+                        if (!AllReloadBool && Animator_Weapon.GetFloat(AnimatorHash.AmmoInChamber) != 0)
                         {
                             WeaponDatas.Patron = 0;
 
@@ -270,7 +269,7 @@ namespace GamePanelHUDMag
 
                             WeaponDatas.Normalized = (float)WeaponDatas.MagCount / (float)WeaponDatas.MagMaxCount - 0.1f;
                         }
-                        else if (AllReloadbool && Animator_Weapon.GetBool("Armed"))
+                        else if (AllReloadBool && Animator_Weapon.GetBool("Armed"))
                         {
                             WeaponDatas.Patron = 0;
 
@@ -280,7 +279,7 @@ namespace GamePanelHUDMag
 
                             WeaponDatas.Normalized = (float)WeaponDatas.MagCount / (float)WeaponDatas.MagMaxCount - 0.1f;
                         }
-                        else if (!AllReloadbool)
+                        else if (!AllReloadBool)
                         {
                             WeaponDatas.Patron = 0;
 

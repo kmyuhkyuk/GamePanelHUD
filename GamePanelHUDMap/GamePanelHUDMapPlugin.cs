@@ -45,7 +45,7 @@ namespace GamePanelHUDMap
         {
             Logger.LogInfo("Loaded: kmyuhkyuk-GamePanelHUDMap");
 
-            MapPath = Path.Combine(HUDCore.ModPath, "map");
+            MapPath = Path.Combine(GamePanelHUDCorePlugin.HUDCoreClass.ModPath, "map");
 
             GamePanelHUDCorePlugin.UpdateManger.Register(this);
         }
