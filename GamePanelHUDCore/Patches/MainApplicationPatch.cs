@@ -24,7 +24,7 @@ namespace GamePanelHUDCore.Patches
 
             if (Is330Up)
             {
-                MainApplication = typeof(TarkovApplication).GetMethods(BindingFlags.DeclaredOnly | BindingFlags.NonPublic | BindingFlags.Instance).Single(x => x.IsAssembly);
+                MainApplication = PatchConstants.EftTypes.Single(x => x.Name == "TarkovApplication").GetMethods(BindingFlags.DeclaredOnly | BindingFlags.NonPublic | BindingFlags.Instance).Single(x => x.IsAssembly);
             }
             else
             {
