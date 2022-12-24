@@ -48,14 +48,6 @@ namespace GamePanelHUDCore
             SettingsDatas.KeyAllHUDAlways = Config.Bind<bool>(mainSettings, "所有指示栏始终显示 All HUD Always display", false);
             SettingsDatas.KeyDebugMethodTime = Config.Bind<bool>(mainSettings, "调试所有指示栏调用时间 Debug All HUD Method Invoke Time", false, new ConfigDescription("", null, new ConfigurationManagerAttributes() { IsAdvanced = true }));
 
-            Canvas canvs = HUDCore.GamePanlHUDPublic.GetComponent<Canvas>();
-
-            canvs.renderMode = RenderMode.ScreenSpaceOverlay;
-            canvs.sortingOrder = 1;
-            canvs.additionalShaderChannels = AdditionalCanvasShaderChannels.TexCoord1 | AdditionalCanvasShaderChannels.Normal | AdditionalCanvasShaderChannels.Tangent;
-
-            DontDestroyOnLoad(HUDCore.GamePanlHUDPublic);
-
             new PlayerPatch().Enable();
             new EnvironmentUIRootPatch().Enable();
             new InventoryScreenPatch().Enable();
@@ -110,9 +102,20 @@ namespace GamePanelHUDCore
 
             public bool AllHUDSW;
 
-            public readonly GameObject GamePanlHUDPublic = new GameObject("GamePanlHUDPublic", new Type[] { typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster) });
+            public static readonly GameObject GamePanlHUDPublic = new GameObject("GamePanlHUDPublic", new Type[] { typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster) });
 
-            public readonly string ModPath  = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "BepInEx/plugins/kmyuhkyuk-GamePanelHUD");
+            public static readonly string ModPath  = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "BepInEx/plugins/kmyuhkyuk-GamePanelHUD");
+
+            static HUDCoreClass()
+            {
+                Canvas canvs = GamePanlHUDPublic.GetComponent<Canvas>();
+
+                canvs.renderMode = RenderMode.ScreenSpaceOverlay;
+                canvs.sortingOrder = 1;
+                canvs.additionalShaderChannels = AdditionalCanvasShaderChannels.TexCoord1 | AdditionalCanvasShaderChannels.Normal | AdditionalCanvasShaderChannels.Tangent;
+
+                DontDestroyOnLoad(GamePanlHUDPublic);
+            }
 
             public string GetBundlePath(string bundlename)
             {
@@ -154,7 +157,7 @@ namespace GamePanelHUDCore
 
             private void InitAsset(Dictionary<string, GameObject> asset, Dictionary<string, GameObject> init, string initassetname)
             {
-                init.Add(initassetname.ToLower(), BundleHelp.InitAsset(asset[initassetname.ToLower()], HUDCore.GamePanlHUDPublic.transform));
+                init.Add(initassetname.ToLower(), BundleHelp.InitAsset(asset[initassetname.ToLower()], GamePanlHUDPublic.transform));
             }
 
             public void Set(Player isyourplayer, bool hudsw)
