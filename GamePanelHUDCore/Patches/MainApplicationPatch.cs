@@ -1,12 +1,11 @@
 ﻿#if !UNITY_EDITOR
 using Aki.Reflection.Patching;
 using HarmonyLib;
+using System;
 using System.Linq;
 using System.Reflection;
-using EFT;
 using GamePanelHUDCore.Utils;
 using Aki.Reflection.Utils;
-using System;
 
 namespace GamePanelHUDCore.Patches
 {
