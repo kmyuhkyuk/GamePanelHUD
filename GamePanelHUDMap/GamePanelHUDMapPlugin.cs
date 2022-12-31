@@ -52,7 +52,7 @@ namespace GamePanelHUDMap
 
         private void Awake()
         {
-            HUDCore.LoadHUD("gamepanlmaphud.bundle", "gamepanlmaphud");
+            GamePanelHUDCorePlugin.HUDCoreClass.LoadHUD("gamepanlmaphud.bundle", "gamepanlmaphud");
         }
 
         public void IUpdate()

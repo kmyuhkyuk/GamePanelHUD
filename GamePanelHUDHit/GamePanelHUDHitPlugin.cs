@@ -5,6 +5,7 @@ using System;
 using UnityEngine;
 using TMPro;
 using EFT;
+using EFT.InventoryLogic;
 using GamePanelHUDCore;
 using GamePanelHUDCore.Utils;
 using GamePanelHUDHit.Patches;
@@ -155,6 +156,7 @@ namespace GamePanelHUDHit
             SettingsDatas.KeyExpColor = Config.Bind<Color>(killColorSettings, "经验值 Exp", new Color(0.8901961f, 0.8901961f, 0.8392157f));
 
             new ApplyDamagePatch().Enable();
+            new ApplyDurabilityDamagePatch().Enable();
             new ApplyDamageInfoPatch().Enable();
             new OnBeenKilledByAggressorPatch().Enable();
 
@@ -163,7 +165,7 @@ namespace GamePanelHUDHit
 
         private void Awake()
         {
-            BundleHelp.AssetData<GameObject> prefabs = HUDCore.LoadHUD("gamepanlhithud.bundle", "gamepanlhithud");
+            BundleHelp.AssetData<GameObject> prefabs = GamePanelHUDCorePlugin.HUDCoreClass.LoadHUD("gamepanlhithud.bundle", "gamepanlhithud");
 
             KillPrefab = prefabs.Asset["kill"];
 
@@ -197,13 +199,23 @@ namespace GamePanelHUDHit
             {
                 var hitType = Enum.GetValues(typeof(HitInfo.Hit));
 
-                var hitDirectionType = Enum.GetValues(typeof(HitInfo.Direction));
-
                 var part = Enum.GetValues(typeof(EBodyPart));
 
                 var type = (HitInfo.Hit)hitType.GetValue(UnityEngine.Random.Range(0, hitType.Length));
 
-                ShowHit(new HitInfo() { Damage = UnityEngine.Random.Range(0, 100), ArmorDamage = UnityEngine.Random.Range(0f, 100f), HasArmorHit = type == HitInfo.Hit.HasArmorHit, DamagePart = (EBodyPart)part.GetValue(UnityEngine.Random.Range(0, part.Length)), HitType = type, HitDirectionType = (HitInfo.Direction)hitDirectionType.GetValue(UnityEngine.Random.Range(0, hitDirectionType.Length)), HitPoint = Vector3.zero, IsTest = true });
+                var hitInfo = new HitInfo()
+                {
+                    Damage = UnityEngine.Random.Range(0, 100),
+                    ArmorDamage = UnityEngine.Random.Range(0f, 100f),
+                    HasArmorHit = type == HitInfo.Hit.HasArmorHit,
+                    DamagePart = (EBodyPart)part.GetValue(UnityEngine.Random.Range(0, part.Length)),
+                    HitType = type,
+                    HitDirection = new Vector3(UnityEngine.Random.Range(-1f, 1f), 0, 0),
+                    HitPoint = Vector3.zero,
+                    IsTest = true
+                };
+
+                ShowHit(hitInfo);
             }
         }
 
@@ -217,7 +229,21 @@ namespace GamePanelHUDHit
 
                 var part = Enum.GetValues(typeof(EBodyPart));
 
-                ShowKill(new KillInfo() { WeaponName = TestWeaponName[UnityEngine.Random.Range(0, TestWeaponName.Length)], PlayerName = TestName[UnityEngine.Random.Range(0, TestName.Length)], Role = (WildSpawnType)role.GetValue(UnityEngine.Random.Range(0, role.Length)), Distance = UnityEngine.Random.Range(0f, 100f), Level = UnityEngine.Random.Range(1, 78), Exp = UnityEngine.Random.Range(100, 1000), Kills = UnityEngine.Random.Range(0, 10), Part = (EBodyPart)part.GetValue(UnityEngine.Random.Range(0, part.Length)), Side = (EPlayerSide)side.GetValue(UnityEngine.Random.Range(0, side.Length)), IsTest = true });
+                var killInfo = new KillInfo()
+                {
+                    WeaponName = TestWeaponName[UnityEngine.Random.Range(0, TestWeaponName.Length)],
+                    PlayerName = TestName[UnityEngine.Random.Range(0, TestName.Length)],
+                    Role = (WildSpawnType)role.GetValue(UnityEngine.Random.Range(0, role.Length)),
+                    Distance = UnityEngine.Random.Range(0f, 100f),
+                    Level = UnityEngine.Random.Range(1, 78),
+                    Exp = UnityEngine.Random.Range(100, 1000),
+                    Kills = UnityEngine.Random.Range(0, 10),
+                    Part = (EBodyPart)part.GetValue(UnityEngine.Random.Range(0, part.Length)),
+                    Side = (EPlayerSide)side.GetValue(UnityEngine.Random.Range(0, side.Length)),
+                    IsTest = true
+                };
+
+                ShowKill(killInfo);
             }
         }
 
@@ -236,7 +262,7 @@ namespace GamePanelHUDHit
             }
         }
 
-        public class HitInfo
+        public struct HitInfo
         {
             public float Damage;
 
@@ -247,8 +273,6 @@ namespace GamePanelHUDHit
             public Vector3 HitDirection;
 
             public Hit HitType;
-
-            public Direction HitDirectionType;
 
             public bool HasArmorHit;
 
@@ -272,7 +296,7 @@ namespace GamePanelHUDHit
             }
         }
 
-        public class KillInfo
+        public struct KillInfo
         {
             public string PlayerName;
 
@@ -297,9 +321,16 @@ namespace GamePanelHUDHit
 
         public class ArmorInfo
         {
+            public ArmorComponent Component;
+
             public float ArmorDamage;
 
             public bool Activa;
+
+            public void SetComponent(ArmorComponent component)
+            {
+                Component = component;
+            }
 
             public void SetActiva(float damage)
             {
@@ -309,6 +340,7 @@ namespace GamePanelHUDHit
 
             public void Rest()
             {
+                Component = null;
                 ArmorDamage = 0;
                 Activa = false;
             }

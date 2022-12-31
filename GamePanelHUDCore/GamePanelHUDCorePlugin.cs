@@ -117,12 +117,12 @@ namespace GamePanelHUDCore
                 DontDestroyOnLoad(GamePanlHUDPublic);
             }
 
-            public string GetBundlePath(string bundlename)
+            public static string GetBundlePath(string bundlename)
             {
                 return Path.Combine(ModPath, "bundles", bundlename);
             }
 
-            public BundleHelp.AssetData<GameObject> LoadHUD(string bundlename, string[] initassetname)
+            public static BundleHelp.AssetData<GameObject> LoadHUD(string bundlename, string[] initassetname)
             {
                 AssetBundle assetBundle = BundleHelp.LoadBundle(GetBundlePath(bundlename));
 
@@ -140,7 +140,7 @@ namespace GamePanelHUDCore
                 return new BundleHelp.AssetData<GameObject>(asset, init);
             }
 
-            public BundleHelp.AssetData<GameObject> LoadHUD(string bundlename, string initassetname)
+            public static BundleHelp.AssetData<GameObject> LoadHUD(string bundlename, string initassetname)
             {
                 AssetBundle assetBundle = BundleHelp.LoadBundle(GetBundlePath(bundlename));
 
@@ -155,7 +155,7 @@ namespace GamePanelHUDCore
                 return new BundleHelp.AssetData<GameObject>(asset, init);
             }
 
-            private void InitAsset(Dictionary<string, GameObject> asset, Dictionary<string, GameObject> init, string initassetname)
+            private static void InitAsset(Dictionary<string, GameObject> asset, Dictionary<string, GameObject> init, string initassetname)
             {
                 init.Add(initassetname.ToLower(), BundleHelp.InitAsset(asset[initassetname.ToLower()], GamePanlHUDPublic.transform));
             }

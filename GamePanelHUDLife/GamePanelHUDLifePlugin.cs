@@ -81,7 +81,7 @@ namespace GamePanelHUDLife
 
         private void Awake()
         {
-            HUDCore.LoadHUD("gamepanllifehud.bundle", "gamepanllifehud");
+            GamePanelHUDCorePlugin.HUDCoreClass.LoadHUD("gamepanllifehud.bundle", "gamepanllifehud");
         }
 
         public void IUpdate()
