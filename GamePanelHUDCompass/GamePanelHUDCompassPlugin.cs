@@ -70,7 +70,7 @@ namespace GamePanelHUDCompass
 
         private void Awake()
         {
-            HUDCore.LoadHUD("gamepanlcompasshud.bundle", "gamepanlcompasshud");
+            GamePanelHUDCorePlugin.HUDCoreClass.LoadHUD("gamepanlcompasshud.bundle", "gamepanlcompasshud");
         }
 
         public void IUpdate()

@@ -35,25 +35,27 @@ namespace GamePanelHUDHit.Patches
                     hasArmorHit = false;
                 }
 
-                GamePanelHUDHitPlugin.HitInfo info = new GamePanelHUDHitPlugin.HitInfo();
-
-                info.Damage = damageInfo.DidBodyDamage;
-                info.DamagePart = bodyPartType;
-                info.HitPoint = damageInfo.HitPoint;
-                info.ArmorDamage = armorDamage;
-
-                info.HasArmorHit = hasArmorHit;
+                GamePanelHUDHitPlugin.HitInfo.Hit hitType;
 
                 if (__instance.HealthController.IsAlive)
                 {
-                    info.HitType = hasArmorHit ? GamePanelHUDHitPlugin.HitInfo.Hit.HasArmorHit : GamePanelHUDHitPlugin.HitInfo.Hit.OnlyHp;
+                    hitType = hasArmorHit ? GamePanelHUDHitPlugin.HitInfo.Hit.HasArmorHit : GamePanelHUDHitPlugin.HitInfo.Hit.OnlyHp;
                 }
                 else
                 {
-                    info.HitType = GamePanelHUDHitPlugin.HitInfo.Hit.Dead;
+                    hitType = GamePanelHUDHitPlugin.HitInfo.Hit.Dead;
                 }
 
-                info.HitDirection = damageInfo.Direction;
+                GamePanelHUDHitPlugin.HitInfo info = new GamePanelHUDHitPlugin.HitInfo()
+                {
+                    Damage = damageInfo.DidBodyDamage,
+                    DamagePart = bodyPartType,
+                    HitPoint = damageInfo.HitPoint,
+                    ArmorDamage = armorDamage,
+                    HasArmorHit = hasArmorHit,
+                    HitType = hitType,
+                    HitDirection = damageInfo.Direction
+                };
 
                 GamePanelHUDHitPlugin.ShowHit(info);
             }

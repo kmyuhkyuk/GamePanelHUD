@@ -221,7 +221,7 @@ namespace GamePanelHUDHit
         }
 #if !UNITY_EDITOR
 
-        public void HitTirgger(bool ishead, GamePanelHUDHitPlugin.HitInfo hitinfo)
+        public void HitTirgger(bool ishead, GamePanelHUDHitPlugin.HitInfo hitinfo, GamePanelHUDHitPlugin.HitInfo.Direction direction)
         {
             Color hitColor = DamageColor;
 
@@ -257,7 +257,7 @@ namespace GamePanelHUDHit
             _RightUpHead.gameObject.SetActive(ishead);
             _RightDowmHead.gameObject.SetActive(ishead);
 
-            switch (hitinfo.HitDirectionType)
+            switch (direction)
             {
                 case GamePanelHUDHitPlugin.HitInfo.Direction.Center:
                     Animator_HitUI.SetTrigger(AnimatorHash.Active);

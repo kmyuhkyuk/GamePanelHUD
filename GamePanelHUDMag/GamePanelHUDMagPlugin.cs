@@ -116,7 +116,7 @@ namespace GamePanelHUDMag
 
         private void Awake()
         {
-            HUDCore.LoadHUD("gamepanlmaghud.bundle", "gamepanlmaghud");
+            GamePanelHUDCorePlugin.HUDCoreClass.LoadHUD("gamepanlmaghud.bundle", "gamepanlmaghud");
         }
 
         public void IUpdate()

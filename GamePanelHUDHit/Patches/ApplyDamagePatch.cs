@@ -13,12 +13,12 @@ namespace GamePanelHUDHit.Patches
             return typeof(ArmorComponent).GetMethod("ApplyDamage", BindingFlags.Public | BindingFlags.Instance);
         }
 
-        [PatchPostfix]
-        private static void PatchPostfix(DamageInfo damageInfo, float armorDamage)
+        [PatchPrefix]
+        private static void PatchPrefix(ArmorComponent __instance, DamageInfo damageInfo)
         {
             if (damageInfo.Player == GamePanelHUDCorePlugin.HUDCore.IsYourPlayer)
             {
-                GamePanelHUDHitPlugin.Armor.SetActiva(armorDamage);
+                GamePanelHUDHitPlugin.Armor.SetComponent(__instance);
             }
         }
     }

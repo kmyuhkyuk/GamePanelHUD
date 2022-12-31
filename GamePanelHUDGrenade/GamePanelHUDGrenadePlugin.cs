@@ -87,7 +87,7 @@ namespace GamePanelHUDGrenade
 
         private void Awake()
         {
-            HUDCore.LoadHUD("gamepanlgrenadehud.bundle", "gamepanlgrenadehud");
+            GamePanelHUDCorePlugin.HUDCoreClass.LoadHUD("gamepanlgrenadehud.bundle", "gamepanlgrenadehud");
         }
 
         public void IUpdate()

@@ -95,6 +95,21 @@ namespace GamePanelHUDHit
         {
             if (_Hit != null)
             {
+                GamePanelHUDHitPlugin.HitInfo.Direction direction;
+
+                if (hitinfo.HitDirection.x < HUD.SettingsData.KeyHitDirectionLeft.Value)
+                {
+                    direction = GamePanelHUDHitPlugin.HitInfo.Direction.Left;
+                }
+                else if (hitinfo.HitDirection.x > HUD.SettingsData.KeyHitDirectionRight.Value)
+                {
+                    direction = GamePanelHUDHitPlugin.HitInfo.Direction.Right;
+                }
+                else
+                {
+                    direction = GamePanelHUDHitPlugin.HitInfo.Direction.Center;
+                }
+
                 if (!hitinfo.IsTest)
                 {
                     Camera cam = Camera.main;
@@ -105,31 +120,18 @@ namespace GamePanelHUDHit
 
                     _Hit.transform.localPosition = new Vector2((int)Math.Round(screenPos.x), (int)Math.Round(screenPos.y));
 
-                    if (hitinfo.HitDirection.x < HUD.SettingsData.KeyHitDirectionLeft.Value)
-                    {
-                        hitinfo.HitDirectionType = GamePanelHUDHitPlugin.HitInfo.Direction.Left;
-                    }
-                    else if (hitinfo.HitDirection.x > HUD.SettingsData.KeyHitDirectionRight.Value)
-                    {
-                        hitinfo.HitDirectionType = GamePanelHUDHitPlugin.HitInfo.Direction.Right;
-                    }
-                    else
-                    {
-                        hitinfo.HitDirectionType = GamePanelHUDHitPlugin.HitInfo.Direction.Center;
-                    }
-
-                    Hit(hitinfo, HUD.SettingsData, _Hit);
+                    Hit(hitinfo, direction, HUD.SettingsData, _Hit);
                 }
                 else
                 {
                     _TestHit.transform.localPosition = new Vector2(HUD.Info.sizeDelta.x / 3.2f, 0);
 
-                    Hit(hitinfo, HUD.SettingsData, _TestHit);
+                    Hit(hitinfo, direction, HUD.SettingsData, _TestHit);
                 }
             }
         }
 
-        void Hit(GamePanelHUDHitPlugin.HitInfo hitinfo, GamePanelHUDHitPlugin.SettingsData settingsdata, GamePanelHUDHitUI _hit)
+        void Hit(GamePanelHUDHitPlugin.HitInfo hitinfo, GamePanelHUDHitPlugin.HitInfo.Direction direction, GamePanelHUDHitPlugin.SettingsData settingsdata, GamePanelHUDHitUI _hit)
         {
             _hit.Damage = hitinfo.Damage;
             _hit.ArmorDamage = hitinfo.ArmorDamage;
@@ -152,10 +154,10 @@ namespace GamePanelHUDHit
 
             if (!settingsdata.KeyHitHasDirection.Value)
             {
-                hitinfo.HitDirectionType = GamePanelHUDHitPlugin.HitInfo.Direction.Center;
+                direction = GamePanelHUDHitPlugin.HitInfo.Direction.Center;
             }
 
-            _hit.HitTirgger(isHead, hitinfo);
+            _hit.HitTirgger(isHead, hitinfo, direction);
         }
 #endif
     }

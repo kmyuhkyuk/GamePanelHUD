@@ -5,6 +5,9 @@ using UnityEngine;
 using EFT;
 using GamePanelHUDCore;
 using GamePanelHUDCore.Utils;
+using System.Reflection.Emit;
+using System.Security.Policy;
+using System.Data;
 
 namespace GamePanelHUDHit.Patches
 {
@@ -29,23 +32,22 @@ namespace GamePanelHUDHit.Patches
         {
             if (aggressor == GamePanelHUDCorePlugin.HUDCore.IsYourPlayer)
             {
-                GamePanelHUDHitPlugin.KillInfo info = new GamePanelHUDHitPlugin.KillInfo();
-
-                info.PlayerName = __instance.Profile.Nickname;
-                info.WeaponName = damageInfo.Weapon.ShortName;
-                info.Part = bodyPart;
-                info.Distance = Vector3.Distance(aggressor.Position, __instance.Position);
-                info.Level = __instance.Profile.Info.Level;
-                info.Side = __instance.Profile.Info.Side;
+                GamePanelHUDHitPlugin.Kills++;
 
                 object settings = ReflectionDatas.RefSettings.GetValue(__instance.Profile.Info);
 
-                info.Exp = ReflectionDatas.RefExperience.GetValue(settings);
-                info.Role = ReflectionDatas.RefRole.GetValue(settings);
-
-                GamePanelHUDHitPlugin.Kills++;
-
-                info.Kills = GamePanelHUDHitPlugin.Kills;
+                GamePanelHUDHitPlugin.KillInfo info = new GamePanelHUDHitPlugin.KillInfo()
+                {
+                    PlayerName = __instance.Profile.Nickname,
+                    WeaponName = damageInfo.Weapon.ShortName,
+                    Part = bodyPart,
+                    Distance = Vector3.Distance(aggressor.Position, __instance.Position),
+                    Level = __instance.Profile.Info.Level,
+                    Side = __instance.Profile.Info.Side,
+                    Exp = ReflectionDatas.RefExperience.GetValue(settings),
+                    Role = ReflectionDatas.RefRole.GetValue(settings),
+                    Kills = GamePanelHUDHitPlugin.Kills
+                };
 
                 GamePanelHUDHitPlugin.ShowKill(info);
             }
