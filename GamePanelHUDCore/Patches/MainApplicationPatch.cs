@@ -13,7 +13,7 @@ namespace GamePanelHUDCore.Patches
     {
         private static readonly bool Is330Up;
 
-        private static readonly MethodBase MainApplication;
+        private static readonly MethodBase MainApplicationBase;
 
         static MainApplicationPatch()
         {
@@ -23,17 +23,17 @@ namespace GamePanelHUDCore.Patches
 
             if (Is330Up)
             {
-                MainApplication = PatchConstants.EftTypes.Single(x => x.Name == "TarkovApplication").GetMethods(BindingFlags.DeclaredOnly | BindingFlags.NonPublic | BindingFlags.Instance).Single(x => x.IsAssembly);
+                MainApplicationBase = PatchConstants.EftTypes.Single(x => x.Name == "TarkovApplication").GetMethods(BindingFlags.DeclaredOnly | BindingFlags.NonPublic | BindingFlags.Instance).Single(x => x.IsAssembly);
             }
             else
             {
-                MainApplication = mainApp.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.NonPublic | BindingFlags.Instance).Single(x => x.IsAssembly);
+                MainApplicationBase = mainApp.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.NonPublic | BindingFlags.Instance).Single(x => x.IsAssembly);
             }
         }
 
         protected override MethodBase GetTargetMethod()
         {
-            return MainApplication;
+            return MainApplicationBase;
         }
 
         [PatchPostfix]
