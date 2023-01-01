@@ -5,9 +5,6 @@ using UnityEngine;
 using EFT;
 using GamePanelHUDCore;
 using GamePanelHUDCore.Utils;
-using System.Reflection.Emit;
-using System.Security.Policy;
-using System.Data;
 
 namespace GamePanelHUDHit.Patches
 {
