@@ -50,7 +50,7 @@ namespace GamePanelHUDCore.Patches
                 backEnd = Traverse.Create(__instance).Field("_backEnd").GetValue<object>();
             }
 
-            ISessionHelp.Init(Traverse.Create(backEnd).Property("Session").GetValue<object>());
+            ISessionHelp.Init(Traverse.Create(backEnd).Property("Session").GetValue<ISession>());
         }
     }
 }

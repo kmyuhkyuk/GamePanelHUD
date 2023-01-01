@@ -5,12 +5,12 @@ namespace GamePanelHUDCore.Utils
 {
     public class ISessionHelp
     {
-        private static object Session;
+        private static ISession Session;
 
         private static object BackEndConfig;
 
         //Only Init Once
-        public static void Init(object session)
+        public static void Init(ISession session)
         {
             Session = session;
 
