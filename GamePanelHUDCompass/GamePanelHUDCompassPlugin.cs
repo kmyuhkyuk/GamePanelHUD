@@ -9,7 +9,7 @@ using GamePanelHUDCore.Utils;
 
 namespace GamePanelHUDCompass
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCompass", "kmyuhkyuk-GamePanelHUDCompass", "2.3.3")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCompass", "kmyuhkyuk-GamePanelHUDCompass", "2.3.4")]
     [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore")]
     public class GamePanelHUDCompassPlugin : BaseUnityPlugin, IUpdate
     {

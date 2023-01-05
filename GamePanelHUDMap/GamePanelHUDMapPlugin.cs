@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace GamePanelHUDMap
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDMap", "kmyuhkyuk-GamePanelHUDMap", "2.3.3")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDMap", "kmyuhkyuk-GamePanelHUDMap", "2.3.4")]
     [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore")]
     public class GamePanelHUDMapPlugin : BaseUnityPlugin, IUpdate
     {
