@@ -5,12 +5,14 @@ using BepInEx.Configuration;
 using System;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using EFT;
 using GamePanelHUDCore.Patches;
 using GamePanelHUDCore.Utils;
+using System.Diagnostics;
 
 namespace GamePanelHUDCore
 {
@@ -32,6 +34,16 @@ namespace GamePanelHUDCore
         private readonly SettingsData SettingsDatas = new SettingsData();
 
         internal static ManualLogSource LogLogger { get; private set; }
+
+        public static Version GameVersion
+        {
+            get
+            {
+                FileVersionInfo exeInfo = Process.GetCurrentProcess().MainModule.FileVersionInfo;
+
+                return new Version(exeInfo.FileMajorPart, exeInfo.ProductMinorPart, exeInfo.ProductBuildPart, exeInfo.FilePrivatePart);
+            }
+        }
 
         private void Start()
         {
@@ -57,6 +69,7 @@ namespace GamePanelHUDCore
             LocalizedHelp.Init();
             GrenadeType.Init();
             GetMag.Init();
+            LauncherMode.Init();
             ReloadOperation.Init();
             RoleHelp.Init();
             RuToEn.Init();

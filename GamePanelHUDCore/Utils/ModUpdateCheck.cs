@@ -1,7 +1,6 @@
 ﻿#if !UNITY_EDITOR
 using BepInEx.Configuration;
 using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
@@ -24,9 +23,7 @@ namespace GamePanelHUDCore.Utils
         {
             get
             {
-                FileVersionInfo exeInfo = Process.GetCurrentProcess().MainModule.FileVersionInfo;
-
-                return new Version(exeInfo.FileMajorPart, exeInfo.ProductMinorPart, exeInfo.ProductBuildPart, exeInfo.FilePrivatePart);
+                return GamePanelHUDCorePlugin.GameVersion;
             }
         }
 

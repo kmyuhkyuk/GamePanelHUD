@@ -150,7 +150,7 @@ namespace GamePanelHUDCore.Utils
                 }
             }
 
-            public PropertyRef(PropertyInfo propertyinfo, object instance = null)
+            public PropertyRef(PropertyInfo propertyinfo, object instance)
             {
                 if (propertyinfo == null)
                 {
@@ -160,10 +160,12 @@ namespace GamePanelHUDCore.Utils
                 Init(propertyinfo, instance);
             }
 
-            public PropertyRef(Type type, string propertyname, object instance = null)
+            public PropertyRef(Type type, string propertyname, bool declaredonly, object instance)
             {
-                PropertyInfo propertyInfo = type.GetProperty(propertyname, AccessTools.all);
+                BindingFlags flags = declaredonly ? AccessTools.allDeclared : AccessTools.all;
 
+                PropertyInfo propertyInfo = type.GetProperty(propertyname, flags);
+                
                 if (propertyInfo == null)
                 {
                     throw new Exception(propertyname + " is null");
@@ -172,9 +174,11 @@ namespace GamePanelHUDCore.Utils
                 Init(propertyInfo, instance);
             }
 
-            public PropertyRef(Type type, string[] propertynames, object instance = null)
+            public PropertyRef(Type type, string[] propertynames, bool declaredonly, object instance)
             {
-                PropertyInfo propertyInfo = propertynames.Select(x => type.GetProperty(x, AccessTools.all)).FirstOrDefault(x => x != null);
+                BindingFlags flags = declaredonly ? AccessTools.allDeclared : AccessTools.all;
+
+                PropertyInfo propertyInfo = propertyInfo = propertynames.Select(x => type.GetProperty(x, flags)).FirstOrDefault(x => x != null);
 
                 if (propertyInfo == null)
                 {
@@ -207,29 +211,29 @@ namespace GamePanelHUDCore.Utils
                 }
             }
 
-            public static PropertyRef<T, F> Create(PropertyInfo propertyinfo, object instance = null)
+            public static PropertyRef<T, F> Create(PropertyInfo propertyinfo, object instance)
             {
                 return new PropertyRef<T, F>(propertyinfo, instance);
             }
 
-            public static PropertyRef<T, F> Create(string propertyname, object instance = null)
+            public static PropertyRef<T, F> Create(string propertyname, bool declaredonly = false, object instance = null)
             {
-                return new PropertyRef<T, F>(typeof(T), propertyname, instance);
+                return new PropertyRef<T, F>(typeof(T), propertyname, declaredonly, instance);
             }
 
-            public static PropertyRef<T, F> Create(string[] propertynames, object instance = null)
+            public static PropertyRef<T, F> Create(string[] propertynames, bool declaredonly = false, object instance = null)
             {
-                return new PropertyRef<T, F>(typeof(T), propertynames, instance);
+                return new PropertyRef<T, F>(typeof(T), propertynames, declaredonly, instance);
             }
 
-            public static PropertyRef<T, F> Create(Type type, string propertyname, object instance = null)
+            public static PropertyRef<T, F> Create(Type type, string propertyname, bool declaredonly = false, object instance = null)
             {
-                return new PropertyRef<T, F>(type, propertyname, instance);
+                return new PropertyRef<T, F>(type, propertyname, declaredonly, instance);
             }
 
-            public static PropertyRef<T, F> Create(Type type, string[] propertynames, object instance = null)
+            public static PropertyRef<T, F> Create(Type type, string[] propertynames, bool declaredonly = false, object instance = null)
             {
-                return new PropertyRef<T, F>(type, propertynames, instance);
+                return new PropertyRef<T, F>(type, propertynames, declaredonly, instance);
             }
 
             public F GetValue(T instance)
@@ -297,7 +301,7 @@ namespace GamePanelHUDCore.Utils
                 }
             }
 
-            public FieldRef(FieldInfo fieldinfo, object instance = null)
+            public FieldRef(FieldInfo fieldinfo, object instance)
             {
                 if (fieldinfo == null)
                 {
@@ -307,21 +311,25 @@ namespace GamePanelHUDCore.Utils
                 Init(fieldinfo, instance);
             }
 
-            public FieldRef(Type type, string fieldname, object instance = null)
+            public FieldRef(Type type, string fieldname, bool declaredonly, object instance)
             {
-                FieldInfo fieldInfo = type.GetField(fieldname, AccessTools.all);
+                BindingFlags flags = declaredonly ? AccessTools.allDeclared : AccessTools.all;
+
+                FieldInfo fieldInfo = type.GetField(fieldname, flags);
 
                 if (fieldInfo == null)
                 {
-                    throw new Exception(fieldInfo + " is null");
+                    throw new Exception(fieldname + " is null");
                 }
 
                 Init(fieldInfo, instance);
             }
 
-            public FieldRef(Type type, string[] fieldnames, object instance = null)
+            public FieldRef(Type type, string[] fieldnames, bool declaredonly, object instance)
             {
-                FieldInfo fieldInfo = fieldnames.Select(x => type.GetField(x, AccessTools.all)).FirstOrDefault(x => x != null);
+                BindingFlags flags = declaredonly ? AccessTools.allDeclared : AccessTools.all;
+
+                FieldInfo fieldInfo = fieldnames.Select(x => type.GetField(x, flags)).FirstOrDefault(x => x != null);
 
                 if (fieldInfo == null)
                 {
@@ -336,24 +344,24 @@ namespace GamePanelHUDCore.Utils
                 return new FieldRef<T, F>(fieldinfo, instance);
             }
 
-            public static FieldRef<T, F> Create(string fieldname, object instance = null)
+            public static FieldRef<T, F> Create(string fieldname, bool declaredonly = false, object instance = null)
             {
-                return new FieldRef<T, F>(typeof(T), fieldname, instance);
+                return new FieldRef<T, F>(typeof(T), fieldname, declaredonly, instance);
             }
 
-            public static FieldRef<T, F> Create(string[] fieldnames, object instance = null)
+            public static FieldRef<T, F> Create(string[] fieldnames, bool declaredonly = false, object instance = null)
             {
-                return new FieldRef<T, F>(typeof(T), fieldnames, instance);
+                return new FieldRef<T, F>(typeof(T), fieldnames, declaredonly, instance);
             }
 
-            public static FieldRef<T, F> Create(Type type, string fieldname, object instance = null)
+            public static FieldRef<T, F> Create(Type type, string fieldname, bool declaredonly = false, object instance = null)
             {
-                return new FieldRef<T, F>(type, fieldname, instance);
+                return new FieldRef<T, F>(type, fieldname, declaredonly, instance);
             }
 
-            public static FieldRef<T, F> Create(Type type, string[] fieldnames, object instance = null)
+            public static FieldRef<T, F> Create(Type type, string[] fieldnames, bool declaredonly = false, object instance = null)
             {
-                return new FieldRef<T, F>(type, fieldnames, instance);
+                return new FieldRef<T, F>(type, fieldnames, declaredonly, instance);
             }
 
             private void Init(FieldInfo fieldinfo, object instance = null)
