@@ -15,9 +15,17 @@ namespace GamePanelHUDDebug.MagDebug
     [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore")]
     public class AnimatorStateRecord : BaseUnityPlugin
     {
-        public Player IsYourPlayer;
+        private GamePanelHUDCorePlugin.HUDCoreClass HUDCore
+        {
+            get
+            {
+                return GamePanelHUDCorePlugin.HUDCore;
+            }
+        }
 
-        public static Weapon weapon_0;
+        public static Player.FirearmController firearmcontroller;
+
+        public static Weapon weapon;
 
         public static Animator animator;
 
@@ -31,15 +39,19 @@ namespace GamePanelHUDDebug.MagDebug
 
         public static Dictionary<int, string> StatesandCilps = new Dictionary<int, string>();
 
-        public static ConfigEntry<bool> KeyRecord { get; set; }
+        public static ConfigEntry<bool> KeyRecord;
 
-        public static ConfigEntry<KeyboardShortcut> KBSRecord { get; set; }
+        public static ConfigEntry<bool> KeyLauncher;
 
-        public static ConfigEntry<KeyboardShortcut> KBSClear { get; set; }
+        public static ConfigEntry<KeyboardShortcut> KBSRecord;
+
+        public static ConfigEntry<KeyboardShortcut> KBSClear;
 
         void Start()
         {
             KeyRecord = Config.Bind<bool>("KeyRecord", "", false);
+
+            KeyLauncher = Config.Bind<bool>("KeyLauncher", "", false);
 
             KBSRecord = Config.Bind<KeyboardShortcut>("Record KeyboardShortcut", "", KeyboardShortcut.Empty);
 
@@ -48,8 +60,6 @@ namespace GamePanelHUDDebug.MagDebug
 
         void Update()
         {
-            IsYourPlayer = GamePanelHUDCorePlugin.HUDCore.IsYourPlayer;
-
             if (KBSRecord.Value.IsDown())
             {
                 KeyRecord.Value = !KeyRecord.Value;
@@ -61,29 +71,36 @@ namespace GamePanelHUDDebug.MagDebug
                 Cilps.Clear();
             }
 
-            if (IsYourPlayer != null)
+            if (HUDCore.IsYourPlayer != null)
             {
-                var weapon = IsYourPlayer.WeaponRoot.Original.gameObject;
+                firearmcontroller = HUDCore.IsYourPlayer.HandsController as Player.FirearmController;
 
-                //Get WeaponPrefab
-                var weaponprefab = weapon.GetComponentInParent<WeaponPrefab>();
-
-                weapon_0 = Traverse.Create(weaponprefab).Field("weapon_0").GetValue<Weapon>();
+                weapon = firearmcontroller != null ? firearmcontroller.Item : null;
 
                 StatesandCilps = States.Zip(Cilps, (k, v) => new { k, v }).ToDictionary(x => x.k, x => x.v);
 
-                if (weapon_0 != null)
+                if (weapon != null)
                 {
-                    animator = weapon.GetComponentInParent<Animator>();
-
-                    CurrentState = animator.GetCurrentAnimatorStateInfo(1).fullPathHash;
-
-                    CurrentCilp = animator.GetCurrentAnimatorClipInfo(1)[0].clip.name;
-
-                    if (KeyRecord.Value)
+                    if (!KeyLauncher.Value)
                     {
-                        States.Add(CurrentState);
-                        Cilps.Add(CurrentCilp);
+                        animator = Traverse.Create(Traverse.Create(HUDCore.IsYourPlayer).Property("ArmsAnimatorCommon").GetValue<object>()).Property("Animator").GetValue<Animator>();
+                    }
+                    else
+                    {
+                        animator = Traverse.Create(Traverse.Create(HUDCore.IsYourPlayer).Property("UnderbarrelWeaponArmsAnimator").GetValue<object>()).Property("Animator").GetValue<Animator>();
+                    }
+
+                    if (animator != null)
+                    {
+                        CurrentState = animator.GetCurrentAnimatorStateInfo(1).fullPathHash;
+
+                        CurrentCilp = animator.GetCurrentAnimatorClipInfo(1)[0].clip.name;
+
+                        if (KeyRecord.Value)
+                        {
+                            States.Add(CurrentState);
+                            Cilps.Add(CurrentCilp);
+                        }
                     }
                 }
             }

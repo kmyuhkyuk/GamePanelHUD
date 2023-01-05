@@ -1,33 +1,29 @@
 ﻿#if !UNITY_EDITOR
 using Aki.Reflection.Patching;
+using Aki.Reflection.Utils;
 using HarmonyLib;
 using System;
 using System.Linq;
 using System.Reflection;
 using GamePanelHUDCore.Utils;
-using Aki.Reflection.Utils;
 
 namespace GamePanelHUDCore.Patches
 {
     public class MainApplicationPatch : ModulePatch
     {
-        private static readonly bool Is330Up;
+        private static readonly bool Is330Up = GamePanelHUDCorePlugin.GameVersion > new Version("0.12.12.20243");
 
         private static readonly MethodBase MainApplicationBase;
 
         static MainApplicationPatch()
         {
-            Type mainApp = PatchConstants.EftTypes.SingleOrDefault(x => x.Name == "MainApplication");
-
-            Is330Up = mainApp == null;
-
             if (Is330Up)
             {
                 MainApplicationBase = PatchConstants.EftTypes.Single(x => x.Name == "TarkovApplication").GetMethods(BindingFlags.DeclaredOnly | BindingFlags.NonPublic | BindingFlags.Instance).Single(x => x.IsAssembly);
             }
             else
             {
-                MainApplicationBase = mainApp.GetMethods(BindingFlags.DeclaredOnly | BindingFlags.NonPublic | BindingFlags.Instance).Single(x => x.IsAssembly);
+                MainApplicationBase = PatchConstants.EftTypes.Single(x => x.Name == "MainApplication").GetMethods(BindingFlags.DeclaredOnly | BindingFlags.NonPublic | BindingFlags.Instance).Single(x => x.IsAssembly);
             }
         }
 

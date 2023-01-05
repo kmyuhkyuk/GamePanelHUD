@@ -116,6 +116,7 @@
     <Compile Include="Utils\ColorHelp.cs" />
     <Compile Include="Utils\GrenadeType.cs" />
     <Compile Include="Utils\IUpdate.cs" />
+    <Compile Include="Utils\LauncherMode.cs" />
     <Compile Include="Utils\LocalizedHelp.cs" />
     <Compile Include="Utils\GetMag.cs" />
     <Compile Include="Utils\ModUpdateCheck.cs" />

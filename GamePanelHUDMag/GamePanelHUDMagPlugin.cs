@@ -30,31 +30,35 @@ namespace GamePanelHUDMag
 
         private bool MagHUDSW;
 
-        private WeaponPrefab WeaponPrefab;
-
-        private Weapon Weapon;
+        private Weapon NowWeapon;
 
         private Weapon OldWeapon;
 
-        private object Mag;
+        private object NowLauncher;
+
+        private object NowMag;
 
         private object OldMag;
 
         private Animator Animator_Weapon;
 
+        private Animator Animator_Launcher;
+
         private readonly WeaponData WeaponDatas = new WeaponData();
 
         private readonly SettingsData SettingsDatas = new SettingsData();
 
-        private object FirearmController;
-
-        private object FirearmsAnimator;
+        private Player.FirearmController NowFirearmController;
 
         private bool AllReloadBool;
 
         private bool WeaponCacheBool = true;
 
         private bool MagCacheBool = true;
+
+        private bool LauncherCacheBool = false;
+
+        private static readonly bool Is341Up = GamePanelHUDCorePlugin.GameVersion > new Version("0.12.12.20765"); //3.5.0 Add Launcher
 
         internal static Action WeaponTirgger;
 
@@ -105,11 +109,20 @@ namespace GamePanelHUDMag
             SettingsDatas.KeyAmmonTypeStyles = Config.Bind<FontStyles>(fontStylesSettings, "弹药类型 AmmonType", FontStyles.Normal);
             SettingsDatas.KeyFireModeStyles = Config.Bind<FontStyles>(fontStylesSettings, "开火模式 Fire Mode", FontStyles.Normal);
 
-            ReflectionDatas.RefWeaponPrefab = RefHelp.FieldRef<object, WeaponPrefab>.Create(typeof(Player.FirearmController), new string[] { "WeaponPrefab_0", "weaponPrefab_0" }); //0.12.12.15.17349, 0.12.12.32.19904
-            ReflectionDatas.RefWeapon = RefHelp.FieldRef<WeaponPrefab, Weapon>.Create(new string[] { "Weapon_0", "weapon_0" }); //0.12.12.15.17349, 0.12.12.32.19904
-
-            ReflectionDatas.RefIAnimator = RefHelp.PropertyRef<object, object>.Create(typeof(FirearmsAnimator), "Animator");
+            ReflectionDatas.RefIAnimator = RefHelp.PropertyRef<Player, object>.Create("ArmsAnimatorCommon");
             ReflectionDatas.RefAnimator = RefHelp.PropertyRef<object, Animator>.Create(RefHelp.GetEftType(x => x.GetMethod("CreateAnimatorStateInfoWrapper", BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance) != null), "Animator");
+
+            if (Is341Up)
+            {
+                Type launcherType = RefHelp.GetEftType(x => x.GetMethod("GetCenterOfImpact", BindingFlags.Public | BindingFlags.Instance) != null);
+
+                ReflectionDatas.RefUnderbarrelWeapon = RefHelp.FieldRef<Player.FirearmController, Item>.Create("UnderbarrelWeapon");
+                ReflectionDatas.RefChambers = RefHelp.FieldRef<object, Slot[]>.Create(launcherType, "Chambers");
+
+                ReflectionDatas.RefWeaponTemplate = RefHelp.PropertyRef<object, WeaponTemplate>.Create(launcherType, "WeaponTemplate");
+                ReflectionDatas.RefLauncherIAnimator = RefHelp.PropertyRef<Player, object>.Create("UnderbarrelWeaponArmsAnimator");
+                ReflectionDatas.RefChamberAmmoCount = RefHelp.PropertyRef<object, int>.Create(launcherType, "ChamberAmmoCount");
+            }
 
             GamePanelHUDCorePlugin.UpdateManger.Register(this);
         }
@@ -126,27 +139,32 @@ namespace GamePanelHUDMag
 
         void MagPlugin()
         {
-            MagHUDSW = HUDCore.AllHUDSW && Weapon != null && HUDCore.HasPlayer && SettingsDatas.KeyMagHUDSW.Value;
+            MagHUDSW = HUDCore.AllHUDSW && NowWeapon != null && HUDCore.HasPlayer && SettingsDatas.KeyMagHUDSW.Value;
 
             HUD.Set(WeaponDatas, SettingsDatas, MagHUDSW);
 
             //Get Player
             if (HUDCore.HasPlayer)
             {
-                FirearmController = HUDCore.IsYourPlayer.HandsController;
-                FirearmsAnimator = HUDCore.IsYourPlayer.HandsAnimator;
-
-                //Get WeaponPrefab
-                WeaponPrefab = ReflectionDatas.RefWeaponPrefab.GetValue(FirearmController);
+                NowFirearmController = HUDCore.IsYourPlayer.HandsController as Player.FirearmController;
 
                 //Get Weapon Class
-                Weapon = ReflectionDatas.RefWeapon.GetValue(WeaponPrefab);
+                NowWeapon = NowFirearmController != null ? NowFirearmController.Item : null;
+                Animator_Weapon = ReflectionDatas.RefAnimator.GetValue(ReflectionDatas.RefIAnimator.GetValue(HUDCore.IsYourPlayer));
 
-                bool weaponActive = Weapon != null;
+                if (Is341Up)
+                {
+                    NowLauncher = ReflectionDatas.RefUnderbarrelWeapon.GetValue(NowFirearmController);
+                    Animator_Launcher = ReflectionDatas.RefAnimator.GetValue(ReflectionDatas.RefLauncherIAnimator.GetValue(HUDCore.IsYourPlayer));
+                }
+
+                bool weaponActive = NowWeapon != null;
+
+                bool launcherActive = weaponActive ? LauncherMode.IsInLauncherMode(NowFirearmController) : false;
 
                 if (WeaponCacheBool)
                 {
-                    OldWeapon = Weapon;
+                    OldWeapon = NowWeapon;
 
                     if (!SettingsDatas.KeyWeaponNameAlways.Value && SettingsDatas.KeyAutoWeaponName.Value)
                     {
@@ -154,130 +172,206 @@ namespace GamePanelHUDMag
                     }
 
                     WeaponCacheBool = false;
+                    LauncherCacheBool = false;
                 }
                 //Not same Weapon trigger
-                else if (Weapon != OldWeapon && weaponActive || !weaponActive)
+                else if (NowWeapon != OldWeapon && weaponActive || !weaponActive)
                 {
                     WeaponCacheBool = true;
                     MagCacheBool = true;
                 }
 
+                //Switch Launcher trigger
+                if (launcherActive != LauncherCacheBool)
+                {
+                    LauncherCacheBool = launcherActive;
+
+                    if (!SettingsDatas.KeyWeaponNameAlways.Value && SettingsDatas.KeyAutoWeaponName.Value)
+                    {
+                        WeaponTirgger();
+                    }
+                }
+                else if (!launcherActive)
+                {
+                    LauncherCacheBool = false;
+                }
+
                 //Get Ammon Count
                 if (weaponActive)
                 {
-                    Animator_Weapon = ReflectionDatas.RefAnimator.GetValue(ReflectionDatas.RefIAnimator.GetValue(FirearmsAnimator));
+                    Animator currentAnimator = launcherActive ? Animator_Launcher : Animator_Weapon;
 
-                    //Get Weapon Name
-                    WeaponDatas.WeaponName = LocalizedHelp.Localized(Weapon.Name, EStringCase.None);
+                    int currentState = currentAnimator.GetCurrentAnimatorStateInfo(1).fullPathHash;
 
-                    WeaponDatas.WeaponShortName = LocalizedHelp.Localized(Weapon.ShortName, EStringCase.None);
+                    AllReloadBool = ReloadOperation.IsInReloadOperation(NowFirearmController) || currentState == 1058993437 || currentState == 1285477936; //1.OriginalReloadCheck 2.TakeHands 3.LauncherReload
 
-                    //Get Fire Mode
-                    WeaponDatas.FireMode = LocalizedHelp.Localized(Weapon.SelectedFireMode.ToString(), EStringCase.None);
-
-                    WeaponDatas.AmmonType = LocalizedHelp.Localized(Weapon.AmmoCaliber, EStringCase.None);
-
-                    int currentState = Animator_Weapon.GetCurrentAnimatorStateInfo(1).fullPathHash;
-
-                    AllReloadBool = ReloadOperation.IsInReloadOperation((Player.FirearmController)FirearmController) || currentState == 1058993437;
-
-                    WeaponDatas.WeaponNameAlways = SettingsDatas.KeyWeaponNameAlways.Value || currentState == 1355507738 && SettingsDatas.KeyLockWeaponName.Value;
+                    WeaponDatas.WeaponNameAlways = SettingsDatas.KeyWeaponNameAlways.Value || currentState == 1355507738 && SettingsDatas.KeyLockWeaponName.Value; //2.LookWeapon
 
                     //MagCount and PatronCount
-                    if (Weapon.ReloadMode != Weapon.EReloadMode.OnlyBarrel)
+                    if (!launcherActive)
                     {
-                        bool magInWeapon = Animator_Weapon.GetBool(AnimatorHash.MagInWeapon);
-                        bool magSame = Mag == OldMag;
+                        //Get Weapon Name
+                        WeaponDatas.WeaponName = LocalizedHelp.Localized(NowWeapon.Name, EStringCase.None);
 
-                        Mag = GetMag.GetCurrentMagazine(Weapon);
+                        WeaponDatas.WeaponShortName = LocalizedHelp.Localized(NowWeapon.ShortName, EStringCase.None);
 
-                        if (MagCacheBool)
+                        //Get Fire Mode
+                        WeaponDatas.FireMode = LocalizedHelp.Localized(NowWeapon.SelectedFireMode.ToString(), EStringCase.None);
+
+                        WeaponDatas.AmmonType = LocalizedHelp.Localized(NowWeapon.AmmoCaliber, EStringCase.None);
+
+                        if (NowWeapon.ReloadMode != Weapon.EReloadMode.OnlyBarrel)
                         {
-                            OldMag = Mag;
+                            bool magInWeapon = Animator_Weapon.GetBool(AnimatorHash.MagInWeapon);
+                            bool magSame = NowMag == OldMag;
 
-                            MagCacheBool = false;
+                            NowMag = GetMag.GetCurrentMagazine(NowWeapon);
+
+                            if (MagCacheBool)
+                            {
+                                OldMag = NowMag;
+
+                                MagCacheBool = false;
+                            }
+
+                            if (magInWeapon && !AllReloadBool && magSame)
+                            {
+                                int count = NowWeapon.GetCurrentMagazineCount();
+                                int maxCount = NowWeapon.GetMaxMagazineCount();
+
+                                WeaponDatas.Patron = NowWeapon.ChamberAmmoCount;
+
+                                WeaponDatas.Normalized = (float)count / (float)maxCount;
+
+                                WeaponDatas.MagCount = count;
+
+                                WeaponDatas.MagMaxCount = maxCount;
+                            }
+                            else if (!magInWeapon && AllReloadBool)
+                            {
+                                WeaponDatas.Patron = (int)Animator_Weapon.GetFloat(AnimatorHash.AmmoInChamber);
+
+                                WeaponDatas.Normalized = 0;
+
+                                WeaponDatas.MagCount = 0;
+
+                                WeaponDatas.MagMaxCount = 0;
+
+                                OldMag = NowMag;
+                            }
+                            else if (magInWeapon && AllReloadBool && magSame)
+                            {
+                                int count = (int)Animator_Weapon.GetFloat(AnimatorHash.AmmoInMag);
+                                int maxCount = NowWeapon.GetMaxMagazineCount();
+
+                                WeaponDatas.Patron = (int)Animator_Weapon.GetFloat(AnimatorHash.AmmoInChamber);
+
+                                WeaponDatas.Normalized = (float)count / (float)maxCount;
+
+                                WeaponDatas.MagCount = count;
+
+                                WeaponDatas.MagMaxCount = maxCount;
+                            }
+                            else if (!magInWeapon && Animator_Weapon.GetFloat(AnimatorHash.AmmoInChamber) != 0 && !AllReloadBool)
+                            {
+                                WeaponDatas.Patron = NowWeapon.ChamberAmmoCount;
+
+                                WeaponDatas.Normalized = 0;
+
+                                WeaponDatas.MagCount = 0;
+
+                                WeaponDatas.MagMaxCount = 0;
+                            }
+                            else if (!magInWeapon && !AllReloadBool)
+                            {
+                                WeaponDatas.Patron = 0;
+
+                                WeaponDatas.Normalized = 0;
+
+                                WeaponDatas.MagCount = 0;
+
+                                WeaponDatas.MagMaxCount = 0;
+                            }
                         }
-
-                        if (magInWeapon && !AllReloadBool && magSame)
+                        else
                         {
-                            int count = Weapon.GetCurrentMagazineCount();
-                            int maxCount = Weapon.GetMaxMagazineCount();
+                            if (!AllReloadBool && Animator_Weapon.GetFloat(AnimatorHash.AmmoInChamber) != 0)
+                            {
+                                int count = NowWeapon.ChamberAmmoCount;
+                                int maxCount = NowWeapon.Chambers.Length;
 
-                            WeaponDatas.Patron = Weapon.ChamberAmmoCount;
+                                WeaponDatas.Patron = 0;
 
-                            WeaponDatas.Normalized = (float)count / (float)maxCount;
+                                WeaponDatas.MagCount = count;
 
-                            WeaponDatas.MagCount = count;
+                                WeaponDatas.MagMaxCount = maxCount;
 
-                            WeaponDatas.MagMaxCount = maxCount;
-                        }
-                        else if (!magInWeapon && AllReloadBool)
-                        {
-                            WeaponDatas.Patron = (int)Animator_Weapon.GetFloat(AnimatorHash.AmmoInChamber);
+                                WeaponDatas.Normalized = (float)count / (float)maxCount - 0.1f;
+                            }
+                            else if (AllReloadBool && Animator_Weapon.GetBool("Armed"))
+                            {
+                                int count = (int)Animator_Weapon.GetFloat(AnimatorHash.AmmoInChamber);
+                                int maxCount = NowWeapon.Chambers.Length;
 
-                            WeaponDatas.Normalized = 0;
+                                WeaponDatas.Patron = 0;
 
-                            WeaponDatas.MagCount = 0;
+                                WeaponDatas.MagCount = count;
 
-                            WeaponDatas.MagMaxCount = 0;
+                                WeaponDatas.MagMaxCount = maxCount;
 
-                            OldMag = Mag;
-                        }
-                        else if (magInWeapon && AllReloadBool && magSame)
-                        {
-                            int count = (int)Animator_Weapon.GetFloat(AnimatorHash.AmmoInMag);
-                            int maxCount = Weapon.GetMaxMagazineCount();
+                                WeaponDatas.Normalized = (float)count / (float)maxCount - 0.1f;
+                            }
+                            else if (!AllReloadBool)
+                            {
+                                WeaponDatas.Patron = 0;
 
-                            WeaponDatas.Patron = (int)Animator_Weapon.GetFloat(AnimatorHash.AmmoInChamber);
+                                WeaponDatas.MagCount = 0;
 
-                            WeaponDatas.Normalized = (float)count / (float)maxCount;
+                                WeaponDatas.MagMaxCount = NowWeapon.Chambers.Length;
 
-                            WeaponDatas.MagCount = count;
-
-                            WeaponDatas.MagMaxCount = maxCount;
-                        }
-                        else if (!magInWeapon && Animator_Weapon.GetFloat(AnimatorHash.AmmoInChamber) != 0 && !AllReloadBool)
-                        {
-                            WeaponDatas.Patron = Weapon.ChamberAmmoCount;
-
-                            WeaponDatas.Normalized = 0;
-
-                            WeaponDatas.MagCount = 0;
-
-                            WeaponDatas.MagMaxCount = 0;
-                        }
-                        else if (!magInWeapon && !AllReloadBool)
-                        {
-                            WeaponDatas.Patron = 0;
-
-                            WeaponDatas.Normalized = 0;
-
-                            WeaponDatas.MagCount = 0;
-
-                            WeaponDatas.MagMaxCount = 0;
+                                WeaponDatas.Normalized = 0;
+                            }
                         }
                     }
                     else
                     {
-                        if (!AllReloadBool && Animator_Weapon.GetFloat(AnimatorHash.AmmoInChamber) != 0)
+                        //Get Weapon Name
+                        WeaponDatas.WeaponName = LocalizedHelp.Localized(((Item)NowLauncher).Name, EStringCase.None);
+
+                        WeaponDatas.WeaponShortName = LocalizedHelp.Localized(((Item)NowLauncher).ShortName, EStringCase.None);
+
+                        WeaponTemplate launcherTemplate = ReflectionDatas.RefWeaponTemplate.GetValue(NowLauncher);
+
+                        //Get Fire Mode
+                        WeaponDatas.FireMode = LocalizedHelp.Localized(Weapon.EFireMode.single.ToString(), EStringCase.None);
+
+                        WeaponDatas.AmmonType = LocalizedHelp.Localized(launcherTemplate.ammoCaliber, EStringCase.None);
+
+                        if (!AllReloadBool && Animator_Launcher.GetFloat(AnimatorHash.AmmoInChamber) != 0)
                         {
+                            int count = ReflectionDatas.RefChamberAmmoCount.GetValue(NowLauncher);
+                            int maxCount = ReflectionDatas.RefChambers.GetValue(NowLauncher).Length;
+
                             WeaponDatas.Patron = 0;
 
-                            WeaponDatas.MagCount = Weapon.ChamberAmmoCount;
+                            WeaponDatas.MagCount = count;
 
-                            WeaponDatas.MagMaxCount = Weapon.Chambers.Length;
+                            WeaponDatas.MagMaxCount = maxCount;
 
-                            WeaponDatas.Normalized = (float)WeaponDatas.MagCount / (float)WeaponDatas.MagMaxCount - 0.1f;
+                            WeaponDatas.Normalized = (float)count / (float)maxCount - 0.1f;
                         }
-                        else if (AllReloadBool && Animator_Weapon.GetBool("Armed"))
+                        else if (AllReloadBool && Animator_Launcher.GetBool("Armed"))
                         {
+                            int count = (int)Animator_Launcher.GetFloat(AnimatorHash.AmmoInChamber);
+                            int maxCount = ReflectionDatas.RefChambers.GetValue(NowLauncher).Length;
+
                             WeaponDatas.Patron = 0;
 
-                            WeaponDatas.MagCount = (int)Animator_Weapon.GetFloat(AnimatorHash.AmmoInChamber);
+                            WeaponDatas.MagCount = count;
 
-                            WeaponDatas.MagMaxCount = Weapon.Chambers.Length;
+                            WeaponDatas.MagMaxCount = maxCount;
 
-                            WeaponDatas.Normalized = (float)WeaponDatas.MagCount / (float)WeaponDatas.MagMaxCount - 0.1f;
+                            WeaponDatas.Normalized = (float)count / (float)maxCount - 0.1f;
                         }
                         else if (!AllReloadBool)
                         {
@@ -285,13 +379,12 @@ namespace GamePanelHUDMag
 
                             WeaponDatas.MagCount = 0;
 
-                            WeaponDatas.MagMaxCount = Weapon.Chambers.Length;
+                            WeaponDatas.MagMaxCount = ReflectionDatas.RefChambers.GetValue(NowLauncher).Length;
 
                             WeaponDatas.Normalized = 0;
                         }
-
                     }
-                }            
+                }
             }
         }
 
@@ -354,10 +447,13 @@ namespace GamePanelHUDMag
 
         public class ReflectionData
         {
-            public RefHelp.FieldRef<object, WeaponPrefab> RefWeaponPrefab;
-            public RefHelp.FieldRef<WeaponPrefab, Weapon> RefWeapon;
+            public RefHelp.FieldRef<Player.FirearmController, Item> RefUnderbarrelWeapon;
+            public RefHelp.FieldRef<object, Slot[]> RefChambers;
 
-            public RefHelp.PropertyRef<object, object> RefIAnimator;
+            public RefHelp.PropertyRef<object, WeaponTemplate> RefWeaponTemplate;
+            public RefHelp.PropertyRef<object, int> RefChamberAmmoCount;
+            public RefHelp.PropertyRef<Player, object> RefIAnimator;
+            public RefHelp.PropertyRef<Player, object> RefLauncherIAnimator;
             public RefHelp.PropertyRef<object, Animator> RefAnimator;
         }
     }

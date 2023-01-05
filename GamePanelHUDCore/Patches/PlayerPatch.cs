@@ -1,6 +1,7 @@
 ﻿#if !UNITY_EDITOR
 using Aki.Reflection.Patching;
 using Aki.Reflection.Utils;
+using System;
 using System.Reflection;
 using System.Threading.Tasks;
 using Comfort.Common;
@@ -12,12 +13,7 @@ namespace GamePanelHUDCore.Patches
 {
     public class PlayerPatch : ModulePatch
     {
-        private static readonly bool Is231Up;
-
-        static PlayerPatch()
-        {
-            Is231Up = typeof(Player).GetProperty("IsYourPlayer").GetSetMethod() == null;
-        }
+        private static readonly bool Is231Up = GamePanelHUDCorePlugin.GameVersion > new Version("0.12.12.17349");
 
         protected override MethodBase GetTargetMethod()
         {

@@ -12,19 +12,25 @@ namespace GamePanelHUDDebug.MagDebug
     [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore")]
     public class OperationRecord : BaseUnityPlugin
     {
-        public Player IsYourPlayer;
+        private GamePanelHUDCorePlugin.HUDCoreClass HUDCore
+        {
+            get
+            {
+                return GamePanelHUDCorePlugin.HUDCore;
+            }
+        }
 
-        public object FirearmController;
+        public Player.FirearmController FirearmController;
 
         public static object CurrentOperation;
 
         public static HashSet<object> Operations = new HashSet<object>();
 
-        public static ConfigEntry<bool> KeyRecord { get; set; }
+        public static ConfigEntry<bool> KeyRecord;
 
-        public static ConfigEntry<KeyboardShortcut> KBSRecord { get; set; }
+        public static ConfigEntry<KeyboardShortcut> KBSRecord;
 
-        public static ConfigEntry<KeyboardShortcut> KBSClear { get; set; }
+        public static ConfigEntry<KeyboardShortcut> KBSClear;
 
         void Start()
         {
@@ -37,21 +43,19 @@ namespace GamePanelHUDDebug.MagDebug
 
         void Update()
         {
-            IsYourPlayer = GamePanelHUDCorePlugin.HUDCore.IsYourPlayer;
-
-            if (IsYourPlayer != null)
+            if (KBSRecord.Value.IsDown())
             {
-                FirearmController = IsYourPlayer.HandsController;
+                KeyRecord.Value = !KeyRecord.Value;
+            }
 
-                if (KBSRecord.Value.IsDown())
-                {
-                    KeyRecord.Value = !KeyRecord.Value;
-                }
+            if (KBSClear.Value.IsDown())
+            {
+                Operations.Clear();
+            }
 
-                if (KBSClear.Value.IsDown())
-                {
-                    Operations.Clear();
-                }
+            if (HUDCore.IsYourPlayer != null)
+            {
+                FirearmController = HUDCore.IsYourPlayer.HandsController as Player.FirearmController;
 
                 if (FirearmController != null)
                 {
