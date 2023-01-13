@@ -19,14 +19,6 @@ namespace GamePanelHUDCore.Utils
 
         private const string Section = "主更新检查 Update Check";
 
-        private static Version GameVersion
-        {
-            get
-            {
-                return GamePanelHUDCorePlugin.GameVersion;
-            }
-        }
-
         public static async void ServerCheck()
         {
             HUDVersions.ServerConnect = default;
@@ -78,7 +70,7 @@ namespace GamePanelHUDCore.Utils
 
             if (serverConnect)
             {
-                Version gameVersion = GameVersion;
+                Version gameVersion = GamePanelHUDCorePlugin.HUDCoreClass.GameVersion;
 
                 if (HUDVersions.FirstGameVersion > gameVersion)
                 {
@@ -270,7 +262,7 @@ namespace GamePanelHUDCore.Utils
 
                         ConfigEntry<string> warn = default;
 
-                        Version gameVersion = GameVersion;
+                        Version gameVersion = GamePanelHUDCorePlugin.HUDCoreClass.GameVersion;
 
                         if (HUDVersions.FirstGameVersion > gameVersion)
                         {

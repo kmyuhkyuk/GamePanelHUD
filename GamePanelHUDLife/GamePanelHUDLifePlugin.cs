@@ -97,7 +97,7 @@ namespace GamePanelHUDLife
 
             if (HUDCore.HasPlayer)
             {
-                HealthController = HUDCore.IsYourPlayer.HealthController;
+                HealthController = HUDCore.YourPlayer.HealthController;
             }
 
             if (HealthController != null)

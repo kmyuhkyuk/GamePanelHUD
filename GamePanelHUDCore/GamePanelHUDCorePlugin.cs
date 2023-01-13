@@ -24,7 +24,7 @@ namespace GamePanelHUDCore
         internal static GameObject InventoryScreen;
         internal static GameObject HideoutScreenOverlay;
 
-        internal static Player IsYourPlayer;
+        internal static Player YourPlayer;
 
         public static readonly HUDCoreClass HUDCore = new HUDCoreClass();
 
@@ -34,17 +34,11 @@ namespace GamePanelHUDCore
 
         internal static ManualLogSource LogLogger { get; private set; }
 
-        public static Version GameVersion { get; private set; }
-
         private void Start()
         {
             Logger.LogInfo("Loaded: kmyuhkyuk-GamePanelHUDCore");
 
             LogLogger = Logger;
-
-            FileVersionInfo exeInfo = Process.GetCurrentProcess().MainModule.FileVersionInfo;
-
-            GameVersion = new Version(exeInfo.FileMajorPart, exeInfo.ProductMinorPart, exeInfo.ProductBuildPart, exeInfo.FilePrivatePart);
 
             ModUpdateCheck.ServerCheck();
 
@@ -64,8 +58,6 @@ namespace GamePanelHUDCore
             LocalizedHelp.Init();
             GrenadeType.Init();
             GetMag.Init();
-            LauncherMode.Init();
-            ReloadOperation.Init();
             RoleHelp.Init();
             RuToEn.Init();
         }
@@ -89,7 +81,7 @@ namespace GamePanelHUDCore
                 AllHUDSW = false;
             }
 
-            HUDCore.Set(IsYourPlayer, AllHUDSW);
+            HUDCore.Set(YourPlayer, AllHUDSW);
 
             UpdateManger.NeedMethodTime = SettingsDatas.KeyDebugMethodTime.Value;
 
@@ -98,13 +90,13 @@ namespace GamePanelHUDCore
 
         public class HUDCoreClass
         {
-            public Player IsYourPlayer;
+            public Player YourPlayer;
 
             public bool HasPlayer
             {
                 get
                 {
-                    return IsYourPlayer != null;
+                    return YourPlayer != null;
                 }
             }
 
@@ -114,8 +106,14 @@ namespace GamePanelHUDCore
 
             public static readonly string ModPath  = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "BepInEx/plugins/kmyuhkyuk-GamePanelHUD");
 
+            public static readonly Version GameVersion;
+
             static HUDCoreClass()
             {
+                FileVersionInfo exeInfo = Process.GetCurrentProcess().MainModule.FileVersionInfo;
+
+                GameVersion = new Version(exeInfo.FileMajorPart, exeInfo.ProductMinorPart, exeInfo.ProductBuildPart, exeInfo.FilePrivatePart);
+
                 Canvas canvs = GamePanlHUDPublic.GetComponent<Canvas>();
 
                 canvs.renderMode = RenderMode.ScreenSpaceOverlay;
@@ -168,9 +166,9 @@ namespace GamePanelHUDCore
                 init.Add(initassetname.ToLower(), BundleHelp.InitAsset(asset[initassetname.ToLower()], GamePanlHUDPublic.transform));
             }
 
-            public void Set(Player isyourplayer, bool hudsw)
+            public void Set(Player yourplayer, bool hudsw)
             {
-                IsYourPlayer = isyourplayer;
+                YourPlayer = yourplayer;
                 AllHUDSW = hudsw;
             }
         }

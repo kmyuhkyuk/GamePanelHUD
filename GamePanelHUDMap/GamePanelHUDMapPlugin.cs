@@ -68,7 +68,7 @@ namespace GamePanelHUDMap
 
             if (HUDCore.HasPlayer)
             {
-                Infiltration = HUDCore.IsYourPlayer.Infiltration;
+                Infiltration = HUDCore.YourPlayer.Infiltration;
 
                 if (!HasMap)
                 {
@@ -77,9 +77,9 @@ namespace GamePanelHUDMap
                     HasMap = true;
                 }
 
-                MapDatas.PlayerPosition = HUDCore.IsYourPlayer.Transform.Original.position;
+                MapDatas.PlayerPosition = HUDCore.YourPlayer.Position;
 
-                MapDatas.PlayerRotation = HUDCore.IsYourPlayer.CameraPosition.eulerAngles;
+                MapDatas.PlayerRotation = HUDCore.YourPlayer.CameraPosition.eulerAngles;
             }
             else
             {

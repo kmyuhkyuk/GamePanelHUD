@@ -116,12 +116,10 @@
     <Compile Include="Utils\ColorHelp.cs" />
     <Compile Include="Utils\GrenadeType.cs" />
     <Compile Include="Utils\IUpdate.cs" />
-    <Compile Include="Utils\LauncherMode.cs" />
     <Compile Include="Utils\LocalizedHelp.cs" />
     <Compile Include="Utils\GetMag.cs" />
     <Compile Include="Utils\ModUpdateCheck.cs" />
     <Compile Include="Utils\RefHelp.cs" />
-    <Compile Include="Utils\ReloadOperation.cs" />
     <Compile Include="Utils\RoleHelp.cs" />
     <Compile Include="Utils\RuToEn.cs" />
     <Compile Include="Utils\Session\ExperienceHelp.cs" />

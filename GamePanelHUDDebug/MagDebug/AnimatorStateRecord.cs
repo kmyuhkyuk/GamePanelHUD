@@ -71,9 +71,9 @@ namespace GamePanelHUDDebug.MagDebug
                 Cilps.Clear();
             }
 
-            if (HUDCore.IsYourPlayer != null)
+            if (HUDCore.YourPlayer != null)
             {
-                firearmcontroller = HUDCore.IsYourPlayer.HandsController as Player.FirearmController;
+                firearmcontroller = HUDCore.YourPlayer.HandsController as Player.FirearmController;
 
                 weapon = firearmcontroller != null ? firearmcontroller.Item : null;
 
@@ -83,11 +83,11 @@ namespace GamePanelHUDDebug.MagDebug
                 {
                     if (!KeyLauncher.Value)
                     {
-                        animator = Traverse.Create(Traverse.Create(HUDCore.IsYourPlayer).Property("ArmsAnimatorCommon").GetValue<object>()).Property("Animator").GetValue<Animator>();
+                        animator = Traverse.Create(Traverse.Create(HUDCore.YourPlayer).Property("ArmsAnimatorCommon").GetValue<object>()).Property("Animator").GetValue<Animator>();
                     }
                     else
                     {
-                        animator = Traverse.Create(Traverse.Create(HUDCore.IsYourPlayer).Property("UnderbarrelWeaponArmsAnimator").GetValue<object>()).Property("Animator").GetValue<Animator>();
+                        animator = Traverse.Create(Traverse.Create(HUDCore.YourPlayer).Property("UnderbarrelWeaponArmsAnimator").GetValue<object>()).Property("Animator").GetValue<Animator>();
                     }
 
                     if (animator != null)

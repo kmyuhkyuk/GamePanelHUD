@@ -16,7 +16,7 @@ namespace GamePanelHUDHit.Patches
         [PatchPrefix]
         private static void PatchPrefix(ArmorComponent __instance, DamageInfo damageInfo)
         {
-            if (damageInfo.Player == GamePanelHUDCorePlugin.HUDCore.IsYourPlayer)
+            if (damageInfo.Player == GamePanelHUDCorePlugin.HUDCore.YourPlayer)
             {
                 GamePanelHUDHitPlugin.Armor.SetComponent(__instance);
             }
