@@ -53,9 +53,9 @@ namespace GamePanelHUDDebug.MagDebug
                 Operations.Clear();
             }
 
-            if (HUDCore.IsYourPlayer != null)
+            if (HUDCore.YourPlayer != null)
             {
-                FirearmController = HUDCore.IsYourPlayer.HandsController as Player.FirearmController;
+                FirearmController = HUDCore.YourPlayer.HandsController as Player.FirearmController;
 
                 if (FirearmController != null)
                 {

@@ -58,7 +58,7 @@ namespace GamePanelHUDMag
 
         private bool LauncherCacheBool = false;
 
-        private static readonly bool Is341Up = GamePanelHUDCorePlugin.GameVersion > new Version("0.12.12.20765"); //3.5.0 Add Launcher
+        private static readonly bool Is341Up = GamePanelHUDCorePlugin.HUDCoreClass.GameVersion > new Version("0.12.12.20765"); //3.5.0 Add Launcher
 
         internal static Action WeaponTirgger;
 
@@ -146,21 +146,21 @@ namespace GamePanelHUDMag
             //Get Player
             if (HUDCore.HasPlayer)
             {
-                NowFirearmController = HUDCore.IsYourPlayer.HandsController as Player.FirearmController;
+                NowFirearmController = HUDCore.YourPlayer.HandsController as Player.FirearmController;
 
                 //Get Weapon Class
                 NowWeapon = NowFirearmController != null ? NowFirearmController.Item : null;
-                Animator_Weapon = ReflectionDatas.RefAnimator.GetValue(ReflectionDatas.RefIAnimator.GetValue(HUDCore.IsYourPlayer));
+                Animator_Weapon = ReflectionDatas.RefAnimator.GetValue(ReflectionDatas.RefIAnimator.GetValue(HUDCore.YourPlayer));
 
                 if (Is341Up)
                 {
                     NowLauncher = ReflectionDatas.RefUnderbarrelWeapon.GetValue(NowFirearmController);
-                    Animator_Launcher = ReflectionDatas.RefAnimator.GetValue(ReflectionDatas.RefLauncherIAnimator.GetValue(HUDCore.IsYourPlayer));
+                    Animator_Launcher = ReflectionDatas.RefAnimator.GetValue(ReflectionDatas.RefLauncherIAnimator.GetValue(HUDCore.YourPlayer));
                 }
 
                 bool weaponActive = NowWeapon != null;
 
-                bool launcherActive = weaponActive ? LauncherMode.IsInLauncherMode(NowFirearmController) : false;
+                bool launcherActive = weaponActive ? NowFirearmController.IsInLauncherMode() : false;
 
                 if (WeaponCacheBool)
                 {
@@ -203,7 +203,7 @@ namespace GamePanelHUDMag
 
                     int currentState = currentAnimator.GetCurrentAnimatorStateInfo(1).fullPathHash;
 
-                    AllReloadBool = ReloadOperation.IsInReloadOperation(NowFirearmController) || currentState == 1058993437 || currentState == 1285477936; //1.OriginalReloadCheck 2.TakeHands 3.LauncherReload
+                    AllReloadBool = NowFirearmController.IsInReloadOperation() || currentState == 1058993437 || currentState == 1285477936; //1.OriginalReloadCheck 2.TakeHands 3.LauncherReload
 
                     WeaponDatas.WeaponNameAlways = SettingsDatas.KeyWeaponNameAlways.Value || currentState == 1355507738 && SettingsDatas.KeyLockWeaponName.Value; //2.LookWeapon
 

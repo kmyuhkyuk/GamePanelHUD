@@ -16,7 +16,7 @@ namespace GamePanelHUDHit.Patches
         [PatchPostfix]
         private static void PatchPostfix(Player __instance, DamageInfo damageInfo, EBodyPart bodyPartType)
         {
-            if (damageInfo.Player == GamePanelHUDCorePlugin.HUDCore.IsYourPlayer)
+            if (damageInfo.Player == GamePanelHUDCorePlugin.HUDCore.YourPlayer)
             {
                 float armorDamage;
 

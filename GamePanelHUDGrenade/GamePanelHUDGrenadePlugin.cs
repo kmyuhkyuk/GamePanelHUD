@@ -104,7 +104,7 @@ namespace GamePanelHUDGrenade
             if (HUDCore.HasPlayer)
             {
                 //Get Inventory and ContainedItems
-                Inventory = ReflectionDatas.RefInventory.GetValue(HUDCore.IsYourPlayer);
+                Inventory = ReflectionDatas.RefInventory.GetValue(HUDCore.YourPlayer);
                 ContainedItems = ReflectionDatas.RefContainedItems.GetValue(Inventory);
 
                 //Get Rig and Pocket

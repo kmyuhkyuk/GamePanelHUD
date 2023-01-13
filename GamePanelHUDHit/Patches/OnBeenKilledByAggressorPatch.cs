@@ -27,7 +27,7 @@ namespace GamePanelHUDHit.Patches
         [PatchPostfix]
         private static void PatchPostfix(Player __instance, Player aggressor, DamageInfo damageInfo, EBodyPart bodyPart)
         {
-            if (aggressor == GamePanelHUDCorePlugin.HUDCore.IsYourPlayer)
+            if (aggressor == GamePanelHUDCorePlugin.HUDCore.YourPlayer)
             {
                 GamePanelHUDHitPlugin.Kills++;
 

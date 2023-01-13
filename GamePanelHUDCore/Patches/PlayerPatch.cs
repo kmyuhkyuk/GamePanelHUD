@@ -13,7 +13,7 @@ namespace GamePanelHUDCore.Patches
 {
     public class PlayerPatch : ModulePatch
     {
-        private static readonly bool Is231Up = GamePanelHUDCorePlugin.GameVersion > new Version("0.12.12.17349");
+        private static readonly bool Is231Up = GamePanelHUDCorePlugin.HUDCoreClass.GameVersion > new Version("0.12.12.17349");
 
         protected override MethodBase GetTargetMethod()
         {
@@ -38,7 +38,7 @@ namespace GamePanelHUDCore.Patches
 
             if (isYouPlayer)
             {
-                GamePanelHUDCorePlugin.IsYourPlayer = __instance;
+                GamePanelHUDCorePlugin.YourPlayer = __instance;
             }
         }
     }

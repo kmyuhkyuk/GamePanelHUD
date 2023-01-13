@@ -6,6 +6,7 @@ using TMPro;
 using GamePanelHUDCore;
 using GamePanelHUDCompass.Patches;
 using GamePanelHUDCore.Utils;
+using EFT;
 
 namespace GamePanelHUDCompass
 {
@@ -58,12 +59,13 @@ namespace GamePanelHUDCompass
             SettingsDatas.KeyAzimuthsAngleColor = Config.Bind<Color>(colorSettings, "刻度角度 Azimuths Angle", new Color(0.8901961f, 0.8901961f, 0.8392157f));
             SettingsDatas.KeyDirectionColor = Config.Bind<Color>(colorSettings, "方向 Direction", new Color(0.8901961f, 0.8901961f, 0.8392157f));
             SettingsDatas.KeyAngleColor = Config.Bind<Color>(colorSettings, "角度 Angle", new Color(0.8901961f, 0.8901961f, 0.8392157f));
-
+                                   
             SettingsDatas.KeyAzimuthsAngleStyles = Config.Bind<FontStyles>(fontStylesSettings, "刻度角度 Azimuths Angle", FontStyles.Normal);
             SettingsDatas.KeyDirectionStyles = Config.Bind<FontStyles>(fontStylesSettings, "方向 Direction", FontStyles.Bold);
             SettingsDatas.KeyAngleStyles = Config.Bind<FontStyles>(fontStylesSettings, "角度 Angle", FontStyles.Bold);
 
             new LevelSettingsPatch().Enable();
+            new FirePatch().Enable();
 
             GamePanelHUDCorePlugin.UpdateManger.Register(this);
         }
@@ -86,7 +88,7 @@ namespace GamePanelHUDCompass
 
             if (HUDCore.HasPlayer)
             {
-                Cam = HUDCore.IsYourPlayer.CameraPosition;
+                Cam = HUDCore.YourPlayer.CameraPosition;
 
                 AngleNum = GetAngle(Cam, NorthDirection, SettingsDatas.KeyAngleOffset.Value);
             }
@@ -104,6 +106,31 @@ namespace GamePanelHUDCompass
             {
                 return num + 360;
             }
+        }
+
+        float GetToAngle(Transform transform, Transform transform2, float northdirection, float offset)
+        {
+            float num = Vector3.Angle(transform.eulerAngles, transform2.eulerAngles) - northdirection + offset;
+
+            if (num >= 0)
+            {
+                return num;
+            }
+            else
+            {
+                return num + 360;
+            }
+        }
+
+        public struct CompassFireInfo
+        {
+            public Player Who;
+
+            public Vector3 Where;
+
+            public float Distance;
+
+            public bool IsSilenced;
         }
 
         public class SettingsData
