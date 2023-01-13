@@ -108,7 +108,7 @@ namespace GamePanelHUDCompass
             }
         }
 
-        float GetToAngle(Vector3 transform, Vector3 transform2, float northdirection, float offset)
+        /*float GetToAngle(Vector3 transform, Vector3 transform2, float northdirection, float offset)
         {
             float num = Vector3.Angle(transform, transform2) - northdirection + offset;
 
@@ -120,7 +120,7 @@ namespace GamePanelHUDCompass
             {
                 return num + 360;
             }
-        }
+        }*/
 
         public struct CompassFireInfo
         {
