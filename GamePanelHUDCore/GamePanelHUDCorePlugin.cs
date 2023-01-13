@@ -5,14 +5,13 @@ using BepInEx.Configuration;
 using System;
 using System.IO;
 using System.Linq;
-using System.Reflection;
+using System.Diagnostics;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using EFT;
 using GamePanelHUDCore.Patches;
 using GamePanelHUDCore.Utils;
-using System.Diagnostics;
 
 namespace GamePanelHUDCore
 {
@@ -35,21 +34,17 @@ namespace GamePanelHUDCore
 
         internal static ManualLogSource LogLogger { get; private set; }
 
-        public static Version GameVersion
-        {
-            get
-            {
-                FileVersionInfo exeInfo = Process.GetCurrentProcess().MainModule.FileVersionInfo;
-
-                return new Version(exeInfo.FileMajorPart, exeInfo.ProductMinorPart, exeInfo.ProductBuildPart, exeInfo.FilePrivatePart);
-            }
-        }
+        public static Version GameVersion { get; private set; }
 
         private void Start()
         {
             Logger.LogInfo("Loaded: kmyuhkyuk-GamePanelHUDCore");
 
             LogLogger = Logger;
+
+            FileVersionInfo exeInfo = Process.GetCurrentProcess().MainModule.FileVersionInfo;
+
+            GameVersion = new Version(exeInfo.FileMajorPart, exeInfo.ProductMinorPart, exeInfo.ProductBuildPart, exeInfo.FilePrivatePart);
 
             ModUpdateCheck.ServerCheck();
 
