@@ -108,9 +108,9 @@ namespace GamePanelHUDCompass
             }
         }
 
-        float GetToAngle(Transform transform, Transform transform2, float northdirection, float offset)
+        float GetToAngle(Vector3 transform, Vector3 transform2, float northdirection, float offset)
         {
-            float num = Vector3.Angle(transform.eulerAngles, transform2.eulerAngles) - northdirection + offset;
+            float num = Vector3.Angle(transform, transform2) - northdirection + offset;
 
             if (num >= 0)
             {
