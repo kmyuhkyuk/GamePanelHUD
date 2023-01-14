@@ -7,6 +7,7 @@ using GamePanelHUDCore;
 using GamePanelHUDCompass.Patches;
 using GamePanelHUDCore.Utils;
 using EFT;
+using System;
 
 namespace GamePanelHUDCompass
 {
@@ -22,7 +23,11 @@ namespace GamePanelHUDCompass
             }
         }
 
-        internal static readonly GamePanelHUDCorePlugin.HUDClass<float, SettingsData> HUD = new GamePanelHUDCorePlugin.HUDClass<float, SettingsData>();
+        private readonly CompassInfo CompassInfos = new CompassInfo();
+
+        internal static readonly GamePanelHUDCorePlugin.HUDClass<CompassInfo, SettingsData> CompassHUD = new GamePanelHUDCorePlugin.HUDClass<CompassInfo, SettingsData>();
+
+        internal static readonly GamePanelHUDCorePlugin.HUDClass<CompassInfo, SettingsData> CompassFireHUD = new GamePanelHUDCorePlugin.HUDClass<CompassInfo, SettingsData>();
 
         internal static float NorthDirection;
 
@@ -30,9 +35,11 @@ namespace GamePanelHUDCompass
 
         private Transform Cam;
 
-        private float AngleNum;
-
         private readonly SettingsData SettingsDatas = new SettingsData();
+
+        internal static GameObject FirePrefab;
+
+        internal static Action<CompassFireInfo> ShowFire;
 
         private void Start()
         {
@@ -84,13 +91,20 @@ namespace GamePanelHUDCompass
         {
             CompassHUDSW = HUDCore.AllHUDSW && Cam != null && HUDCore.HasPlayer && SettingsDatas.KeyCompassHUDSW.Value;
 
-            HUD.Set(AngleNum, SettingsDatas, CompassHUDSW);
+            CompassHUD.Set(CompassInfos, SettingsDatas, CompassHUDSW);
+            CompassFireHUD.Set(CompassInfos, SettingsDatas, CompassHUDSW);
 
             if (HUDCore.HasPlayer)
             {
-                Cam = HUDCore.YourPlayer.CameraPosition;
+                Player yourPlayer = HUDCore.YourPlayer;
 
-                AngleNum = GetAngle(Cam, NorthDirection, SettingsDatas.KeyAngleOffset.Value);
+                Cam = yourPlayer.CameraPosition;
+
+                CompassInfos.NorthDirection = NorthDirection;
+                
+                CompassInfos.Angle = GetAngle(Cam, NorthDirection, SettingsDatas.KeyAngleOffset.Value);
+
+                CompassInfos.PlayerPosition = yourPlayer.Position;
             }
         }
 
@@ -108,23 +122,18 @@ namespace GamePanelHUDCompass
             }
         }
 
-        float GetToAngle(Vector3 position, Vector3 position2, float northdirection, float offset)
+        public class CompassInfo
         {
-            float num = Vector3.Angle(position, position2) - northdirection + offset;
+            public float NorthDirection;
 
-            if (num >= 0)
-            {
-                return num;
-            }
-            else
-            {
-                return num + 360;
-            }
+            public float Angle;
+
+            public Vector3 PlayerPosition;
         }
 
         public struct CompassFireInfo
         {
-            public Player Who;
+            public int Who;
 
             public Vector3 Where;
 

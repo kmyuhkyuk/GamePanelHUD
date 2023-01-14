@@ -33,7 +33,7 @@ namespace GamePanelHUDCore.Patches
             }
             else
             {
-                isYouPlayer = __instance == Singleton<GameWorld>.Instance.AllPlayers[0];
+                isYouPlayer = __instance.Id == 1;
             }
 
             if (isYouPlayer)

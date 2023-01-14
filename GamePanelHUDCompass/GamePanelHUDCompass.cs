@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using EFT.UI;
+using System.Collections.Generic;
+using EFT;
 #if !UNITY_EDITOR
 using GamePanelHUDCore;
 using GamePanelHUDCore.Utils;
@@ -12,11 +14,11 @@ namespace GamePanelHUDCompass
 #endif
     {
 #if !UNITY_EDITOR
-        private GamePanelHUDCorePlugin.HUDClass<float, GamePanelHUDCompassPlugin.SettingsData> HUD
+        private GamePanelHUDCorePlugin.HUDClass<GamePanelHUDCompassPlugin.CompassInfo, GamePanelHUDCompassPlugin.SettingsData> HUD
         {
             get
             {
-                return GamePanelHUDCompassPlugin.HUD;
+                return GamePanelHUDCompassPlugin.CompassHUD;
             }
         }
 #endif
@@ -46,7 +48,7 @@ namespace GamePanelHUDCompass
                 _Compass.gameObject.SetActive(HUD.HUDSW);
                 _Compass.AngleHUDSW = HUD.SettingsData.KeyAngleHUDSW.Value;
 
-                _Compass.AngleNum = HUD.Info;
+                _Compass.AngleNum = HUD.Info.Angle;
 
                 _Compass.ArrowColor = HUD.SettingsData.KeyArrowColor.Value;
                 _Compass.AzimuthsColor = HUD.SettingsData.KeyAzimuthsColor.Value;
