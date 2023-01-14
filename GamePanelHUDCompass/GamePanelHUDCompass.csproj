@@ -77,6 +77,10 @@
     <Reference Include="UnityEngine">
       <HintPath>R:\Battlestate Games\Client.0.12.12.15.17349\EscapeFromTarkov_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.AnimationModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>R:\Battlestate Games\Client.0.12.12.15.17349\EscapeFromTarkov_Data\Managed\UnityEngine.AnimationModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>R:\Battlestate Games\Client.0.12.12.15.17349\EscapeFromTarkov_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
@@ -87,6 +91,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GamePanelHUDCompass.cs" />
+    <Compile Include="GamePanelHUDCompassFire.cs" />
+    <Compile Include="GamePanelHUDCompassFireUI.cs" />
     <Compile Include="GamePanelHUDCompassPlugin.cs" />
     <Compile Include="GamePanelHUDCompassUI.cs" />
     <Compile Include="Patches\FirePatch.cs" />

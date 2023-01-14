@@ -1,4 +1,5 @@
-﻿using Aki.Reflection.Patching;
+﻿#if !UNITY_EDITOR
+using Aki.Reflection.Patching;
 using System.Reflection;
 using System.Collections.Generic;
 using UnityEngine;
@@ -21,28 +22,23 @@ namespace GamePanelHUDCompass.Patches
         {
             Player yourPlayer = GamePanelHUDCorePlugin.HUDCore.YourPlayer;
 
-            /*if (____player != yourPlayer))
+            if (____player != yourPlayer)
             {
+                Vector3 weaponPosition = __instance.WeaponRoot.position;
+
                 GamePanelHUDCompassPlugin.CompassFireInfo fireInfo = new GamePanelHUDCompassPlugin.CompassFireInfo()
                 {
-                    WhoFire = ____player,
-                    WhereFire = __instance.WeaponRoot.position
+                    Who = ____player.Id,
+                    Where = weaponPosition,
+                    IsSilenced = __instance.IsSilenced,
+                    Distance = Vector3.Distance(weaponPosition, yourPlayer.Position)
                 };
 
                 Test.Add(fireInfo);
-            }*/
 
-            Vector3 weaponPosition = __instance.WeaponRoot.position;
-
-            GamePanelHUDCompassPlugin.CompassFireInfo fireInfo = new GamePanelHUDCompassPlugin.CompassFireInfo()
-            {
-                Who = ____player,
-                Where = weaponPosition,
-                IsSilenced = __instance.IsSilenced,
-                Distance = Vector3.Distance(weaponPosition, yourPlayer.Position)
-            };
-
-            Test.Add(fireInfo);
+                GamePanelHUDCompassPlugin.ShowFire(fireInfo);
+            }
         }
     }
 }
+#endif

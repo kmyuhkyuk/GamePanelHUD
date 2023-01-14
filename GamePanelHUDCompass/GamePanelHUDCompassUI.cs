@@ -40,7 +40,7 @@ namespace GamePanelHUDCompass
         private Image _Arrow;
 
         [SerializeField]
-        private RectTransform _AzimuthsValue;
+        private RectTransform _Azimuths;
 
         [SerializeField]
         private TMP_Text _DirectionValue;
@@ -50,7 +50,7 @@ namespace GamePanelHUDCompass
 
         private Transform _AnglePanel;
 
-        private Image[] _Azimuths;
+        private Image[] _AzimuthsImage;
 
         private TMP_Text[] _AzimuthsAngle;
 
@@ -58,11 +58,10 @@ namespace GamePanelHUDCompass
 
         private readonly StringBuilderData StringBuilderDatas = new StringBuilderData();
 
-#if !UNITY_EDITOR
         void Start()
         {
-            _Azimuths = _AzimuthsValue.GetComponentsInChildren<Image>();
-            _AzimuthsAngle = _AzimuthsValue.GetComponentsInChildren<TMP_Text>();
+            _AzimuthsImage = _Azimuths.GetComponentsInChildren<Image>();
+            _AzimuthsAngle = _Azimuths.GetComponentsInChildren<TMP_Text>();
             _AnglePanel = _DirectionValue.transform.parent;
 
             AngleTexts = _AzimuthsAngle.Select(x => x.text).ToArray();
@@ -76,9 +75,12 @@ namespace GamePanelHUDCompass
 
             StringBuilderDatas._AzimuthsAngle = changes.ToArray();
 
+#if !UNITY_EDITOR
             GamePanelHUDCorePlugin.UpdateManger.Register(this);
+#endif
         }
 
+#if !UNITY_EDITOR
         void OnEnable()
         {
             GamePanelHUDCorePlugin.UpdateManger.Run(this);
@@ -102,7 +104,7 @@ namespace GamePanelHUDCompass
         {
             _Arrow.color = ArrowColor;
 
-            foreach (Image image in _Azimuths)
+            foreach (Image image in _AzimuthsImage)
             {
                 image.color = AzimuthsColor;
             }
@@ -115,7 +117,7 @@ namespace GamePanelHUDCompass
                 _azimuthsAngle.text = StringBuilderDatas._AzimuthsAngle[i].StringConcat("<color=", AzimuthsAngleColor, ">", AngleTexts[i], "</color>");
             }
 
-            _AzimuthsValue.anchoredPosition = new Vector2(-(AngleNum / 15 * 120), 0);
+            _Azimuths.anchoredPosition = new Vector2(-(AngleNum / 15 * 120), 0);
 
             string direction;
             if (AngleNum >= 45 && AngleNum < 90)

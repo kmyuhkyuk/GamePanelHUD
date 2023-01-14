@@ -1,4 +1,5 @@
-﻿using Aki.Reflection.Patching;
+﻿#if !UNITY_EDITOR
+using Aki.Reflection.Patching;
 using System.Reflection;
 using EFT.InventoryLogic;
 
@@ -21,3 +22,4 @@ namespace GamePanelHUDHit.Patches
         }
     }
 }
+#endif
