@@ -97,14 +97,16 @@ namespace GamePanelHUDMag
 
         private readonly StringBuilderData StringBuilderDatas = new StringBuilderData();
 
-#if !UNITY_EDITOR
         void Start()
         {
             Animator_Weapon = _WeaponValue.transform.parent.parent.GetComponent<Animator>();
             Animator_Current = _CurrentValue.GetComponent<Animator>();
 
+#if !UNITY_EDITOR
             GamePanelHUDCorePlugin.UpdateManger.Register(this);
+#endif
         }
+#if !UNITY_EDITOR
 
         void OnEnable()
         {

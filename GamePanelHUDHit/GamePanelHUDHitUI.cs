@@ -117,7 +117,6 @@ namespace GamePanelHUDHit
 
         private readonly StringBuilderData StringBuilderDatas = new StringBuilderData();
 
-#if !UNITY_EDITOR
         void Start()
         {
             Animator_HitUI = GetComponent<Animator>();
@@ -137,8 +136,11 @@ namespace GamePanelHUDHit
 
             DamageValue = _HpValue.transform.parent.parent.GetComponent<RectTransform>();
 
+#if !UNITY_EDITOR
             GamePanelHUDCorePlugin.UpdateManger.Register(this);
+#endif
         }
+#if !UNITY_EDITOR
 
         public void IUpdate()
         {

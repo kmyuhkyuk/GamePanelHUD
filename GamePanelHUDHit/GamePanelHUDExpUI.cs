@@ -32,13 +32,15 @@ namespace GamePanelHUDHit
 
         private readonly StringBuilderData StringBuilderDatas = new StringBuilderData();
 
-#if !UNITY_EDITOR
         void Start()
         {
             Animator_ExpUI = GetComponent<Animator>();
 
+#if !UNITY_EDITOR
             GamePanelHUDCorePlugin.UpdateManger.Register(this);
+#endif
         }
+#if !UNITY_EDITOR
 
         public void IUpdate()
         {

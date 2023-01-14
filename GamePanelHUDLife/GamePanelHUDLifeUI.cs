@@ -81,14 +81,16 @@ namespace GamePanelHUDLife
 
         private readonly StringBuilderData StringBuilderdDatas = new StringBuilderData();
 
-#if !UNITY_EDITOR
         void Start()
         {
             Animator_UpBuffArrow = _UpBuffArrow.GetComponent<Animator>();
             Animator_DownBuffArrow = _DownBuffArrow.GetComponent<Animator>();
 
+#if !UNITY_EDITOR
             GamePanelHUDCorePlugin.UpdateManger.Register(this);
+#endif
         }
+#if !UNITY_EDITOR
 
         void OnEnable()
         {
