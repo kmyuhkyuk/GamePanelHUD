@@ -68,11 +68,13 @@ namespace GamePanelHUDCompass
 
         void CompassInfoUI()
         {
+#if !UNITY_EDITOR
             float angle = GetToAngle(HUD.Info.PlayerPosition, Where, HUD.Info.NorthDirection, HUD.SettingsData.KeyAngleOffset.Value);
 
             RealRect.anchoredPosition = new Vector2(-(angle / 15 * 120), 8);
             VirtualRect.anchoredPosition = new Vector2(-(angle / 15 * 120) - 2880, 8);
             Virtual2Rect.anchoredPosition = new Vector2(-(angle / 15 * 120) + 2880, 8);
+#endif
         }
 
 #if !UNITY_EDITOR
