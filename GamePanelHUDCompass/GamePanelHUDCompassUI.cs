@@ -43,6 +43,9 @@ namespace GamePanelHUDCompass
         private RectTransform _Azimuths;
 
         [SerializeField]
+        private Transform _AzimuthsValue;
+
+        [SerializeField]
         private TMP_Text _DirectionValue;
 
         [SerializeField]
@@ -60,8 +63,8 @@ namespace GamePanelHUDCompass
 
         void Start()
         {
-            _AzimuthsImage = _Azimuths.GetComponentsInChildren<Image>();
-            _AzimuthsAngle = _Azimuths.GetComponentsInChildren<TMP_Text>();
+            _AzimuthsImage = _AzimuthsValue.GetComponentsInChildren<Image>();
+            _AzimuthsAngle = _AzimuthsValue.GetComponentsInChildren<TMP_Text>();
             _AnglePanel = _DirectionValue.transform.parent;
 
             AngleTexts = _AzimuthsAngle.Select(x => x.text).ToArray();

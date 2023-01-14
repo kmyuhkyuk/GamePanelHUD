@@ -26,7 +26,6 @@ namespace GamePanelHUDHit
         [SerializeField]
         private GamePanelHUDHitUI _Hit;
 
-        [SerializeField]
         private GamePanelHUDHitUI _TestHit;
 
         private CanvasGroup HitGroup;

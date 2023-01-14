@@ -36,6 +36,7 @@ namespace GamePanelHUDCompass
 
         internal static Action<int> Remove;
 
+#if !UNITY_EDITOR
         void Start()
         {
             Remove = RemoveFireUI;
@@ -88,5 +89,6 @@ namespace GamePanelHUDCompass
         {
             CompassFires.Remove(id);
         }
+#endif
     }
 }
