@@ -67,8 +67,6 @@ namespace GamePanelHUDHit
             }
 
             GamePanelHUDCorePlugin.UpdateManger.Register(this);
-
-            GamePanelHUDKill.HasInfoAdd();
         }
 
         public void IUpdate()
