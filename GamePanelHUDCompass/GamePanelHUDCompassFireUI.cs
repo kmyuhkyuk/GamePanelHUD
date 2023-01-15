@@ -38,6 +38,15 @@ namespace GamePanelHUDCompass
         [SerializeField]
         private Image _Virtual2;
 
+        [SerializeField]
+        private Image _RealRed;
+
+        [SerializeField]
+        private Image _VirtualRed;
+
+        [SerializeField]
+        private Image _Virtual2Red;
+
         private Animator Animator_Fire;
 
         private RectTransform RealRect;
@@ -74,9 +83,11 @@ namespace GamePanelHUDCompass
 
             float compassX = -(angle / 15 * 120);
 
-            RealRect.anchoredPosition = new Vector2(compassX, 8);
-            VirtualRect.anchoredPosition = new Vector2(compassX - 2880, 8);
-            Virtual2Rect.anchoredPosition = new Vector2(compassX + 2880, 8);
+            float height = HUD.SettingsData.KeyCompassFireHeight.Value;
+
+            RealRect.anchoredPosition = new Vector2(compassX, height);
+            VirtualRect.anchoredPosition = new Vector2(compassX - 2880, height);
+            Virtual2Rect.anchoredPosition = new Vector2(compassX + 2880, height);
 
             if (Active)
             {

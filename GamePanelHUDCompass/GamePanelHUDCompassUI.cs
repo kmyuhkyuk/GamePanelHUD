@@ -20,6 +20,8 @@ namespace GamePanelHUDCompass
 
         public float AngleNum;
 
+        public float CompassX;
+
         public Color AzimuthsColor;
 
         public Color ArrowColor;
@@ -120,7 +122,7 @@ namespace GamePanelHUDCompass
                 _azimuthsAngle.text = StringBuilderDatas._AzimuthsAngle[i].StringConcat("<color=", AzimuthsAngleColor, ">", AngleTexts[i], "</color>");
             }
 
-            _Azimuths.anchoredPosition = new Vector2(-(AngleNum / 15 * 120), 0);
+            _Azimuths.anchoredPosition = new Vector2(CompassX, 0);
 
             string direction;
             if (AngleNum >= 45 && AngleNum < 90)

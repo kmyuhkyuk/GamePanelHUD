@@ -34,11 +34,15 @@ namespace GamePanelHUDCompass
         [SerializeField]
         private Transform _Fires;
 
+        private CanvasGroup FiresGroup;
+
         internal static Action<int> Remove;
 
 #if !UNITY_EDITOR
         void Start()
         {
+            FiresGroup = _Fires.GetComponent<CanvasGroup>();
+
             Remove = RemoveFireUI;
 
             GamePanelHUDCompassPlugin.ShowFire = ShowFire;
@@ -54,7 +58,12 @@ namespace GamePanelHUDCompass
 
             if (_Azimuths != null)
             {
-                _Azimuths.anchoredPosition = new Vector2(-(HUD.Info.Angle / 15 * 120), 0);
+                if (_Fires != null)
+                {
+                    FiresGroup.alpha = HUD.SettingsData.KeyCompassFireHUDSW.Value ? 1 : 0;
+                }
+
+                _Azimuths.anchoredPosition = new Vector2(HUD.Info.CompassX, 0);
             }
         }
 
@@ -62,25 +71,28 @@ namespace GamePanelHUDCompass
         {
             if (_Fires != null)
             {
-                if (CompassFires.TryGetValue(fireinfo.Who, out var fireui))
+                if (!fireinfo.IsSilenced || !HUD.SettingsData.KeyCompassFireSilenced.Value)
                 {
-                    fireui.Where = fireinfo.Where;
+                    if (CompassFires.TryGetValue(fireinfo.Who, out var fireui))
+                    {
+                        fireui.Where = fireinfo.Where;
 
-                    fireui.Fire();
-                }
-                else
-                {
-                    GameObject fire = Instantiate(GamePanelHUDCompassPlugin.FirePrefab, _Fires);
+                        fireui.Fire();
+                    }
+                    else
+                    {
+                        GameObject fire = Instantiate(GamePanelHUDCompassPlugin.FirePrefab, _Fires);
 
-                    GamePanelHUDCompassFireUI _fire = fire.GetComponent<GamePanelHUDCompassFireUI>();
+                        GamePanelHUDCompassFireUI _fire = fire.GetComponent<GamePanelHUDCompassFireUI>();
 
-                    _fire.Who = fireinfo.Who;
+                        _fire.Who = fireinfo.Who;
 
-                    _fire.Where = fireinfo.Where;
+                        _fire.Where = fireinfo.Where;
 
-                    _fire.Active = true;
+                        _fire.Active = true;
 
-                    CompassFires.Add(fireinfo.Who, _fire);
+                        CompassFires.Add(fireinfo.Who, _fire);
+                    }
                 }
             }
         }

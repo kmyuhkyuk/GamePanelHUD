@@ -55,11 +55,15 @@ namespace GamePanelHUDCompass
             SettingsDatas.KeyCompassHUDSW = Config.Bind<bool>(mainSettings, "罗盘指示栏显示 Compass HUD display", true);
             SettingsDatas.KeyAngleHUDSW = Config.Bind<bool>(mainSettings, "罗盘角度显示 Compass Angle HUD display", true);
 
+            SettingsDatas.KeyCompassFireHUDSW = Config.Bind<bool>(mainSettings, "罗盘开火指示栏显示 Compass Fire HUD display", true);
+            SettingsDatas.KeyCompassFireSilenced = Config.Bind<bool>(mainSettings, "罗盘开火隐藏消音 Compass Fire Hide Silenced", true);
+
             SettingsDatas.KeyAnchoredPosition = Config.Bind<Vector2>(positionScaleSettings, "指示栏位置 Anchored Position", new Vector2(0, 0));
             SettingsDatas.KeySizeDelta = Config.Bind<Vector2>(positionScaleSettings, "指示栏高度 Size Delta", new Vector2(600, 90));
             SettingsDatas.KeyLocalScale = Config.Bind<Vector2>(positionScaleSettings, "指示栏大小 Local Scale", new Vector2(1, 1));
 
             SettingsDatas.KeyAngleOffset = Config.Bind<float>(mainSettings, "角度偏移 Angle Offset", 0);
+            SettingsDatas.KeyCompassFireHeight = Config.Bind<float>(mainSettings, "罗盘开火高度 Compass Fire Height", 8);
 
             SettingsDatas.KeyArrowColor = Config.Bind<Color>(colorSettings, "指针 Arrow", new Color(1f, 1f, 1f));
             SettingsDatas.KeyAzimuthsColor = Config.Bind<Color>(colorSettings, "刻度 Azimuths", new Color(0.8901961f, 0.8901961f, 0.8392157f));
@@ -129,6 +133,14 @@ namespace GamePanelHUDCompass
             public float Angle;
 
             public Vector3 PlayerPosition;
+
+            public float CompassX
+            {
+                get
+                {
+                    return -(Angle / 15 * 120);
+                }
+            }
         }
 
         public struct CompassFireInfo
@@ -148,12 +160,15 @@ namespace GamePanelHUDCompass
         {
             public ConfigEntry<bool> KeyCompassHUDSW;
             public ConfigEntry<bool> KeyAngleHUDSW;
+            public ConfigEntry<bool> KeyCompassFireHUDSW;
+            public ConfigEntry<bool> KeyCompassFireSilenced;
 
             public ConfigEntry<Vector2> KeyAnchoredPosition;
             public ConfigEntry<Vector2> KeySizeDelta;
             public ConfigEntry<Vector2> KeyLocalScale;
 
             public ConfigEntry<float> KeyAngleOffset;
+            public ConfigEntry<float> KeyCompassFireHeight;
 
             public ConfigEntry<Color> KeyArrowColor;
             public ConfigEntry<Color> KeyAzimuthsColor;
