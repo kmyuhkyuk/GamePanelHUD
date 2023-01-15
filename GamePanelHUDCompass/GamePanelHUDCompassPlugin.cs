@@ -37,7 +37,7 @@ namespace GamePanelHUDCompass
 
         private readonly SettingsData SettingsDatas = new SettingsData();
 
-        internal static GameObject FirePrefab;
+        internal static GameObject FirePrefab { get; private set; }
 
         internal static Action<CompassFireInfo> ShowFire;
 
@@ -79,7 +79,9 @@ namespace GamePanelHUDCompass
 
         private void Awake()
         {
-            GamePanelHUDCorePlugin.HUDCoreClass.LoadHUD("gamepanlcompasshud.bundle", "gamepanlcompasshud");
+            BundleHelp.AssetData<GameObject> prefabs = GamePanelHUDCorePlugin.HUDCoreClass.LoadHUD("gamepanlcompasshud.bundle", "gamepanlcompasshud");
+
+            FirePrefab = prefabs.Asset["fire"];
         }
 
         public void IUpdate()
@@ -96,21 +98,19 @@ namespace GamePanelHUDCompass
 
             if (HUDCore.HasPlayer)
             {
-                Player yourPlayer = HUDCore.YourPlayer;
-
-                Cam = yourPlayer.CameraPosition;
+                Cam = HUDCore.YourPlayer.CameraPosition;
 
                 CompassInfos.NorthDirection = NorthDirection;
                 
-                CompassInfos.Angle = GetAngle(Cam, NorthDirection, SettingsDatas.KeyAngleOffset.Value);
+                CompassInfos.Angle = GetAngle(Cam.eulerAngles, NorthDirection, SettingsDatas.KeyAngleOffset.Value);
 
-                CompassInfos.PlayerPosition = yourPlayer.Position;
+                CompassInfos.PlayerPosition = Cam.position;
             }
         }
 
-        float GetAngle(Transform transform, float northdirection, float offset)
+        float GetAngle(Vector3 eulerangles, float northdirection, float offset)
         {
-            float num = transform.eulerAngles.y - northdirection + offset;
+            float num = eulerangles.y - northdirection + offset;
 
             if (num >= 0)
             {
@@ -138,6 +138,8 @@ namespace GamePanelHUDCompass
             public Vector3 Where;
 
             public float Distance;
+
+            public WildSpawnType Role;
 
             public bool IsSilenced;
         }
