@@ -154,6 +154,13 @@ namespace GamePanelHUDCompass
             public WildSpawnType Role;
 
             public bool IsSilenced;
+
+            public enum HideDirection
+            {
+                None,
+                Left,
+                Right
+            }
         }
 
         public class SettingsData
