@@ -58,8 +58,6 @@ namespace GamePanelHUDHit
 
         private CanvasGroup TestExpGroup;
 
-        internal static Action HasInfoAdd;
-
         internal static Action HasInfoMinu;
 
         internal static Action HasWaitInfoMinu;
@@ -86,7 +84,6 @@ namespace GamePanelHUDHit
                 TestExpGroup = _TestExp.GetComponent<CanvasGroup>();
             }
 
-            HasInfoAdd = InfoAdd;
             HasInfoMinu = InfoMinu;
             HasWaitInfoMinu = WaitInfoMinu;
 
@@ -184,6 +181,9 @@ namespace GamePanelHUDHit
                 hasKills.Add(AddKillInfo(killinfo, HUD.SettingsData, kills, baseExp));
 
                 int hasKillsCount = hasKills.Count;
+
+                NowHasInfo =+ hasKillsCount;
+                WaitInfo =+hasKillsCount;
 
                 int count = hasKillsCount - 1;
 
@@ -394,12 +394,6 @@ namespace GamePanelHUDHit
             _kill.Active = true;
 
             return _kill;
-        }
-
-        void InfoAdd()
-        {
-            NowHasInfo++;
-            WaitInfo++;
         }
 
         void InfoMinu()
