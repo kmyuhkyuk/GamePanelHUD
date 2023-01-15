@@ -40,7 +40,7 @@ namespace GamePanelHUDCompass.Patches
                 Who = ____player.Id,
                 Where = weaponPosition,
                 Role = ReflectionDatas.RefRole.GetValue(ReflectionDatas.RefSettings.GetValue(____player.Profile.Info)),
-                IsSilenced = __instance.IsSilenced,
+                IsSilenced = __instance.IsSilenced && !__instance.IsInLauncherMode(),
                 Distance = Vector3.Distance(weaponPosition, yourPlayer.Position)
             };
 
