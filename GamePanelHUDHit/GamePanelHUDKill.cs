@@ -86,11 +86,11 @@ namespace GamePanelHUDHit
                 TestExpGroup = _TestExp.GetComponent<CanvasGroup>();
             }
 
-            GamePanelHUDHitPlugin.ShowKill = ShowKill;
-
             HasInfoAdd = InfoAdd;
             HasInfoMinu = InfoMinu;
             HasWaitInfoMinu = WaitInfoMinu;
+
+            GamePanelHUDHitPlugin.ShowKill = ShowKill;
 
             GamePanelHUDCorePlugin.UpdateManger.Register(this);
         }

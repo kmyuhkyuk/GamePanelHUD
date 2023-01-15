@@ -40,8 +40,6 @@ namespace GamePanelHUDHit
 
         public FontStyles TextFontStyles;
 
-        public FontStyles XpStyles;
-
         public GamePanelHUDKillUI After;
 
         [SerializeField]
@@ -59,6 +57,15 @@ namespace GamePanelHUDHit
         {
             Animator_KillUI = GetComponent<Animator>();
 
+            _TextValue.fontStyle = TextFontStyles;
+
+            _XpValue.fontStyle = HUD.SettingsData.KeyKillXpStyles.Value;
+
+            if (HasXp)
+            {
+                _XpValue.text = StringBuilderDatas._XpValue.StringConcat("<color=", HUD.SettingsData.KeyKillXpColor.Value.ColorToHtml(), ">", Xp, "</color>");
+            }
+
             GamePanelHUDCorePlugin.UpdateManger.Register(this);
 
             GamePanelHUDKill.HasInfoAdd();
@@ -71,15 +78,6 @@ namespace GamePanelHUDHit
 
         void KillUI()
         {
-            _TextValue.fontStyle = TextFontStyles;
-
-            _XpValue.fontStyle = XpStyles;
-
-            if (HasXp)
-            {
-                _XpValue.text = StringBuilderDatas._XpValue.StringConcat("<color=", HUD.SettingsData.KeyKillXpColor.Value.ColorToHtml(), ">", Xp, "</color>");
-            }
-
             Animator_KillUI.SetFloat(AnimatorHash.Speed, HUD.SettingsData.KeyKillWaitSpeed.Value);
 
             if (Active)

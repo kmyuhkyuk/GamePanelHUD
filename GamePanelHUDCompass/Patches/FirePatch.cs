@@ -33,6 +33,8 @@ namespace GamePanelHUDCompass.Patches
 
             Vector3 weaponPosition = __instance.WeaponRoot.position;
 
+            //if (____player != yourPlayer)
+
             GamePanelHUDCompassPlugin.CompassFireInfo fireInfo = new GamePanelHUDCompassPlugin.CompassFireInfo()
             {
                 Who = ____player.Id,
