@@ -1,13 +1,12 @@
-﻿using EFT;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+using TMPro;
+using EFT;
 using EFT.UI;
 using GamePanelHUDCore;
 using GamePanelHUDCore.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
 
 namespace GamePanelHUDCompass
 {
@@ -34,6 +33,12 @@ namespace GamePanelHUDCompass
         [SerializeField]
         private Transform _Fires;
 
+        [SerializeField]
+        private TMP_Text _FireLeft;
+
+        [SerializeField]
+        private TMP_Text _FireRight;
+
         private CanvasGroup FiresGroup;
 
         internal static Action<int> Remove;
@@ -58,12 +63,14 @@ namespace GamePanelHUDCompass
 
             if (_Azimuths != null)
             {
-                if (_Fires != null)
-                {
-                    FiresGroup.alpha = HUD.SettingsData.KeyCompassFireHUDSW.Value ? 1 : 0;
-                }
+                FiresGroup.alpha = HUD.SettingsData.KeyCompassFireHUDSW.Value ? 1 : 0;
 
                 _Azimuths.anchoredPosition = new Vector2(HUD.Info.CompassX, 0);
+
+                IEnumerable<GamePanelHUDCompassPlugin.CompassFireInfo.HideDirection> directions = CompassFires.Values.Select(x => x.GetDirection());
+
+                _FireLeft.gameObject.SetActive(directions.Contains(GamePanelHUDCompassPlugin.CompassFireInfo.HideDirection.Left));
+                _FireRight.gameObject.SetActive(directions.Contains(GamePanelHUDCompassPlugin.CompassFireInfo.HideDirection.Right));
             }
         }
 
