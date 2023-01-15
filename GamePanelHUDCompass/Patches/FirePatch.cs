@@ -5,12 +5,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using EFT;
 using GamePanelHUDCore;
+using GamePanelHUDCore.Utils;
 
 namespace GamePanelHUDCompass.Patches
 {
     public class FirePatch : ModulePatch
     {
+        private static ReflectionData ReflectionDatas = new ReflectionData();
+
         public static List<GamePanelHUDCompassPlugin.CompassFireInfo> Test = new List<GamePanelHUDCompassPlugin.CompassFireInfo>();
+
+        static FirePatch()
+        {
+            ReflectionDatas.RefSettings = RefHelp.FieldRef<InfoClass, object>.Create(typeof(InfoClass), "Settings");
+            ReflectionDatas.RefRole = RefHelp.FieldRef<object, WildSpawnType>.Create(ReflectionDatas.RefSettings.FieldType, "Role");
+        }
 
         protected override MethodBase GetTargetMethod()
         {
@@ -22,22 +31,26 @@ namespace GamePanelHUDCompass.Patches
         {
             Player yourPlayer = GamePanelHUDCorePlugin.HUDCore.YourPlayer;
 
-            if (____player != yourPlayer)
+            Vector3 weaponPosition = __instance.WeaponRoot.position;
+
+            GamePanelHUDCompassPlugin.CompassFireInfo fireInfo = new GamePanelHUDCompassPlugin.CompassFireInfo()
             {
-                Vector3 weaponPosition = __instance.WeaponRoot.position;
+                Who = ____player.Id,
+                Where = weaponPosition,
+                Role = ReflectionDatas.RefRole.GetValue(ReflectionDatas.RefSettings.GetValue(____player.Profile.Info)),
+                IsSilenced = __instance.IsSilenced,
+                Distance = Vector3.Distance(weaponPosition, yourPlayer.Position)
+            };
 
-                GamePanelHUDCompassPlugin.CompassFireInfo fireInfo = new GamePanelHUDCompassPlugin.CompassFireInfo()
-                {
-                    Who = ____player.Id,
-                    Where = weaponPosition,
-                    IsSilenced = __instance.IsSilenced,
-                    Distance = Vector3.Distance(weaponPosition, yourPlayer.Position)
-                };
+            Test.Add(fireInfo);
 
-                Test.Add(fireInfo);
+            GamePanelHUDCompassPlugin.ShowFire(fireInfo);
+        }
 
-                GamePanelHUDCompassPlugin.ShowFire(fireInfo);
-            }
+        public class ReflectionData
+        {
+            public RefHelp.FieldRef<InfoClass, object> RefSettings;
+            public RefHelp.FieldRef<object, WildSpawnType> RefRole;
         }
     }
 }

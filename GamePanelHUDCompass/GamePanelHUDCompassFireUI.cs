@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using System;
 #if !UNITY_EDITOR
 using GamePanelHUDCore;
 #endif
@@ -71,9 +72,18 @@ namespace GamePanelHUDCompass
 #if !UNITY_EDITOR
             float angle = GetToAngle(HUD.Info.PlayerPosition, Where, HUD.Info.NorthDirection, HUD.SettingsData.KeyAngleOffset.Value);
 
-            RealRect.anchoredPosition = new Vector2(-(angle / 15 * 120), 8);
-            VirtualRect.anchoredPosition = new Vector2(-(angle / 15 * 120) - 2880, 8);
-            Virtual2Rect.anchoredPosition = new Vector2(-(angle / 15 * 120) + 2880, 8);
+            float compassX = -(angle / 15 * 120);
+
+            RealRect.anchoredPosition = new Vector2(compassX, 8);
+            VirtualRect.anchoredPosition = new Vector2(compassX - 2880, 8);
+            Virtual2Rect.anchoredPosition = new Vector2(compassX + 2880, 8);
+
+            if (Active)
+            {
+                Animator_Fire.SetBool(AnimatorHash.Active, Active);
+
+                Active = false;
+            }
 #endif
         }
 
@@ -85,7 +95,16 @@ namespace GamePanelHUDCompass
 
         float GetToAngle(Vector3 position, Vector3 position2, float northdirection, float offset)
         {
-            return Vector3.Angle(position, position2) - northdirection + offset;
+            float num = Vector3.SignedAngle(position2 - position, -Vector3.forward, Vector3.up) - northdirection + offset; //Why is -Vector3.forward?
+
+            if (num >= 0)
+            {
+                return num;
+            }
+            else
+            {
+                return num + 360;
+            }
         }
 #endif
 
