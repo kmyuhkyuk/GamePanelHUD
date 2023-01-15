@@ -123,7 +123,6 @@ namespace GamePanelHUDCompass
         {
 #if !UNITY_EDITOR
             GamePanelHUDCompassFire.Remove(Who);
-
             GamePanelHUDCorePlugin.UpdateManger.Remove(this);
             Destroy(gameObject);
 #endif
