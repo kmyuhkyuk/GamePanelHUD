@@ -138,7 +138,7 @@ namespace GamePanelHUDCompass
 
             if (!realInPanel && !virtualInPanel)
             {
-                float right = Math.Abs(HUD.Info.Angle) - Angle;
+                float right = Math.Abs(HUD.Info.Angle - Angle);
 
                 float left = 360 - right;
 
