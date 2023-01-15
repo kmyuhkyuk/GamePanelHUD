@@ -162,7 +162,7 @@ namespace GamePanelHUDHit
                     }
 
                     text.firstVisibleCharacter = current;
-                    current--;
+                    current -= 1;
 
                     await Task.Delay(speed);
                 }
@@ -184,8 +184,8 @@ namespace GamePanelHUDHit
                 After.CanDestroy = true;
             }
 
-            GamePanelHUDCorePlugin.UpdateManger.Remove(this);
             GamePanelHUDKill.HasInfoMinu();
+            GamePanelHUDCorePlugin.UpdateManger.Remove(this);
             Destroy(gameObject);
 #endif
         }

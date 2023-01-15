@@ -58,6 +58,8 @@ namespace GamePanelHUDHit
 
         private CanvasGroup TestExpGroup;
 
+        internal static Action HasInfoAdd;
+
         internal static Action HasInfoMinu;
 
         internal static Action HasWaitInfoMinu;
@@ -182,8 +184,8 @@ namespace GamePanelHUDHit
 
                 int hasKillsCount = hasKills.Count;
 
-                NowHasInfo =+ hasKillsCount;
-                WaitInfo =+hasKillsCount;
+                NowHasInfo += hasKillsCount;
+                WaitInfo += hasKillsCount;
 
                 int count = hasKillsCount - 1;
 
@@ -193,7 +195,7 @@ namespace GamePanelHUDHit
                     {
                         Previous.After = hasKills.Last();
 
-                        count--;
+                        count -= 1;
                     }
 
                     hasKills.First().CanDestroy = true;
@@ -398,12 +400,12 @@ namespace GamePanelHUDHit
 
         void InfoMinu()
         {
-            NowHasInfo--;
+            NowHasInfo -= 1;
         }
 
         void WaitInfoMinu()
         {
-            WaitInfo--;
+            WaitInfo -= 1;
 
             if (WaitInfo == 0)
             {
