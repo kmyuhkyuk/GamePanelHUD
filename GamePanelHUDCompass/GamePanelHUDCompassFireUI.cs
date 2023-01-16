@@ -29,7 +29,7 @@ namespace GamePanelHUDCompass
 
         public Vector3 Where;
 
-        private float Angle;
+        public GamePanelHUDCompassPlugin.CompassFireInfo.HideDirection Direction;
 
         [SerializeField]
         private Image _Real;
@@ -58,6 +58,10 @@ namespace GamePanelHUDCompass
         private RectTransform Virtual2Rect;
 
         private float FireX;
+
+        bool realInPanel;
+
+        bool virtualInPanel;
 
         private float FireXLeft
         {
@@ -99,9 +103,13 @@ namespace GamePanelHUDCompass
         void CompassInfoUI()
         {
 #if !UNITY_EDITOR
-            Angle = GetToAngle(HUD.Info.PlayerPosition, Where, HUD.Info.NorthDirection, HUD.SettingsData.KeyAngleOffset.Value);
+            Vector3 lhs = Where - HUD.Info.PlayerPosition;
 
-            FireX = -(Angle / 15 * 120);
+            float angle = GetToAngle(lhs, HUD.Info.NorthDirection, HUD.SettingsData.KeyAngleOffset.Value);
+
+            FireX = -(angle / 15 * 120);
+
+            Direction = GetDirection(HUD.SettingsData.KeySizeDelta.Value.x, HUD.Info.CompassX, FireX, FireXLeft, FireXRight, RealDirection(lhs, HUD.Info.PlayerRight));
 
             float height = HUD.SettingsData.KeyCompassFireHeight.Value;
 
@@ -124,25 +132,21 @@ namespace GamePanelHUDCompass
             Animator_Fire.SetTrigger(AnimatorHash.Fire);
         }
 
-        public GamePanelHUDCompassPlugin.CompassFireInfo.HideDirection GetDirection()
+        GamePanelHUDCompassPlugin.CompassFireInfo.HideDirection GetDirection(float panelx, float compassx, float firex, float firexleft, float firexright, GamePanelHUDCompassPlugin.CompassFireInfo.HideDirection direction)
         {
-            float panelX = HUD.SettingsData.KeySizeDelta.Value.x;
+            float panelHalf = panelx / 2;
 
-            float panelMaxX = panelX / 2;
+            float panelMaxX = panelHalf + compassx;
 
-            float panelMinX = -panelMaxX;
+            float panelMinX = -panelHalf + compassx;
 
-            bool realInPanel = FireX < panelMaxX && FireX > panelMinX;
+            realInPanel = -firex < panelMaxX && -firex > panelMinX;
 
-            bool virtualInPanel = FireXLeft < panelMaxX && FireXLeft > panelMinX || FireXRight < panelMaxX && FireXRight > panelMinX;
+            virtualInPanel = -firexleft < panelMaxX && -firexleft > panelMinX || -firexright < panelMaxX && -firexright > panelMinX;
 
             if (!realInPanel && !virtualInPanel)
             {
-                float right = Math.Abs(HUD.Info.Angle - Angle);
-
-                float left = 360 - right;
-
-                return right > left ? GamePanelHUDCompassPlugin.CompassFireInfo.HideDirection.Left : GamePanelHUDCompassPlugin.CompassFireInfo.HideDirection.Right;
+                return direction;
             }
             else
             {
@@ -150,9 +154,9 @@ namespace GamePanelHUDCompass
             }
         }
 
-        float GetToAngle(Vector3 position, Vector3 position2, float northdirection, float offset)
+        float GetToAngle(Vector3 lhs, float northdirection, float offset)
         {
-            float num = Vector3.SignedAngle(position2 - position, -Vector3.forward, Vector3.up) - northdirection + offset; //Why is -Vector3.forward?
+            float num = Vector3.SignedAngle(lhs, -Vector3.forward, Vector3.up) - northdirection + offset;
 
             if (num >= 0)
             {
@@ -162,6 +166,11 @@ namespace GamePanelHUDCompass
             {
                 return num + 360;
             }
+        }
+
+        GamePanelHUDCompassPlugin.CompassFireInfo.HideDirection RealDirection(Vector3 lhs, Vector3 right)
+        {
+            return Vector3.Dot(lhs, right) < 0 ? GamePanelHUDCompassPlugin.CompassFireInfo.HideDirection.Left : GamePanelHUDCompassPlugin.CompassFireInfo.HideDirection.Right;
         }
 #endif
 

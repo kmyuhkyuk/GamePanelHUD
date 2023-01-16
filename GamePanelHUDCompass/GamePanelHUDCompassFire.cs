@@ -67,7 +67,7 @@ namespace GamePanelHUDCompass
 
                 _Azimuths.anchoredPosition = new Vector2(HUD.Info.CompassX, 0);
 
-                IEnumerable<GamePanelHUDCompassPlugin.CompassFireInfo.HideDirection> directions = CompassFires.Values.Select(x => x.GetDirection());
+                IEnumerable<GamePanelHUDCompassPlugin.CompassFireInfo.HideDirection> directions = CompassFires.Values.Select(x => x.Direction);
 
                 _FireLeft.gameObject.SetActive(directions.Contains(GamePanelHUDCompassPlugin.CompassFireInfo.HideDirection.Left));
                 _FireRight.gameObject.SetActive(directions.Contains(GamePanelHUDCompassPlugin.CompassFireInfo.HideDirection.Right));
