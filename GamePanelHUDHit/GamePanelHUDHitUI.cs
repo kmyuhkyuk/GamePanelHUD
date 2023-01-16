@@ -61,23 +61,23 @@ namespace GamePanelHUDHit
 
         public FontStyles ArmorDamageStyles;
 
-        private RectTransform LeftUp;
+        private RectTransform LeftUpRect;
 
-        private RectTransform LeftDown;
+        private RectTransform LeftDownRect;
 
-        private RectTransform RightUp;
+        private RectTransform RightUpRect;
 
-        private RectTransform RightDowm;
+        private RectTransform RightDowmRect;
 
-        private RectTransform LeftUpHead;
+        private RectTransform LeftUpHeadRect;
 
-        private RectTransform LeftDownHead;
+        private RectTransform LeftDownHeadRect;
 
-        private RectTransform RightUpHead;
+        private RectTransform RightUpHeadRect;
 
-        private RectTransform RightDowmHead;
+        private RectTransform RightDowmHeadRect;
 
-        private RectTransform DamageValue;
+        private RectTransform DamageValueRect;
 
         private Transform _Hp;
 
@@ -124,17 +124,17 @@ namespace GamePanelHUDHit
             _Hp = _HpValue.transform.parent;
             _Armor = _ArmorValue.transform.parent;
 
-            LeftUp = _LeftUp.GetComponent<RectTransform>();
-            LeftDown = _LeftDown.GetComponent<RectTransform>();
-            RightUp = _RightUp.GetComponent<RectTransform>();
-            RightDowm = _RightDowm.GetComponent<RectTransform>();
+            LeftUpRect = _LeftUp.GetComponent<RectTransform>();
+            LeftDownRect = _LeftDown.GetComponent<RectTransform>();
+            RightUpRect = _RightUp.GetComponent<RectTransform>();
+            RightDowmRect = _RightDowm.GetComponent<RectTransform>();
 
-            LeftUpHead = _LeftUpHead.GetComponent<RectTransform>();
-            LeftDownHead = _LeftDownHead.GetComponent<RectTransform>();
-            RightUpHead = _RightUpHead.GetComponent<RectTransform>();
-            RightDowmHead = _RightDowmHead.GetComponent<RectTransform>();
+            LeftUpHeadRect = _LeftUpHead.GetComponent<RectTransform>();
+            LeftDownHeadRect = _LeftDownHead.GetComponent<RectTransform>();
+            RightUpHeadRect = _RightUpHead.GetComponent<RectTransform>();
+            RightDowmHeadRect = _RightDowmHead.GetComponent<RectTransform>();
 
-            DamageValue = _HpValue.transform.parent.parent.GetComponent<RectTransform>();
+            DamageValueRect = _HpValue.transform.parent.parent.GetComponent<RectTransform>();
 
 #if !UNITY_EDITOR
             GamePanelHUDCorePlugin.UpdateManger.Register(this);
@@ -153,14 +153,14 @@ namespace GamePanelHUDHit
         void Update()
 #endif
         {
-            LeftUp.sizeDelta = HitSizeDelta;
-            LeftDown.sizeDelta = HitSizeDelta;
-            RightUp.sizeDelta = HitSizeDelta;
-            RightDowm.sizeDelta = HitSizeDelta;
+            LeftUpRect.sizeDelta = HitSizeDelta;
+            LeftDownRect.sizeDelta = HitSizeDelta;
+            RightUpRect.sizeDelta = HitSizeDelta;
+            RightDowmRect.sizeDelta = HitSizeDelta;
 
             Vector2 leftUpPos = new Vector2(-HitAnchoredPosition.x, HitAnchoredPosition.y);
             Vector2 leftDownPos = new Vector2(-HitAnchoredPosition.x, -HitAnchoredPosition.y);
-            Vector2 rightUpPos = new Vector2(HitAnchoredPosition.x, HitAnchoredPosition.y);
+            Vector2 rightUpPos = HitAnchoredPosition;
             Vector2 rightDownPos = new Vector2(HitAnchoredPosition.x, -HitAnchoredPosition.y);
 
             Vector3 leftUpRot = new Vector3(-HitLocalRotation.x, HitLocalRotation.y, HitLocalRotation.z);
@@ -168,44 +168,44 @@ namespace GamePanelHUDHit
             Vector3 rightUpRot = new Vector3(HitLocalRotation.x, HitLocalRotation.y, -HitLocalRotation.z);
             Vector3 rightDownRot = new Vector3(HitLocalRotation.x, -HitLocalRotation.y, HitLocalRotation.z);
 
-            LeftUp.anchoredPosition = leftUpPos;
-            LeftDown.anchoredPosition = leftDownPos;
-            RightUp.anchoredPosition = rightUpPos;
-            RightDowm.anchoredPosition = rightDownPos;
+            LeftUpRect.anchoredPosition = leftUpPos;
+            LeftDownRect.anchoredPosition = leftDownPos;
+            RightUpRect.anchoredPosition = rightUpPos;
+            RightDowmRect.anchoredPosition = rightDownPos;
 
-            LeftUp.localEulerAngles = leftUpRot;
-            LeftDown.localEulerAngles = leftDownRot;
-            RightUp.localEulerAngles = rightUpRot;
-            RightDowm.localEulerAngles = rightDownRot;
+            LeftUpRect.localEulerAngles = leftUpRot;
+            LeftDownRect.localEulerAngles = leftDownRot;
+            RightUpRect.localEulerAngles = rightUpRot;
+            RightDowmRect.localEulerAngles = rightDownRot;
 
-            LeftUp.localScale = HitLocalScale;
-            LeftDown.localScale = HitLocalScale;
-            RightUp.localScale = HitLocalScale;
-            RightDowm.localScale = HitLocalScale;
+            LeftUpRect.localScale = HitLocalScale;
+            LeftDownRect.localScale = HitLocalScale;
+            RightUpRect.localScale = HitLocalScale;
+            RightDowmRect.localScale = HitLocalScale;
 
-            LeftUpHead.sizeDelta = HitHeadSizeDelta;
-            LeftDownHead.sizeDelta = HitHeadSizeDelta;
-            RightUpHead.sizeDelta = HitHeadSizeDelta;
-            RightDowmHead.sizeDelta = HitHeadSizeDelta;
+            LeftUpHeadRect.sizeDelta = HitHeadSizeDelta;
+            LeftDownHeadRect.sizeDelta = HitHeadSizeDelta;
+            RightUpHeadRect.sizeDelta = HitHeadSizeDelta;
+            RightDowmHeadRect.sizeDelta = HitHeadSizeDelta;
 
-            LeftUpHead.anchoredPosition = leftUpPos;
-            LeftDownHead.anchoredPosition = leftDownPos;
-            RightUpHead.anchoredPosition = rightUpPos;
-            RightDowmHead.anchoredPosition = rightDownPos;
+            LeftUpHeadRect.anchoredPosition = leftUpPos;
+            LeftDownHeadRect.anchoredPosition = leftDownPos;
+            RightUpHeadRect.anchoredPosition = rightUpPos;
+            RightDowmHeadRect.anchoredPosition = rightDownPos;
 
-            LeftUpHead.localEulerAngles = leftUpRot;
-            LeftDownHead.localEulerAngles = leftDownRot;
-            RightUpHead.localEulerAngles = rightUpRot;
-            RightDowmHead.localEulerAngles = rightDownRot;
+            LeftUpHeadRect.localEulerAngles = leftUpRot;
+            LeftDownHeadRect.localEulerAngles = leftDownRot;
+            RightUpHeadRect.localEulerAngles = rightUpRot;
+            RightDowmHeadRect.localEulerAngles = rightDownRot;
 
-            LeftUpHead.localScale = HitLocalScale;
-            LeftDownHead.localScale = HitLocalScale;
-            RightUpHead.localScale = HitLocalScale;
-            RightDowmHead.localScale = HitLocalScale;
+            LeftUpHeadRect.localScale = HitLocalScale;
+            LeftDownHeadRect.localScale = HitLocalScale;
+            RightUpHeadRect.localScale = HitLocalScale;
+            RightDowmHeadRect.localScale = HitLocalScale;
 
-            DamageValue.anchoredPosition = HitDamageAnchoredPosition;
-            DamageValue.sizeDelta = HitDamageSizeDelta;
-            DamageValue.localScale = HitDamageLocalScale;
+            DamageValueRect.anchoredPosition = HitDamageAnchoredPosition;
+            DamageValueRect.sizeDelta = HitDamageSizeDelta;
+            DamageValueRect.localScale = HitDamageLocalScale;
 
             _Hp.gameObject.SetActive(DamageHUDSW);
 
