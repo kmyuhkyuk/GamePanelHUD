@@ -1,7 +1,5 @@
 ﻿using UnityEngine;
 using EFT.UI;
-using System.Collections.Generic;
-using EFT;
 #if !UNITY_EDITOR
 using GamePanelHUDCore;
 using GamePanelHUDCore.Utils;

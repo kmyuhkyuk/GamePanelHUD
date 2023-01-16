@@ -1,13 +1,13 @@
 ﻿#if !UNITY_EDITOR
 using BepInEx;
 using BepInEx.Configuration;
+using System;
 using UnityEngine;
 using TMPro;
+using EFT;
 using GamePanelHUDCore;
 using GamePanelHUDCompass.Patches;
 using GamePanelHUDCore.Utils;
-using EFT;
-using System;
 
 namespace GamePanelHUDCompass
 {
