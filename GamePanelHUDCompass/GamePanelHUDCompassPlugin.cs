@@ -109,6 +109,8 @@ namespace GamePanelHUDCompass
                 CompassInfos.Angle = GetAngle(Cam.eulerAngles, NorthDirection, SettingsDatas.KeyAngleOffset.Value);
 
                 CompassInfos.PlayerPosition = Cam.position;
+
+                CompassInfos.PlayerRight = Cam.right;
             }
         }
 
@@ -133,6 +135,8 @@ namespace GamePanelHUDCompass
             public float Angle;
 
             public Vector3 PlayerPosition;
+
+            public Vector3 PlayerRight;
 
             public float CompassX
             {
