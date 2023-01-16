@@ -13,8 +13,6 @@ namespace GamePanelHUDCompass.Patches
     {
         private static ReflectionData ReflectionDatas = new ReflectionData();
 
-        public static List<GamePanelHUDCompassPlugin.CompassFireInfo> Test = new List<GamePanelHUDCompassPlugin.CompassFireInfo>();
-
         static FirePatch()
         {
             ReflectionDatas.RefSettings = RefHelp.FieldRef<InfoClass, object>.Create(typeof(InfoClass), "Settings");
@@ -33,20 +31,19 @@ namespace GamePanelHUDCompass.Patches
 
             Vector3 weaponPosition = __instance.WeaponRoot.position;
 
-            //if (____player != yourPlayer)
-
-            GamePanelHUDCompassPlugin.CompassFireInfo fireInfo = new GamePanelHUDCompassPlugin.CompassFireInfo()
+            if (____player != yourPlayer)
             {
-                Who = ____player.Id,
-                Where = weaponPosition,
-                Role = ReflectionDatas.RefRole.GetValue(ReflectionDatas.RefSettings.GetValue(____player.Profile.Info)),
-                IsSilenced = __instance.IsSilenced && !__instance.IsInLauncherMode(),
-                Distance = Vector3.Distance(weaponPosition, yourPlayer.Position)
-            };
+                GamePanelHUDCompassPlugin.CompassFireInfo fireInfo = new GamePanelHUDCompassPlugin.CompassFireInfo()
+                {
+                    Who = ____player.Id,
+                    Where = weaponPosition,
+                    Role = ReflectionDatas.RefRole.GetValue(ReflectionDatas.RefSettings.GetValue(____player.Profile.Info)),
+                    IsSilenced = __instance.IsSilenced && !__instance.IsInLauncherMode(),
+                    Distance = Vector3.Distance(weaponPosition, yourPlayer.Position)
+                };
 
-            Test.Add(fireInfo);
-
-            GamePanelHUDCompassPlugin.ShowFire(fireInfo);
+                GamePanelHUDCompassPlugin.ShowFire(fireInfo);
+            }
         }
 
         public class ReflectionData
