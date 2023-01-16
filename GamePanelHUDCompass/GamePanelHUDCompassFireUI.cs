@@ -59,10 +59,6 @@ namespace GamePanelHUDCompass
 
         private float FireX;
 
-        bool realInPanel;
-
-        bool virtualInPanel;
-
         private float FireXLeft
         {
             get
@@ -140,9 +136,9 @@ namespace GamePanelHUDCompass
 
             float panelMinX = -panelHalf + compassx;
 
-            realInPanel = -firex < panelMaxX && -firex > panelMinX;
+            bool realInPanel = -firex < panelMaxX && -firex > panelMinX;
 
-            virtualInPanel = -firexleft < panelMaxX && -firexleft > panelMinX || -firexright < panelMaxX && -firexright > panelMinX;
+            bool virtualInPanel = -firexleft < panelMaxX && -firexleft > panelMinX || -firexright < panelMaxX && -firexright > panelMinX;
 
             if (!realInPanel && !virtualInPanel)
             {
