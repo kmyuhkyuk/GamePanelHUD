@@ -33,6 +33,8 @@ namespace GamePanelHUDCompass
 
         private bool CompassHUDSW;
 
+        private bool CompassFireHUDSW;
+
         private Transform Cam;
 
         private readonly SettingsData SettingsDatas = new SettingsData();
@@ -114,9 +116,10 @@ namespace GamePanelHUDCompass
         void CompassPlugin()
         {
             CompassHUDSW = HUDCore.AllHUDSW && Cam != null && HUDCore.HasPlayer && SettingsDatas.KeyCompassHUDSW.Value;
+            CompassFireHUDSW = CompassHUDSW && SettingsDatas.KeyCompassFireHUDSW.Value;
 
             CompassHUD.Set(CompassInfos, SettingsDatas, CompassHUDSW);
-            CompassFireHUD.Set(CompassInfos, SettingsDatas, CompassHUDSW);
+            CompassFireHUD.Set(CompassInfos, SettingsDatas, CompassFireHUDSW);
 
             if (HUDCore.HasPlayer)
             {

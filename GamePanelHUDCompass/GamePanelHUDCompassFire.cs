@@ -73,7 +73,7 @@ namespace GamePanelHUDCompass
 
             if (_Azimuths != null)
             {
-                FiresGroup.alpha = HUD.SettingsData.KeyCompassFireHUDSW.Value ? 1 : 0;
+                FiresGroup.alpha = HUD.HUDSW ? 1 : 0;
 
                 _Azimuths.anchoredPosition = new Vector2(HUD.Info.CompassX, 0);
 
