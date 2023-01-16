@@ -29,7 +29,7 @@ namespace GamePanelHUDCompass
 
         public Vector3 Where;
 
-        public GamePanelHUDCompassPlugin.CompassFireInfo.HideDirection Direction;
+        public GamePanelHUDCompassPlugin.CompassFireInfo.HideDirection Direction { get; private set; }
 
         [SerializeField]
         private Image _Real;
