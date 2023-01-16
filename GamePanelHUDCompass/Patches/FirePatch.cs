@@ -1,7 +1,6 @@
 ﻿#if !UNITY_EDITOR
 using Aki.Reflection.Patching;
 using System.Reflection;
-using System.Collections.Generic;
 using UnityEngine;
 using EFT;
 using GamePanelHUDCore;

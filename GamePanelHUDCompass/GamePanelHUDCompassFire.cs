@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using TMPro;
-using EFT;
 using EFT.UI;
 using GamePanelHUDCore;
 using GamePanelHUDCore.Utils;
