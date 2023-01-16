@@ -25,20 +25,32 @@ namespace GamePanelHUDCompass
 
         public bool Active;
 
+        public bool IsBoss;
+
+        public bool IsFollower;
+
+        public bool? IsLeft { get; private set; }
+
         public int Who;
 
         public Vector3 Where;
 
-        public GamePanelHUDCompassPlugin.CompassFireInfo.HideDirection Direction { get; private set; }
+        public Color FireColor;
+
+        public Color OutlineColor;
+
+        public Vector2 FireSizeDelta;
+
+        public Vector2 OutlineSizeDelta;
 
         [SerializeField]
-        private Image _Real;
+        private Image _RealOutline;
 
         [SerializeField]
-        private Image _Virtual;
+        private Image _VirtualOutline;
 
         [SerializeField]
-        private Image _Virtual2;
+        private Image _Virtual2Outline;
 
         [SerializeField]
         private Image _RealRed;
@@ -56,6 +68,18 @@ namespace GamePanelHUDCompass
         private RectTransform VirtualRect;
 
         private RectTransform Virtual2Rect;
+
+        private RectTransform RealOutlineRect;
+
+        private RectTransform VirtualOutlineRect;
+
+        private RectTransform Virtual2OutlineRect;
+
+        private RectTransform RealRedRect;
+
+        private RectTransform VirtualRedRect;
+
+        private RectTransform Virtual2RedRect;
 
         private float FireX;
 
@@ -80,9 +104,33 @@ namespace GamePanelHUDCompass
         {
             Animator_Fire = GetComponent<Animator>();
 
-            RealRect = _Real.GetComponent<RectTransform>();
-            VirtualRect = _Virtual.GetComponent<RectTransform>();
-            Virtual2Rect = _Virtual2.GetComponent<RectTransform>();
+            RealOutlineRect = _RealOutline.GetComponent<RectTransform>();
+            VirtualOutlineRect = _VirtualOutline.GetComponent<RectTransform>();
+            Virtual2OutlineRect = _Virtual2Outline.GetComponent<RectTransform>();
+
+            RealRedRect = _RealRed.GetComponent<RectTransform>();
+            VirtualRedRect = _VirtualRed.GetComponent<RectTransform>();
+            Virtual2RedRect = _Virtual2Red.GetComponent<RectTransform>();
+
+            RealRect = RealRedRect.parent.GetComponent<RectTransform>();
+            VirtualRect = VirtualRedRect.parent.GetComponent<RectTransform>();
+            Virtual2Rect = Virtual2RedRect.parent.GetComponent<RectTransform>();
+
+            RealOutlineRect.sizeDelta = OutlineSizeDelta;
+            VirtualOutlineRect.sizeDelta = OutlineSizeDelta;
+            Virtual2OutlineRect.sizeDelta = OutlineSizeDelta;
+
+            RealRedRect.sizeDelta = FireSizeDelta;
+            VirtualRedRect.sizeDelta = FireSizeDelta;
+            Virtual2RedRect.sizeDelta = FireSizeDelta;
+
+            _RealOutline.color = OutlineColor;
+            _VirtualOutline.color = OutlineColor;
+            _Virtual2Outline.color = OutlineColor;
+
+            _RealRed.color = FireColor;
+            _VirtualRed.color = FireColor;
+            _Virtual2Red.color = FireColor;
 
             GamePanelHUDCorePlugin.UpdateManger.Register(this);
         }
@@ -105,13 +153,11 @@ namespace GamePanelHUDCompass
 
             FireX = -(angle / 15 * 120);
 
-            Direction = GetDirection(HUD.SettingsData.KeySizeDelta.Value.x, HUD.Info.CompassX, FireX, FireXLeft, FireXRight, RealDirection(lhs, HUD.Info.PlayerRight));
+            IsLeft = GetDirection(HUD.SettingsData.KeySizeDelta.Value.x, HUD.Info.CompassX, FireX, FireXLeft, FireXRight, RealDirection(lhs, HUD.Info.PlayerRight));
 
-            float height = HUD.SettingsData.KeyCompassFireHeight.Value;
-
-            RealRect.anchoredPosition = new Vector2(FireX, height);
-            VirtualRect.anchoredPosition = new Vector2(FireXLeft, height);
-            Virtual2Rect.anchoredPosition = new Vector2(FireXRight, height);
+            RealRect.anchoredPosition = new Vector2(FireX, HUD.SettingsData.KeyCompassFireHeight.Value);
+            VirtualRect.anchoredPosition = new Vector2(FireXLeft, HUD.SettingsData.KeyCompassFireHeight.Value);
+            Virtual2Rect.anchoredPosition = new Vector2(FireXRight, HUD.SettingsData.KeyCompassFireHeight.Value);
 
             if (Active)
             {
@@ -128,7 +174,7 @@ namespace GamePanelHUDCompass
             Animator_Fire.SetTrigger(AnimatorHash.Fire);
         }
 
-        GamePanelHUDCompassPlugin.CompassFireInfo.HideDirection GetDirection(float panelx, float compassx, float firex, float firexleft, float firexright, GamePanelHUDCompassPlugin.CompassFireInfo.HideDirection direction)
+        bool? GetDirection(float panelx, float compassx, float firex, float firexleft, float firexright, bool direction)
         {
             float panelHalf = panelx / 2;
 
@@ -146,13 +192,13 @@ namespace GamePanelHUDCompass
             }
             else
             {
-                return GamePanelHUDCompassPlugin.CompassFireInfo.HideDirection.None;
+                return default;
             }
         }
 
         float GetToAngle(Vector3 lhs, float northdirection, float offset)
         {
-            float num = Vector3.SignedAngle(lhs, -Vector3.forward, Vector3.up) - northdirection + offset;
+            float num = Vector3.SignedAngle(lhs, -Vector3.forward, Vector3.up) - northdirection + offset; //Why is -Vector3.forward?
 
             if (num >= 0)
             {
@@ -164,9 +210,9 @@ namespace GamePanelHUDCompass
             }
         }
 
-        GamePanelHUDCompassPlugin.CompassFireInfo.HideDirection RealDirection(Vector3 lhs, Vector3 right)
+        bool RealDirection(Vector3 lhs, Vector3 right)
         {
-            return Vector3.Dot(lhs, right) < 0 ? GamePanelHUDCompassPlugin.CompassFireInfo.HideDirection.Left : GamePanelHUDCompassPlugin.CompassFireInfo.HideDirection.Right;
+            return Vector3.Dot(lhs, right) < 0 ? true : false;
         }
 #endif
 
