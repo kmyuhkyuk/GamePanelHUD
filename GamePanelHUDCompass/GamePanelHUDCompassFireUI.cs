@@ -2,8 +2,8 @@
 using UnityEngine.UI;
 #if !UNITY_EDITOR
 using GamePanelHUDCore;
-#endif
 using GamePanelHUDCore.Utils;
+#endif
 
 namespace GamePanelHUDCompass
 {
