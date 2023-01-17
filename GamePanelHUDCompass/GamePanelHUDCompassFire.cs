@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Text;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using EFT.UI;
+#if !UNITY_EDITOR
 using GamePanelHUDCore;
 using GamePanelHUDCore.Utils;
-using System.Text;
+#endif
 
 namespace GamePanelHUDCompass
 {

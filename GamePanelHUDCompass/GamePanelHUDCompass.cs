@@ -4,6 +4,7 @@ using EFT.UI;
 using GamePanelHUDCore;
 using GamePanelHUDCore.Utils;
 #endif
+
 namespace GamePanelHUDCompass
 {
     public class GamePanelHUDCompass : UIElement
