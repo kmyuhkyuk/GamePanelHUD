@@ -30,6 +30,8 @@ namespace GamePanelHUDCompass
 
         public bool? IsLeft { get; private set; }
 
+        public bool IsDestroy { get; private set; }
+
         public int Who;
 
         public Vector3 Where;
@@ -175,7 +177,7 @@ namespace GamePanelHUDCompass
 #if !UNITY_EDITOR
             Vector3 lhs = Where - HUD.Info.PlayerPosition;
 
-            float angle = GetToAngle(lhs, HUD.Info.NorthDirection, HUD.SettingsData.KeyAngleOffset.Value);
+            float angle = GetToAngle(lhs, HUD.Info.NorthVector, HUD.SettingsData.KeyAngleOffset.Value);
 
             FireX = -(angle / 15 * 120);
 
@@ -223,9 +225,9 @@ namespace GamePanelHUDCompass
             }
         }
 
-        float GetToAngle(Vector3 lhs, float northdirection, float offset)
+        float GetToAngle(Vector3 lhs, Vector3 northvector, float offset)
         {
-            float num = Vector3.SignedAngle(lhs, -Vector3.forward, Vector3.up) - northdirection + offset; //Why is -Vector3.forward?
+            float num = Vector3.SignedAngle(lhs, northvector, Vector3.up) + offset;
 
             if (num >= 0)
             {
@@ -246,6 +248,8 @@ namespace GamePanelHUDCompass
         void Destroy()
         {
 #if !UNITY_EDITOR
+            IsDestroy = true;
+
             GamePanelHUDCompassFire.Remove(Who);
             GamePanelHUDCorePlugin.UpdateManger.Remove(this);
             Destroy(gameObject);

@@ -31,6 +31,8 @@ namespace GamePanelHUDCompass
 
         internal static float NorthDirection;
 
+        internal static Vector3 NorthVector;
+
         private bool CompassHUDSW;
 
         private bool CompassFireHUDSW;
@@ -125,8 +127,8 @@ namespace GamePanelHUDCompass
             {
                 Cam = HUDCore.YourPlayer.CameraPosition;
 
-                CompassInfos.NorthDirection = NorthDirection;
-                
+                CompassInfos.NorthVector = NorthVector;
+
                 CompassInfos.Angle = GetAngle(Cam.eulerAngles, NorthDirection, SettingsDatas.KeyAngleOffset.Value);
 
                 CompassInfos.PlayerPosition = Cam.position;
@@ -151,7 +153,7 @@ namespace GamePanelHUDCompass
 
         public class CompassInfo
         {
-            public float NorthDirection;
+            public Vector3 NorthVector;
 
             public float Angle;
 
