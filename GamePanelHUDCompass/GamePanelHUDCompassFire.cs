@@ -173,7 +173,7 @@ namespace GamePanelHUDCompass
                         else if (isFollower)
                         {
                             _fire.FireColor = HUD.SettingsData.KeyCompassFireFollowerColor.Value;
-                            _fire.OutlineColor = HUD.SettingsData.KeyCompassFireBossOutlineColor.Value;
+                            _fire.OutlineColor = HUD.SettingsData.KeyCompassFireFollowerOutlineColor.Value;
                         }
                         else
                         {
