@@ -156,7 +156,7 @@ namespace GamePanelHUDCore.Utils
             {
                 GUILayout.BeginVertical();
 
-                GUILayout.Label("有新版本 Has New Version", Yellow);
+                GUILayout.Label("有新版本 Have Latest version", Yellow);
 
                 GUILayout.Label(string.Concat("最新版本 Latest Version: ", HUDVersions.ModVersion), Yellow);
 
@@ -184,7 +184,7 @@ namespace GamePanelHUDCore.Utils
 
             public static void NotNeedUpdate(ConfigEntryBase entry)
             {
-                GUILayout.Label("没有新版本 Not Has New Version", Green);
+                GUILayout.Label("已经是最新版本 Already is latest version", Green);
 
                 GUILayout.BeginVertical();
 
