@@ -186,6 +186,11 @@ namespace GamePanelHUDCompass
             Virtual2Rect.anchoredPosition = new Vector2(FireXRight, HUD.SettingsData.KeyCompassFireHeight.Value);
             Virtual3Rect.anchoredPosition = new Vector2(FireXRightRight, HUD.SettingsData.KeyCompassFireHeight.Value);
 
+            Animator_Fire.SetFloat(AnimatorHash.Active, HUD.SettingsData.KeyCompassFireActiveSpeed.Value);
+            Animator_Fire.SetFloat(AnimatorHash.Speed, HUD.SettingsData.KeyCompassFireWaitSpeed.Value);
+            Animator_Fire.SetFloat(AnimatorHash.ToSmallSpeed, HUD.SettingsData.KeyCompassFireToSmallSpeed.Value);
+            Animator_Fire.SetFloat(AnimatorHash.SmallSpeed, HUD.SettingsData.KeyCompassFireSmallWaitSpeed.Value);
+
             if (Active)
             {
                 Animator_Fire.SetBool(AnimatorHash.Active, Active);

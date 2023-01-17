@@ -55,6 +55,7 @@ namespace GamePanelHUDCompass
             const string positionScaleSettings = "位置大小设置 Position Scale Settings";
             const string colorSettings = "颜色设置 Color Settings";
             const string fontStylesSettings = "字体样式设置 Font Styles Settings";
+            const string speedSettings = "动画速度设置 Animation Speed Settings";
             const string otherSettings = "其他设置 Other Settings";
 
             SettingsDatas.KeyCompassHUDSW = Config.Bind<bool>(mainSettings, "罗盘指示栏显示 Compass HUD display", true);
@@ -72,6 +73,11 @@ namespace GamePanelHUDCompass
             SettingsDatas.KeyCompassFireOutlineSizeDelta = Config.Bind<Vector2>(positionScaleSettings, "罗盘开火轮廓高度 Compass Fire Outline Size Delta", new Vector2(26, 26));
             SettingsDatas.KeyCompassFireDirectionAnchoredPosition = Config.Bind<Vector2>(positionScaleSettings, "罗盘开火方向位置 Compass Fire Direction Anchored Position", new Vector2(15, -63));
             SettingsDatas.KeyCompassFireDirectionScale = Config.Bind<Vector2>(positionScaleSettings, "罗盘开火方向大小 Compass Fire Direction Local Scale", new Vector2(1, 1));
+
+            SettingsDatas.KeyCompassFireActiveSpeed = Config.Bind<float>(speedSettings, "罗盘开火激活速度 Compass Fire Active Speed", 1, new ConfigDescription("", new AcceptableValueRange<float>(0, 10)));
+            SettingsDatas.KeyCompassFireWaitSpeed = Config.Bind<float>(speedSettings, "罗盘开火等待速度 Compass Fire Wait Speed", 1, new ConfigDescription("", new AcceptableValueRange<float>(0, 10)));
+            SettingsDatas.KeyCompassFireToSmallSpeed = Config.Bind<float>(speedSettings, "罗盘开火变小速度 Compass Fire To Small Speed", 1, new ConfigDescription("", new AcceptableValueRange<float>(0, 10)));
+            SettingsDatas.KeyCompassFireSmallWaitSpeed = Config.Bind<float>(speedSettings, "罗盘开火变小等待速度 Compass Fire Small Wait Speed", 1, new ConfigDescription("", new AcceptableValueRange<float>(0, 10)));
 
             SettingsDatas.KeyAngleOffset = Config.Bind<float>(otherSettings, "角度偏移 Angle Offset", 0);
 
@@ -202,6 +208,10 @@ namespace GamePanelHUDCompass
             public ConfigEntry<float> KeyAngleOffset;
             public ConfigEntry<float> KeyCompassFireHeight;
             public ConfigEntry<float> KeyCompassFireDistance;
+            public ConfigEntry<float> KeyCompassFireActiveSpeed;
+            public ConfigEntry<float> KeyCompassFireWaitSpeed;
+            public ConfigEntry<float> KeyCompassFireToSmallSpeed;
+            public ConfigEntry<float> KeyCompassFireSmallWaitSpeed;
 
             public ConfigEntry<Color> KeyArrowColor;
             public ConfigEntry<Color> KeyAzimuthsColor;
