@@ -16,6 +16,7 @@ namespace GamePanelHUDCompass.Patches
         private static void PatchPostfix(LevelSettings __instance)
         {
             GamePanelHUDCompassPlugin.NorthDirection = __instance.NorthDirection;
+            GamePanelHUDCompassPlugin.NorthVector = __instance.NorthVector; 
         }
     }
 }
