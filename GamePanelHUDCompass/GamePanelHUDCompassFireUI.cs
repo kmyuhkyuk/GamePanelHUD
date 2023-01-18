@@ -30,6 +30,8 @@ namespace GamePanelHUDCompass
 
         public bool? IsLeft { get; private set; }
 
+        public bool DeadDestroy;
+
         public int Who;
 
         public Vector3 Where;
@@ -196,6 +198,13 @@ namespace GamePanelHUDCompass
                 Animator_Fire.SetBool(AnimatorHash.Active, Active);
 
                 Active = false;
+            }
+
+            if (DeadDestroy)
+            {
+                Destroy();
+
+                DeadDestroy = false;
             }
 #endif
         }

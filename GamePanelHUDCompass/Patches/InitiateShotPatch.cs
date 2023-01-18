@@ -8,11 +8,11 @@ using GamePanelHUDCore.Utils;
 
 namespace GamePanelHUDCompass.Patches
 {
-    public class FirePatch : ModulePatch
+    public class InitiateShotPatch : ModulePatch
     {
         private static ReflectionData ReflectionDatas = new ReflectionData();
 
-        static FirePatch()
+        static InitiateShotPatch()
         {
             ReflectionDatas.RefSettings = RefHelp.FieldRef<InfoClass, object>.Create(typeof(InfoClass), "Settings");
             ReflectionDatas.RefRole = RefHelp.FieldRef<object, WildSpawnType>.Create(ReflectionDatas.RefSettings.FieldType, "Role");

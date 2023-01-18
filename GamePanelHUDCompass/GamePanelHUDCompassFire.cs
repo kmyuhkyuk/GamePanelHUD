@@ -64,6 +64,7 @@ namespace GamePanelHUDCompass
             Remove = RemoveFireUI;
 
             GamePanelHUDCompassPlugin.ShowFire = ShowFire;
+            GamePanelHUDCompassPlugin.DestroyFire = DestroyFireUI;
 
             GamePanelHUDCorePlugin.UpdateManger.Register(this);
         }
@@ -195,6 +196,14 @@ namespace GamePanelHUDCompass
                         CompassFires.Add(fireinfo.Who, _fire);
                     }
                 }
+            }
+        }
+
+        void DestroyFireUI(int id)
+        {
+            if (CompassFires.TryGetValue(id, out var fireui) && HUD.SettingsData.KeyCompassFireDeadDestroy.Value)
+            {
+                fireui.DeadDestroy = true;
             }
         }
 

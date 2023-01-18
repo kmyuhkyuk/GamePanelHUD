@@ -45,6 +45,8 @@ namespace GamePanelHUDCompass
 
         internal static Action<CompassFireInfo> ShowFire;
 
+        internal static Action<int> DestroyFire;
+
         private void Start()
         {
             Logger.LogInfo("Loaded: kmyuhkyuk-GamePanelHUDCompass");
@@ -64,6 +66,7 @@ namespace GamePanelHUDCompass
             SettingsDatas.KeyCompassFireHUDSW = Config.Bind<bool>(mainSettings, "罗盘开火指示栏显示 Compass Fire HUD display", true);
             SettingsDatas.KeyCompassFireDirectionHUDSW = Config.Bind<bool>(mainSettings, "罗盘开火指示栏显示 Compass Fire Direction HUD display", true);
             SettingsDatas.KeyCompassFireSilenced = Config.Bind<bool>(mainSettings, "罗盘开火隐藏消音 Compass Fire Hide Silenced", true);
+            SettingsDatas.KeyCompassFireDeadDestroy = Config.Bind<bool>(mainSettings, "罗盘开火死亡销毁 Compass Fire Dead Destroy", true);
 
             SettingsDatas.KeyAnchoredPosition = Config.Bind<Vector2>(positionScaleSettings, "指示栏位置 Anchored Position", new Vector2(0, 0));
             SettingsDatas.KeySizeDelta = Config.Bind<Vector2>(positionScaleSettings, "指示栏高度 Size Delta", new Vector2(600, 90));
@@ -104,7 +107,8 @@ namespace GamePanelHUDCompass
             SettingsDatas.KeyCompassFireDirectionStyles = Config.Bind<FontStyles>(fontStylesSettings, "罗盘开火方向 Compass Fire Direction", FontStyles.Normal);
 
             new LevelSettingsPatch().Enable();
-            new FirePatch().Enable();
+            new InitiateShotPatch().Enable();
+            new OnBeenKilledByAggressorPatch().Enable();
 
             GamePanelHUDCorePlugin.UpdateManger.Register(this);
         }
@@ -196,6 +200,7 @@ namespace GamePanelHUDCompass
             public ConfigEntry<bool> KeyCompassFireHUDSW;
             public ConfigEntry<bool> KeyCompassFireDirectionHUDSW;
             public ConfigEntry<bool> KeyCompassFireSilenced;
+            public ConfigEntry<bool> KeyCompassFireDeadDestroy;
 
             public ConfigEntry<Vector2> KeyAnchoredPosition;
             public ConfigEntry<Vector2> KeySizeDelta;
