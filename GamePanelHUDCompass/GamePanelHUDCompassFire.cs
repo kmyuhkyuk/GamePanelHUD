@@ -26,7 +26,7 @@ namespace GamePanelHUDCompass
         }
 #endif
 
-        private Dictionary<int, GamePanelHUDCompassFireUI> CompassFires = new Dictionary<int, GamePanelHUDCompassFireUI>();
+        private readonly Dictionary<int, GamePanelHUDCompassFireUI> CompassFires = new Dictionary<int, GamePanelHUDCompassFireUI>();
 
         [SerializeField]
         private Transform _CompassFire;
