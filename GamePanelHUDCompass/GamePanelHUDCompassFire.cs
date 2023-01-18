@@ -29,6 +29,9 @@ namespace GamePanelHUDCompass
         private Dictionary<int, GamePanelHUDCompassFireUI> CompassFires = new Dictionary<int, GamePanelHUDCompassFireUI>();
 
         [SerializeField]
+        private Transform _CompassFire;
+
+        [SerializeField]
         private RectTransform _Azimuths;
 
         [SerializeField]
@@ -53,7 +56,7 @@ namespace GamePanelHUDCompass
 #if !UNITY_EDITOR
         void Start()
         {
-            FiresGroup = _Fires.GetComponent<CanvasGroup>();
+            FiresGroup = _CompassFire.GetComponent<CanvasGroup>();
 
             FireLeftRect = _FireLeft.GetComponent<RectTransform>();
             FireRightRect = _FireRight.GetComponent<RectTransform>();
@@ -71,7 +74,7 @@ namespace GamePanelHUDCompass
             RectTransform.sizeDelta = HUD.SettingsData.KeySizeDelta.Value;
             RectTransform.localScale = HUD.SettingsData.KeyLocalScale.Value;
 
-            if (_Azimuths != null)
+            if (_CompassFire != null)
             {
                 FiresGroup.alpha = HUD.HUDSW ? 1 : 0;
 
