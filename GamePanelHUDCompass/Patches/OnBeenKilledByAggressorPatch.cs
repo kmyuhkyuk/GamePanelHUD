@@ -1,11 +1,7 @@
 ﻿#if !UNITY_EDITOR
 using Aki.Reflection.Patching;
 using System.Reflection;
-using UnityEngine;
 using EFT;
-using GamePanelHUDCore;
-using GamePanelHUDCore.Utils;
-
 
 namespace GamePanelHUDCompass.Patches
 {
