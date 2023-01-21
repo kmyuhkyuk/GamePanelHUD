@@ -260,7 +260,7 @@ namespace GamePanelHUDCore.Utils
                             data.ModConfigFile.Remove(data.ModWarn.Definition);
                         }
 
-                        ConfigEntry<string> warn = default;
+                        ConfigEntry<string> warn;
 
                         Version gameVersion = GamePanelHUDCorePlugin.HUDCoreClass.GameVersion;
 
@@ -271,6 +271,10 @@ namespace GamePanelHUDCore.Utils
                         else if (HUDVersions.LastGameVersion < gameVersion)
                         {
                             warn = data.ModConfigFile.Bind(Section, "Last Update", "", new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 1, HideDefaultButton = true, CustomDrawer = LastUpdate, HideSettingName = true }));
+                        }
+                        else
+                        {
+                            warn = default;
                         }
 
                         data.ModWarn = warn;
