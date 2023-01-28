@@ -177,11 +177,11 @@ namespace GamePanelHUDCompass
 #if !UNITY_EDITOR
             Vector3 lhs = Where - HUD.Info.PlayerPosition;
 
-            float angle = GetToAngle(lhs, HUD.Info.NorthVector, HUD.SettingsData.KeyAngleOffset.Value);
+            float angle = HUD.Info.GetToAngle(lhs, HUD.SettingsData.KeyAngleOffset.Value);
 
             FireX = -(angle / 15 * 120);
 
-            IsLeft = GetDirection(HUD.SettingsData.KeySizeDelta.Value.x, HUD.Info.CompassX, FireX, FireXLeft, FireXRight, FireXRightRight, RealDirection(lhs, HUD.Info.PlayerRight));
+            IsLeft = GetDirection(HUD.SettingsData.KeySizeDelta.Value.x, HUD.Info.CompassX, FireX, FireXLeft, FireXRight, FireXRightRight, lhs, HUD.Info.PlayerRight);
 
             RealRect.anchoredPosition = new Vector2(FireX, HUD.SettingsData.KeyCompassFireHeight.Value);
             VirtualRect.anchoredPosition = new Vector2(FireXLeft, HUD.SettingsData.KeyCompassFireHeight.Value);
@@ -215,7 +215,12 @@ namespace GamePanelHUDCompass
             Animator_Fire.SetTrigger(AnimatorHash.Fire);
         }
 
-        bool? GetDirection(float panelx, float compassx, float firex, float firexleft, float firexright, float firexrightright, bool direction)
+        public bool IsDestroy()
+        {
+            return Animator_Fire.GetCurrentAnimatorStateInfo(0).shortNameHash == AnimatorHash.Destroy;
+        }
+
+        bool? GetDirection(float panelx, float compassx, float firex, float firexleft, float firexright, float firexrightright, Vector3 lhs, Vector3 right)
         {
             float panelHalf = panelx / 2;
 
@@ -229,25 +234,11 @@ namespace GamePanelHUDCompass
 
             if (!realInPanel && !virtualInPanel)
             {
-                return direction;
+                return RealDirection(lhs, right);
             }
             else
             {
                 return default;
-            }
-        }
-
-        float GetToAngle(Vector3 lhs, Vector3 northvector, float offset)
-        {
-            float num = Vector3.SignedAngle(lhs, northvector, Vector3.up) + offset;
-
-            if (num >= 0)
-            {
-                return num;
-            }
-            else
-            {
-                return num + 360;
             }
         }
 
