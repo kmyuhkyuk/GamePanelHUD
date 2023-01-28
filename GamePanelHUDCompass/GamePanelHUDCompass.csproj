@@ -99,9 +99,12 @@
     <Compile Include="GamePanelHUDCompassFireUI.cs" />
     <Compile Include="GamePanelHUDCompassPlugin.cs" />
     <Compile Include="GamePanelHUDCompassUI.cs" />
+    <Compile Include="Patches\AirdropSynchronizableObjectPatch.cs" />
+    <Compile Include="Patches\ExperienceTriggerPatch.cs" />
     <Compile Include="Patches\InitiateShotPatch.cs" />
     <Compile Include="Patches\LevelSettingsPatch.cs" />
     <Compile Include="Patches\OnBeenKilledByAggressorPatch.cs" />
+    <Compile Include="Patches\TriggerWithIdPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

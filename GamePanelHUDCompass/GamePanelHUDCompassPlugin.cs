@@ -8,6 +8,10 @@ using EFT;
 using GamePanelHUDCore;
 using GamePanelHUDCompass.Patches;
 using GamePanelHUDCore.Utils;
+using Sirenix.Serialization;
+using System.Collections.Generic;
+using EFT.Interactive;
+using System.Linq;
 
 namespace GamePanelHUDCompass
 {
@@ -24,6 +28,8 @@ namespace GamePanelHUDCompass
         }
 
         private readonly CompassInfo CompassInfos = new CompassInfo();
+
+        private readonly CompassStaticInfo CompassStaticInfos = new CompassStaticInfo();
 
         internal static readonly GamePanelHUDCorePlugin.HUDClass<CompassInfo, SettingsData> CompassHUD = new GamePanelHUDCorePlugin.HUDClass<CompassInfo, SettingsData>();
 
@@ -46,6 +52,8 @@ namespace GamePanelHUDCompass
         internal static Action<CompassFireInfo> ShowFire;
 
         internal static Action<int> DestroyFire;
+
+        internal static Action<TriggerWithId> AddTrigger;
 
         private void Start()
         {
@@ -106,9 +114,14 @@ namespace GamePanelHUDCompass
 
             SettingsDatas.KeyCompassFireDirectionStyles = Config.Bind<FontStyles>(fontStylesSettings, "罗盘开火方向 Compass Fire Direction", FontStyles.Normal);
 
+            AddTrigger = AddPoint;
+
             new LevelSettingsPatch().Enable();
             new InitiateShotPatch().Enable();
             new OnBeenKilledByAggressorPatch().Enable();
+            new TriggerWithIdPatch().Enable();
+            new ExperienceTriggerPatch().Enable();
+            //new AirdropSynchronizableObjectPatch().Enable();
 
             GamePanelHUDCorePlugin.UpdateManger.Register(this);
         }
@@ -161,6 +174,36 @@ namespace GamePanelHUDCompass
             }
         }
 
+        void AddPoint(TriggerWithId trigger)
+        {
+            string id = trigger.Id;
+            Vector3 pos = trigger.transform.position;
+
+            Dictionary<string, Vector3> point;
+
+            if (trigger is ExperienceTrigger)
+            {
+                point = CompassStaticInfos.ExperienceTriggerPoint;
+            }
+            else if (trigger is PlaceItemTrigger)
+            {
+                point = CompassStaticInfos.PlaceItemTriggerPoint;
+            }
+            else
+            {
+                point = CompassStaticInfos.QuestTriggerPoint;
+            }
+
+            if (!point.ContainsKey(id))
+            {
+                point.Add(id, pos);
+            }
+            else
+            {
+                point.Add(string.Concat(id, "(", trigger.transform.parent.name, ")"), pos);
+            }
+        }
+
         public class CompassInfo
         {
             public Vector3 NorthVector;
@@ -178,6 +221,20 @@ namespace GamePanelHUDCompass
                     return -(Angle / 15 * 120);
                 }
             }
+
+            public float GetToAngle(Vector3 lhs, float offset)
+            {
+                float num = Vector3.SignedAngle(lhs, NorthVector, Vector3.up) + offset;
+
+                if (num >= 0)
+                {
+                    return num;
+                }
+                else
+                {
+                    return num + 360;
+                }
+            }
         }
 
         public struct CompassFireInfo
@@ -191,6 +248,15 @@ namespace GamePanelHUDCompass
             public WildSpawnType Role;
 
             public bool IsSilenced;
+        }
+
+        public class CompassStaticInfo
+        {
+            public Dictionary<string, Vector3> ExperienceTriggerPoint = new Dictionary<string, Vector3>();
+
+            public Dictionary<string, Vector3> PlaceItemTriggerPoint = new Dictionary<string, Vector3>();
+
+            public Dictionary<string, Vector3> QuestTriggerPoint = new Dictionary<string, Vector3>();
         }
 
         public class SettingsData

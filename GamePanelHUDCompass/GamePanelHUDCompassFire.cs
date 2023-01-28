@@ -137,8 +137,8 @@ namespace GamePanelHUDCompass
                 _FireLeft.text = StringBuilderDatas._FireLeft.StringConcat("<color=", leftDirectionColor, ">", "<", "</color>");
                 _FireRight.text = StringBuilderDatas._FireLeft.StringConcat("<color=", rightDirectionColor, ">", ">", "</color>");
 
-                _FireLeft.gameObject.SetActive(HUD.SettingsData.KeyCompassFireDirectionHUDSW.Value && left);
-                _FireRight.gameObject.SetActive(HUD.SettingsData.KeyCompassFireDirectionHUDSW.Value && right);
+                _FireLeft.gameObject.SetActive(left && HUD.SettingsData.KeyCompassFireDirectionHUDSW.Value);
+                _FireRight.gameObject.SetActive(right && HUD.SettingsData.KeyCompassFireDirectionHUDSW.Value);
             }
         }
 
@@ -148,7 +148,7 @@ namespace GamePanelHUDCompass
             {
                 if (!fireinfo.IsSilenced || !HUD.SettingsData.KeyCompassFireSilenced.Value && fireinfo.Distance <= HUD.SettingsData.KeyCompassFireDistance.Value)
                 {
-                    if (CompassFires.TryGetValue(fireinfo.Who, out var fireui))
+                    if (CompassFires.TryGetValue(fireinfo.Who, out var fireui) && !fireui.IsDestroy())
                     {
                         fireui.Where = fireinfo.Where;
 

@@ -203,13 +203,13 @@ namespace GamePanelHUDMag
 
                     int currentState = currentAnimator.GetCurrentAnimatorStateInfo(1).fullPathHash;
 
-                    AllReloadBool = NowFirearmController.IsInReloadOperation() || currentState == 1058993437 || currentState == 1285477936; //1.OriginalReloadCheck 2.TakeHands 3.LauncherReload
-
                     WeaponDatas.WeaponNameAlways = SettingsDatas.KeyWeaponNameAlways.Value || currentState == 1355507738 && SettingsDatas.KeyLockWeaponName.Value; //2.LookWeapon
 
                     //MagCount and PatronCount
                     if (!launcherActive)
                     {
+                        AllReloadBool = NowFirearmController.IsInReloadOperation() || currentState == 1058993437; //1.OriginalReloadCheck 2.TakeHands
+
                         //Get Weapon Name
                         WeaponDatas.WeaponName = LocalizedHelp.Localized(NowWeapon.Name, EStringCase.None);
 
@@ -225,6 +225,10 @@ namespace GamePanelHUDMag
                             bool magInWeapon = Animator_Weapon.GetBool(AnimatorHash.MagInWeapon);
                             bool magSame = NowMag == OldMag;
 
+                            int ammoInChamber = (int)Animator_Weapon.GetFloat(AnimatorHash.AmmoInChamber);
+                            int chambersCount = NowWeapon.ChamberAmmoCount;
+                            int maxMagazineCount = NowWeapon.GetMaxMagazineCount();
+
                             NowMag = GetMag.GetCurrentMagazine(NowWeapon);
 
                             if (MagCacheBool)
@@ -237,9 +241,9 @@ namespace GamePanelHUDMag
                             if (magInWeapon && !AllReloadBool && magSame)
                             {
                                 int count = NowWeapon.GetCurrentMagazineCount();
-                                int maxCount = NowWeapon.GetMaxMagazineCount();
+                                int maxCount = maxMagazineCount;
 
-                                WeaponDatas.Patron = NowWeapon.ChamberAmmoCount;
+                                WeaponDatas.Patron = chambersCount;
 
                                 WeaponDatas.Normalized = (float)count / (float)maxCount;
 
@@ -249,7 +253,7 @@ namespace GamePanelHUDMag
                             }
                             else if (!magInWeapon && AllReloadBool)
                             {
-                                WeaponDatas.Patron = (int)Animator_Weapon.GetFloat(AnimatorHash.AmmoInChamber);
+                                WeaponDatas.Patron = ammoInChamber;
 
                                 WeaponDatas.Normalized = 0;
 
@@ -262,9 +266,9 @@ namespace GamePanelHUDMag
                             else if (magInWeapon && AllReloadBool && magSame)
                             {
                                 int count = (int)Animator_Weapon.GetFloat(AnimatorHash.AmmoInMag);
-                                int maxCount = NowWeapon.GetMaxMagazineCount();
+                                int maxCount = maxMagazineCount;
 
-                                WeaponDatas.Patron = (int)Animator_Weapon.GetFloat(AnimatorHash.AmmoInChamber);
+                                WeaponDatas.Patron = ammoInChamber;
 
                                 WeaponDatas.Normalized = (float)count / (float)maxCount;
 
@@ -272,9 +276,9 @@ namespace GamePanelHUDMag
 
                                 WeaponDatas.MagMaxCount = maxCount;
                             }
-                            else if (!magInWeapon && Animator_Weapon.GetFloat(AnimatorHash.AmmoInChamber) != 0 && !AllReloadBool)
+                            else if (!magInWeapon && ammoInChamber != 0 && !AllReloadBool)
                             {
-                                WeaponDatas.Patron = NowWeapon.ChamberAmmoCount;
+                                WeaponDatas.Patron = chambersCount;
 
                                 WeaponDatas.Normalized = 0;
 
@@ -295,10 +299,13 @@ namespace GamePanelHUDMag
                         }
                         else
                         {
-                            if (!AllReloadBool && Animator_Weapon.GetFloat(AnimatorHash.AmmoInChamber) != 0)
+                            int ammoInChamber = (int)Animator_Weapon.GetFloat(AnimatorHash.AmmoInChamber);
+                            int chambersCount = NowWeapon.Chambers.Length;
+
+                            if (!AllReloadBool && ammoInChamber != 0)
                             {
                                 int count = NowWeapon.ChamberAmmoCount;
-                                int maxCount = NowWeapon.Chambers.Length;
+                                int maxCount = chambersCount;
 
                                 WeaponDatas.Patron = 0;
 
@@ -308,10 +315,10 @@ namespace GamePanelHUDMag
 
                                 WeaponDatas.Normalized = (float)count / (float)maxCount - 0.1f;
                             }
-                            else if (AllReloadBool && Animator_Weapon.GetBool("Armed"))
+                            else if (AllReloadBool)
                             {
-                                int count = (int)Animator_Weapon.GetFloat(AnimatorHash.AmmoInChamber);
-                                int maxCount = NowWeapon.Chambers.Length;
+                                int count = ammoInChamber;
+                                int maxCount = chambersCount;
 
                                 WeaponDatas.Patron = 0;
 
@@ -327,7 +334,7 @@ namespace GamePanelHUDMag
 
                                 WeaponDatas.MagCount = 0;
 
-                                WeaponDatas.MagMaxCount = NowWeapon.Chambers.Length;
+                                WeaponDatas.MagMaxCount = chambersCount;
 
                                 WeaponDatas.Normalized = 0;
                             }
@@ -335,6 +342,8 @@ namespace GamePanelHUDMag
                     }
                     else
                     {
+                        AllReloadBool = currentState == 1285477936; //1.LauncherReload
+
                         //Get Weapon Name
                         WeaponDatas.WeaponName = LocalizedHelp.Localized(((Item)NowLauncher).Name, EStringCase.None);
 
@@ -347,10 +356,13 @@ namespace GamePanelHUDMag
 
                         WeaponDatas.AmmonType = LocalizedHelp.Localized(launcherTemplate.ammoCaliber, EStringCase.None);
 
-                        if (!AllReloadBool && Animator_Launcher.GetFloat(AnimatorHash.AmmoInChamber) != 0)
+                        int ammoInChamber = (int)Animator_Launcher.GetFloat(AnimatorHash.AmmoInChamber);
+                        int chambersCount = ReflectionDatas.RefChambers.GetValue(NowLauncher).Length;
+
+                        if (!AllReloadBool && ammoInChamber != 0)
                         {
                             int count = ReflectionDatas.RefChamberAmmoCount.GetValue(NowLauncher);
-                            int maxCount = ReflectionDatas.RefChambers.GetValue(NowLauncher).Length;
+                            int maxCount = chambersCount;
 
                             WeaponDatas.Patron = 0;
 
@@ -360,14 +372,14 @@ namespace GamePanelHUDMag
 
                             WeaponDatas.Normalized = (float)count / (float)maxCount - 0.1f;
                         }
-                        else if (AllReloadBool && Animator_Launcher.GetBool("Armed"))
+                        else if (AllReloadBool)
                         {
-                            int count = (int)Animator_Launcher.GetFloat(AnimatorHash.AmmoInChamber);
-                            int maxCount = ReflectionDatas.RefChambers.GetValue(NowLauncher).Length;
+                            int count = ammoInChamber;
+                            int maxCount = chambersCount;
 
                             WeaponDatas.Patron = 0;
 
-                            WeaponDatas.MagCount = count;
+                            WeaponDatas.MagCount = ammoInChamber;
 
                             WeaponDatas.MagMaxCount = maxCount;
 
@@ -379,7 +391,7 @@ namespace GamePanelHUDMag
 
                             WeaponDatas.MagCount = 0;
 
-                            WeaponDatas.MagMaxCount = ReflectionDatas.RefChambers.GetValue(NowLauncher).Length;
+                            WeaponDatas.MagMaxCount = chambersCount;
 
                             WeaponDatas.Normalized = 0;
                         }
