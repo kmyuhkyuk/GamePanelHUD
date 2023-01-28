@@ -1,11 +1,8 @@
 ﻿using Aki.Reflection.Patching;
-using EFT.Interactive;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.Generic;
+using EFT.Interactive;
+
 
 namespace GamePanelHUDCompass.Patches
 {
