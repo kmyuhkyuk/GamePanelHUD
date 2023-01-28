@@ -2,16 +2,14 @@
 using BepInEx;
 using BepInEx.Configuration;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using EFT;
+using EFT.Interactive;
 using GamePanelHUDCore;
 using GamePanelHUDCompass.Patches;
 using GamePanelHUDCore.Utils;
-using Sirenix.Serialization;
-using System.Collections.Generic;
-using EFT.Interactive;
-using System.Linq;
 
 namespace GamePanelHUDCompass
 {
