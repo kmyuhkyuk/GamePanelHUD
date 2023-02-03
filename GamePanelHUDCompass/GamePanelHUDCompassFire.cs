@@ -61,6 +61,8 @@ namespace GamePanelHUDCompass
             FireLeftRect = _FireLeft.GetComponent<RectTransform>();
             FireRightRect = _FireRight.GetComponent<RectTransform>();
 
+            Remove = RemoveFireUI;
+
             GamePanelHUDCompassPlugin.ShowFire = ShowFire;
             GamePanelHUDCompassPlugin.DestroyFire = DestroyFireUI;
 
