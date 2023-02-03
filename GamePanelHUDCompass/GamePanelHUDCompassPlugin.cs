@@ -212,7 +212,7 @@ namespace GamePanelHUDCompass
 
                 if (CompassStaticCache)
                 {
-                    ShowQuest(HUDCore.YourPlayer, HUDCore.TheWorld, ReflectionDatas, Is231Up, ShowStatic);
+                    ShowQuest(HUDCore.YourPlayer, HUDCore.TheWorld, Is231Up, ShowStatic);
 
                     CompassStaticCache = false;
                 }
@@ -225,33 +225,33 @@ namespace GamePanelHUDCompass
             }
         }
 
-        void ShowQuest(Player player, GameWorld theworld, ReflectionData reflectiondatas, bool is231up, Action<CompassStaticInfo> showstatic)
+        void ShowQuest(Player player, GameWorld theworld, bool is231up, Action<CompassStaticInfo> showstatic)
         {
-            object questData = reflectiondatas.RefQuestController.GetValue(player);
+            object questData = ReflectionDatas.RefQuestController.GetValue(player);
 
-            object quests = reflectiondatas.RefQuests.GetValue(questData);
+            object quests = ReflectionDatas.RefQuests.GetValue(questData);
 
-            IList questsList = reflectiondatas.RefQuestsList.GetValue(quests) as IList;
+            IList questsList = ReflectionDatas.RefQuestsList.GetValue(quests) as IList;
 
-            object lootItems = reflectiondatas.RefLootItems.GetValue(theworld);
+            object lootItems = ReflectionDatas.RefLootItems.GetValue(theworld);
 
-            Dictionary<string, LootItem> lootItemsList = reflectiondatas.RefLootItemsList.GetValue(lootItems).ToDictionary(x => x.ItemId, x => x);
+            Dictionary<string, LootItem> lootItemsList = ReflectionDatas.RefLootItemsList.GetValue(lootItems).ToDictionary(x => x.ItemId, x => x);
 
             foreach (object item in questsList)
             {
-                if (reflectiondatas.RefQuestStatus.GetValue(item) == EQuestStatus.Started)
+                if (ReflectionDatas.RefQuestStatus.GetValue(item) == EQuestStatus.Started)
                 {
-                    object template = reflectiondatas.RefTemplate.GetValue(item);
+                    object template = ReflectionDatas.RefTemplate.GetValue(item);
 
-                    if (player.Location == LocalizedHelp.Localized(string.Concat(reflectiondatas.RefLocationId.GetValue(template), " Name")) && (is231up ? (player.Profile.Side == EPlayerSide.Savage ? 1 : 0) == reflectiondatas.RefPlayerGroup.GetValue(template) : true))
+                    if (player.Location == LocalizedHelp.Localized(string.Concat(ReflectionDatas.RefLocationId.GetValue(template), " Name")) && (is231up ? (player.Profile.Side == EPlayerSide.Savage ? 1 : 0) == ReflectionDatas.RefPlayerGroup.GetValue(template) : true))
                     {
-                        string name = reflectiondatas.RefNameLocaleKey.GetValue(template);
+                        string name = ReflectionDatas.RefNameLocaleKey.GetValue(template);
 
-                        string traderId = reflectiondatas.RefTraderId.GetValue(template);
+                        string traderId = ReflectionDatas.RefTraderId.GetValue(template);
 
-                        object availableForFinishConditions = reflectiondatas.RefAvailableForFinishConditions.GetValue(item);
+                        object availableForFinishConditions = ReflectionDatas.RefAvailableForFinishConditions.GetValue(item);
 
-                        IList availableForFinishConditionsList = reflectiondatas.RefAvailableForFinishConditionsList.GetValue(availableForFinishConditions) as IList;
+                        IList availableForFinishConditionsList = ReflectionDatas.RefAvailableForFinishConditionsList.GetValue(availableForFinishConditions) as IList;
 
                         foreach (object condition in availableForFinishConditionsList)
                         {
@@ -295,13 +295,13 @@ namespace GamePanelHUDCompass
                                     }
                                 }
                             }
-                            else if (condition is ConditionCounterCreator && reflectiondatas.RefConditionCounterCreatorType.GetValue((ConditionCounterCreator)condition) == 6) //Type == Experience
+                            else if (condition is ConditionCounterCreator && ReflectionDatas.RefConditionCounterCreatorType.GetValue((ConditionCounterCreator)condition) == 6) //Type == Experience
                             {
-                                object counter = reflectiondatas.RefConditionCounterCreatorCounter.GetValue((ConditionCounterCreator)condition);
+                                object counter = ReflectionDatas.RefConditionCounterCreatorCounter.GetValue((ConditionCounterCreator)condition);
 
-                                object conditions = reflectiondatas.RefConditions.GetValue(counter);
+                                object conditions = ReflectionDatas.RefConditions.GetValue(counter);
 
-                                IList conditionsList = reflectiondatas.RefConditionsList.GetValue(conditions) as IList;
+                                IList conditionsList = ReflectionDatas.RefConditionsList.GetValue(conditions) as IList;
 
                                 foreach (object counterCondition in conditionsList)
                                 {
