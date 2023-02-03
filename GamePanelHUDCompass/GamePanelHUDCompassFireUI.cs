@@ -2,8 +2,8 @@
 using UnityEngine.UI;
 #if !UNITY_EDITOR
 using GamePanelHUDCore;
-using GamePanelHUDCore.Utils;
 #endif
+using GamePanelHUDCore.Utils;
 
 namespace GamePanelHUDCompass
 {
@@ -169,10 +169,10 @@ namespace GamePanelHUDCompass
         void Update()
 #endif
         {
-            CompassInfoUI();
+            CompassFireUI();
         }
 
-        void CompassInfoUI()
+        void CompassFireUI()
         {
 #if !UNITY_EDITOR
             Vector3 lhs = Where - HUD.Info.PlayerPosition;
@@ -181,12 +181,16 @@ namespace GamePanelHUDCompass
 
             FireX = -(angle / 15 * 120);
 
-            IsLeft = GetDirection(HUD.SettingsData.KeySizeDelta.Value.x, HUD.Info.CompassX, FireX, FireXLeft, FireXRight, FireXRightRight, lhs, HUD.Info.PlayerRight);
+            float fireXLeft = FireXLeft;
+            float fireXRight = FireXRight;
+            float fireXRightRight = FireXRightRight;
+
+            IsLeft = GetDirection(HUD.SettingsData.KeySizeDelta.Value.x, HUD.Info.CompassX, FireX, fireXLeft, fireXRight, fireXRightRight, lhs, HUD.Info.PlayerRight);
 
             RealRect.anchoredPosition = new Vector2(FireX, HUD.SettingsData.KeyCompassFireHeight.Value);
-            VirtualRect.anchoredPosition = new Vector2(FireXLeft, HUD.SettingsData.KeyCompassFireHeight.Value);
-            Virtual2Rect.anchoredPosition = new Vector2(FireXRight, HUD.SettingsData.KeyCompassFireHeight.Value);
-            Virtual3Rect.anchoredPosition = new Vector2(FireXRightRight, HUD.SettingsData.KeyCompassFireHeight.Value);
+            VirtualRect.anchoredPosition = new Vector2(fireXLeft, HUD.SettingsData.KeyCompassFireHeight.Value);
+            Virtual2Rect.anchoredPosition = new Vector2(fireXRight, HUD.SettingsData.KeyCompassFireHeight.Value);
+            Virtual3Rect.anchoredPosition = new Vector2(fireXRightRight, HUD.SettingsData.KeyCompassFireHeight.Value);
 
             Animator_Fire.SetFloat(AnimatorHash.Active, HUD.SettingsData.KeyCompassFireActiveSpeed.Value);
             Animator_Fire.SetFloat(AnimatorHash.Speed, HUD.SettingsData.KeyCompassFireWaitSpeed.Value);
