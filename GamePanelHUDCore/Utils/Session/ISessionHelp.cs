@@ -1,4 +1,5 @@
 ﻿#if !UNITY_EDITOR
+using GamePanelHUDCore.Utils.Session;
 using HarmonyLib;
 
 namespace GamePanelHUDCore.Utils
@@ -17,6 +18,7 @@ namespace GamePanelHUDCore.Utils
             BackEndConfig = Traverse.Create(Session).Property("BackEndConfig").GetValue<object>();
 
             ExperienceHelp.Init(BackEndConfig);
+            TradersAvatar.Init(Session);
         }
     }
 }

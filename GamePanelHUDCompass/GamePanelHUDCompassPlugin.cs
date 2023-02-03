@@ -2,14 +2,21 @@
 using BepInEx;
 using BepInEx.Configuration;
 using System;
+using HarmonyLib;
+using System.Reflection;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using EFT;
+using EFT.Quests;
 using EFT.Interactive;
 using GamePanelHUDCore;
 using GamePanelHUDCompass.Patches;
 using GamePanelHUDCore.Utils;
+using System.Security.Policy;
+using EFT.InventoryLogic;
+using System.Linq;
 
 namespace GamePanelHUDCompass
 {
@@ -27,11 +34,13 @@ namespace GamePanelHUDCompass
 
         private readonly CompassInfo CompassInfos = new CompassInfo();
 
-        private readonly CompassStaticInfo CompassStaticInfos = new CompassStaticInfo();
+        private readonly TriggerInfo Triggers = new TriggerInfo();
 
         internal static readonly GamePanelHUDCorePlugin.HUDClass<CompassInfo, SettingsData> CompassHUD = new GamePanelHUDCorePlugin.HUDClass<CompassInfo, SettingsData>();
 
         internal static readonly GamePanelHUDCorePlugin.HUDClass<CompassInfo, SettingsData> CompassFireHUD = new GamePanelHUDCorePlugin.HUDClass<CompassInfo, SettingsData>();
+
+        internal static readonly GamePanelHUDCorePlugin.HUDClass<CompassInfo, SettingsData> CompassStaticHUD = new GamePanelHUDCorePlugin.HUDClass<CompassInfo, SettingsData>();
 
         internal static float NorthDirection;
 
@@ -41,17 +50,29 @@ namespace GamePanelHUDCompass
 
         private bool CompassFireHUDSW;
 
+        private bool CompassStaticCache = true;
+
         private Transform Cam;
 
         private readonly SettingsData SettingsDatas = new SettingsData();
 
+        private readonly ReflectionData ReflectionDatas = new ReflectionData();
+
+        private List<CompassStaticInfo> Test = new List<CompassStaticInfo>(); 
+
         internal static GameObject FirePrefab { get; private set; }
+
+        internal static GameObject StaticPrefab { get; private set; }
 
         internal static Action<CompassFireInfo> ShowFire;
 
         internal static Action<int> DestroyFire;
 
         internal static Action<TriggerWithId> AddTrigger;
+
+        internal static Action<CompassStaticInfo> ShowStatic;
+
+        private bool Is231Up = GamePanelHUDCorePlugin.HUDCoreClass.GameVersion > new Version("0.12.12.17349");
 
         private void Start()
         {
@@ -112,6 +133,39 @@ namespace GamePanelHUDCompass
 
             SettingsDatas.KeyCompassFireDirectionStyles = Config.Bind<FontStyles>(fontStylesSettings, "罗盘开火方向 Compass Fire Direction", FontStyles.Normal);
 
+            ReflectionDatas.RefQuestController = RefHelp.FieldRef<Player, object>.Create("_questController");
+            ReflectionDatas.RefQuests = RefHelp.FieldRef<object, object>.Create(ReflectionDatas.RefQuestController.FieldType, "Quests");
+            ReflectionDatas.RefQuestsList = RefHelp.FieldRef<object, object>.Create(ReflectionDatas.RefQuests.FieldType, "list_0");
+            ReflectionDatas.RefConditionCounterCreatorType = RefHelp.FieldRef<ConditionCounterCreator, int>.Create("type");
+            ReflectionDatas.RefConditionCounterCreatorCounter = RefHelp.FieldRef<ConditionCounterCreator, object>.Create("counter");
+            ReflectionDatas.RefLootItems = RefHelp.FieldRef<GameWorld, object>.Create("LootItems");
+            ReflectionDatas.RefLootItemsList = RefHelp.FieldRef<object, List<LootItem>>.Create(ReflectionDatas.RefLootItems.FieldType, "list_0");
+
+            Type questsType = ReflectionDatas.RefQuestsList.FieldType;
+            Type questType = questsType.GetGenericArguments()[0];
+
+            ReflectionDatas.RefQuestStatus = RefHelp.PropertyRef<object, EQuestStatus>.Create(questType, "QuestStatus");
+            ReflectionDatas.RefAvailableForFinishConditions = RefHelp.PropertyRef<object, object>.Create(questType, "AvailableForFinishConditions");
+            ReflectionDatas.RefConditions = RefHelp.PropertyRef<object, object>.Create(ReflectionDatas.RefConditionCounterCreatorCounter.FieldType, "conditions");
+
+            ReflectionDatas.RefConditionsList = RefHelp.FieldRef<object, object>.Create(ReflectionDatas.RefConditions.PropertyType, "list_0");
+
+            ReflectionDatas.RefAvailableForFinishConditionsList = RefHelp.FieldRef<object, object>.Create(ReflectionDatas.RefAvailableForFinishConditions.PropertyType, "list_0");
+
+            ReflectionDatas.RefTemplate = RefHelp.PropertyRef<object, object>.Create(questType, "Template");
+
+            Type templateType = ReflectionDatas.RefTemplate.PropertyType;
+
+            ReflectionDatas.RefLocationId = RefHelp.FieldRef<object, string>.Create(templateType, "LocationId");
+            ReflectionDatas.RefTraderId = RefHelp.FieldRef<object, string>.Create(templateType, "TraderId");
+
+            ReflectionDatas.RefNameLocaleKey = RefHelp.PropertyRef<object, string>.Create(templateType, "NameLocaleKey");
+
+            if (Is231Up)
+            {
+                ReflectionDatas.RefPlayerGroup = RefHelp.FieldRef<object, int>.Create(templateType, "PlayerGroup");
+            }
+
             AddTrigger = AddPoint;
 
             new LevelSettingsPatch().Enable();
@@ -119,7 +173,7 @@ namespace GamePanelHUDCompass
             new OnBeenKilledByAggressorPatch().Enable();
             new TriggerWithIdPatch().Enable();
             new ExperienceTriggerPatch().Enable();
-            //new AirdropSynchronizableObjectPatch().Enable();
+            new AirdropSynchronizableObjectPatch().Enable();
 
             GamePanelHUDCorePlugin.UpdateManger.Register(this);
         }
@@ -155,6 +209,126 @@ namespace GamePanelHUDCompass
                 CompassInfos.PlayerPosition = Cam.position;
 
                 CompassInfos.PlayerRight = Cam.right;
+
+                if (CompassStaticCache)
+                {
+                    ShowQuest(HUDCore.YourPlayer, HUDCore.TheWorld, ReflectionDatas, Is231Up, ShowStatic);
+
+                    CompassStaticCache = false;
+                }
+            }
+            else
+            {
+                Triggers.Clear();
+
+                CompassStaticCache = true;
+            }
+        }
+
+        void ShowQuest(Player player, GameWorld theworld, ReflectionData reflectiondatas, bool is231up, Action<CompassStaticInfo> showstatic)
+        {
+            object questData = reflectiondatas.RefQuestController.GetValue(player);
+
+            object quests = reflectiondatas.RefQuests.GetValue(questData);
+
+            IList questsList = reflectiondatas.RefQuestsList.GetValue(quests) as IList;
+
+            object lootItems = reflectiondatas.RefLootItems.GetValue(theworld);
+
+            Dictionary<string, LootItem> lootItemsList = reflectiondatas.RefLootItemsList.GetValue(lootItems).ToDictionary(x => x.ItemId, x => x);
+
+            foreach (object item in questsList)
+            {
+                if (reflectiondatas.RefQuestStatus.GetValue(item) == EQuestStatus.Started)
+                {
+                    object template = reflectiondatas.RefTemplate.GetValue(item);
+
+                    if (player.Location == LocalizedHelp.Localized(string.Concat(reflectiondatas.RefLocationId.GetValue(template), " Name")) && (is231up ? (player.Profile.Side == EPlayerSide.Savage ? 1 : 0) == reflectiondatas.RefPlayerGroup.GetValue(template) : true))
+                    {
+                        string name = reflectiondatas.RefNameLocaleKey.GetValue(template);
+
+                        string traderId = reflectiondatas.RefTraderId.GetValue(template);
+
+                        object availableForFinishConditions = reflectiondatas.RefAvailableForFinishConditions.GetValue(item);
+
+                        IList availableForFinishConditionsList = reflectiondatas.RefAvailableForFinishConditionsList.GetValue(availableForFinishConditions) as IList;
+
+                        foreach (object condition in availableForFinishConditionsList)
+                        {
+                            if (condition is ConditionLeaveItemAtLocation)
+                            {
+                                string zoneId = ((ConditionLeaveItemAtLocation)condition).zoneId;
+
+                                if (Triggers.PlaceItemTriggerPoint.TryGetValue(zoneId, out Vector3 where))
+                                {
+                                    CompassStaticInfo staticInfo = new CompassStaticInfo()
+                                    {
+                                        Where = where,
+                                        ZoneId = zoneId,
+                                        NameKey = name,
+                                        DescriptionKey = ((Condition)condition).id,
+                                        TraderId = traderId,
+                                        QuestType = CompassStaticInfo.Type.ConditionLeaveItemAtLocation
+                                    };
+
+                                    Test.Add(staticInfo);
+                                }
+                            }
+                            else if (condition is ConditionFindItem)
+                            {
+                                string[] itemIds = ((ConditionFindItem)condition).target;
+
+                                foreach (string itemid in itemIds)
+                                {
+                                    if (lootItemsList.TryGetValue(itemid, out LootItem lootitem) && lootitem.Item.QuestItem)
+                                    {
+                                        CompassStaticInfo staticInfo = new CompassStaticInfo()
+                                        {
+                                            Where = lootitem.transform.position,
+                                            NameKey = name,
+                                            DescriptionKey = ((Condition)condition).id,
+                                            TraderId = traderId,
+                                            QuestType = CompassStaticInfo.Type.ConditionFindItem
+                                        };
+
+                                        Test.Add(staticInfo);
+                                    }
+                                }
+                            }
+                            else if (condition is ConditionCounterCreator && reflectiondatas.RefConditionCounterCreatorType.GetValue((ConditionCounterCreator)condition) == 6) //Type == Experience
+                            {
+                                object counter = reflectiondatas.RefConditionCounterCreatorCounter.GetValue((ConditionCounterCreator)condition);
+
+                                object conditions = reflectiondatas.RefConditions.GetValue(counter);
+
+                                IList conditionsList = reflectiondatas.RefConditionsList.GetValue(conditions) as IList;
+
+                                foreach (object counterCondition in conditionsList)
+                                {
+                                    if (counterCondition is ConditionVisitPlace)
+                                    {
+                                        string zoneId = ((ConditionVisitPlace)counterCondition).target;
+
+                                        if (Triggers.ExperienceTriggerPoint.TryGetValue(zoneId, out Vector3 where))
+                                        {
+                                            CompassStaticInfo staticInfo = new CompassStaticInfo()
+                                            {
+                                                Where = where,
+                                                ZoneId = zoneId,
+                                                NameKey = name,
+                                                DescriptionKey = ((Condition)condition).id,
+                                                TraderId = traderId,
+                                                QuestType = CompassStaticInfo.Type.ConditionCounterCreator
+                                            };
+
+                                            Test.Add(staticInfo);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -181,15 +355,15 @@ namespace GamePanelHUDCompass
 
             if (trigger is ExperienceTrigger)
             {
-                point = CompassStaticInfos.ExperienceTriggerPoint;
+                point = Triggers.ExperienceTriggerPoint;
             }
             else if (trigger is PlaceItemTrigger)
             {
-                point = CompassStaticInfos.PlaceItemTriggerPoint;
+                point = Triggers.PlaceItemTriggerPoint;
             }
             else
             {
-                point = CompassStaticInfos.QuestTriggerPoint;
+                point = Triggers.QuestTriggerPoint;
             }
 
             if (!point.ContainsKey(id))
@@ -248,13 +422,44 @@ namespace GamePanelHUDCompass
             public bool IsSilenced;
         }
 
-        public class CompassStaticInfo
+        public struct CompassStaticInfo
+        {
+            public Vector3 Where;
+
+            public string ZoneId;
+
+            public bool IsAirdrop;
+
+            public string NameKey;
+
+            public string DescriptionKey;
+
+            public string TraderId;
+
+            public Type QuestType;
+
+            public enum Type
+            {
+                ConditionLeaveItemAtLocation,
+                ConditionFindItem,
+                ConditionCounterCreator
+            }
+        }
+
+        public class TriggerInfo
         {
             public Dictionary<string, Vector3> ExperienceTriggerPoint = new Dictionary<string, Vector3>();
 
             public Dictionary<string, Vector3> PlaceItemTriggerPoint = new Dictionary<string, Vector3>();
 
             public Dictionary<string, Vector3> QuestTriggerPoint = new Dictionary<string, Vector3>();
+
+            public void Clear()
+            {
+                ExperienceTriggerPoint.Clear();
+                PlaceItemTriggerPoint.Clear();
+                QuestTriggerPoint.Clear();
+            }
         }
 
         public class SettingsData
@@ -298,6 +503,28 @@ namespace GamePanelHUDCompass
             public ConfigEntry<FontStyles> KeyDirectionStyles;
             public ConfigEntry<FontStyles> KeyAngleStyles;
             public ConfigEntry<FontStyles> KeyCompassFireDirectionStyles;
+        }
+
+        public class ReflectionData
+        {
+            public RefHelp.FieldRef<Player, object> RefQuestController;
+            public RefHelp.FieldRef<object, object> RefQuests;
+            public RefHelp.FieldRef<object, object> RefQuestsList;
+            public RefHelp.FieldRef<object, object> RefAvailableForFinishConditionsList;
+            public RefHelp.FieldRef<object, string> RefLocationId;
+            public RefHelp.FieldRef<object, int> RefPlayerGroup;
+            public RefHelp.FieldRef<object, string> RefTraderId;
+            public RefHelp.FieldRef<ConditionCounterCreator, int> RefConditionCounterCreatorType;
+            public RefHelp.FieldRef<ConditionCounterCreator, object> RefConditionCounterCreatorCounter;
+            public RefHelp.FieldRef<object, object> RefConditionsList;
+            public RefHelp.FieldRef<GameWorld, object> RefLootItems;
+            public RefHelp.FieldRef<object, List<LootItem>> RefLootItemsList;
+
+            public RefHelp.PropertyRef<object, EQuestStatus> RefQuestStatus;
+            public RefHelp.PropertyRef<object, object> RefAvailableForFinishConditions;
+            public RefHelp.PropertyRef<object, object> RefTemplate;
+            public RefHelp.PropertyRef<object, string> RefNameLocaleKey;
+            public RefHelp.PropertyRef<object, object> RefConditions;
         }
     }
 }

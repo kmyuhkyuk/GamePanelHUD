@@ -23,34 +23,32 @@ namespace GamePanelHUDCore.Utils
         {
             HUDVersions.ServerConnect = default;
 
-            UnityWebRequest www = UnityWebRequest.Get(UpdateDataUrl);
-
-            www.SendWebRequest();
-
-            while (!www.isDone)
-                await Task.Yield();
-
-            if (www.isHttpError || www.isNetworkError)
+            using (UnityWebRequest www = UnityWebRequest.Get(UpdateDataUrl))
             {
-                HUDVersions.Set(false, new Version(), new Version(), new Version(), null, null);
-            }
-            else
-            {
-                HUDVersion hudVersion = JsonConvert.DeserializeObject<HUDVersion>(www.downloadHandler.text);
+                www.SendWebRequest();
 
-                HUDVersions.Set(true, hudVersion.ModVersion, hudVersion.FirstGameVersion, hudVersion.LastGameVersion, hudVersion.ModFileUrl, hudVersion.ModDownloadUrl);
+                while (!www.isDone)
+                    await Task.Yield();
+
+                if (www.isHttpError || www.isNetworkError)
+                {
+                    HUDVersions.ConnectError();
+                }
+                else
+                {
+                    HUDVersions.Set(JsonConvert.DeserializeObject<HUDVersion>(www.downloadHandler.text));
+                }
             }
         }
 
         public static async void DrawNeedUpdate(ConfigFile config, Version version)
         {
-            Action<ConfigEntryBase> draw;
-
             while (!HUDVersions.ServerConnect.HasValue)
                 await Task.Yield();
 
             bool serverConnect = (bool)HUDVersions.ServerConnect;
 
+            Action<ConfigEntryBase> draw;
             if (!serverConnect)
             {
                 draw = Draw.CantKnowUpdate;
@@ -102,14 +100,24 @@ namespace GamePanelHUDCore.Utils
 
             public string ModDownloadUrl;
 
-            public void Set(bool connect, Version version, Version firstversion, Version lastversion, string fileurl, string downloadurl)
+            public void Set(HUDVersion hudversion)
             {
-                ServerConnect = connect;
-                ModVersion = version;
-                FirstGameVersion = firstversion;
-                LastGameVersion = lastversion;
-                ModFileUrl = fileurl;
-                ModDownloadUrl = downloadurl;
+                ServerConnect = true;
+                ModVersion = hudversion.ModVersion;
+                FirstGameVersion = hudversion.FirstGameVersion;
+                LastGameVersion = hudversion.LastGameVersion;
+                ModFileUrl = hudversion.ModFileUrl;
+                ModDownloadUrl = hudversion.ModDownloadUrl;
+            }
+
+            public void ConnectError()
+            {
+                ServerConnect = default;
+                ModVersion = null;
+                FirstGameVersion = null;
+                LastGameVersion = null;
+                ModFileUrl = null;
+                ModDownloadUrl = null;
             }
         }
 

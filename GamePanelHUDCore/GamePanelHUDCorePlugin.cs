@@ -26,6 +26,8 @@ namespace GamePanelHUDCore
 
         internal static Player YourPlayer;
 
+        internal static GameWorld TheWorld;
+
         public static readonly HUDCoreClass HUDCore = new HUDCoreClass();
 
         private bool AllHUDSW;
@@ -41,7 +43,6 @@ namespace GamePanelHUDCore
             LogLogger = Logger;
 
             ModUpdateCheck.ServerCheck();
-
             ModUpdateCheck.DrawNeedUpdate(Config, Info.Metadata.Version);
 
             const string mainSettings = "主设置 Main Settings";
@@ -50,6 +51,7 @@ namespace GamePanelHUDCore
             SettingsDatas.KeyDebugMethodTime = Config.Bind<bool>(mainSettings, "调试所有指示栏调用时间 Debug All HUD Method Invoke Time", false, new ConfigDescription("", null, new ConfigurationManagerAttributes() { IsAdvanced = true }));
 
             new PlayerPatch().Enable();
+            new GameWorldPatch().Enable();
             new EnvironmentUIRootPatch().Enable();
             new InventoryScreenPatch().Enable();
             new HideoutScreenOverlayPatch().Enable();
@@ -81,7 +83,7 @@ namespace GamePanelHUDCore
                 AllHUDSW = false;
             }
 
-            HUDCore.Set(YourPlayer, AllHUDSW);
+            HUDCore.Set(YourPlayer, TheWorld, AllHUDSW);
 
             UpdateManger.NeedMethodTime = SettingsDatas.KeyDebugMethodTime.Value;
 
@@ -91,6 +93,8 @@ namespace GamePanelHUDCore
         public class HUDCoreClass
         {
             public Player YourPlayer;
+
+            public GameWorld TheWorld;
 
             public bool HasPlayer
             {
@@ -166,9 +170,10 @@ namespace GamePanelHUDCore
                 init.Add(initassetname.ToLower(), BundleHelp.InitAsset(asset[initassetname.ToLower()], GamePanlHUDPublic.transform));
             }
 
-            public void Set(Player yourplayer, bool hudsw)
+            public void Set(Player yourplayer, GameWorld theworld, bool hudsw)
             {
                 YourPlayer = yourplayer;
+                TheWorld = theworld;
                 AllHUDSW = hudsw;
             }
         }

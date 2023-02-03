@@ -98,6 +98,8 @@
     <Compile Include="GamePanelHUDCompassFire.cs" />
     <Compile Include="GamePanelHUDCompassFireUI.cs" />
     <Compile Include="GamePanelHUDCompassPlugin.cs" />
+    <Compile Include="GamePanelHUDCompassStatic.cs" />
+    <Compile Include="GamePanelHUDCompassStaticUI.cs" />
     <Compile Include="GamePanelHUDCompassUI.cs" />
     <Compile Include="Patches\AirdropSynchronizableObjectPatch.cs" />
     <Compile Include="Patches\ExperienceTriggerPatch.cs" />

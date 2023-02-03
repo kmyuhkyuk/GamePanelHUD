@@ -1,4 +1,5 @@
-﻿using Aki.Reflection.Patching;
+﻿#if !UNITY_EDITOR
+using Aki.Reflection.Patching;
 using EFT.Interactive;
 using System.Reflection;
 using System.Collections.Generic;
@@ -23,3 +24,4 @@ namespace GamePanelHUDCompass.Patches
         }
     }
 }
+#endif

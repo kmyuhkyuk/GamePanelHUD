@@ -43,7 +43,7 @@ namespace GamePanelHUDCompass
         [SerializeField]
         private TMP_Text _FireRight;
 
-        private CanvasGroup FiresGroup;
+        private CanvasGroup CompassFireGroup;
 
         private RectTransform FireLeftRect;
 
@@ -56,12 +56,10 @@ namespace GamePanelHUDCompass
 #if !UNITY_EDITOR
         void Start()
         {
-            FiresGroup = _CompassFire.GetComponent<CanvasGroup>();
+            CompassFireGroup = _CompassFire.GetComponent<CanvasGroup>();
 
             FireLeftRect = _FireLeft.GetComponent<RectTransform>();
             FireRightRect = _FireRight.GetComponent<RectTransform>();
-
-            Remove = RemoveFireUI;
 
             GamePanelHUDCompassPlugin.ShowFire = ShowFire;
             GamePanelHUDCompassPlugin.DestroyFire = DestroyFireUI;
@@ -71,13 +69,18 @@ namespace GamePanelHUDCompass
 
         public void IUpdate()
         {
+            CompassFrieHUD();
+        }
+
+        void CompassFrieHUD()
+        {
             RectTransform.anchoredPosition = HUD.SettingsData.KeyAnchoredPosition.Value;
             RectTransform.sizeDelta = HUD.SettingsData.KeySizeDelta.Value;
             RectTransform.localScale = HUD.SettingsData.KeyLocalScale.Value;
 
             if (_CompassFire != null)
             {
-                FiresGroup.alpha = HUD.HUDSW ? 1 : 0;
+                CompassFireGroup.alpha = HUD.HUDSW ? 1 : 0;
 
                 _Azimuths.anchoredPosition = new Vector2(HUD.Info.CompassX, 0);
 

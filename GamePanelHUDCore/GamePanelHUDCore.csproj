@@ -106,6 +106,7 @@
     <Compile Include="ConfigurationManagerAttributes.cs" />
     <Compile Include="GamePanelHUDCorePlugin.cs" />
     <Compile Include="Patches\EnvironmentUIRootPatch.cs" />
+    <Compile Include="Patches\GameWorldPatch.cs" />
     <Compile Include="Patches\HideoutScreenOverlayPatch.cs" />
     <Compile Include="Patches\InventoryScreenPatch.cs" />
     <Compile Include="Patches\MainApplicationPatch.cs" />
@@ -124,6 +125,7 @@
     <Compile Include="Utils\RuToEn.cs" />
     <Compile Include="Utils\Session\ExperienceHelp.cs" />
     <Compile Include="Utils\Session\ISessionHelp.cs" />
+    <Compile Include="Utils\Session\TradersAvatar.cs" />
     <Compile Include="Utils\StringBuilderHelp.cs" />
   </ItemGroup>
   <ItemGroup>
