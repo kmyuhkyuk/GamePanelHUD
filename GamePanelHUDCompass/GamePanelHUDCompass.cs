@@ -39,7 +39,7 @@ namespace GamePanelHUDCompass
         void CompassHUD()
         {
             RectTransform.anchoredPosition = HUD.SettingsData.KeyAnchoredPosition.Value;
-            RectTransform.sizeDelta = HUD.SettingsData.KeySizeDelta.Value;
+            RectTransform.sizeDelta = HUD.Info.SizeDelta;
             RectTransform.localScale = HUD.SettingsData.KeyLocalScale.Value;
 
             if (_Compass != null)

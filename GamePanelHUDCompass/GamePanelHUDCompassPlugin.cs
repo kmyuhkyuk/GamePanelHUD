@@ -2,8 +2,7 @@
 using BepInEx;
 using BepInEx.Configuration;
 using System;
-using HarmonyLib;
-using System.Reflection;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,11 +11,9 @@ using EFT;
 using EFT.Quests;
 using EFT.Interactive;
 using GamePanelHUDCore;
-using GamePanelHUDCompass.Patches;
 using GamePanelHUDCore.Utils;
-using System.Security.Policy;
-using EFT.InventoryLogic;
-using System.Linq;
+using GamePanelHUDCore.Utils.Zone;
+using GamePanelHUDCompass.Patches;
 
 namespace GamePanelHUDCompass
 {
@@ -34,8 +31,6 @@ namespace GamePanelHUDCompass
 
         private readonly CompassInfo CompassInfos = new CompassInfo();
 
-        private readonly TriggerInfo Triggers = new TriggerInfo();
-
         internal static readonly GamePanelHUDCorePlugin.HUDClass<CompassInfo, SettingsData> CompassHUD = new GamePanelHUDCorePlugin.HUDClass<CompassInfo, SettingsData>();
 
         internal static readonly GamePanelHUDCorePlugin.HUDClass<CompassInfo, SettingsData> CompassFireHUD = new GamePanelHUDCorePlugin.HUDClass<CompassInfo, SettingsData>();
@@ -50,13 +45,15 @@ namespace GamePanelHUDCompass
 
         private bool CompassFireHUDSW;
 
-        private bool CompassStaticCache = true;
+        private bool CompassStaticCacheBool = true;
 
         private Transform Cam;
 
+        private RectTransform ScreenRect;
+
         private readonly SettingsData SettingsDatas = new SettingsData();
 
-        private readonly ReflectionData ReflectionDatas = new ReflectionData();
+        private readonly ReflectionData ReflectionDatas = new ReflectionData(); 
 
         private List<CompassStaticInfo> Test = new List<CompassStaticInfo>(); 
 
@@ -67,8 +64,6 @@ namespace GamePanelHUDCompass
         internal static Action<CompassFireInfo> ShowFire;
 
         internal static Action<int> DestroyFire;
-
-        internal static Action<TriggerWithId> AddTrigger;
 
         internal static Action<CompassStaticInfo> ShowStatic;
 
@@ -85,6 +80,7 @@ namespace GamePanelHUDCompass
             const string colorSettings = "颜色设置 Color Settings";
             const string fontStylesSettings = "字体样式设置 Font Styles Settings";
             const string speedSettings = "动画速度设置 Animation Speed Settings";
+            const string rateSettings = "率设置  Rate Settings";
             const string otherSettings = "其他设置 Other Settings";
 
             SettingsDatas.KeyCompassHUDSW = Config.Bind<bool>(mainSettings, "罗盘指示栏显示 Compass HUD display", true);
@@ -94,6 +90,7 @@ namespace GamePanelHUDCompass
             SettingsDatas.KeyCompassFireDirectionHUDSW = Config.Bind<bool>(mainSettings, "罗盘开火指示栏显示 Compass Fire Direction HUD display", true);
             SettingsDatas.KeyCompassFireSilenced = Config.Bind<bool>(mainSettings, "罗盘开火隐藏消音 Compass Fire Hide Silenced", true);
             SettingsDatas.KeyCompassFireDeadDestroy = Config.Bind<bool>(mainSettings, "罗盘开火死亡销毁 Compass Fire Dead Destroy", true);
+            SettingsDatas.KeyAutoSizeDelta = Config.Bind<bool>(mainSettings, "自动高度 Auto Size Delta", true);
 
             SettingsDatas.KeyAnchoredPosition = Config.Bind<Vector2>(positionScaleSettings, "指示栏位置 Anchored Position", new Vector2(0, 0));
             SettingsDatas.KeySizeDelta = Config.Bind<Vector2>(positionScaleSettings, "指示栏高度 Size Delta", new Vector2(600, 90));
@@ -113,6 +110,8 @@ namespace GamePanelHUDCompass
 
             SettingsDatas.KeyAngleOffset = Config.Bind<float>(otherSettings, "角度偏移 Angle Offset", 0);
             SettingsDatas.KeyCompassFireDistance = Config.Bind<float>(otherSettings, "罗盘开火最大距离 Compass Fire Max Distance", 50, new ConfigDescription("Fire distance <= How many meters display", new AcceptableValueRange<float>(0, 1000)));
+
+            SettingsDatas.KeyAutoSizeDeltaRate = Config.Bind<int>(rateSettings, "自动高度比率 Auto Size Delta Rate", 30, new ConfigDescription("Screen percentage", new AcceptableValueRange<int>(0, 100)));
 
             SettingsDatas.KeyArrowColor = Config.Bind<Color>(colorSettings, "指针 Arrow", new Color(1f, 1f, 1f));
             SettingsDatas.KeyAzimuthsColor = Config.Bind<Color>(colorSettings, "刻度 Azimuths", new Color(0.8901961f, 0.8901961f, 0.8392157f));
@@ -136,7 +135,6 @@ namespace GamePanelHUDCompass
             ReflectionDatas.RefQuestController = RefHelp.FieldRef<Player, object>.Create("_questController");
             ReflectionDatas.RefQuests = RefHelp.FieldRef<object, object>.Create(ReflectionDatas.RefQuestController.FieldType, "Quests");
             ReflectionDatas.RefQuestsList = RefHelp.FieldRef<object, object>.Create(ReflectionDatas.RefQuests.FieldType, "list_0");
-            ReflectionDatas.RefConditionCounterCreatorType = RefHelp.FieldRef<ConditionCounterCreator, int>.Create("type");
             ReflectionDatas.RefConditionCounterCreatorCounter = RefHelp.FieldRef<ConditionCounterCreator, object>.Create("counter");
             ReflectionDatas.RefLootItems = RefHelp.FieldRef<GameWorld, object>.Create("LootItems");
             ReflectionDatas.RefLootItemsList = RefHelp.FieldRef<object, List<LootItem>>.Create(ReflectionDatas.RefLootItems.FieldType, "list_0");
@@ -166,14 +164,14 @@ namespace GamePanelHUDCompass
                 ReflectionDatas.RefPlayerGroup = RefHelp.FieldRef<object, int>.Create(templateType, "PlayerGroup");
             }
 
-            AddTrigger = AddPoint;
-
             new LevelSettingsPatch().Enable();
             new InitiateShotPatch().Enable();
             new OnBeenKilledByAggressorPatch().Enable();
-            new TriggerWithIdPatch().Enable();
-            new ExperienceTriggerPatch().Enable();
-            new AirdropSynchronizableObjectPatch().Enable();
+
+            if (Is231Up)
+            {
+                new AirdropSynchronizableObjectPatch().Enable();
+            }
 
             GamePanelHUDCorePlugin.UpdateManger.Register(this);
         }
@@ -183,6 +181,8 @@ namespace GamePanelHUDCompass
             BundleHelp.AssetData<GameObject> prefabs = GamePanelHUDCorePlugin.HUDCoreClass.LoadHUD("gamepanlcompasshud.bundle", "gamepanlcompasshud");
 
             FirePrefab = prefabs.Asset["fire"];
+
+            ScreenRect = GamePanelHUDCorePlugin.HUDCoreClass.GamePanlHUDPublic.GetComponent<RectTransform>();
         }
 
         public void IUpdate()
@@ -194,6 +194,15 @@ namespace GamePanelHUDCompass
         {
             CompassHUDSW = HUDCore.AllHUDSW && Cam != null && HUDCore.HasPlayer && SettingsDatas.KeyCompassHUDSW.Value;
             CompassFireHUDSW = CompassHUDSW && SettingsDatas.KeyCompassFireHUDSW.Value;
+
+            if (SettingsDatas.KeyAutoSizeDelta.Value)
+            {
+                CompassInfos.SizeDelta = new Vector2(ScreenRect.sizeDelta.x * ((float)SettingsDatas.KeyAutoSizeDeltaRate.Value / 100), SettingsDatas.KeySizeDelta.Value.y);
+            }
+            else
+            {
+                CompassInfos.SizeDelta = SettingsDatas.KeySizeDelta.Value;
+            }
 
             CompassHUD.Set(CompassInfos, SettingsDatas, CompassHUDSW);
             CompassFireHUD.Set(CompassInfos, SettingsDatas, CompassFireHUDSW);
@@ -210,22 +219,25 @@ namespace GamePanelHUDCompass
 
                 CompassInfos.PlayerRight = Cam.right;
 
-                if (CompassStaticCache)
+                if (CompassStaticCacheBool)
                 {
-                    ShowQuest(HUDCore.YourPlayer, HUDCore.TheWorld, Is231Up, ShowStatic);
+                    List<LootItem> lootItemsList = ReflectionDatas.RefLootItemsList.GetValue(ReflectionDatas.RefLootItems.GetValue(HUDCore.TheWorld));
 
-                    CompassStaticCache = false;
+                    if (lootItemsList.Count > 0)
+                    {
+                        ShowQuest(HUDCore.YourPlayer, lootItemsList, Is231Up, null);
+
+                        CompassStaticCacheBool = false;
+                    }
                 }
             }
             else
             {
-                Triggers.Clear();
-
-                CompassStaticCache = true;
+                CompassStaticCacheBool = true;
             }
         }
 
-        void ShowQuest(Player player, GameWorld theworld, bool is231up, Action<CompassStaticInfo> showstatic)
+        void ShowQuest(Player player, List<LootItem> lootitemslist, bool is231up, Action<CompassStaticInfo> showstatic)
         {
             object questData = ReflectionDatas.RefQuestController.GetValue(player);
 
@@ -233,9 +245,7 @@ namespace GamePanelHUDCompass
 
             IList questsList = ReflectionDatas.RefQuestsList.GetValue(quests) as IList;
 
-            object lootItems = ReflectionDatas.RefLootItems.GetValue(theworld);
-
-            Dictionary<string, LootItem> lootItemsList = ReflectionDatas.RefLootItemsList.GetValue(lootItems).ToDictionary(x => x.ItemId, x => x);
+            Dictionary<string, LootItem> questItemsDictionary = lootitemslist.Where(x => x.Item.QuestItem).ToDictionary(x => x.TemplateId, x => x);
 
             foreach (object item in questsList)
             {
@@ -243,7 +253,7 @@ namespace GamePanelHUDCompass
                 {
                     object template = ReflectionDatas.RefTemplate.GetValue(item);
 
-                    if (player.Location == LocalizedHelp.Localized(string.Concat(ReflectionDatas.RefLocationId.GetValue(template), " Name")) && (is231up ? (player.Profile.Side == EPlayerSide.Savage ? 1 : 0) == ReflectionDatas.RefPlayerGroup.GetValue(template) : true))
+                    if (is231up ? (player.Profile.Side == EPlayerSide.Savage ? 1 : 0) == ReflectionDatas.RefPlayerGroup.GetValue(template) : true)
                     {
                         string name = ReflectionDatas.RefNameLocaleKey.GetValue(template);
 
@@ -259,12 +269,13 @@ namespace GamePanelHUDCompass
                             {
                                 string zoneId = ((ConditionLeaveItemAtLocation)condition).zoneId;
 
-                                if (Triggers.PlaceItemTriggerPoint.TryGetValue(zoneId, out Vector3 where))
+                                if (ZoneHelp.TryPlaceItem(zoneId, out Vector3 where))
                                 {
                                     CompassStaticInfo staticInfo = new CompassStaticInfo()
                                     {
                                         Where = where,
                                         ZoneId = zoneId,
+                                        Target = ((ConditionLeaveItemAtLocation)condition).target,
                                         NameKey = name,
                                         DescriptionKey = ((Condition)condition).id,
                                         TraderId = traderId,
@@ -280,7 +291,7 @@ namespace GamePanelHUDCompass
 
                                 foreach (string itemid in itemIds)
                                 {
-                                    if (lootItemsList.TryGetValue(itemid, out LootItem lootitem) && lootitem.Item.QuestItem)
+                                    if (questItemsDictionary.TryGetValue(itemid, out LootItem lootitem))
                                     {
                                         CompassStaticInfo staticInfo = new CompassStaticInfo()
                                         {
@@ -295,7 +306,7 @@ namespace GamePanelHUDCompass
                                     }
                                 }
                             }
-                            else if (condition is ConditionCounterCreator && ReflectionDatas.RefConditionCounterCreatorType.GetValue((ConditionCounterCreator)condition) == 6) //Type == Experience
+                            else if (condition is ConditionCounterCreator)
                             {
                                 object counter = ReflectionDatas.RefConditionCounterCreatorCounter.GetValue((ConditionCounterCreator)condition);
 
@@ -309,7 +320,7 @@ namespace GamePanelHUDCompass
                                     {
                                         string zoneId = ((ConditionVisitPlace)counterCondition).target;
 
-                                        if (Triggers.ExperienceTriggerPoint.TryGetValue(zoneId, out Vector3 where))
+                                        if (ZoneHelp.TryExperience(zoneId, out Vector3 where))
                                         {
                                             CompassStaticInfo staticInfo = new CompassStaticInfo()
                                             {
@@ -318,10 +329,32 @@ namespace GamePanelHUDCompass
                                                 NameKey = name,
                                                 DescriptionKey = ((Condition)condition).id,
                                                 TraderId = traderId,
-                                                QuestType = CompassStaticInfo.Type.ConditionCounterCreator
+                                                QuestType = CompassStaticInfo.Type.ConditionVisitPlace
                                             };
 
                                             Test.Add(staticInfo);
+                                        }
+                                    }
+                                    else if (condition is ConditionInZone)
+                                    {
+                                        string[] zoneIds = ((ConditionInZone)counterCondition).zoneIds;
+
+                                        foreach (string zoneid in zoneIds)
+                                        {
+                                            if (ZoneHelp.TryExperience(zoneid, out Vector3 where))
+                                            {
+                                                CompassStaticInfo staticInfo = new CompassStaticInfo()
+                                                {
+                                                    Where = where,
+                                                    ZoneId = zoneid,
+                                                    NameKey = name,
+                                                    DescriptionKey = ((Condition)condition).id,
+                                                    TraderId = traderId,
+                                                    QuestType = CompassStaticInfo.Type.ConditionInZone
+                                                };
+
+                                                Test.Add(staticInfo);
+                                            }
                                         }
                                     }
                                 }
@@ -331,6 +364,7 @@ namespace GamePanelHUDCompass
                 }
             }
         }
+        
 
         float GetAngle(Vector3 eulerangles, float northdirection, float offset)
         {
@@ -346,36 +380,6 @@ namespace GamePanelHUDCompass
             }
         }
 
-        void AddPoint(TriggerWithId trigger)
-        {
-            string id = trigger.Id;
-            Vector3 pos = trigger.transform.position;
-
-            Dictionary<string, Vector3> point;
-
-            if (trigger is ExperienceTrigger)
-            {
-                point = Triggers.ExperienceTriggerPoint;
-            }
-            else if (trigger is PlaceItemTrigger)
-            {
-                point = Triggers.PlaceItemTriggerPoint;
-            }
-            else
-            {
-                point = Triggers.QuestTriggerPoint;
-            }
-
-            if (!point.ContainsKey(id))
-            {
-                point.Add(id, pos);
-            }
-            else
-            {
-                point.Add(string.Concat(id, "(", trigger.transform.parent.name, ")"), pos);
-            }
-        }
-
         public class CompassInfo
         {
             public Vector3 NorthVector;
@@ -385,6 +389,8 @@ namespace GamePanelHUDCompass
             public Vector3 PlayerPosition;
 
             public Vector3 PlayerRight;
+
+            public Vector2 SizeDelta;
 
             public float CompassX
             {
@@ -428,7 +434,7 @@ namespace GamePanelHUDCompass
 
             public string ZoneId;
 
-            public bool IsAirdrop;
+            public string[] Target;
 
             public string NameKey;
 
@@ -440,25 +446,11 @@ namespace GamePanelHUDCompass
 
             public enum Type
             {
+                Airdrop,
                 ConditionLeaveItemAtLocation,
                 ConditionFindItem,
-                ConditionCounterCreator
-            }
-        }
-
-        public class TriggerInfo
-        {
-            public Dictionary<string, Vector3> ExperienceTriggerPoint = new Dictionary<string, Vector3>();
-
-            public Dictionary<string, Vector3> PlaceItemTriggerPoint = new Dictionary<string, Vector3>();
-
-            public Dictionary<string, Vector3> QuestTriggerPoint = new Dictionary<string, Vector3>();
-
-            public void Clear()
-            {
-                ExperienceTriggerPoint.Clear();
-                PlaceItemTriggerPoint.Clear();
-                QuestTriggerPoint.Clear();
+                ConditionVisitPlace,
+                ConditionInZone
             }
         }
 
@@ -470,6 +462,7 @@ namespace GamePanelHUDCompass
             public ConfigEntry<bool> KeyCompassFireDirectionHUDSW;
             public ConfigEntry<bool> KeyCompassFireSilenced;
             public ConfigEntry<bool> KeyCompassFireDeadDestroy;
+            public ConfigEntry<bool> KeyAutoSizeDelta;
 
             public ConfigEntry<Vector2> KeyAnchoredPosition;
             public ConfigEntry<Vector2> KeySizeDelta;
@@ -486,6 +479,8 @@ namespace GamePanelHUDCompass
             public ConfigEntry<float> KeyCompassFireWaitSpeed;
             public ConfigEntry<float> KeyCompassFireToSmallSpeed;
             public ConfigEntry<float> KeyCompassFireSmallWaitSpeed;
+
+            public ConfigEntry<int> KeyAutoSizeDeltaRate;
 
             public ConfigEntry<Color> KeyArrowColor;
             public ConfigEntry<Color> KeyAzimuthsColor;
@@ -514,7 +509,6 @@ namespace GamePanelHUDCompass
             public RefHelp.FieldRef<object, string> RefLocationId;
             public RefHelp.FieldRef<object, int> RefPlayerGroup;
             public RefHelp.FieldRef<object, string> RefTraderId;
-            public RefHelp.FieldRef<ConditionCounterCreator, int> RefConditionCounterCreatorType;
             public RefHelp.FieldRef<ConditionCounterCreator, object> RefConditionCounterCreatorCounter;
             public RefHelp.FieldRef<object, object> RefConditionsList;
             public RefHelp.FieldRef<GameWorld, object> RefLootItems;

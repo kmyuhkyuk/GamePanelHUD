@@ -185,7 +185,7 @@ namespace GamePanelHUDCompass
             float fireXRight = FireXRight;
             float fireXRightRight = FireXRightRight;
 
-            IsLeft = GetDirection(HUD.SettingsData.KeySizeDelta.Value.x, HUD.Info.CompassX, FireX, fireXLeft, fireXRight, fireXRightRight, lhs, HUD.Info.PlayerRight);
+            IsLeft = GetDirection(HUD.Info.SizeDelta.x, HUD.Info.CompassX, FireX, fireXLeft, fireXRight, fireXRightRight, lhs, HUD.Info.PlayerRight);
 
             RealRect.anchoredPosition = new Vector2(FireX, HUD.SettingsData.KeyCompassFireHeight.Value);
             VirtualRect.anchoredPosition = new Vector2(fireXLeft, HUD.SettingsData.KeyCompassFireHeight.Value);

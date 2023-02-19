@@ -8,11 +8,13 @@ namespace GamePanelHUDCore.Utils.Session
 {
     public class TradersAvatar
     {
-        public static readonly Dictionary<string, Sprite> Avatar = new Dictionary<string, Sprite>();
+        private static readonly Dictionary<string, Sprite> Avatar = new Dictionary<string, Sprite>();
 
-        public static async void Init(object session)
+        public static async void Init(ISession session)
         {
             IList tradersList = Traverse.Create(session).Property("Traders").GetValue<object>() as IList;
+
+            Avatar.Clear();
 
             foreach (object trader in tradersList)
             {
@@ -24,6 +26,11 @@ namespace GamePanelHUDCore.Utils.Session
 
                 Avatar.Add(id, sprite);
             }
+        }
+
+        public static Sprite GetAvatar(string traderid)
+        {
+            return Avatar.TryGetValue(traderid, out Sprite avatar) ? avatar : null;
         }
     }
 }

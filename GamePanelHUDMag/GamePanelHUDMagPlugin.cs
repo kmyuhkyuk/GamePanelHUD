@@ -154,7 +154,7 @@ namespace GamePanelHUDMag
 
                 if (Is341Up)
                 {
-                    NowLauncher = ReflectionDatas.RefUnderbarrelWeapon.GetValue(NowFirearmController);
+                    NowLauncher = ReflectionDatas.RefUnderbarrelWeapon.GetValue(NowFirearmController); 
                     Animator_Launcher = ReflectionDatas.RefAnimator.GetValue(ReflectionDatas.RefLauncherIAnimator.GetValue(HUDCore.YourPlayer));
                 }
 
@@ -184,12 +184,12 @@ namespace GamePanelHUDMag
                 //Switch Launcher trigger
                 if (launcherActive != LauncherCacheBool)
                 {
-                    LauncherCacheBool = launcherActive;
-
                     if (!SettingsDatas.KeyWeaponNameAlways.Value && SettingsDatas.KeyAutoWeaponName.Value)
                     {
                         WeaponTirgger();
                     }
+
+                    LauncherCacheBool = launcherActive;
                 }
                 else if (!launcherActive)
                 {

@@ -14,7 +14,7 @@ namespace GamePanelHUDCore.Utils
 
         private static object Kill;
 
-        private static Func<int, int> RefKillingBonusPercent;
+        private static Func<object, int, int> RefKillingBonusPercent;
 
         private static int VictimLevelExp;
 
@@ -23,6 +23,13 @@ namespace GamePanelHUDCore.Utils
         private static float HeadShotMult;
 
         public static bool CanWork { get; private set; }
+
+        static ExperienceHelp()
+        {
+            BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
+
+            RefKillingBonusPercent = RefHelp.ObjectMethodDelegate<Func<object, int, int>>(RefHelp.GetEftMethod(x => x.GetMethod("GetKillingBonusPercent") != null, flags, x => x.Name == "GetKillingBonusPercent"));
+        }
 
         public static void Init(object backendconfig)
         {
@@ -37,8 +44,6 @@ namespace GamePanelHUDCore.Utils
             VictimBotLevelExp = Traverse.Create(Kill).Field("VictimBotLevelExp").GetValue<int>();
 
             HeadShotMult = Traverse.Create(Kill).Field("HeadShotMult").GetValue<float>();
-
-            RefKillingBonusPercent = AccessTools.MethodDelegate<Func<int, int>>(Kill.GetType().GetMethod("GetKillingBonusPercent", BindingFlags.Public | BindingFlags.Instance), Kill);
 
             CanWork = true;
         }
@@ -73,7 +78,7 @@ namespace GamePanelHUDCore.Utils
 
         public static int GetKillingBonusPercent(int killed)
         {
-            return RefKillingBonusPercent(killed);
+            return RefKillingBonusPercent(Kill, killed);
         }
     }
 }

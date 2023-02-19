@@ -35,7 +35,7 @@ namespace GamePanelHUDCompass.Patches
             GamePanelHUDCompassPlugin.CompassStaticInfo staticInfo = new GamePanelHUDCompassPlugin.CompassStaticInfo()
             {
                 Where = __instance.transform.position,
-                IsAirdrop = true
+                QuestType = GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Airdrop
             };
 
             GamePanelHUDCompassPlugin.ShowStatic(staticInfo);
