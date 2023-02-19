@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-#if !UNITY_EDITOR
+﻿#if !UNITY_EDITOR
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace GamePanelHUDCore.Utils

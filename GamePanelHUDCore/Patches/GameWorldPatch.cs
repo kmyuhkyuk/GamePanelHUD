@@ -4,7 +4,7 @@ using EFT;
 
 namespace GamePanelHUDCore.Patches
 {
-    public class GameWorldPatch : ModulePatch
+    public class GameWorldAwakePatch : ModulePatch
     {
         protected override MethodBase GetTargetMethod()
         {
@@ -15,6 +15,20 @@ namespace GamePanelHUDCore.Patches
         private static void PatchPostfix(GameWorld __instance)
         {
             GamePanelHUDCorePlugin.TheWorld = __instance;
+        }
+    }
+
+    public class GameWorldDisposePatch : ModulePatch
+    {
+        protected override MethodBase GetTargetMethod()
+        {
+            return typeof(GameWorld).GetMethod("Dispose", BindingFlags.Public | BindingFlags.Instance);
+        }
+
+        [PatchPostfix]
+        private static void PatchPostfix(GameWorld __instance)
+        {
+            GamePanelHUDCorePlugin.HUDCoreClass.WorldDispose(__instance);
         }
     }
 }

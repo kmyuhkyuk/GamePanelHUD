@@ -1,6 +1,6 @@
 ﻿#if !UNITY_EDITOR
-using GamePanelHUDCore.Utils.Session;
 using HarmonyLib;
+using GamePanelHUDCore.Utils.Session;
 
 namespace GamePanelHUDCore.Utils
 {
@@ -10,7 +10,6 @@ namespace GamePanelHUDCore.Utils
 
         private static object BackEndConfig;
 
-        //Only Init Once
         public static void Init(ISession session)
         {
             Session = session;

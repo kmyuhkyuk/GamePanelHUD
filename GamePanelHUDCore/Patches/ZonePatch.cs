@@ -3,8 +3,9 @@ using Aki.Reflection.Patching;
 using System.Reflection;
 using System.Collections.Generic;
 using EFT.Interactive;
+using GamePanelHUDCore.Utils.Zone;
 
-namespace GamePanelHUDCompass.Patches
+namespace GamePanelHUDCore.Patches
 {
     public class ExperienceTriggerPatch : ModulePatch
     {
@@ -18,7 +19,25 @@ namespace GamePanelHUDCompass.Patches
         [PatchPostfix]
         private static void PatchPostfix(ExperienceTrigger __instance)
         {
-            GamePanelHUDCompassPlugin.AddTrigger(__instance);
+            ZoneHelp.AddPoint(__instance);
+            Test.Add(__instance);
+        }
+    }
+
+    public class TriggerWithIdPatch : ModulePatch
+    {
+        private static List<TriggerWithId> Test = new List<TriggerWithId>();
+
+        protected override MethodBase GetTargetMethod()
+        {
+            return typeof(TriggerWithId).GetMethod("Awake", BindingFlags.NonPublic | BindingFlags.Instance);
+        }
+
+        [PatchPostfix]
+        private static void PatchPostfix(TriggerWithId __instance)
+        {
+            ZoneHelp.AddPoint(__instance);
+
             Test.Add(__instance);
         }
     }

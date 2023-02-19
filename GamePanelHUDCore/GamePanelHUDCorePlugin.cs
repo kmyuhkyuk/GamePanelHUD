@@ -51,11 +51,14 @@ namespace GamePanelHUDCore
             SettingsDatas.KeyDebugMethodTime = Config.Bind<bool>(mainSettings, "调试所有指示栏调用时间 Debug All HUD Method Invoke Time", false, new ConfigDescription("", null, new ConfigurationManagerAttributes() { IsAdvanced = true }));
 
             new PlayerPatch().Enable();
-            new GameWorldPatch().Enable();
+            new GameWorldAwakePatch().Enable();
+            new GameWorldDisposePatch().Enable();
             new EnvironmentUIRootPatch().Enable();
             new InventoryScreenPatch().Enable();
             new HideoutScreenOverlayPatch().Enable();
             new MainApplicationPatch().Enable();
+            new ExperienceTriggerPatch().Enable();
+            new TriggerWithIdPatch().Enable();
 
             LocalizedHelp.Init();
             GrenadeType.Init();
@@ -95,6 +98,8 @@ namespace GamePanelHUDCore
             public Player YourPlayer;
 
             public GameWorld TheWorld;
+
+            public static event Action<GameWorld> WorldDestroy;
 
             public bool HasPlayer
             {
@@ -168,6 +173,14 @@ namespace GamePanelHUDCore
             private static void InitAsset(Dictionary<string, GameObject> asset, Dictionary<string, GameObject> init, string initassetname)
             {
                 init.Add(initassetname.ToLower(), BundleHelp.InitAsset(asset[initassetname.ToLower()], GamePanlHUDPublic.transform));
+            }
+
+            public static void WorldDispose(GameWorld world)
+            {
+                if (WorldDestroy != null)
+                {
+                    WorldDestroy(world);
+                }
             }
 
             public void Set(Player yourplayer, GameWorld theworld, bool hudsw)

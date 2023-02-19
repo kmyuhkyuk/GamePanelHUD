@@ -64,7 +64,7 @@ namespace GamePanelHUDCompass
         void CompassStaticHUD()
         {
             RectTransform.anchoredPosition = HUD.SettingsData.KeyAnchoredPosition.Value;
-            RectTransform.sizeDelta = HUD.SettingsData.KeySizeDelta.Value;
+            RectTransform.sizeDelta = HUD.Info.SizeDelta;
             RectTransform.localScale = HUD.SettingsData.KeyLocalScale.Value;
 
             if (_CompassStatic != null)
@@ -77,11 +77,11 @@ namespace GamePanelHUDCompass
 
         void ShowStatic(GamePanelHUDCompassPlugin.CompassStaticInfo staticinfo)
         {
-            GameObject staticG = Instantiate(GamePanelHUDCompassPlugin.StaticPrefab, staticinfo.IsAirdrop ? _Airdrops : _Quests);
+            //GameObject staticG = Instantiate(GamePanelHUDCompassPlugin.StaticPrefab, staticinfo.IsAirdrop ? _Airdrops : _Quests);
 
-            GamePanelHUDCompassStaticUI _static = staticG.GetComponent<GamePanelHUDCompassStaticUI>();
+            //GamePanelHUDCompassStaticUI _static = staticG.GetComponent<GamePanelHUDCompassStaticUI>();
 
-            _static.Where = staticinfo.Where;
+            //_static.Where = staticinfo.Where;
         }
 #endif
     }

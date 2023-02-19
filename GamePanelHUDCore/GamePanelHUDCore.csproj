@@ -47,8 +47,9 @@
     <Reference Include="Aki.Reflection">
       <HintPath>R:\Battlestate Games\Client.0.12.12.32.20765\EscapeFromTarkov_Data\Managed\Aki.Reflection.dll</HintPath>
     </Reference>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>R:\Battlestate Games\Client.0.12.12.32.20765\EscapeFromTarkov_Data\Managed\Assembly-CSharp.dll</HintPath>
+    <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>R:\Battlestate Games\Client.0.12.12.15.17349\EscapeFromTarkov_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="BepInEx">
       <HintPath>R:\Battlestate Games\Client.0.12.12.32.20765\BepInEx\core\BepInEx.dll</HintPath>
@@ -111,6 +112,7 @@
     <Compile Include="Patches\InventoryScreenPatch.cs" />
     <Compile Include="Patches\MainApplicationPatch.cs" />
     <Compile Include="Patches\PlayerPatch.cs" />
+    <Compile Include="Patches\ZonePatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\AnimatorHash.cs" />
     <Compile Include="Utils\BundleHelp.cs" />
@@ -127,6 +129,7 @@
     <Compile Include="Utils\Session\ISessionHelp.cs" />
     <Compile Include="Utils\Session\TradersAvatar.cs" />
     <Compile Include="Utils\StringBuilderHelp.cs" />
+    <Compile Include="Utils\Zone\ZoneHelp.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="kmyuhkyuk.pfx" />
