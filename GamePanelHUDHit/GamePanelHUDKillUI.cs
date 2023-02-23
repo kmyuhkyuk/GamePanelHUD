@@ -144,7 +144,6 @@ namespace GamePanelHUDHit
 
                     await Task.Delay(speed);
                 }
-                await Task.Yield();
             }
             else
             {
@@ -166,7 +165,6 @@ namespace GamePanelHUDHit
 
                     await Task.Delay(speed);
                 }
-                await Task.Yield();
             }
         }
 #endif
