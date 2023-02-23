@@ -130,15 +130,7 @@ namespace GamePanelHUDMag
 #endif
         {
             //Set Current float and color and Style to String
-            string addZeros;
-            if (Current < 10 && Maximum > 10)
-            {
-                addZeros = "0";
-            }
-            else
-            {
-                addZeros = "";
-            }
+            string addZeros = Current < 10 && Maximum > 10 ? "0" : "";
 
             string currentColor;
             if ((Normalized > WarningRate10 && Maximum <= 10 || Normalized >= WarningRate100 && Maximum > 10) && Current != 0)

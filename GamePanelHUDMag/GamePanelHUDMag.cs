@@ -86,7 +86,10 @@ namespace GamePanelHUDMag
 
         void WeaponTirgger()
         {
-            _Mag.WeaponTirgger = true;
+            if (_Mag !=null)
+            {
+                _Mag.WeaponTirgger = true;
+            }
         }
 #endif
     }

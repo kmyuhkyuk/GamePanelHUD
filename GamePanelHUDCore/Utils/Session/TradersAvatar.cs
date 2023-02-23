@@ -12,7 +12,7 @@ namespace GamePanelHUDCore.Utils.Session
 
         public static async void Init(ISession session)
         {
-            IList tradersList = Traverse.Create(session).Property("Traders").GetValue<object>() as IList;
+            IList tradersList = Traverse.Create(session).Property("Traders").GetValue<IList>();
 
             Avatar.Clear();
 
