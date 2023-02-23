@@ -22,7 +22,7 @@ namespace GamePanelHUDCore.Utils
         {
             BindingFlags flags = BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
 
-            RoleHelpType = RefHelp.GetEftType(x => x.GetMethod("IsBoss", flags) != null && x.GetMethod("Init", flags) != null && x.GetMethod("GetPhraseTagFromRole", flags) == null);
+            RoleHelpType = RefHelp.GetEftType(x => x.GetMethod("IsBoss", flags) != null && x.GetMethod("Init", flags) != null);
 
             RefIsBoss = AccessTools.MethodDelegate<Func<WildSpawnType, bool>>(RoleHelpType.GetMethod("IsBoss", flags));
 
