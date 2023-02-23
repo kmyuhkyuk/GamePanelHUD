@@ -1,6 +1,7 @@
 ﻿#if !UNITY_EDITOR
 using BepInEx;
 using BepInEx.Configuration;
+using HarmonyLib;
 using System;
 using System.Linq;
 using System.Collections;
@@ -10,6 +11,7 @@ using TMPro;
 using EFT;
 using EFT.Quests;
 using EFT.Interactive;
+using EFT.InventoryLogic;
 using GamePanelHUDCore;
 using GamePanelHUDCore.Utils;
 using GamePanelHUDCore.Utils.Zone;
@@ -29,13 +31,17 @@ namespace GamePanelHUDCompass
             }
         }
 
-        private readonly CompassInfo CompassInfos = new CompassInfo();
+        private readonly CompassData CompassInfos = new CompassData();
 
-        internal static readonly GamePanelHUDCorePlugin.HUDClass<CompassInfo, SettingsData> CompassHUD = new GamePanelHUDCorePlugin.HUDClass<CompassInfo, SettingsData>();
+        private readonly CompassFireData CompassFireDatas = new CompassFireData();
 
-        internal static readonly GamePanelHUDCorePlugin.HUDClass<CompassInfo, SettingsData> CompassFireHUD = new GamePanelHUDCorePlugin.HUDClass<CompassInfo, SettingsData>();
+        private readonly CompassStaticData CompassStaticDatas = new CompassStaticData();
 
-        internal static readonly GamePanelHUDCorePlugin.HUDClass<CompassInfo, SettingsData> CompassStaticHUD = new GamePanelHUDCorePlugin.HUDClass<CompassInfo, SettingsData>();
+        internal static readonly GamePanelHUDCorePlugin.HUDClass<CompassData, SettingsData> CompassHUD = new GamePanelHUDCorePlugin.HUDClass<CompassData, SettingsData>();
+
+        internal static readonly GamePanelHUDCorePlugin.HUDClass<CompassFireData, SettingsData> CompassFireHUD = new GamePanelHUDCorePlugin.HUDClass<CompassFireData, SettingsData>();
+
+        internal static readonly GamePanelHUDCorePlugin.HUDClass<CompassStaticData, SettingsData> CompassStaticHUD = new GamePanelHUDCorePlugin.HUDClass<CompassStaticData, SettingsData>();
 
         internal static float NorthDirection;
 
@@ -132,37 +138,8 @@ namespace GamePanelHUDCompass
 
             SettingsDatas.KeyCompassFireDirectionStyles = Config.Bind<FontStyles>(fontStylesSettings, "罗盘开火方向 Compass Fire Direction", FontStyles.Normal);
 
-            ReflectionDatas.RefQuestController = RefHelp.FieldRef<Player, object>.Create("_questController");
-            ReflectionDatas.RefQuests = RefHelp.FieldRef<object, object>.Create(ReflectionDatas.RefQuestController.FieldType, "Quests");
-            ReflectionDatas.RefQuestsList = RefHelp.FieldRef<object, object>.Create(ReflectionDatas.RefQuests.FieldType, "list_0");
-            ReflectionDatas.RefConditionCounterCreatorCounter = RefHelp.FieldRef<ConditionCounterCreator, object>.Create("counter");
             ReflectionDatas.RefLootItems = RefHelp.FieldRef<GameWorld, object>.Create("LootItems");
             ReflectionDatas.RefLootItemsList = RefHelp.FieldRef<object, List<LootItem>>.Create(ReflectionDatas.RefLootItems.FieldType, "list_0");
-
-            Type questsType = ReflectionDatas.RefQuestsList.FieldType;
-            Type questType = questsType.GetGenericArguments()[0];
-
-            ReflectionDatas.RefQuestStatus = RefHelp.PropertyRef<object, EQuestStatus>.Create(questType, "QuestStatus");
-            ReflectionDatas.RefAvailableForFinishConditions = RefHelp.PropertyRef<object, object>.Create(questType, "AvailableForFinishConditions");
-            ReflectionDatas.RefConditions = RefHelp.PropertyRef<object, object>.Create(ReflectionDatas.RefConditionCounterCreatorCounter.FieldType, "conditions");
-
-            ReflectionDatas.RefConditionsList = RefHelp.FieldRef<object, object>.Create(ReflectionDatas.RefConditions.PropertyType, "list_0");
-
-            ReflectionDatas.RefAvailableForFinishConditionsList = RefHelp.FieldRef<object, object>.Create(ReflectionDatas.RefAvailableForFinishConditions.PropertyType, "list_0");
-
-            ReflectionDatas.RefTemplate = RefHelp.PropertyRef<object, object>.Create(questType, "Template");
-
-            Type templateType = ReflectionDatas.RefTemplate.PropertyType;
-
-            ReflectionDatas.RefLocationId = RefHelp.FieldRef<object, string>.Create(templateType, "LocationId");
-            ReflectionDatas.RefTraderId = RefHelp.FieldRef<object, string>.Create(templateType, "TraderId");
-
-            ReflectionDatas.RefNameLocaleKey = RefHelp.PropertyRef<object, string>.Create(templateType, "NameLocaleKey");
-
-            if (Is231Up)
-            {
-                ReflectionDatas.RefPlayerGroup = RefHelp.FieldRef<object, int>.Create(templateType, "PlayerGroup");
-            }
 
             new LevelSettingsPatch().Enable();
             new InitiateShotPatch().Enable();
@@ -205,19 +182,26 @@ namespace GamePanelHUDCompass
             }
 
             CompassHUD.Set(CompassInfos, SettingsDatas, CompassHUDSW);
-            CompassFireHUD.Set(CompassInfos, SettingsDatas, CompassFireHUDSW);
+            CompassFireHUD.Set(CompassFireDatas, SettingsDatas, CompassFireHUDSW);
+            CompassStaticHUD.Set(CompassStaticDatas, SettingsDatas, false);
 
             if (HUDCore.HasPlayer)
             {
                 Cam = HUDCore.YourPlayer.CameraPosition;
 
-                CompassInfos.NorthVector = NorthVector;
-
                 CompassInfos.Angle = GetAngle(Cam.eulerAngles, NorthDirection, SettingsDatas.KeyAngleOffset.Value);
 
-                CompassInfos.PlayerPosition = Cam.position;
+                CompassFireDatas.Copy(CompassInfos);
 
-                CompassInfos.PlayerRight = Cam.right;
+                CompassFireDatas.NorthVector = NorthVector;
+
+                CompassFireDatas.PlayerPosition = Cam.position;
+
+                CompassFireDatas.PlayerRight = Cam.right;
+
+                CompassStaticDatas.Copy(CompassFireDatas);
+
+                CompassStaticDatas.AllPlayerItems = HUDCore.YourPlayer.Profile.Inventory.AllPlayerItems;
 
                 if (CompassStaticCacheBool)
                 {
@@ -239,29 +223,29 @@ namespace GamePanelHUDCompass
 
         void ShowQuest(Player player, List<LootItem> lootitemslist, bool is231up, Action<CompassStaticInfo> showstatic)
         {
-            object questData = ReflectionDatas.RefQuestController.GetValue(player);
+            object questData = Traverse.Create(player).Field("_questController").GetValue<object>();
 
-            object quests = ReflectionDatas.RefQuests.GetValue(questData);
+            object quests = Traverse.Create(questData).Field("Quests").GetValue<object>();
 
-            IList questsList = ReflectionDatas.RefQuestsList.GetValue(quests) as IList;
+            IList questsList = Traverse.Create(quests).Field("list_0").GetValue<IList>();
 
             Dictionary<string, LootItem> questItemsDictionary = lootitemslist.Where(x => x.Item.QuestItem).ToDictionary(x => x.TemplateId, x => x);
 
             foreach (object item in questsList)
             {
-                if (ReflectionDatas.RefQuestStatus.GetValue(item) == EQuestStatus.Started)
+                if (Traverse.Create(item).Property("QuestStatus").GetValue<EQuestStatus>() == EQuestStatus.Started)
                 {
-                    object template = ReflectionDatas.RefTemplate.GetValue(item);
+                    object template = Traverse.Create(item).Property("Template").GetValue<object>();
 
-                    if (is231up ? (player.Profile.Side == EPlayerSide.Savage ? 1 : 0) == ReflectionDatas.RefPlayerGroup.GetValue(template) : true)
+                    if (is231up ? (player.Profile.Side == EPlayerSide.Savage ? 1 : 0) == Traverse.Create(template).Field("PlayerGroup").GetValue<int>() : true)
                     {
-                        string name = ReflectionDatas.RefNameLocaleKey.GetValue(template);
+                        string name = Traverse.Create(template).Property("NameLocaleKey").GetValue<string>();
 
-                        string traderId = ReflectionDatas.RefTraderId.GetValue(template);
+                        string traderId = Traverse.Create(template).Field("TraderId").GetValue<string>();
 
-                        object availableForFinishConditions = ReflectionDatas.RefAvailableForFinishConditions.GetValue(item);
+                        object availableForFinishConditions = Traverse.Create(item).Property("AvailableForFinishConditions").GetValue<object>();
 
-                        IList availableForFinishConditionsList = ReflectionDatas.RefAvailableForFinishConditionsList.GetValue(availableForFinishConditions) as IList;
+                        IList availableForFinishConditionsList = Traverse.Create(availableForFinishConditions).Field("list_0").GetValue<IList>();
 
                         foreach (object condition in availableForFinishConditionsList)
                         {
@@ -308,11 +292,11 @@ namespace GamePanelHUDCompass
                             }
                             else if (condition is ConditionCounterCreator)
                             {
-                                object counter = ReflectionDatas.RefConditionCounterCreatorCounter.GetValue((ConditionCounterCreator)condition);
+                                object counter = Traverse.Create(condition).Field("counter").GetValue<object>();
 
-                                object conditions = ReflectionDatas.RefConditions.GetValue(counter);
+                                object conditions = Traverse.Create(counter).Property("conditions").GetValue<object>();
 
-                                IList conditionsList = ReflectionDatas.RefConditionsList.GetValue(conditions) as IList;
+                                IList conditionsList = Traverse.Create(conditions).Field("list_0").GetValue<IList>();
 
                                 foreach (object counterCondition in conditionsList)
                                 {
@@ -364,7 +348,17 @@ namespace GamePanelHUDCompass
                 }
             }
         }
-        
+
+        void ShowExfiltration(GameWorld world, Action<CompassStaticInfo> showstatic)
+        {
+            object exfiltrationController = Traverse.Create(world).Property("ExfiltrationController").GetValue<object>();
+
+            ExfiltrationPoint[] exfiltrationPoints = Traverse.Create(exfiltrationController).Property("ExfiltrationPoints").GetValue<ExfiltrationPoint[]>();
+
+            foreach (ExfiltrationPoint point in exfiltrationPoints)
+            {
+            }
+        }
 
         float GetAngle(Vector3 eulerangles, float northdirection, float offset)
         {
@@ -380,15 +374,9 @@ namespace GamePanelHUDCompass
             }
         }
 
-        public class CompassInfo
+        public class CompassData
         {
-            public Vector3 NorthVector;
-
             public float Angle;
-
-            public Vector3 PlayerPosition;
-
-            public Vector3 PlayerRight;
 
             public Vector2 SizeDelta;
 
@@ -399,6 +387,21 @@ namespace GamePanelHUDCompass
                     return -(Angle / 15 * 120);
                 }
             }
+
+            public void Copy(CompassData data)
+            {
+                Angle = data.Angle;
+                SizeDelta = data.SizeDelta;
+            }
+        }
+
+        public class CompassFireData : CompassData
+        {
+            public Vector3 NorthVector;
+
+            public Vector3 PlayerPosition;
+
+            public Vector3 PlayerRight;
 
             public float GetToAngle(Vector3 lhs, float offset)
             {
@@ -413,6 +416,13 @@ namespace GamePanelHUDCompass
                     return num + 360;
                 }
             }
+        }
+
+        public class CompassStaticData : CompassFireData
+        {
+            public IEnumerable<Item> AllPlayerItems;
+
+            public ExfiltrationPoint[] PlayerExfiltrationPoints;
         }
 
         public struct CompassFireInfo
@@ -447,6 +457,7 @@ namespace GamePanelHUDCompass
             public enum Type
             {
                 Airdrop,
+                Exfiltration,
                 ConditionLeaveItemAtLocation,
                 ConditionFindItem,
                 ConditionVisitPlace,
@@ -502,23 +513,8 @@ namespace GamePanelHUDCompass
 
         public class ReflectionData
         {
-            public RefHelp.FieldRef<Player, object> RefQuestController;
-            public RefHelp.FieldRef<object, object> RefQuests;
-            public RefHelp.FieldRef<object, object> RefQuestsList;
-            public RefHelp.FieldRef<object, object> RefAvailableForFinishConditionsList;
-            public RefHelp.FieldRef<object, string> RefLocationId;
-            public RefHelp.FieldRef<object, int> RefPlayerGroup;
-            public RefHelp.FieldRef<object, string> RefTraderId;
-            public RefHelp.FieldRef<ConditionCounterCreator, object> RefConditionCounterCreatorCounter;
-            public RefHelp.FieldRef<object, object> RefConditionsList;
             public RefHelp.FieldRef<GameWorld, object> RefLootItems;
             public RefHelp.FieldRef<object, List<LootItem>> RefLootItemsList;
-
-            public RefHelp.PropertyRef<object, EQuestStatus> RefQuestStatus;
-            public RefHelp.PropertyRef<object, object> RefAvailableForFinishConditions;
-            public RefHelp.PropertyRef<object, object> RefTemplate;
-            public RefHelp.PropertyRef<object, string> RefNameLocaleKey;
-            public RefHelp.PropertyRef<object, object> RefConditions;
         }
     }
 }

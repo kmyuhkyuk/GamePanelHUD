@@ -143,15 +143,7 @@ namespace GamePanelHUDLife
                 addZeros = "00";
             }
 
-            string currentColor;
-            if (Normalized > WarningRate)
-            {
-                currentColor = CurrentColor;
-            }
-            else
-            {
-                currentColor = WarningColor;
-            }
+            string currentColor = Normalized > WarningRate ? CurrentColor : WarningColor;
 
             _CurrentValue.fontStyle = CurrentStyles;
             _CurrentValue.text = StringBuilderdDatas._CurrentValue.StringConcat("<color=", AddZerosColor, ">", addZeros, "</color>", "<color=", currentColor, ">", current, "</color>");
@@ -171,16 +163,8 @@ namespace GamePanelHUDLife
             _UpBuffArrow.color = UpBuffArrowColor;
             _DownBuffArrow.color = DownBuffArrowColor;
 
-            string buffColor;
             //Buff Up Down Color 
-            if (BuffRate > 0)
-            {
-                buffColor = UpBuffColor;
-            }
-            else
-            {
-                buffColor = DownBuffColor;
-            }
+            string buffColor = BuffRate > 0 ? UpBuffColor : DownBuffColor;
 
             _BuffValue.text = StringBuilderdDatas._BuffValue.StringConcat("<color=", buffColor, ">", BuffRate.ToString("F2"), "</color>");
 

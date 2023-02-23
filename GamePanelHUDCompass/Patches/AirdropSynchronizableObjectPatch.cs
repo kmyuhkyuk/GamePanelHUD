@@ -30,11 +30,11 @@ namespace GamePanelHUDCompass.Patches
         }
 
         [PatchPostfix]
-        private static void PatchPostfix(MonoBehaviour __instance)
+        private static void PatchPostfix(object __instance, Vector3 position)
         {
             GamePanelHUDCompassPlugin.CompassStaticInfo staticInfo = new GamePanelHUDCompassPlugin.CompassStaticInfo()
             {
-                Where = __instance.transform.position,
+                Where = position,
                 QuestType = GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Airdrop
             };
 

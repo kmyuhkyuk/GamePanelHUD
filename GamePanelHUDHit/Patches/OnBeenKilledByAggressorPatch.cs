@@ -1,5 +1,6 @@
 ﻿#if !UNITY_EDITOR
 using Aki.Reflection.Patching;
+using System;
 using System.Reflection;
 using UnityEngine;
 using EFT;
@@ -15,8 +16,11 @@ namespace GamePanelHUDHit.Patches
         static OnBeenKilledByAggressorPatch()
         {
             ReflectionDatas.RefSettings = RefHelp.FieldRef<InfoClass, object>.Create(typeof(InfoClass), "Settings");
-            ReflectionDatas.RefExperience = RefHelp.FieldRef<object, int>.Create(ReflectionDatas.RefSettings.FieldType, "Experience" );
-            ReflectionDatas.RefRole = RefHelp.FieldRef<object, WildSpawnType>.Create(ReflectionDatas.RefSettings.FieldType, "Role");
+
+            Type settingsType = ReflectionDatas.RefSettings.FieldType;
+
+            ReflectionDatas.RefExperience = RefHelp.FieldRef<object, int>.Create(settingsType, "Experience" );
+            ReflectionDatas.RefRole = RefHelp.FieldRef<object, WildSpawnType>.Create(settingsType, "Role");
         }
 
         protected override MethodBase GetTargetMethod()

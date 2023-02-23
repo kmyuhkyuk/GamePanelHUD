@@ -18,7 +18,7 @@ namespace GamePanelHUDCompass
 #endif
     {
 #if !UNITY_EDITOR
-        private GamePanelHUDCorePlugin.HUDClass<GamePanelHUDCompassPlugin.CompassInfo, GamePanelHUDCompassPlugin.SettingsData> HUD
+        private GamePanelHUDCorePlugin.HUDClass<GamePanelHUDCompassPlugin.CompassStaticData, GamePanelHUDCompassPlugin.SettingsData> HUD
         {
             get
             {
