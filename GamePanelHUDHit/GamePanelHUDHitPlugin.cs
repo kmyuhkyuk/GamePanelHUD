@@ -205,7 +205,7 @@ namespace GamePanelHUDHit
 
                 var hitInfo = new HitInfo()
                 {
-                    Damage = UnityEngine.Random.Range(0, 100),
+                    Damage = UnityEngine.Random.Range(0, 101),
                     ArmorDamage = UnityEngine.Random.Range(0f, 100f),
                     HasArmorHit = type == HitInfo.Hit.HasArmorHit,
                     DamagePart = (EBodyPart)part.GetValue(UnityEngine.Random.Range(0, part.Length)),
@@ -235,9 +235,9 @@ namespace GamePanelHUDHit
                     PlayerName = TestName[UnityEngine.Random.Range(0, TestName.Length)],
                     Role = (WildSpawnType)role.GetValue(UnityEngine.Random.Range(0, role.Length)),
                     Distance = UnityEngine.Random.Range(0f, 100f),
-                    Level = UnityEngine.Random.Range(1, 78),
-                    Exp = UnityEngine.Random.Range(100, 1000),
-                    Kills = UnityEngine.Random.Range(0, 10),
+                    Level = UnityEngine.Random.Range(1, 79),
+                    Exp = UnityEngine.Random.Range(100, 1001),
+                    Kills = UnityEngine.Random.Range(0, 11),
                     Part = (EBodyPart)part.GetValue(UnityEngine.Random.Range(0, part.Length)),
                     Side = (EPlayerSide)side.GetValue(UnityEngine.Random.Range(0, side.Length)),
                     IsTest = true
