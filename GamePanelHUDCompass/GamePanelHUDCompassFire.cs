@@ -151,7 +151,7 @@ namespace GamePanelHUDCompass
         {
             if (_Fires != null)
             {
-                if (!fireinfo.IsSilenced || !HUD.SettingsData.KeyCompassFireSilenced.Value && fireinfo.Distance <= HUD.SettingsData.KeyCompassFireDistance.Value)
+                if ((!fireinfo.IsSilenced || !HUD.SettingsData.KeyCompassFireSilenced.Value) && fireinfo.Distance <= HUD.SettingsData.KeyCompassFireDistance.Value)
                 {
                     if (CompassFires.TryGetValue(fireinfo.Who, out var fireui) && !fireui.IsDestroy())
                     {
