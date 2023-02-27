@@ -51,11 +51,11 @@ namespace GamePanelHUDCompass.Patches
         }
     }
 
-    public class PlayerDisposePatch : ModulePatch
+    public class PlayerDeadPatch : ModulePatch
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(Player).GetMethod("Dispose", BindingFlags.Public | BindingFlags.Instance);
+            return typeof(Player).GetMethod("OnDead", BindingFlags.NonPublic | BindingFlags.Instance);
         }
 
         [PatchPostfix]
