@@ -142,8 +142,8 @@ namespace GamePanelHUDCompass
             ReflectionDatas.RefLootItemsList = RefHelp.FieldRef<object, List<LootItem>>.Create(ReflectionDatas.RefLootItems.FieldType, "list_0");
 
             new LevelSettingsPatch().Enable();
-            new InitiateShotPatch().Enable();
-            new OnBeenKilledByAggressorPatch().Enable();
+            new PlayerShotPatch().Enable();
+            new PlayerKillPatch().Enable();
 
             if (Is231Up)
             {
