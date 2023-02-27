@@ -102,9 +102,8 @@
     <Compile Include="GamePanelHUDCompassStaticUI.cs" />
     <Compile Include="GamePanelHUDCompassUI.cs" />
     <Compile Include="Patches\AirdropSynchronizableObjectPatch.cs" />
-    <Compile Include="Patches\InitiateShotPatch.cs" />
     <Compile Include="Patches\LevelSettingsPatch.cs" />
-    <Compile Include="Patches\OnBeenKilledByAggressorPatch.cs" />
+    <Compile Include="Patches\PlayerPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
