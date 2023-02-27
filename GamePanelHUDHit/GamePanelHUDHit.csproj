@@ -109,9 +109,8 @@
     <Compile Include="GamePanelHUDExpUI.cs" />
     <Compile Include="GamePanelHUDKill.cs" />
     <Compile Include="Patches\ApplyDamagePatch.cs" />
-    <Compile Include="Patches\ApplyDamageInfoPatch.cs" />
     <Compile Include="Patches\ApplyDurabilityDamagePatch.cs" />
-    <Compile Include="Patches\OnBeenKilledByAggressorPatch.cs" />
+    <Compile Include="Patches\PlayerPatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

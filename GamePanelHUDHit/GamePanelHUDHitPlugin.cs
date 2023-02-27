@@ -157,8 +157,8 @@ namespace GamePanelHUDHit
 
             new ApplyDamagePatch().Enable();
             new ApplyDurabilityDamagePatch().Enable();
-            new ApplyDamageInfoPatch().Enable();
-            new OnBeenKilledByAggressorPatch().Enable();
+            new PlayerApplyDamageInfoPatch().Enable();
+            new PlayerKillPatch().Enable();
 
             GamePanelHUDCorePlugin.UpdateManger.Register(this);
         }
