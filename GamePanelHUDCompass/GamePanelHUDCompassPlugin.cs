@@ -143,7 +143,7 @@ namespace GamePanelHUDCompass
 
             new LevelSettingsPatch().Enable();
             new PlayerShotPatch().Enable();
-            new PlayerKillPatch().Enable();
+            new PlayerDeadPatch().Enable();
 
             if (Is231Up)
             {
