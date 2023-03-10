@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿#if !UNITY_EDITOR
+using HarmonyLib;
 using System.Collections;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -34,3 +35,4 @@ namespace GamePanelHUDCore.Utils.Session
         }
     }
 }
+#endif

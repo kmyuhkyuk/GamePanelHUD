@@ -2,7 +2,7 @@
 
 namespace GamePanelHUDDebug
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDDebug", "kmyuhkyuk-GamePanelHUDDebug", "2.4.1")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDDebug", "kmyuhkyuk-GamePanelHUDDebug", "2.4.2")]
     [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore")]
     public class GamePanelHUDDebugPlugin : BaseUnityPlugin
     {
