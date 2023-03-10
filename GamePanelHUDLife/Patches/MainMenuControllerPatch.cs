@@ -8,11 +8,9 @@ namespace GamePanelHUDLife.Patches
 {
     public class MainMenuControllerPatch : ModulePatch
     {
-        private static MethodInfo fesf = typeof(MainMenuController).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly).Where(x => x.ReturnType == typeof(Task)).ElementAt(0);
-
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(MainMenuController).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly).Where(x => x.ReturnType == typeof(Task)).ElementAt(1);
+            return typeof(MainMenuController).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly).Where(x => x.ReturnType == typeof(Task)).ElementAt(0);
         }
 
         [PatchPostfix]
