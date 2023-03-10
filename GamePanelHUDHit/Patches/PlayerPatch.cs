@@ -1,4 +1,5 @@
-﻿using Aki.Reflection.Patching;
+﻿#if !UNITY_EDITOR
+using Aki.Reflection.Patching;
 using System;
 using System.Reflection;
 using UnityEngine;
@@ -117,3 +118,4 @@ namespace GamePanelHUDHit.Patches
         }
     }
 }
+#endif
