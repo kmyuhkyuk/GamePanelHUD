@@ -1,4 +1,4 @@
-﻿/*using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 #if !UNITY_EDITOR
 using GamePanelHUDCore;
@@ -261,4 +261,4 @@ namespace GamePanelHUDCompass
 #endif
         }
     }
-}*/
+}

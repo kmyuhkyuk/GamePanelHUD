@@ -1,6 +1,6 @@
 ﻿#if !UNITY_EDITOR
 using Aki.Reflection.Patching;
-using Aki.Reflection.Utils;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -10,7 +10,7 @@ namespace GamePanelHUDLife.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(MainMenuController).GetMethod("method_4", PatchConstants.PrivateFlags);
+            return typeof(MainMenuController).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly).Where(x => x.ReturnType == typeof(Task)).ElementAt(1);
         }
 
         [PatchPostfix]
