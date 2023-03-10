@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using System.Text;
 using System.Collections.Generic;
 using UnityEngine;
@@ -224,4 +224,4 @@ namespace GamePanelHUDCompass
             public StringBuilder _FireRight = new StringBuilder(128);
         }
     }
-}
+}*/
