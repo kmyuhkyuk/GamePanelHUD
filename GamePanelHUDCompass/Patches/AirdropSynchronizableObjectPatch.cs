@@ -1,4 +1,4 @@
-﻿#if !UNITY_EDITOR
+﻿/*#if !UNITY_EDITOR
 using Aki.Reflection.Patching;
 using EFT;
 using EFT.Interactive;
@@ -43,3 +43,4 @@ namespace GamePanelHUDCompass.Patches
     }
 }
 #endif
+*/

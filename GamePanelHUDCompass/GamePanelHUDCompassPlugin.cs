@@ -35,13 +35,13 @@ namespace GamePanelHUDCompass
 
         private readonly CompassFireData CompassFireDatas = new CompassFireData();
 
-        private readonly CompassStaticData CompassStaticDatas = new CompassStaticData();
+        //private readonly CompassStaticData CompassStaticDatas = new CompassStaticData();
 
         internal static readonly GamePanelHUDCorePlugin.HUDClass<CompassData, SettingsData> CompassHUD = new GamePanelHUDCorePlugin.HUDClass<CompassData, SettingsData>();
 
         internal static readonly GamePanelHUDCorePlugin.HUDClass<CompassFireData, SettingsData> CompassFireHUD = new GamePanelHUDCorePlugin.HUDClass<CompassFireData, SettingsData>();
 
-        internal static readonly GamePanelHUDCorePlugin.HUDClass<CompassStaticData, SettingsData> CompassStaticHUD = new GamePanelHUDCorePlugin.HUDClass<CompassStaticData, SettingsData>();
+        //internal static readonly GamePanelHUDCorePlugin.HUDClass<CompassStaticData, SettingsData> CompassStaticHUD = new GamePanelHUDCorePlugin.HUDClass<CompassStaticData, SettingsData>();
 
         internal static float NorthDirection;
 
@@ -51,7 +51,7 @@ namespace GamePanelHUDCompass
 
         private bool CompassFireHUDSW;
 
-        private bool CompassStaticCacheBool = true;
+        //private bool CompassStaticCacheBool = true;
 
         private Transform Cam;
 
@@ -61,19 +61,19 @@ namespace GamePanelHUDCompass
 
         private readonly ReflectionData ReflectionDatas = new ReflectionData(); 
 
-        private List<CompassStaticInfo> Test = new List<CompassStaticInfo>(); 
+        //private List<CompassStaticInfo> Test = new List<CompassStaticInfo>(); 
 
         internal static GameObject FirePrefab { get; private set; }
 
-        internal static GameObject StaticPrefab { get; private set; }
+        //internal static GameObject StaticPrefab { get; private set; }
 
         internal static Action<CompassFireInfo> ShowFire;
 
         internal static Action<int> DestroyFire;
 
-        internal static Action<CompassStaticInfo> ShowStatic;
+        //internal static Action<CompassStaticInfo> ShowStatic;
 
-        private bool Is231Up = GamePanelHUDCorePlugin.HUDCoreClass.GameVersion > new Version("0.12.12.17349");
+        //private bool Is231Up = GamePanelHUDCorePlugin.HUDCoreClass.GameVersion > new Version("0.12.12.17349");
 
         private void Start()
         {
@@ -145,10 +145,10 @@ namespace GamePanelHUDCompass
             new PlayerShotPatch().Enable();
             new PlayerDeadPatch().Enable();
 
-            if (Is231Up)
+            /*if (Is231Up)
             {
                 new AirdropSynchronizableObjectPatch().Enable();
-            }
+            }*/
 
             GamePanelHUDCorePlugin.UpdateManger.Register(this);
         }
@@ -183,7 +183,7 @@ namespace GamePanelHUDCompass
 
             CompassHUD.Set(CompassInfos, SettingsDatas, CompassHUDSW);
             CompassFireHUD.Set(CompassFireDatas, SettingsDatas, CompassFireHUDSW);
-            CompassStaticHUD.Set(CompassStaticDatas, SettingsDatas, false);
+            //CompassStaticHUD.Set(CompassStaticDatas, SettingsDatas, false);
 
             if (HUDCore.HasPlayer)
             {
@@ -199,11 +199,11 @@ namespace GamePanelHUDCompass
 
                 CompassFireDatas.PlayerRight = Cam.right;
 
-                CompassStaticDatas.Copy(CompassFireDatas);
+                //CompassStaticDatas.Copy(CompassFireDatas);
 
-                CompassStaticDatas.AllPlayerItems = HUDCore.YourPlayer.Profile.Inventory.AllPlayerItems;
+                //CompassStaticDatas.AllPlayerItems = HUDCore.YourPlayer.Profile.Inventory.AllPlayerItems;
 
-                if (CompassStaticCacheBool)
+                /*if (CompassStaticCacheBool)
                 {
                     List<LootItem> lootItemsList = ReflectionDatas.RefLootItemsList.GetValue(ReflectionDatas.RefLootItems.GetValue(HUDCore.TheWorld));
 
@@ -213,15 +213,15 @@ namespace GamePanelHUDCompass
 
                         CompassStaticCacheBool = false;
                     }
-                }
+                }*/
             }
-            else
+            /*else
             {
                 CompassStaticCacheBool = true;
-            }
+            }*/
         }
 
-        void ShowQuest(Player player, List<LootItem> lootitemslist, bool is231up, Action<CompassStaticInfo> showstatic)
+        /*void ShowQuest(Player player, List<LootItem> lootitemslist, bool is231up, Action<CompassStaticInfo> showstatic)
         {
             object questData = Traverse.Create(player).Field("_questController").GetValue<object>();
 
@@ -358,7 +358,7 @@ namespace GamePanelHUDCompass
             foreach (ExfiltrationPoint point in exfiltrationPoints)
             {
             }
-        }
+        }*/
 
         float GetAngle(Vector3 eulerangles, float northdirection, float offset)
         {
@@ -418,12 +418,12 @@ namespace GamePanelHUDCompass
             }
         }
 
-        public class CompassStaticData : CompassFireData
+        /*public class CompassStaticData : CompassFireData
         {
             public IEnumerable<Item> AllPlayerItems;
 
             public ExfiltrationPoint[] PlayerExfiltrationPoints;
-        }
+        }*/
 
         public struct CompassFireInfo
         {
@@ -438,7 +438,7 @@ namespace GamePanelHUDCompass
             public bool IsSilenced;
         }
 
-        public struct CompassStaticInfo
+        /*public struct CompassStaticInfo
         {
             public Vector3 Where;
 
@@ -463,7 +463,7 @@ namespace GamePanelHUDCompass
                 ConditionVisitPlace,
                 ConditionInZone
             }
-        }
+        }*/
 
         public class SettingsData
         {

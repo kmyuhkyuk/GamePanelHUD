@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -115,4 +115,4 @@ namespace GamePanelHUDCompass
             Virtual3Rect.anchoredPosition = new Vector2(IconXRightRight, HUD.SettingsData.KeyCompassFireHeight.Value);
         }
     }
-}
+}*/
