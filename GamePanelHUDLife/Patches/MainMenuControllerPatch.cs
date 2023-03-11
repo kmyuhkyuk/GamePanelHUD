@@ -10,7 +10,7 @@ namespace GamePanelHUDLife.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(MainMenuController).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly).Where(x => x.ReturnType == typeof(Task)).ElementAt(0);
+            return typeof(MainMenuController).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly).First(x => x.ReturnType == typeof(Task));
         }
 
         [PatchPostfix]
