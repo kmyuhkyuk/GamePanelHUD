@@ -73,7 +73,7 @@ namespace GamePanelHUDCore
             //All HUD display 
             else if (BattleUiScreen != null)
             {
-                AllHUDSW = !BattleUiScreen.activeSelf;
+                AllHUDSW = BattleUiScreen.activeSelf;
             }
             else
             {
