@@ -106,10 +106,8 @@
   <ItemGroup>
     <Compile Include="ConfigurationManagerAttributes.cs" />
     <Compile Include="GamePanelHUDCorePlugin.cs" />
-    <Compile Include="Patches\EnvironmentUIRootPatch.cs" />
+    <Compile Include="Patches\GameUIPatch.cs" />
     <Compile Include="Patches\GameWorldPatch.cs" />
-    <Compile Include="Patches\HideoutScreenOverlayPatch.cs" />
-    <Compile Include="Patches\InventoryScreenPatch.cs" />
     <Compile Include="Patches\MainApplicationPatch.cs" />
     <Compile Include="Patches\PlayerPatch.cs" />
     <Compile Include="Patches\ZonePatch.cs" />

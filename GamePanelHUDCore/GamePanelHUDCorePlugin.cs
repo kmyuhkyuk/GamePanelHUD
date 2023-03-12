@@ -20,9 +20,7 @@ namespace GamePanelHUDCore
     {
         public static readonly IUpdateManger UpdateManger = new IUpdateManger();
 
-        internal static GameObject EnvironmentUIRoot;
-        internal static GameObject InventoryScreen;
-        internal static GameObject HideoutScreenOverlay;
+        internal static GameObject BattleUiScreen;
 
         internal static Player YourPlayer;
 
@@ -53,9 +51,7 @@ namespace GamePanelHUDCore
             new PlayerPatch().Enable();
             new GameWorldAwakePatch().Enable();
             new GameWorldDisposePatch().Enable();
-            new EnvironmentUIRootPatch().Enable();
-            new InventoryScreenPatch().Enable();
-            new HideoutScreenOverlayPatch().Enable();
+            new GameUIPatch().Enable();
             new MainApplicationPatch().Enable();
             new ExperienceTriggerPatch().Enable();
             new TriggerWithIdPatch().Enable();
@@ -75,11 +71,9 @@ namespace GamePanelHUDCore
                 AllHUDSW = true;
             }
             //All HUD display 
-            else if (EnvironmentUIRoot != null)
+            else if (BattleUiScreen != null)
             {
-                GameObject[] gameobjects = new GameObject[] { EnvironmentUIRoot, InventoryScreen, HideoutScreenOverlay };
-
-                AllHUDSW = !gameobjects.Where(x => x != null).Select(x => x.activeSelf).Contains(true);
+                AllHUDSW = !BattleUiScreen.activeSelf;
             }
             else
             {
