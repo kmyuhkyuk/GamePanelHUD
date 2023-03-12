@@ -10,17 +10,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using EFT;
+using EFT.UI;
 using GamePanelHUDCore.Patches;
 using GamePanelHUDCore.Utils;
 
 namespace GamePanelHUDCore
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCore", "kmyuhkyuk-GamePanelHUDCore", "2.4.2")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCore", "kmyuhkyuk-GamePanelHUDCore", "2.4.3")]
     public class GamePanelHUDCorePlugin : BaseUnityPlugin
     {
         public static readonly IUpdateManger UpdateManger = new IUpdateManger();
 
-        internal static GameObject BattleUiScreen;
+        internal static GameUI YourGameUI;
 
         internal static Player YourPlayer;
 
@@ -71,16 +72,16 @@ namespace GamePanelHUDCore
                 AllHUDSW = true;
             }
             //All HUD display 
-            else if (BattleUiScreen != null)
+            else if (YourGameUI != null && YourGameUI.BattleUiScreen != null)
             {
-                AllHUDSW = BattleUiScreen.activeSelf;
+                AllHUDSW = YourGameUI.BattleUiScreen.gameObject.activeSelf;
             }
             else
             {
                 AllHUDSW = false;
             }
 
-            HUDCore.Set(YourPlayer, TheWorld, AllHUDSW);
+            HUDCore.Set(YourPlayer, YourGameUI, TheWorld, AllHUDSW);
 
             UpdateManger.NeedMethodTime = SettingsDatas.KeyDebugMethodTime.Value;
 
@@ -90,6 +91,8 @@ namespace GamePanelHUDCore
         public class HUDCoreClass
         {
             public Player YourPlayer;
+
+            public GameUI YourGameUI;
 
             public GameWorld TheWorld;
 
@@ -177,9 +180,10 @@ namespace GamePanelHUDCore
                 }
             }
 
-            public void Set(Player yourplayer, GameWorld theworld, bool hudsw)
+            public void Set(Player yourplayer, GameUI yourgameui, GameWorld theworld, bool hudsw)
             {
                 YourPlayer = yourplayer;
+                YourGameUI = yourgameui;
                 TheWorld = theworld;
                 AllHUDSW = hudsw;
             }

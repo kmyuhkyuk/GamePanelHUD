@@ -12,9 +12,9 @@ namespace GamePanelHUDCore.Patches
         }
 
         [PatchPostfix]
-        private static void PatchPostfix(GameUI __instance, BattleUIScreen ___BattleUiScreen)
+        private static void PatchPostfix(GameUI __instance)
         {
-            GamePanelHUDCorePlugin.BattleUiScreen = ___BattleUiScreen.gameObject;
+            GamePanelHUDCorePlugin.YourGameUI = __instance;
         }
     }
 }

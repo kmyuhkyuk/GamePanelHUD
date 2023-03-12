@@ -6,13 +6,14 @@ using System.Reflection;
 using UnityEngine;
 using TMPro;
 using EFT;
+using EFT.UI;
 using EFT.InventoryLogic;
 using GamePanelHUDCore;
 using GamePanelHUDCore.Utils;
 
 namespace GamePanelHUDMag
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDMag", "kmyuhkyuk-GamePanelHUDMag", "2.4.2")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDMag", "kmyuhkyuk-GamePanelHUDMag", "2.4.3")]
     [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore")]
     public class GamePanelHUDMagPlugin : BaseUnityPlugin, IUpdate
     {
@@ -83,6 +84,7 @@ namespace GamePanelHUDMag
             SettingsDatas.KeyZeroWarning = Config.Bind<bool>(mainSettings, "零警告动画 Zero Warning Animation", true);
             SettingsDatas.KeyLockWeaponName = Config.Bind<bool>(mainSettings, "检视时显示武器名 Weapon Name Inspect display", true);
             SettingsDatas.KeyAutoWeaponName = Config.Bind<bool>(mainSettings, "自动显示武器名 Weapon Name Auto display", true);
+            SettingsDatas.KeyHideGameAmmoPanel = Config.Bind<bool>(mainSettings, "隐藏游戏弹药面板 Hide Game Ammo Panel", false);
 
             SettingsDatas.KeyAnchoredPosition = Config.Bind<Vector2>(positionScaleSettings, "指示栏位置 Anchored Position", new Vector2(-100, 40));
             SettingsDatas.KeyLocalScale = Config.Bind<Vector2>(positionScaleSettings, "指示栏大小 Local Scale", new Vector2(1, 1));
@@ -111,6 +113,8 @@ namespace GamePanelHUDMag
 
             ReflectionDatas.RefIAnimator = RefHelp.PropertyRef<Player, object>.Create("ArmsAnimatorCommon");
             ReflectionDatas.RefAnimator = RefHelp.PropertyRef<object, Animator>.Create(RefHelp.GetEftType(x => x.GetMethod("CreateAnimatorStateInfoWrapper", BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance) != null), "Animator");
+            ReflectionDatas.RefAmmoCountPanel = RefHelp.FieldRef<BattleUIScreen, AmmoCountPanel>.Create("_ammoCountPanel");
+            ReflectionDatas.RefAmmoCount = RefHelp.FieldRef<AmmoCountPanel, CustomTextMeshProUGUI>.Create("_ammoCount");
 
             if (Is341Up)
             {
@@ -146,6 +150,8 @@ namespace GamePanelHUDMag
             //Get Player
             if (HUDCore.HasPlayer)
             {
+                ReflectionDatas.RefAmmoCount.GetValue(ReflectionDatas.RefAmmoCountPanel.GetValue(HUDCore.YourGameUI.BattleUiScreen)).gameObject.SetActive(!SettingsDatas.KeyHideGameAmmoPanel.Value);
+
                 NowFirearmController = HUDCore.YourPlayer.HandsController as Player.FirearmController;
 
                 //Get Weapon Class
@@ -431,6 +437,7 @@ namespace GamePanelHUDMag
             public ConfigEntry<bool> KeyZeroWarning;
             public ConfigEntry<bool> KeyLockWeaponName;
             public ConfigEntry<bool> KeyAutoWeaponName;
+            public ConfigEntry<bool> KeyHideGameAmmoPanel;
 
             public ConfigEntry<Vector2> KeyAnchoredPosition;
             public ConfigEntry<Vector2> KeyLocalScale;
@@ -461,6 +468,8 @@ namespace GamePanelHUDMag
         {
             public RefHelp.FieldRef<Player.FirearmController, Item> RefUnderbarrelWeapon;
             public RefHelp.FieldRef<object, Slot[]> RefChambers;
+            public RefHelp.FieldRef<BattleUIScreen, AmmoCountPanel> RefAmmoCountPanel;
+            public RefHelp.FieldRef<AmmoCountPanel, CustomTextMeshProUGUI> RefAmmoCount;
 
             public RefHelp.PropertyRef<object, WeaponTemplate> RefWeaponTemplate;
             public RefHelp.PropertyRef<object, int> RefChamberAmmoCount;
