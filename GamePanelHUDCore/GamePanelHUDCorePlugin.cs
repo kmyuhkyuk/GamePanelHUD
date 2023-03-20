@@ -108,7 +108,7 @@ namespace GamePanelHUDCore
 
             public bool AllHUDSW;
 
-            public static readonly GameObject GamePanlHUDPublic = new GameObject("GamePanlHUDPublic", new Type[] { typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster) });
+            public static readonly GameObject GamePanlHUDPublic = new GameObject("GamePanlHUDPublic", new Type[] { typeof(Canvas), typeof(CanvasScaler) });
 
             public static readonly string ModPath  = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "BepInEx/plugins/kmyuhkyuk-GamePanelHUD");
 
@@ -120,11 +120,11 @@ namespace GamePanelHUDCore
 
                 GameVersion = new Version(exeInfo.FileMajorPart, exeInfo.ProductMinorPart, exeInfo.ProductBuildPart, exeInfo.FilePrivatePart);
 
-                Canvas canvs = GamePanlHUDPublic.GetComponent<Canvas>();
+                Canvas canvas = GamePanlHUDPublic.GetComponent<Canvas>();
 
-                canvs.renderMode = RenderMode.ScreenSpaceOverlay;
-                canvs.sortingOrder = 1;
-                canvs.additionalShaderChannels = AdditionalCanvasShaderChannels.TexCoord1 | AdditionalCanvasShaderChannels.Normal | AdditionalCanvasShaderChannels.Tangent;
+                canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+                canvas.sortingOrder = 1;
+                canvas.additionalShaderChannels = AdditionalCanvasShaderChannels.TexCoord1 | AdditionalCanvasShaderChannels.Normal | AdditionalCanvasShaderChannels.Tangent;
 
                 DontDestroyOnLoad(GamePanlHUDPublic);
             }
