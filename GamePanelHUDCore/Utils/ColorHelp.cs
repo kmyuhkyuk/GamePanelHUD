@@ -6,7 +6,7 @@ namespace GamePanelHUDCore.Utils
 {
     public static class ColorHelp
     {
-        private static Dictionary<Color, string> HexColorPool = new Dictionary<Color, string>();
+        private static readonly Dictionary<Color, string> HexColorPool = new Dictionary<Color, string>();
 
         public static string ColorToHtml(this Color color)
         {

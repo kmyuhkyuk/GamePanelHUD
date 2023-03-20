@@ -33,13 +33,9 @@ namespace GamePanelHUDCore
 
         private readonly SettingsData SettingsDatas = new SettingsData();
 
-        internal static ManualLogSource LogLogger { get; private set; }
-
         private void Start()
         {
             Logger.LogInfo("Loaded: kmyuhkyuk-GamePanelHUDCore");
-
-            LogLogger = Logger;
 
             ModUpdateCheck.ServerCheck();
             ModUpdateCheck.DrawNeedUpdate(Config, Info.Metadata.Version);
@@ -114,6 +110,8 @@ namespace GamePanelHUDCore
 
             public static readonly Version GameVersion;
 
+            private static readonly ManualLogSource LogSource = BepInEx.Logging.Logger.CreateLogSource("HUDCore");
+
             static HUDCoreClass()
             {
                 FileVersionInfo exeInfo = Process.GetCurrentProcess().MainModule.FileVersionInfo;
@@ -134,9 +132,9 @@ namespace GamePanelHUDCore
                 return Path.Combine(ModPath, "bundles", bundlename);
             }
 
-            public static BundleHelp.AssetData<GameObject> LoadHUD(string bundlename, string[] initassetname)
+            public static AssetData<GameObject> LoadHUD(string bundlename, string[] initassetname)
             {
-                AssetBundle assetBundle = BundleHelp.LoadBundle(GetBundlePath(bundlename));
+                AssetBundle assetBundle = BundleHelp.LoadBundle(LogSource, GetBundlePath(bundlename));
 
                 Dictionary<string, GameObject> asset = BundleHelp.LoadAllAsset<GameObject>(assetBundle).ToDictionary(x => x.name.ToLower(), x => x);
 
@@ -149,12 +147,12 @@ namespace GamePanelHUDCore
 
                 assetBundle.Unload(false);
 
-                return new BundleHelp.AssetData<GameObject>(asset, init);
+                return new AssetData<GameObject>(asset, init);
             }
 
-            public static BundleHelp.AssetData<GameObject> LoadHUD(string bundlename, string initassetname)
+            public static AssetData<GameObject> LoadHUD(string bundlename, string initassetname)
             {
-                AssetBundle assetBundle = BundleHelp.LoadBundle(GetBundlePath(bundlename));
+                AssetBundle assetBundle = BundleHelp.LoadBundle(LogSource, GetBundlePath(bundlename));
 
                 Dictionary<string, GameObject> asset = BundleHelp.LoadAllAsset<GameObject>(assetBundle).ToDictionary(x => x.name.ToLower(), x => x);
 
@@ -164,12 +162,25 @@ namespace GamePanelHUDCore
 
                 assetBundle.Unload(false);
 
-                return new BundleHelp.AssetData<GameObject>(asset, init);
+                return new AssetData<GameObject>(asset, init);
             }
 
             private static void InitAsset(Dictionary<string, GameObject> asset, Dictionary<string, GameObject> init, string initassetname)
             {
-                init.Add(initassetname.ToLower(), BundleHelp.InitAsset(asset[initassetname.ToLower()], GamePanlHUDPublic.transform));
+                init.Add(initassetname.ToLower(), GameObject.Instantiate(asset[initassetname.ToLower()], GamePanlHUDPublic.transform));
+            }
+
+            public class AssetData<T>
+            {
+                public IReadOnlyDictionary<string, T> Asset;
+
+                public IReadOnlyDictionary<string, T> Init;
+
+                public AssetData(Dictionary<string, T> asset, Dictionary<string, T> init)
+                {
+                    Asset = asset;
+                    Init = init;
+                }
             }
 
             public static void WorldDispose(GameWorld world)
