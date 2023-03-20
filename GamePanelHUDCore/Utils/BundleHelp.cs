@@ -1,4 +1,5 @@
 ﻿#if !UNITY_EDITOR
+using BepInEx.Logging;
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -8,13 +9,13 @@ namespace GamePanelHUDCore.Utils
 {
     public class BundleHelp
     {
-        public static AssetBundle LoadBundle(string bundlepath)
+        public static AssetBundle LoadBundle(ManualLogSource logsource, string bundlepath)
         {
             AssetBundle assetBundle = AssetBundle.LoadFromFile(bundlepath);
 
             if (assetBundle == null)
             {
-                GamePanelHUDCorePlugin.LogLogger.LogError("Failed to load AssetBundle!");
+                logsource.LogError("Failed to load AssetBundle!");
 
                 return null;
             }
@@ -24,7 +25,7 @@ namespace GamePanelHUDCore.Utils
             }
         }
 
-        public static async Task<AssetBundle> LoadAsyncBundle(string bundlepath)
+        public static async Task<AssetBundle> LoadAsyncBundle(ManualLogSource logsource, string bundlepath)
         {
             var www = AssetBundle.LoadFromFileAsync(bundlepath);
 
@@ -33,7 +34,7 @@ namespace GamePanelHUDCore.Utils
 
             if (www.assetBundle == null)
             {
-                GamePanelHUDCorePlugin.LogLogger.LogError("Failed to load AssetBundle!");
+                logsource.LogError("Failed to load AssetBundle!");
 
                 return null;
             }
@@ -76,31 +77,6 @@ namespace GamePanelHUDCore.Utils
             else
             {
                 return null;
-            }
-        }
-
-        public static GameObject InitAsset(GameObject prefab, Transform transform)
-        {
-            if (prefab != null)
-            {
-                return GameObject.Instantiate(prefab, transform);
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        public class AssetData<T>
-        {
-            public IReadOnlyDictionary<string, T> Asset;
-
-            public IReadOnlyDictionary<string, T> Init;
-
-            public AssetData(Dictionary<string, T> asset, Dictionary<string, T> init)
-            {
-                Asset = asset;
-                Init = init;
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿#if !UNITY_EDITOR
+using BepInEx.Logging;
 using System;
 using System.Text;
 using System.Diagnostics;
@@ -22,6 +23,8 @@ namespace GamePanelHUDCore.Utils
         private readonly Debug Debugs = new Debug();
 
         public bool NeedMethodTime;
+
+        private static readonly ManualLogSource LogSource = Logger.CreateLogSource("IUpdateManger");
 
         public void Register(IUpdate update)
         {
@@ -100,7 +103,7 @@ namespace GamePanelHUDCore.Utils
                         {
                             if (i == 0)
                             {
-                                GamePanelHUDCorePlugin.LogLogger.LogMessage(Debugs.StringBuilderDatas.Start.StringConcat("----------Start----------:CurrentTime:", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")));
+                                LogSource.LogMessage(Debugs.StringBuilderDatas.Start.StringConcat("----------Start----------:CurrentTime:", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")));
 
                                 Debugs.AllMethodTime.Start();
                             }
@@ -111,7 +114,7 @@ namespace GamePanelHUDCore.Utils
 
                             Debugs.MethodTime.Stop();
 
-                            GamePanelHUDCorePlugin.LogLogger.LogMessage(Debugs.StringBuilderDatas.NeedTime.StringConcat(update.GetType().Name, ":NeedTime:", Debugs.MethodTime.Elapsed));
+                            LogSource.LogMessage(Debugs.StringBuilderDatas.NeedTime.StringConcat(update.GetType().Name, ":NeedTime:", Debugs.MethodTime.Elapsed));
 
                             Debugs.MethodTime.Reset();
 
@@ -128,7 +131,7 @@ namespace GamePanelHUDCore.Utils
                                     Debugs.MinTime = Debugs.AllMethodTime.Elapsed;
                                 }
 
-                                GamePanelHUDCorePlugin.LogLogger.LogMessage(Debugs.StringBuilderDatas.End.StringConcat("----------End----------:TotalNeedTime:", Debugs.AllMethodTime.Elapsed, ":MaxTime:", Debugs.MaxTime, ":MinTime:", Debugs.MinTime));
+                                LogSource.LogMessage(Debugs.StringBuilderDatas.End.StringConcat("----------End----------:TotalNeedTime:", Debugs.AllMethodTime.Elapsed, ":MaxTime:", Debugs.MaxTime, ":MinTime:", Debugs.MinTime));
 
                                 Debugs.AllMethodTime.Reset();
                             }
