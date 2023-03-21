@@ -133,7 +133,7 @@ namespace GamePanelHUDMag
 
         private void Awake()
         {
-            GamePanelHUDCorePlugin.HUDCoreClass.LoadHUD("gamepanlmaghud.bundle", "gamepanlmaghud");
+            GamePanelHUDCorePlugin.HUDCoreClass.LoadHUD("gamepanlmaghud.bundle", "GamePanlMagHUD");
         }
 
         public void IUpdate()

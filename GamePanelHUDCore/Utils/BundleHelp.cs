@@ -2,7 +2,6 @@
 using BepInEx.Logging;
 using System;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace GamePanelHUDCore.Utils
