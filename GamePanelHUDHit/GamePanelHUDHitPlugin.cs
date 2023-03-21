@@ -165,9 +165,9 @@ namespace GamePanelHUDHit
 
         private void Awake()
         {
-            BundleHelp.AssetData<GameObject> prefabs = GamePanelHUDCorePlugin.HUDCoreClass.LoadHUD("gamepanlhithud.bundle", "gamepanlhithud");
+            GamePanelHUDCorePlugin.HUDCoreClass.AssetData<GameObject> prefabs = GamePanelHUDCorePlugin.HUDCoreClass.LoadHUD("gamepanlhithud.bundle", "GamePanlHitHUD");
 
-            KillPrefab = prefabs.Asset["kill"];
+            KillPrefab = prefabs.Asset["Kill"];
 
             ScreenRect = GamePanelHUDCorePlugin.HUDCoreClass.GamePanlHUDPublic.GetComponent<RectTransform>();
         }

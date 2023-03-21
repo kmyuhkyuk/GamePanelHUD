@@ -155,9 +155,9 @@ namespace GamePanelHUDCompass
 
         private void Awake()
         {
-            BundleHelp.AssetData<GameObject> prefabs = GamePanelHUDCorePlugin.HUDCoreClass.LoadHUD("gamepanlcompasshud.bundle", "gamepanlcompasshud");
+            GamePanelHUDCorePlugin.HUDCoreClass.AssetData<GameObject> prefabs = GamePanelHUDCorePlugin.HUDCoreClass.LoadHUD("gamepanlcompasshud.bundle", "GamePanlCompassHUD");
 
-            FirePrefab = prefabs.Asset["fire"];
+            FirePrefab = prefabs.Asset["Fire"];
 
             ScreenRect = GamePanelHUDCorePlugin.HUDCoreClass.GamePanlHUDPublic.GetComponent<RectTransform>();
         }

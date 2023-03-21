@@ -132,11 +132,16 @@ namespace GamePanelHUDCore
                 return Path.Combine(ModPath, "bundles", bundlename);
             }
 
+            public static AssetData<GameObject> LoadHUD(string bundlename, string initassetname)
+            {
+                return LoadHUD(bundlename, new string[] { initassetname });
+            }
+
             public static AssetData<GameObject> LoadHUD(string bundlename, string[] initassetname)
             {
                 AssetBundle assetBundle = BundleHelp.LoadBundle(LogSource, GetBundlePath(bundlename));
 
-                Dictionary<string, GameObject> asset = BundleHelp.LoadAllAsset<GameObject>(assetBundle).ToDictionary(x => x.name.ToLower(), x => x);
+                Dictionary<string, GameObject> asset = BundleHelp.LoadAllAsset<GameObject>(assetBundle).ToDictionary(x => x.name, x => x);
 
                 Dictionary<string, GameObject> init = new Dictionary<string, GameObject>();
 
@@ -150,24 +155,9 @@ namespace GamePanelHUDCore
                 return new AssetData<GameObject>(asset, init);
             }
 
-            public static AssetData<GameObject> LoadHUD(string bundlename, string initassetname)
-            {
-                AssetBundle assetBundle = BundleHelp.LoadBundle(LogSource, GetBundlePath(bundlename));
-
-                Dictionary<string, GameObject> asset = BundleHelp.LoadAllAsset<GameObject>(assetBundle).ToDictionary(x => x.name.ToLower(), x => x);
-
-                Dictionary<string, GameObject> init = new Dictionary<string, GameObject>();
-
-                InitAsset(asset, init, initassetname);
-
-                assetBundle.Unload(false);
-
-                return new AssetData<GameObject>(asset, init);
-            }
-
             private static void InitAsset(Dictionary<string, GameObject> asset, Dictionary<string, GameObject> init, string initassetname)
             {
-                init.Add(initassetname.ToLower(), GameObject.Instantiate(asset[initassetname.ToLower()], GamePanlHUDPublic.transform));
+                init.Add(initassetname, GameObject.Instantiate(asset[initassetname], GamePanlHUDPublic.transform));
             }
 
             public class AssetData<T>
