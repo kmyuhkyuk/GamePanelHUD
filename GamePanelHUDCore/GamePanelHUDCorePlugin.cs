@@ -141,7 +141,7 @@ namespace GamePanelHUDCore
             {
                 AssetBundle assetBundle = BundleHelp.LoadBundle(LogSource, GetBundlePath(bundlename));
 
-                Dictionary<string, GameObject> asset = BundleHelp.LoadAllAsset<GameObject>(assetBundle).ToDictionary(x => x.name, x => x);
+                Dictionary<string, GameObject> asset = assetBundle.LoadAllAssets<GameObject>().ToDictionary(x => x.name, x => x);
 
                 Dictionary<string, GameObject> init = new Dictionary<string, GameObject>();
 
