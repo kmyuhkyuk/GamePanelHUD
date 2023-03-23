@@ -43,18 +43,6 @@ namespace GamePanelHUDCore.Utils
             }
         }
 
-        public static T[] LoadAllAsset<T>(AssetBundle assetbundle) where T : UnityEngine.Object
-        {
-            if (assetbundle != null)
-            {
-                return assetbundle.LoadAllAssets<T>();
-            }
-            else
-            {
-                return null;
-            }
-        }
-
         public static async Task<T[]> LoadAsyncAllAsset<T>(AssetBundle assetbundle) where T : UnityEngine.Object
         {
             if (assetbundle != null)
