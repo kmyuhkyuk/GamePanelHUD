@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace GamePanelHUDCore.Utils
 {
-    public class ModUpdateCheck
+    public static class ModUpdateCheck
     {
         private static readonly HUDVersion HUDVersions = new HUDVersion();
 

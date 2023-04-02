@@ -6,7 +6,7 @@ using EFT;
 
 namespace GamePanelHUDCore.Utils
 {
-    public class LocalizedHelp
+    public static class LocalizedHelp
     {
         private static Func<string, EStringCase, string> RefLocalized;
 

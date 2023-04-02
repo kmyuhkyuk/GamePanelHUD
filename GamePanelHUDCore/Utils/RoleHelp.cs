@@ -6,7 +6,7 @@ using EFT;
 
 namespace GamePanelHUDCore.Utils
 {
-    public class RoleHelp
+    public static class RoleHelp
     {
         private static Type RoleHelpType;
 

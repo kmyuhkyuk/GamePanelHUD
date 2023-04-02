@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace GamePanelHUDCore.Utils
 {
-    public class RuToEn
+    public static class RuToEn
     {
         private static Func<string, string> RefTransliterate;
 

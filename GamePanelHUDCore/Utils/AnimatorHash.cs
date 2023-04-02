@@ -2,7 +2,7 @@
 
 namespace GamePanelHUDCore.Utils
 {
-    public class AnimatorHash
+    public static class AnimatorHash
     {
         public static readonly int Active = Animator.StringToHash("Active");
 
