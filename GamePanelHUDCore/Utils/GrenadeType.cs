@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace GamePanelHUDCore.Utils
 {
-    public class GrenadeType
+    public static class GrenadeType
     {
         public static Type GrenadeItemType { get; private set; }
 

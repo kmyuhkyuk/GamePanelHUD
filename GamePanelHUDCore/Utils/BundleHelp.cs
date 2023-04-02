@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace GamePanelHUDCore.Utils
 {
-    public class BundleHelp
+    public static class BundleHelp
     {
         public static AssetBundle LoadBundle(ManualLogSource logsource, string bundlepath)
         {

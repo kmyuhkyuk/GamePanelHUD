@@ -4,7 +4,7 @@ using GamePanelHUDCore.Utils.Session;
 
 namespace GamePanelHUDCore.Utils
 {
-    public class ISessionHelp
+    public static class ISessionHelp
     {
         private static ISession Session;
 

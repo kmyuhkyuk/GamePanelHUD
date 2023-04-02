@@ -6,7 +6,7 @@ using EFT;
 
 namespace GamePanelHUDCore.Utils
 {
-    public class ExperienceHelp
+    public static class ExperienceHelp
     {
         private static object Config;
 

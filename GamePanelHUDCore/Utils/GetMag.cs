@@ -6,7 +6,7 @@ using EFT.InventoryLogic;
 
 namespace GamePanelHUDCore.Utils
 {
-    public class GetMag
+    public static class GetMag
     {
         private static Func<Weapon, object> RefGetCurrentMagazine;
 

@@ -6,7 +6,7 @@ using EFT.Interactive;
 
 namespace GamePanelHUDCore.Utils.Zone
 {
-    public class ZoneHelp
+    public static class ZoneHelp
     {
         private static readonly Dictionary<string, Vector3> ExperienceTriggerPoint = new Dictionary<string, Vector3>();
 

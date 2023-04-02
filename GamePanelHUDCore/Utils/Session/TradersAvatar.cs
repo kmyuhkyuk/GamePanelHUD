@@ -8,7 +8,7 @@ using System;
 
 namespace GamePanelHUDCore.Utils.Session
 {
-    public class TradersAvatar
+    public static class TradersAvatar
     {
         private static readonly Dictionary<string, Func<Task<Sprite>>> Avatar = new Dictionary<string, Func<Task<Sprite>>>();
 
