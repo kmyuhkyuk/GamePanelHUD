@@ -153,11 +153,6 @@ namespace GamePanelHUDHit
         void Update()
 #endif
         {
-            LeftUpRect.sizeDelta = HitSizeDelta;
-            LeftDownRect.sizeDelta = HitSizeDelta;
-            RightUpRect.sizeDelta = HitSizeDelta;
-            RightDowmRect.sizeDelta = HitSizeDelta;
-
             Vector2 leftUpPos = new Vector2(-HitAnchoredPosition.x, HitAnchoredPosition.y);
             Vector2 leftDownPos = new Vector2(-HitAnchoredPosition.x, -HitAnchoredPosition.y);
             Vector2 rightUpPos = HitAnchoredPosition;
@@ -167,6 +162,11 @@ namespace GamePanelHUDHit
             Vector3 leftDownRot = new Vector3(-HitLocalRotation.x, -HitLocalRotation.y, -HitLocalRotation.z);
             Vector3 rightUpRot = new Vector3(HitLocalRotation.x, HitLocalRotation.y, -HitLocalRotation.z);
             Vector3 rightDownRot = new Vector3(HitLocalRotation.x, -HitLocalRotation.y, HitLocalRotation.z);
+
+            LeftUpRect.sizeDelta = HitSizeDelta;
+            LeftDownRect.sizeDelta = HitSizeDelta;
+            RightUpRect.sizeDelta = HitSizeDelta;
+            RightDowmRect.sizeDelta = HitSizeDelta;
 
             LeftUpRect.anchoredPosition = leftUpPos;
             LeftDownRect.anchoredPosition = leftDownPos;
@@ -225,8 +225,7 @@ namespace GamePanelHUDHit
 
         public void HitTirgger(bool ishead, GamePanelHUDHitPlugin.HitInfo hitinfo, GamePanelHUDHitPlugin.HitInfo.Direction direction)
         {
-            Color hitColor = DamageColor;
-
+            Color hitColor;
             switch (hitinfo.HitType)
             {
                 case GamePanelHUDHitPlugin.HitInfo.Hit.OnlyHp:
@@ -241,23 +240,14 @@ namespace GamePanelHUDHit
                 case GamePanelHUDHitPlugin.HitInfo.Hit.Head:
                     hitColor = HeadColor;
                     break;
+                default:
+                    hitColor = Color.black;
+                    break;
             }
 
-            _LeftUp.color = hitColor;
-            _LeftDown.color = hitColor;
-            _RightUp.color = hitColor;
-            _RightDowm.color = hitColor;
+            HitColor(hitColor);
 
-            _LeftUpHead.color = hitColor;
-            _LeftDownHead.color = hitColor;
-            _RightUpHead.color = hitColor;
-            _RightDowmHead.color = hitColor;
-
-            _LeftUpHead.gameObject.SetActive(ishead);
-            _LeftDownHead.gameObject.SetActive(ishead);
-            _LeftUpHead.gameObject.SetActive(ishead);
-            _RightUpHead.gameObject.SetActive(ishead);
-            _RightDowmHead.gameObject.SetActive(ishead);
+            HitHead(ishead);
 
             switch (direction)
             {
@@ -271,6 +261,28 @@ namespace GamePanelHUDHit
                     Animator_HitUI.SetTrigger(AnimatorHash.ActiveRight);
                     break;
             }
+        }
+
+        void HitHead(bool sw)
+        {
+            _LeftUpHead.gameObject.SetActive(sw);
+            _LeftDownHead.gameObject.SetActive(sw);
+            _LeftUpHead.gameObject.SetActive(sw);
+            _RightUpHead.gameObject.SetActive(sw);
+            _RightDowmHead.gameObject.SetActive(sw);
+        }
+
+        void HitColor(Color color)
+        {
+            _LeftUp.color = color;
+            _LeftDown.color = color;
+            _RightUp.color = color;
+            _RightDowm.color = color;
+
+            _LeftUpHead.color = color;
+            _LeftDownHead.color = color;
+            _RightUpHead.color = color;
+            _RightDowmHead.color = color;
         }
 
         public void HitDeadTirgger()

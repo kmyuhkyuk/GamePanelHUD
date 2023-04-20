@@ -53,7 +53,6 @@ namespace GamePanelHUDCore.Utils
             switch (side)
             {
                 case EPlayerSide.Usec:
-                    return VictimLevelExp;
                 case EPlayerSide.Bear:
                     return VictimLevelExp;
                 case EPlayerSide.Savage:
@@ -61,9 +60,9 @@ namespace GamePanelHUDCore.Utils
                         return VictimBotLevelExp;
                     else
                         return exp;
+                default:
+                    return 0;
             }
-
-            return 0;
         }
 
         public static int GetHeadExp(int exp, EPlayerSide side)

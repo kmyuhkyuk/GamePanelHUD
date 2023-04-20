@@ -36,10 +36,7 @@ namespace GamePanelHUDCore.Utils
 
         public void Run(IUpdate update)
         {
-            if (StopUpdates.Contains(update))
-            {
-                StopUpdates.Remove(update);
-            }
+            StopUpdates.Remove(update);
         }
 
         public void Stop(IUpdate update)
@@ -62,44 +59,25 @@ namespace GamePanelHUDCore.Utils
         {
             if (Updates.Count > 0)
             {
-                if (!NeedMethodTime)
+                for (int i = 0; i < Updates.Count; i++)
                 {
-                    for (int i = 0; i < Updates.Count; i++)
+                    IUpdate update = Updates[i];
+
+                    if (RemoveUpdates.Contains(update))
                     {
-                        IUpdate update = Updates[i];
+                        int num = RemoveUpdates.IndexOf(update);
 
-                        if (RemoveUpdates.Contains(update))
-                        {
-                            int num = RemoveUpdates.IndexOf(update);
+                        Updates.RemoveAt(i);
 
-                            Updates.RemoveAt(i);
-
-                            RemoveUpdates.RemoveAt(num);
-                        }
-                        else if (!StopUpdates.Contains(update))
+                        RemoveUpdates.RemoveAt(num);
+                    }
+                    else if (!StopUpdates.Contains(update))
+                    {
+                        if (!NeedMethodTime)
                         {
                             update.IUpdate();
                         }
-                    }
-
-                    Debugs.MaxTime = TimeSpan.Zero;
-                    Debugs.MinTime = TimeSpan.Zero;
-                }
-                else
-                {
-                    for (int i = 0; i < Updates.Count; i++)
-                    {
-                        IUpdate update = Updates[i];
-
-                        if (RemoveUpdates.Contains(update))
-                        {
-                            int num = RemoveUpdates.IndexOf(update);
-
-                            Updates.RemoveAt(i);
-
-                            RemoveUpdates.RemoveAt(num);
-                        }
-                        else if (!StopUpdates.Contains(update))
+                        else
                         {
                             if (i == 0)
                             {
@@ -136,6 +114,14 @@ namespace GamePanelHUDCore.Utils
                                 Debugs.AllMethodTime.Reset();
                             }
                         }
+
+                        update.IUpdate();
+                    }
+
+                    if (!NeedMethodTime)
+                    {
+                        Debugs.MaxTime = TimeSpan.Zero;
+                        Debugs.MinTime = TimeSpan.Zero;
                     }
                 }
             }

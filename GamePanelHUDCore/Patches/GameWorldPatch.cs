@@ -19,6 +19,20 @@ namespace GamePanelHUDCore.Patches
         }
     }
 
+    public class GameWorldOnGameStartedPatch : ModulePatch
+    {
+        protected override MethodBase GetTargetMethod()
+        {
+            return typeof(GameWorld).GetMethod("OnGameStarted", BindingFlags.Public | BindingFlags.Instance);
+        }
+
+        [PatchPostfix]
+        private static void PatchPostfix(GameWorld __instance)
+        {
+            GamePanelHUDCorePlugin.HUDCoreClass.GameWorldStart(__instance);
+        }
+    }
+
     public class GameWorldDisposePatch : ModulePatch
     {
         protected override MethodBase GetTargetMethod()
@@ -29,7 +43,7 @@ namespace GamePanelHUDCore.Patches
         [PatchPostfix]
         private static void PatchPostfix(GameWorld __instance)
         {
-            GamePanelHUDCorePlugin.HUDCoreClass.WorldDispose(__instance);
+            GamePanelHUDCorePlugin.HUDCoreClass.GameWorldDispose(__instance);
         }
     }
 }

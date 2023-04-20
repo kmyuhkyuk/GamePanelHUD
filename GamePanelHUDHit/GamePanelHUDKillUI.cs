@@ -115,7 +115,7 @@ namespace GamePanelHUDHit
             GamePanelHUDKill.HasWaitInfoMinu();
         }
 
-        async Task TextTask(TMP_Text text, int speed, bool isletftoright)
+        async Task TextTask(TMP_Text text, int speed, bool isLefttoright)
         {
             text.ForceMeshUpdate();
             TMP_TextInfo textInfo = text.textInfo;
@@ -124,7 +124,7 @@ namespace GamePanelHUDHit
             bool complete = false;
             int current;
 
-            if (isletftoright)
+            if (isLefttoright)
             {
                 _TextValue.maxVisibleCharacters = 0;
 

@@ -1,6 +1,5 @@
 ﻿#if !UNITY_EDITOR
 using Aki.Reflection.Patching;
-using Aki.Reflection.Utils;
 using System.Reflection;
 
 namespace GamePanelHUDCompass.Patches
@@ -9,7 +8,7 @@ namespace GamePanelHUDCompass.Patches
     {
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(LevelSettings).GetMethod("Awake", PatchConstants.PrivateFlags);
+            return typeof(LevelSettings).GetMethod("Awake", BindingFlags.NonPublic | BindingFlags.Instance);
         }
 
         [PatchPostfix]

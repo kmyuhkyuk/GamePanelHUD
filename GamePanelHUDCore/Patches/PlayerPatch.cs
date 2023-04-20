@@ -1,6 +1,5 @@
 ﻿#if !UNITY_EDITOR
 using Aki.Reflection.Patching;
-using Aki.Reflection.Utils;
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -16,7 +15,7 @@ namespace GamePanelHUDCore.Patches
 
         protected override MethodBase GetTargetMethod()
         {
-            return typeof(Player).GetMethod("Init", PatchConstants.PrivateFlags);
+            return typeof(Player).GetMethod("Init", BindingFlags.NonPublic | BindingFlags.Instance);
         }
 
         [PatchPostfix]

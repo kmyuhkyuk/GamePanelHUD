@@ -11,25 +11,18 @@ namespace GamePanelHUDCore.Patches
     {
         private static readonly bool Is330Up = GamePanelHUDCorePlugin.HUDCoreClass.GameVersion > new Version("0.12.12.20243");
 
-        private static readonly MethodBase MainApplicationBase;
-
-        static MainApplicationPatch()
+        protected override MethodBase GetTargetMethod()
         {
             BindingFlags flags = BindingFlags.DeclaredOnly | BindingFlags.NonPublic | BindingFlags.Instance;
 
             if (Is330Up)
             {
-                MainApplicationBase = RefHelp.GetEftMethod(x => x.Name == "TarkovApplication", flags, x => x.IsAssembly);
+                return RefHelp.GetEftMethod(x => x.Name == "TarkovApplication", flags, x => x.IsAssembly);
             }
             else
             {
-                MainApplicationBase = RefHelp.GetEftMethod(x => x.Name == "MainApplication", flags, x => x.IsAssembly);
+                return RefHelp.GetEftMethod(x => x.Name == "MainApplication", flags, x => x.IsAssembly);
             }
-        }
-
-        protected override MethodBase GetTargetMethod()
-        {
-            return MainApplicationBase;
         }
 
         [PatchPostfix]

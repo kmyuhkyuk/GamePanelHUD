@@ -100,40 +100,43 @@ namespace GamePanelHUDCompass
                 bool left = false;
                 bool right = false;
 
-                foreach (GamePanelHUDCompassFireUI fire in CompassFires.Values)
+                if (CompassFires.Count > 0)
                 {
-                    bool? isLeft = fire.IsLeft;
-
-                    if (isLeft.HasValue)
+                    foreach (GamePanelHUDCompassFireUI fire in CompassFires.Values)
                     {
-                        bool isBoos = fire.IsBoss;
+                        bool? isLeft = fire.IsLeft;
 
-                        bool isFollower = fire.IsFollower;
-
-                        if ((bool)isLeft)
+                        if (isLeft.HasValue)
                         {
-                            left = true;
+                            bool isBoos = fire.IsBoss;
 
-                            if (isBoos)
-                            {
-                                leftDirectionColor = HUD.SettingsData.KeyCompassFireBossColor.Value.ColorToHtml();
-                            }
-                            else if (isFollower)
-                            {
-                                leftDirectionColor = HUD.SettingsData.KeyCompassFireFollowerColor.Value.ColorToHtml();
-                            }
-                        }
-                        else
-                        {
-                            right = true;
+                            bool isFollower = fire.IsFollower;
 
-                            if (isBoos)
+                            if ((bool)isLeft)
                             {
-                                rightDirectionColor = HUD.SettingsData.KeyCompassFireBossColor.Value.ColorToHtml();
+                                left = true;
+
+                                if (isBoos)
+                                {
+                                    leftDirectionColor = HUD.SettingsData.KeyCompassFireBossColor.Value.ColorToHtml();
+                                }
+                                else if (isFollower)
+                                {
+                                    leftDirectionColor = HUD.SettingsData.KeyCompassFireFollowerColor.Value.ColorToHtml();
+                                }
                             }
-                            else if (isFollower)
+                            else
                             {
-                                rightDirectionColor = HUD.SettingsData.KeyCompassFireFollowerColor.Value.ColorToHtml();
+                                right = true;
+
+                                if (isBoos)
+                                {
+                                    rightDirectionColor = HUD.SettingsData.KeyCompassFireBossColor.Value.ColorToHtml();
+                                }
+                                else if (isFollower)
+                                {
+                                    rightDirectionColor = HUD.SettingsData.KeyCompassFireFollowerColor.Value.ColorToHtml();
+                                }
                             }
                         }
                     }
