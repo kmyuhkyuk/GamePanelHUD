@@ -47,10 +47,10 @@ namespace GamePanelHUDCore
 
             new PlayerPatch().Enable();
             new GameWorldAwakePatch().Enable();
+            new GameWorldOnGameStartedPatch().Enable();
             new GameWorldDisposePatch().Enable();
             new GameUIPatch().Enable();
             new MainApplicationPatch().Enable();
-            new ExperienceTriggerPatch().Enable();
             new TriggerWithIdPatch().Enable();
 
             LocalizedHelp.Init();
@@ -92,7 +92,9 @@ namespace GamePanelHUDCore
 
             public GameWorld TheWorld;
 
-            public static event Action<GameWorld> WorldDestroy;
+            public static event Action<GameWorld> WorldStart;
+
+            public static event Action<GameWorld> WorldDispose;
 
             public bool HasPlayer
             {
@@ -173,11 +175,19 @@ namespace GamePanelHUDCore
                 }
             }
 
-            public static void WorldDispose(GameWorld world)
+            public static void GameWorldDispose(GameWorld world)
             {
-                if (WorldDestroy != null)
+                if (WorldDispose != null)
                 {
-                    WorldDestroy(world);
+                    WorldDispose(world);
+                }
+            }
+
+            public static void GameWorldStart(GameWorld world)
+            {
+                if (WorldStart != null)
+                {
+                    WorldStart(world);
                 }
             }
 

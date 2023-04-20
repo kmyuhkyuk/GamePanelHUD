@@ -53,11 +53,11 @@ namespace GamePanelHUDCompass
         [SerializeField]
         private TMP_Text _AngleValue;
 
-        private Transform _AnglePanel;
+        private Transform AnglePanel;
 
-        private Image[] _AzimuthsImage;
+        private Image[] AzimuthsImages;
 
-        private TMP_Text[] _AzimuthsAngle;
+        private TMP_Text[] AzimuthsAngles;
 
         private string[] AngleTexts;
 
@@ -65,11 +65,11 @@ namespace GamePanelHUDCompass
 
         void Start()
         {
-            _AzimuthsImage = _AzimuthsValue.GetComponentsInChildren<Image>();
-            _AzimuthsAngle = _AzimuthsValue.GetComponentsInChildren<TMP_Text>();
-            _AnglePanel = _DirectionValue.transform.parent;
+            AzimuthsImages = _AzimuthsValue.GetComponentsInChildren<Image>();
+            AzimuthsAngles = _AzimuthsValue.GetComponentsInChildren<TMP_Text>();
+            AnglePanel = _DirectionValue.transform.parent;
 
-            AngleTexts = _AzimuthsAngle.Select(x => x.text).ToArray();
+            AngleTexts = AzimuthsAngles.Select(x => x.text).ToArray();
 
             List<StringBuilder> changes = new List<StringBuilder>();
 
@@ -109,14 +109,14 @@ namespace GamePanelHUDCompass
         {
             _Arrow.color = ArrowColor;
 
-            foreach (Image image in _AzimuthsImage)
+            foreach (Image image in AzimuthsImages)
             {
                 image.color = AzimuthsColor;
             }
 
-            for (int i = 0; i < _AzimuthsAngle.Length; i++)
+            for (int i = 0; i < AzimuthsAngles.Length; i++)
             {
-                TMP_Text _azimuthsAngle = _AzimuthsAngle[i];
+                TMP_Text _azimuthsAngle = AzimuthsAngles[i];
 
                 _azimuthsAngle.fontStyle = AzimuthsAngleStyles;
                 _azimuthsAngle.text = StringBuilderDatas._AzimuthsAngle[i].StringConcat("<color=", AzimuthsAngleColor, ">", AngleTexts[i], "</color>");
@@ -158,7 +158,7 @@ namespace GamePanelHUDCompass
                 direction = "N";
             }
 
-            _AnglePanel.gameObject.SetActive(AngleHUDSW);
+            AnglePanel.gameObject.SetActive(AngleHUDSW);
 
             _DirectionValue.fontStyle = DirectionStyles;
             _DirectionValue.text = StringBuilderDatas._DirectionValue.StringConcat("<color=", DirectionColor, ">", direction, "</color>");

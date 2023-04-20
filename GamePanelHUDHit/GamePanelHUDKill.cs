@@ -276,13 +276,13 @@ namespace GamePanelHUDHit
 
             string nameColor = settingsdata.KeyKillNameColor.Value.ColorToHtml();
             string partColor = settingsdata.KeyKillPartColor.Value.ColorToHtml();
-            string sideColor = settingsdata.KeyKillUsecColor.Value.ColorToHtml();
             string weaponColor = settingsdata.KeyKillWeaponColor.Value.ColorToHtml();
             string lvlColor = settingsdata.KeyKillLvlColor.Value.ColorToHtml();
             string levelColor = settingsdata.KeyKillLevelColor.Value.ColorToHtml();
             string bracketColor = settingsdata.KeyKillBracketColor.Value.ColorToHtml();
             string enemyDownColor = settingsdata.KeyKillEnemyDownColor.Value.ColorToHtml();
 
+            string sideColor;
             if (isScav && RoleHelp.IsBoss(killinfo.Role))
             {
                 sideColor = settingsdata.KeyKillBossColor.Value.ColorToHtml();
@@ -303,6 +303,9 @@ namespace GamePanelHUDHit
                         break;
                     case EPlayerSide.Savage:
                         sideColor = settingsdata.KeyKillScavColor.Value.ColorToHtml();
+                        break;
+                    default:
+                        sideColor = Color.black.ColorToHtml();
                         break;
                 }
             }

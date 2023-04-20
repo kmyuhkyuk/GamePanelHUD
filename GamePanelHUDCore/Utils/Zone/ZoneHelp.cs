@@ -3,72 +3,64 @@ using System.Collections.Generic;
 using UnityEngine;
 using EFT;
 using EFT.Interactive;
+using System.Linq;
 
 namespace GamePanelHUDCore.Utils.Zone
 {
     public static class ZoneHelp
     {
-        private static readonly Dictionary<string, Vector3> ExperienceTriggerPoint = new Dictionary<string, Vector3>();
+        internal static readonly List<TriggerWithId> TriggerPoints = new List<TriggerWithId>();
 
-        private static readonly Dictionary<string, Vector3> PlaceItemTriggerPoint = new Dictionary<string, Vector3>();
+        public static IEnumerable<ExperienceTrigger> ExperienceTriggers
+        {
+            get
+            {
+                return TriggerPoints.Where(x => x is ExperienceTrigger).Select(x => (ExperienceTrigger)x);
+            }
+        }
 
-        private static readonly Dictionary<string, Vector3> QuestTriggerPoint = new Dictionary<string, Vector3>();
+        public static IEnumerable<PlaceItemTrigger> PlaceItemTriggers
+        {
+            get
+            {
+                return TriggerPoints.Where(x => x is PlaceItemTrigger).Select(x => (PlaceItemTrigger)x);
+            }
+        }
+
+        public static IEnumerable<QuestTrigger> QuestTriggers
+        {
+            get
+            {
+                return TriggerPoints.Where(x => x is QuestTrigger).Select(x => (QuestTrigger)x);
+            }
+        }
 
         static ZoneHelp()
         {
-            GamePanelHUDCorePlugin.HUDCoreClass.WorldDestroy += Clear;
+            GamePanelHUDCorePlugin.HUDCoreClass.WorldDispose += (GameWorld) => TriggerPoints.Clear();
         }
 
-        public static void AddPoint(TriggerWithId trigger)
+        public static bool TryGetValues<T>(string id, out IEnumerable<T> triggers) where T : TriggerWithId
         {
-            string id = trigger.Id;
-            Vector3 pos = trigger.transform.position;
-
-            Dictionary<string, Vector3> point;
-
-            if (trigger is ExperienceTrigger)
+            if (typeof(T) == typeof(ExperienceTrigger))
             {
-                point = ExperienceTriggerPoint;
+                triggers = ExperienceTriggers.Where(x => x.Id == id) as IEnumerable<T>;
             }
-            else if (trigger is PlaceItemTrigger)
+            else if (typeof(T) == typeof(PlaceItemTrigger))
             {
-                point = PlaceItemTriggerPoint;
+                triggers = PlaceItemTriggers.Where(x => x.Id == id) as IEnumerable<T>;
             }
-            else
+            else if (typeof(T) == typeof(QuestTrigger))
             {
-                point = QuestTriggerPoint;
-            }
-
-            if (!point.ContainsKey(id))
-            {
-                point.Add(id, pos);
+                triggers = QuestTriggers.Where(x => x.Id == id) as IEnumerable<T>;
             }
             else
             {
-                point.Add(string.Concat(id, "(", trigger.transform.parent.name, ")"), pos);
+                triggers = null;
+                return false;
             }
-        }
 
-        public static bool TryExperience(string id, out Vector3 vector3)
-        {
-            return ExperienceTriggerPoint.TryGetValue(id, out vector3);
-        }
-
-        public static bool TryPlaceItem(string id, out Vector3 vector3)
-        {
-            return PlaceItemTriggerPoint.TryGetValue(id, out vector3);
-        }
-
-        public static bool TryQuest(string id, out Vector3 vector3)
-        {
-            return QuestTriggerPoint.TryGetValue(id, out vector3);
-        }
-
-        private static void Clear(GameWorld world)
-        {
-            ExperienceTriggerPoint.Clear();
-            PlaceItemTriggerPoint.Clear();
-            QuestTriggerPoint.Clear();
+            return triggers.Count() > 0 ? true : false;
         }
     }
 }

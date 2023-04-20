@@ -177,7 +177,7 @@ namespace GamePanelHUDCompass
 #if !UNITY_EDITOR
             Vector3 lhs = Where - HUD.Info.PlayerPosition;
 
-            float angle = HUD.Info.GetToAngle(lhs, HUD.SettingsData.KeyAngleOffset.Value);
+            float angle = HUD.Info.GetToAngle(lhs);
 
             FireX = -(angle / 15 * 120);
 
@@ -187,10 +187,11 @@ namespace GamePanelHUDCompass
 
             IsLeft = GetDirection(HUD.Info.SizeDelta.x, HUD.Info.CompassX, FireX, fireXLeft, fireXRight, fireXRightRight, lhs, HUD.Info.PlayerRight);
 
-            RealRect.anchoredPosition = new Vector2(FireX, HUD.SettingsData.KeyCompassFireHeight.Value);
-            VirtualRect.anchoredPosition = new Vector2(fireXLeft, HUD.SettingsData.KeyCompassFireHeight.Value);
-            Virtual2Rect.anchoredPosition = new Vector2(fireXRight, HUD.SettingsData.KeyCompassFireHeight.Value);
-            Virtual3Rect.anchoredPosition = new Vector2(fireXRightRight, HUD.SettingsData.KeyCompassFireHeight.Value);
+            float height = HUD.SettingsData.KeyCompassFireHeight.Value;
+            RealRect.anchoredPosition = new Vector2(FireX, height);
+            VirtualRect.anchoredPosition = new Vector2(fireXLeft, height);
+            Virtual2Rect.anchoredPosition = new Vector2(fireXRight, height);
+            Virtual3Rect.anchoredPosition = new Vector2(fireXRightRight, height);
 
             Animator_Fire.SetFloat(AnimatorHash.Active, HUD.SettingsData.KeyCompassFireActiveSpeed.Value);
             Animator_Fire.SetFloat(AnimatorHash.Speed, HUD.SettingsData.KeyCompassFireWaitSpeed.Value);

@@ -83,15 +83,15 @@ namespace GamePanelHUDMag
         private TMP_Text _PatronValue;
 
         [SerializeField]
-        private TMP_Text _WeaponValue;
+        private TMP_Text _WeaponNameValue;
 
         [SerializeField]
-        private TMP_Text _AmmoValue;
+        private TMP_Text _AmmoTypeValue;
 
         [SerializeField]
         private TMP_Text _FiremodeValue;
 
-        private Animator Animator_Weapon;
+        private Animator Animator_WeaponName;
 
         private Animator Animator_Current;
 
@@ -99,7 +99,7 @@ namespace GamePanelHUDMag
 
         void Start()
         {
-            Animator_Weapon = _WeaponValue.transform.parent.parent.GetComponent<Animator>();
+            Animator_WeaponName = _WeaponNameValue.transform.parent.GetComponent<Animator>();
             Animator_Current = _CurrentValue.GetComponent<Animator>();
 
 #if !UNITY_EDITOR
@@ -157,11 +157,11 @@ namespace GamePanelHUDMag
             _PatronValue.text = StringBuilderDatas._PatronValue.StringConcat("<color=", PatronColor, ">", "+", Patron, "</color>");
 
             //Set Weapon Name
-            _WeaponValue.fontStyle = WeaponNameStyles;
-            _WeaponValue.text = StringBuilderDatas._WeaponValue.StringConcat("<color=", WeaponNameColor, ">", WeaponName, "</color>");
+            _WeaponNameValue.fontStyle = WeaponNameStyles;
+            _WeaponNameValue.text = StringBuilderDatas._WeaponValue.StringConcat("<color=", WeaponNameColor, ">", WeaponName, "</color>");
 
-            Animator_Weapon.SetBool(AnimatorHash.Always, WeaponNameAlways);
-            Animator_Weapon.SetFloat(AnimatorHash.Speed, WeaponNameSpeed);
+            Animator_WeaponName.SetBool(AnimatorHash.Always, WeaponNameAlways);
+            Animator_WeaponName.SetFloat(AnimatorHash.Speed, WeaponNameSpeed);
 
             Animator_Current.SetBool(AnimatorHash.Zero, Current == 0 && Patron == 0 && ZeroWarning);
             Animator_Current.SetFloat(AnimatorHash.Speed, ZeroWarningSpeed);
@@ -173,14 +173,14 @@ namespace GamePanelHUDMag
             _FiremodeValue.fontStyle = FireModeStyles;
             _FiremodeValue.text = StringBuilderDatas._FiremodeValue.StringConcat("<color=", FireModeColor, ">", FireMode, "</color>");
 
-            _AmmoValue.gameObject.SetActive(AmmoTypeHUDSW);
+            _AmmoTypeValue.gameObject.SetActive(AmmoTypeHUDSW);
 
-            _AmmoValue.fontStyle = AmmoTypeStyles;
-            _AmmoValue.text = StringBuilderDatas._AmmoValue.StringConcat("<color=", AmmoTypeColor, ">", AmmoType, "</color>");
+            _AmmoTypeValue.fontStyle = AmmoTypeStyles;
+            _AmmoTypeValue.text = StringBuilderDatas._AmmoValue.StringConcat("<color=", AmmoTypeColor, ">", AmmoType, "</color>");
 
             if (WeaponTirgger)
             {
-                Animator_Weapon.SetTrigger(AnimatorHash.Active);
+                Animator_WeaponName.SetTrigger(AnimatorHash.Active);
 
                 WeaponTirgger = false;
             }

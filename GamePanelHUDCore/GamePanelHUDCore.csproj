@@ -109,6 +109,7 @@
     <Compile Include="Patches\GameUIPatch.cs" />
     <Compile Include="Patches\GameWorldPatch.cs" />
     <Compile Include="Patches\MainApplicationPatch.cs" />
+    <Compile Include="Patches\Ex\ModulePatchs.cs" />
     <Compile Include="Patches\PlayerPatch.cs" />
     <Compile Include="Patches\ZonePatch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
