@@ -62,7 +62,7 @@ namespace GamePanelHUDCompass
 
         private readonly SettingsData SettingsDatas = new SettingsData();
 
-        private ExfiltrationPoint[] ExfiltrationPoints;
+        private ExfiltrationData[] ExfiltrationPoints;
 
         internal static int AirdropCount;
 
@@ -126,6 +126,7 @@ namespace GamePanelHUDCompass
             SettingsDatas.KeyCompassStaticHeight = Config.Bind<float>(positionScaleSettings, "罗盘静态高度 Compass Static Height", 5);
 
             SettingsDatas.KeyCompassFireDistance = Config.Bind<float>(otherSettings, "罗盘开火最大距离 Compass Fire Max Distance", 50, new ConfigDescription("Fire distance <= How many meters display", new AcceptableValueRange<float>(0, 1000)));
+            SettingsDatas.KeyCompassStaticCenterPointRange = Config.Bind<int>(otherSettings, "罗盘静态中心点范围 Compass Static Center Point Range", 20);
 
             SettingsDatas.KeyAutoSizeDeltaRate = Config.Bind<int>(rateSettings, "自动高度比率 Auto Size Delta Rate", 30, new ConfigDescription("Screen percentage", new AcceptableValueRange<int>(0, 100)));
 
@@ -219,11 +220,6 @@ namespace GamePanelHUDCompass
 
                 CompassStaticDatas.AllPlayerItems = HUDCore.YourPlayer.Profile.Inventory.AllPlayerItems.Select(x => x.TemplateId);
 
-                if (ExfiltrationPoints != null)
-                {
-                    CompassStaticDatas.ExfiltrationPointEnableds = ExfiltrationPoints.Select(x => x.Status != EExfiltrationStatus.NotPresent).ToArray();
-                }
-
                 if (CompassQuestCacheBool)
                 {
                     ShowQuest(HUDCore.YourPlayer, HUDCore.TheWorld, Is231Up, ShowStatic);
@@ -236,6 +232,16 @@ namespace GamePanelHUDCompass
                     ExfiltrationPoints = ShowExfiltration(HUDCore.YourPlayer, HUDCore.TheWorld, ShowStatic);
 
                     CompassExitCacheBool = false;
+                }
+
+                if (ExfiltrationPoints != null)
+                {
+                    CompassStaticDatas.ExfiltrationPoints = ExfiltrationPoints.Select(x => new ExfiltrationUIData()
+                    {
+                        NotPresent = x.Exfiltration.Status == EExfiltrationStatus.NotPresent,
+                        UncompleteRequirements = x.Exfiltration.Status == EExfiltrationStatus.UncompleteRequirements,
+                        Swtichs = x.Swtichs.Select(j => j.DoorState == EDoorState.Open).ToArray()
+                    }).ToArray();
                 }
             }
             else
@@ -298,6 +304,7 @@ namespace GamePanelHUDCompass
                                     NameKey = name,
                                     DescriptionKey = nowCondition.id,
                                     TraderId = traderId,
+                                    IsNotNecessary = !nowCondition.IsNecessary,
                                     InfoType = CompassStaticInfo.Type.ConditionLeaveItemAtLocation
                                 };
 
@@ -321,6 +328,7 @@ namespace GamePanelHUDCompass
                                     NameKey = name,
                                     DescriptionKey = nowCondition.id,
                                     TraderId = traderId,
+                                    IsNotNecessary = !nowCondition.IsNecessary,
                                     InfoType = CompassStaticInfo.Type.ConditionFindItem
                                 };
 
@@ -357,6 +365,7 @@ namespace GamePanelHUDCompass
                                             NameKey = name,
                                             DescriptionKey = beforeCondition.id,
                                             TraderId = traderId,
+                                            IsNotNecessary = !nowCondition.IsNecessary,
                                             InfoType = CompassStaticInfo.Type.ConditionVisitPlace
                                         };
 
@@ -383,6 +392,7 @@ namespace GamePanelHUDCompass
                                                 NameKey = name,
                                                 DescriptionKey = beforeCondition.id,
                                                 TraderId = traderId,
+                                                IsNotNecessary = !nowCondition.IsNecessary,
                                                 InfoType = CompassStaticInfo.Type.ConditionInZone
                                             };
 
@@ -397,11 +407,11 @@ namespace GamePanelHUDCompass
             }
         }
 
-        ExfiltrationPoint[] ShowExfiltration(Player player, GameWorld world, Action<CompassStaticInfo> showstatic)
+        ExfiltrationData[] ShowExfiltration(Player player, GameWorld world, Action<CompassStaticInfo> showstatic)
         {
             if (player is HideoutPlayer)
                 return null;
-
+   
             object exfiltrationController = Traverse.Create(world).Property("ExfiltrationController").GetValue<object>();
 
             ExfiltrationPoint[] exfiltrationPoints;
@@ -414,6 +424,8 @@ namespace GamePanelHUDCompass
             {
                 exfiltrationPoints = Traverse.Create(exfiltrationController).Property("ScavExfiltrationPoints").GetValue<ScavExfiltrationPoint[]>().Where(x => x.EligibleIds.Contains(player.ProfileId)).ToArray();
             }
+
+            List<ExfiltrationData> datas = new List<ExfiltrationData>();
 
             for (int i = 0; i < exfiltrationPoints.Length; i++)
             {
@@ -430,9 +442,36 @@ namespace GamePanelHUDCompass
                 };
 
                 showstatic(staticInfo);
+
+                Switch[] switchs = new Switch[0];
+
+                if (point.Status == EExfiltrationStatus.UncompleteRequirements)
+                {
+                    switchs = Traverse.Create(point).Field("list_1").GetValue<List<Switch>>().ToArray();
+
+                    for (int j = 0; j < switchs.Length; j++)
+                    {
+                        Switch @switch = switchs[j];
+
+                        CompassStaticInfo staticInfo2 = new CompassStaticInfo()
+                        {
+                            Id = @switch.Id,
+                            Where = @switch.transform.position,
+                            ExIndex = i,
+                            ExIndex2 = j,
+                            NameKey = point.Settings.Name,
+                            DescriptionKey = @switch.ExtractionZoneTip,
+                            InfoType = CompassStaticInfo.Type.Switch
+                        };
+
+                        showstatic(staticInfo2);
+                    }
+                }
+
+                datas.Add(new ExfiltrationData(point, switchs));
             }
 
-            return exfiltrationPoints;
+            return datas.ToArray();
         }
 
         float GetAngle(Vector3 eulerangles, float northdirection)
@@ -499,7 +538,7 @@ namespace GamePanelHUDCompass
         {
             public IEnumerable<string> AllPlayerItems;
 
-            public bool[] ExfiltrationPointEnableds;
+            public ExfiltrationUIData[] ExfiltrationPoints;
 
             public void CopyFrom(CompassStaticData data)
             {
@@ -511,7 +550,29 @@ namespace GamePanelHUDCompass
                 PlayerRight = data.PlayerRight;
 
                 AllPlayerItems = data.AllPlayerItems;
-                ExfiltrationPointEnableds = data.ExfiltrationPointEnableds;
+                ExfiltrationPoints = data.ExfiltrationPoints;
+            }
+        }
+
+        public class ExfiltrationUIData
+        {
+            public bool NotPresent;
+
+            public bool UncompleteRequirements;
+
+            public bool[] Swtichs;
+        }
+
+        public class ExfiltrationData
+        {
+            public ExfiltrationPoint Exfiltration;
+
+            public Switch[] Swtichs;
+
+            public ExfiltrationData(ExfiltrationPoint point, Switch[] swtichs)
+            {
+                Exfiltration = point;
+                Swtichs = swtichs;
             }
         }
 
@@ -546,12 +607,17 @@ namespace GamePanelHUDCompass
 
             public int ExIndex;
 
+            public int ExIndex2;
+
+            public bool IsNotNecessary;
+
             public Type InfoType;
 
             public enum Type
             {
                 Airdrop,
                 Exfiltration,
+                Switch,
                 ConditionLeaveItemAtLocation,
                 ConditionFindItem,
                 ConditionVisitPlace,
@@ -593,6 +659,7 @@ namespace GamePanelHUDCompass
             public ConfigEntry<float> KeyCompassStaticHeight;
 
             public ConfigEntry<int> KeyAutoSizeDeltaRate;
+            public ConfigEntry<int> KeyCompassStaticCenterPointRange;
 
             public ConfigEntry<Color> KeyArrowColor;
             public ConfigEntry<Color> KeyAzimuthsColor;

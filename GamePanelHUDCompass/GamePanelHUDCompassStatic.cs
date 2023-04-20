@@ -134,7 +134,9 @@ namespace GamePanelHUDCompass
 
                         GamePanelHUDCompassStaticUI ui = workUI[Array.IndexOf(xDiffs, xDiff)];
 
-                        if (xDiff < 20 && xDiff > -20)
+                        int range = HUD.SettingsData.KeyCompassStaticCenterPointRange.Value;
+
+                        if (xDiff < range && xDiff > -range)
                         {
                             switch (ui.InfoType)
                             {
@@ -142,6 +144,7 @@ namespace GamePanelHUDCompass
                                     _Airdrops.SetAsLastSibling();
                                     break;
                                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Exfiltration:
+                                case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Switch:
                                     _Exfiltrations.SetAsLastSibling();
                                     break;
                                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionLeaveItemAtLocation:
@@ -154,8 +157,20 @@ namespace GamePanelHUDCompass
 
                             ui.transform.SetAsLastSibling();
 
+                            string necessary = ui.IsNotNecessary ? LocalizedHelp.Localized("(optional)") : "";
+
+                            string name;
+                            if (ui.HasRequirement)
+                            {
+                                name = StringBuilderDatas._Name.StringConcat("<color=", HUD.SettingsData.KeyCompassStaticNameColor.Value.ColorToHtml(), ">", LocalizedHelp.Localized(ui.NameKey), necessary, "(", LocalizedHelp.Localized("hideout/Requirements are not fulfilled"), ")", "</color>");
+                            }
+                            else
+                            {
+                                name = StringBuilderDatas._Name.StringConcat("<color=", HUD.SettingsData.KeyCompassStaticNameColor.Value.ColorToHtml(), ">", LocalizedHelp.Localized(ui.NameKey), necessary, "</color>");
+                            }
+
                             _Name.fontStyle = HUD.SettingsData.KeyCompassStaticNameStyles.Value;
-                            _Name.text = StringBuilderDatas._Name.StringConcat("<color=", HUD.SettingsData.KeyCompassStaticNameColor.Value.ColorToHtml(), ">", LocalizedHelp.Localized(ui.NameKey), "</color>");
+                            _Name.text = name;
 
                             _Description.fontStyle = HUD.SettingsData.KeyCompassStaticDescriptionStyles.Value;
                             _Description.text = StringBuilderDatas._Description.StringConcat("<color=", HUD.SettingsData.KeyCompassStaticDescriptionColor.Value.ColorToHtml(), ">", LocalizedHelp.Localized(ui.DescriptionKey), "</color>");
@@ -180,6 +195,7 @@ namespace GamePanelHUDCompass
                     root = _Airdrops;
                     break;
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Exfiltration:
+                case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Switch:
                     root = _Exfiltrations;
                     break;
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionLeaveItemAtLocation:
@@ -201,6 +217,7 @@ namespace GamePanelHUDCompass
                     _static.BindIcon(Airdrop);
                     break;
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Exfiltration:
+                case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Switch:
                     _static.BindIcon(Exfiltration);
                     break;
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionLeaveItemAtLocation:
@@ -217,8 +234,10 @@ namespace GamePanelHUDCompass
             _static.Target = staticinfo.Target;
             _static.NameKey = staticinfo.NameKey;
             _static.TraderId = staticinfo.TraderId;
+            _static.IsNotNecessary = staticinfo.IsNotNecessary;
             _static.DescriptionKey = staticinfo.DescriptionKey;
             _static.ExIndex = staticinfo.ExIndex;
+            _static.ExIndex2 = staticinfo.ExIndex2;
             _static.InfoType = staticinfo.InfoType;
 
             if (CompassStatics.TryGetValue(staticinfo.Id, out List<GamePanelHUDCompassStaticUI> list))

@@ -30,6 +30,8 @@ namespace GamePanelHUDCompass
 
         public float XDiff { get; private set; }
 
+        public bool HasRequirement { get; private set; }
+
         public string Id;
 
         public Vector3 Where;
@@ -44,7 +46,11 @@ namespace GamePanelHUDCompass
 
         public string TraderId;
 
+        public bool IsNotNecessary;
+
         public int ExIndex;
+
+        public int ExIndex2;
 
         public bool ToDestroy;
 
@@ -114,6 +120,7 @@ namespace GamePanelHUDCompass
                     SetSizeDelta(new Vector2(32, 24));
                     break;
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Exfiltration:
+                case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Switch:
                     SetNativeSize();
                     break;
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionLeaveItemAtLocation:
@@ -167,10 +174,15 @@ namespace GamePanelHUDCompass
             switch (InfoType)
             {
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Exfiltration:
-                    Enabled(HUD.Info.ExfiltrationPointEnableds[ExIndex]);
+                    HasRequirement = HUD.Info.ExfiltrationPoints[ExIndex].UncompleteRequirements;
+                    Enabled(!HUD.Info.ExfiltrationPoints[ExIndex].NotPresent);
+                    break;
+                case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Switch:
+                    Enabled(!HUD.Info.ExfiltrationPoints[ExIndex].Swtichs[ExIndex2]);
                     break;
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionLeaveItemAtLocation:
-                    Enabled(Target.All(x => HUD.Info.AllPlayerItems.Contains(x)));
+                    HasRequirement = !Target.All(x => HUD.Info.AllPlayerItems.Contains(x));
+                    Enabled(true);
                     break;
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Airdrop:
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionFindItem:
