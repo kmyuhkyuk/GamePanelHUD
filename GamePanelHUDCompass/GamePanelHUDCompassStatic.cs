@@ -152,6 +152,8 @@ namespace GamePanelHUDCompass
                                     break;
                             }
 
+                            ui.transform.SetAsLastSibling();
+
                             _Name.fontStyle = HUD.SettingsData.KeyCompassStaticNameStyles.Value;
                             _Name.text = StringBuilderDatas._Name.StringConcat("<color=", HUD.SettingsData.KeyCompassStaticNameColor.Value.ColorToHtml(), ">", LocalizedHelp.Localized(ui.NameKey), "</color>");
 

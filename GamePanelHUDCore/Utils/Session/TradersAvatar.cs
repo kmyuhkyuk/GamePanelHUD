@@ -1,10 +1,10 @@
 ﻿#if !UNITY_EDITOR
 using HarmonyLib;
+using System;
 using System.Collections;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using UnityEngine;
-using System;
 
 namespace GamePanelHUDCore.Utils.Session
 {
@@ -55,7 +55,12 @@ namespace GamePanelHUDCore.Utils.Session
 
         public static async void GetAvatar(string traderid, Action<Sprite> action)
         {
-            action(await GetAvatar(traderid));
+            var sprite = await GetAvatar(traderid);
+
+            if (action != null)
+            {
+                action(sprite);
+            }
         }
     }
 }
