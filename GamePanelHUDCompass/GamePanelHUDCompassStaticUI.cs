@@ -124,6 +124,7 @@ namespace GamePanelHUDCompass
                     SetNativeSize();
                     break;
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionLeaveItemAtLocation:
+                case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionPlaceBeacon:
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionFindItem:
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionVisitPlace:
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionInZone:
@@ -200,6 +201,7 @@ namespace GamePanelHUDCompass
                     }
                     break;
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionLeaveItemAtLocation:
+                case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionPlaceBeacon:
                     HasRequirement = !Target.All(x => HUD.Info.AllPlayerItems.Contains(x));
                     if (HUD.SettingsData.KeyCompassStaticHideRequirements.Value)
                     {
