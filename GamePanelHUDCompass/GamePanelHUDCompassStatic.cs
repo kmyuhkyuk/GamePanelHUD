@@ -148,6 +148,7 @@ namespace GamePanelHUDCompass
                                     _Exfiltrations.SetAsLastSibling();
                                     break;
                                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionLeaveItemAtLocation:
+                                case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionPlaceBeacon:
                                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionFindItem:
                                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionVisitPlace:
                                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionInZone:
@@ -203,6 +204,7 @@ namespace GamePanelHUDCompass
                     root = _Exfiltrations;
                     break;
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionLeaveItemAtLocation:
+                case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionPlaceBeacon:
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionFindItem:
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionVisitPlace:
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionInZone:
@@ -225,6 +227,7 @@ namespace GamePanelHUDCompass
                     _static.BindIcon(Exfiltration);
                     break;
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionLeaveItemAtLocation:
+                case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionPlaceBeacon:
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionFindItem:
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionVisitPlace:
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionInZone:

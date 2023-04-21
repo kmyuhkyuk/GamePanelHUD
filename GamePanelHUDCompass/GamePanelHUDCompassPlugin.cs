@@ -18,7 +18,7 @@ using GamePanelHUDCompass.Patches;
 
 namespace GamePanelHUDCompass
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCompass", "kmyuhkyuk-GamePanelHUDCompass", "2.5.0")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCompass", "kmyuhkyuk-GamePanelHUDCompass", "2.5.1")]
     [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore")]
     public class GamePanelHUDCompassPlugin : BaseUnityPlugin, IUpdate
     {
@@ -309,6 +309,32 @@ namespace GamePanelHUDCompass
                                     TraderId = traderId,
                                     IsNotNecessary = !nowCondition.IsNecessary,
                                     InfoType = CompassStaticInfo.Type.ConditionLeaveItemAtLocation
+                                };
+
+                                showstatic(staticInfo);
+                            }
+                        }
+                    }
+                    else if (condition is ConditionPlaceBeacon)
+                    {
+                        ConditionPlaceBeacon nowCondition = (ConditionPlaceBeacon)condition;
+                        string zoneId = nowCondition.zoneId;
+
+                        if (ZoneHelp.TryGetValues(zoneId, out IEnumerable<PlaceItemTrigger> triggers))
+                        {
+                            foreach (var trigger in triggers)
+                            {
+                                CompassStaticInfo staticInfo = new CompassStaticInfo()
+                                {
+                                    Id = nowCondition.id,
+                                    Where = trigger.transform.position,
+                                    ZoneId = zoneId,
+                                    Target = nowCondition.target,
+                                    NameKey = name,
+                                    DescriptionKey = nowCondition.id,
+                                    TraderId = traderId,
+                                    IsNotNecessary = !nowCondition.IsNecessary,
+                                    InfoType = CompassStaticInfo.Type.ConditionPlaceBeacon
                                 };
 
                                 showstatic(staticInfo);
@@ -622,6 +648,7 @@ namespace GamePanelHUDCompass
                 Exfiltration,
                 Switch,
                 ConditionLeaveItemAtLocation,
+                ConditionPlaceBeacon,
                 ConditionFindItem,
                 ConditionVisitPlace,
                 ConditionInZone
