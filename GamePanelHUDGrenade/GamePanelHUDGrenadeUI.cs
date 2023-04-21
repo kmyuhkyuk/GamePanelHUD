@@ -67,7 +67,7 @@ namespace GamePanelHUDGrenade
             }
 
             _GrenadeValue.fontStyle = GrenadeStyles;
-            _GrenadeValue.text = StringBuilderDatas._GrenadeValue.StringConcat("</color>", "<color=", grenadeColor, ">", GrenadeAmount, "</color>");
+            _GrenadeValue.text = StringBuilderDatas._GrenadeValue.StringConcat("<color=", grenadeColor, ">", GrenadeAmount, "</color>");
         }
 
         public class StringBuilderData

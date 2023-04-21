@@ -314,8 +314,8 @@ namespace GamePanelHUDHit
 
             string part = settingsdata.KeyKillHasPart.Value ? string.Concat("<color=", bracketColor, ">", "[", "</color>", "<color=", partColor, ">", LocalizedHelp.Localized(killinfo.Part.ToString(), EStringCase.None), "</color>", "<color=", bracketColor, ">", "]", "</color>") : "";
             string side = settingsdata.KeyKillHasSide.Value ? string.Concat("<color=", bracketColor, ">", "[", "</color>", "<color=", sideColor, ">", sideName, "</color>", "<color=", bracketColor, ">", "]", "</color>") : "";
-            string weapon = settingsdata.KeyKillHasWeapon.Value ? string.Concat("<color=", bracketColor, ">", "[", "</color>", "<color=", weaponColor, ">", weaponName, "</color>", "</color>", "<color=", bracketColor, ">", "]", "</color>") : "";
-            string level = !isScav && settingsdata.KeyKillHasLevel.Value ? string.Concat("<color=", bracketColor, ">", "[", "</color>", "<color=", lvlColor, ">", LocalizedHelp.Localized("LVLKILLLIST", EStringCase.None), ".", "</color>", "</color>", "<color=", levelColor, ">", killinfo.Level, "</color>", "</color>", "<color=", bracketColor, ">", "]", "</color>") : "";
+            string weapon = settingsdata.KeyKillHasWeapon.Value ? string.Concat("<color=", bracketColor, ">", "[", "</color>", "<color=", weaponColor, ">", weaponName, "</color>", "<color=", bracketColor, ">", "]", "</color>") : "";
+            string level = !isScav && settingsdata.KeyKillHasLevel.Value ? string.Concat("<color=", bracketColor, ">", "[", "</color>", "<color=", lvlColor, ">", LocalizedHelp.Localized("LVLKILLLIST", EStringCase.None), ".", "</color>", "<color=", levelColor, ">", killinfo.Level, "</color>", "<color=", bracketColor, ">", "]", "</color>") : "";
 
             _kill.Text = string.Concat("<color=", enemyDownColor, ">", LocalizedHelp.Localized("ENEMYDOWN", EStringCase.None), "</color>"); ;
             _kill.Text2 = string.Concat(weapon, side, " ", "<color=", nameColor, ">", playerName, "</color>", " ", level, part);
@@ -347,7 +347,7 @@ namespace GamePanelHUDHit
 
             string distanceText = killinfo.Distance.ToString("F2");
 
-            _kill.Text = string.Concat("<color=", distanceColor, ">", distanceText, " ", "<color=", metersColor, ">", meters);
+            _kill.Text = string.Concat("<color=", distanceColor, ">", distanceText, "</color>", " ", "<color=", metersColor, ">", meters, "</color>");
             _kill.TextFontStyles = settingsdata.KeyKillDistanceStyles.Value;
 
             _kill.transform.SetAsFirstSibling();

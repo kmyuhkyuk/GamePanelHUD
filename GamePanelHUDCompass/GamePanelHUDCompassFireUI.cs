@@ -208,8 +208,6 @@ namespace GamePanelHUDCompass
             if (DeadDestroy)
             {
                 Destroy();
-
-                DeadDestroy = false;
             }
 #endif
         }
@@ -218,11 +216,6 @@ namespace GamePanelHUDCompass
         public void Fire()
         {
             Animator_Fire.SetTrigger(AnimatorHash.Fire);
-        }
-
-        public bool IsDestroy()
-        {
-            return Animator_Fire.GetCurrentAnimatorStateInfo(0).shortNameHash == AnimatorHash.Destroy;
         }
 
         bool? GetDirection(float panelx, float compassx, float firex, float firexleft, float firexright, float firexrightright, Vector3 lhs, Vector3 right)

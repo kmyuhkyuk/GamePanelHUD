@@ -105,8 +105,9 @@ namespace GamePanelHUDCompass
             SettingsDatas.KeyCompassStaticExfiltration = Config.Bind<bool>(mainSettings, "罗盘静态撤离点显示 Compass Static Exfiltration display", true);
             SettingsDatas.KeyCompassStaticQuest = Config.Bind<bool>(mainSettings, "罗盘静态任务显示 Compass Static Quest display", true);
             SettingsDatas.KeyCompassStaticInfoHUDSW = Config.Bind<bool>(mainSettings, "罗盘静态信息显示 Compass Static Info HUD display", true);
+            SettingsDatas.KeyCompassStaticDistanceHUDSW = Config.Bind<bool>(mainSettings, "罗盘静态距离显示 Compass Static Distance HUD display", true);
             SettingsDatas.KeyCompassStaticHideRequirements = Config.Bind<bool>(mainSettings, "罗盘静态隐藏需求 Compass Static Hide Requirements", false);
-            SettingsDatas.KeyCompassStaticHideOptional = Config.Bind<bool>(mainSettings, "罗盘静态隐藏选项 Compass Static Hide Optional", false);
+            SettingsDatas.KeyCompassStaticHideOptional = Config.Bind<bool>(mainSettings, "罗盘静态隐藏可选项 Compass Static Hide Optional", false);
             SettingsDatas.KeyAutoSizeDelta = Config.Bind<bool>(mainSettings, "自动高度 Auto Size Delta", true);
 
             SettingsDatas.KeyAnchoredPosition = Config.Bind<Vector2>(positionScaleSettings, "指示栏位置 Anchored Position", new Vector2(0, 0));
@@ -146,6 +147,10 @@ namespace GamePanelHUDCompass
             SettingsDatas.KeyCompassFireFollowerOutlineColor = Config.Bind<Color>(colorSettings, "罗盘开火轮廓 Compass Follower Outline", new Color(0f, 0.7f, 1f));
             SettingsDatas.KeyCompassStaticNameColor = Config.Bind<Color>(colorSettings, "罗盘静态名字 Compass Static Name", new Color(0.8901961f, 0.8901961f, 0.8392157f));
             SettingsDatas.KeyCompassStaticDescriptionColor = Config.Bind<Color>(colorSettings, "罗盘静态说明 Compass Static Description", new Color(0.8901961f, 0.8901961f, 0.8392157f));
+            SettingsDatas.KeyCompassStaticNecessaryColor = Config.Bind<Color>(colorSettings, "罗盘静态可选项 Compass Static Optional", new Color(0.8901961f, 0.8901961f, 0.8392157f));
+            SettingsDatas.KeyCompassStaticRequirementsColor = Config.Bind<Color>(colorSettings, "罗盘静态需求 Compass Static Requirements", new Color(0.8901961f, 0.8901961f, 0.8392157f));
+            SettingsDatas.KeyCompassStaticDistanceColor = Config.Bind<Color>(colorSettings, "罗盘静态距离 Compass Static Distance", new Color(0.8901961f, 0.8901961f, 0.8392157f));
+            SettingsDatas.KeyCompassStaticMetersColor = Config.Bind<Color>(colorSettings, "罗盘静态米 Compass Static Meters", new Color(0.8901961f, 0.8901961f, 0.8392157f));
 
             SettingsDatas.KeyAzimuthsAngleStyles = Config.Bind<FontStyles>(fontStylesSettings, "刻度角度 Azimuths Angle", FontStyles.Normal);
             SettingsDatas.KeyDirectionStyles = Config.Bind<FontStyles>(fontStylesSettings, "方向 Direction", FontStyles.Bold);
@@ -153,6 +158,7 @@ namespace GamePanelHUDCompass
             SettingsDatas.KeyCompassFireDirectionStyles = Config.Bind<FontStyles>(fontStylesSettings, "罗盘开火方向 Compass Fire Direction", FontStyles.Normal);
             SettingsDatas.KeyCompassStaticNameStyles = Config.Bind<FontStyles>(fontStylesSettings, "罗盘静态名字 Compass Static Name", FontStyles.Bold);
             SettingsDatas.KeyCompassStaticDescriptionStyles = Config.Bind<FontStyles>(fontStylesSettings, "罗盘静态说明 Compass Static Description", FontStyles.Normal);
+            SettingsDatas.KeyCompassStaticDistanceStyles = Config.Bind<FontStyles>(fontStylesSettings, "罗盘静态距离 Compass Static Distance", FontStyles.Bold);
 
             new LevelSettingsPatch().Enable();
             new PlayerShotPatch().Enable();
@@ -668,8 +674,9 @@ namespace GamePanelHUDCompass
             public ConfigEntry<bool> KeyCompassStaticExfiltration;
             public ConfigEntry<bool> KeyCompassStaticQuest;
             public ConfigEntry<bool> KeyCompassStaticInfoHUDSW;
+            public ConfigEntry<bool> KeyCompassStaticDistanceHUDSW;
             public ConfigEntry<bool> KeyCompassStaticHideRequirements;
-            public ConfigEntry<bool> KeyCompassStaticHideOptional;  
+            public ConfigEntry<bool> KeyCompassStaticHideOptional;
             public ConfigEntry<bool> KeyAutoSizeDelta;
 
             public ConfigEntry<Vector2> KeyAnchoredPosition;
@@ -706,6 +713,10 @@ namespace GamePanelHUDCompass
             public ConfigEntry<Color> KeyCompassFireFollowerOutlineColor;
             public ConfigEntry<Color> KeyCompassStaticNameColor;
             public ConfigEntry<Color> KeyCompassStaticDescriptionColor;
+            public ConfigEntry<Color> KeyCompassStaticNecessaryColor;
+            public ConfigEntry<Color> KeyCompassStaticRequirementsColor;
+            public ConfigEntry<Color> KeyCompassStaticDistanceColor;
+            public ConfigEntry<Color> KeyCompassStaticMetersColor;
 
             public ConfigEntry<FontStyles> KeyAzimuthsAngleStyles;
             public ConfigEntry<FontStyles> KeyDirectionStyles;
@@ -713,6 +724,7 @@ namespace GamePanelHUDCompass
             public ConfigEntry<FontStyles> KeyCompassFireDirectionStyles;
             public ConfigEntry<FontStyles> KeyCompassStaticNameStyles;
             public ConfigEntry<FontStyles> KeyCompassStaticDescriptionStyles;
+            public ConfigEntry<FontStyles> KeyCompassStaticDistanceStyles;
         }
     }
 }

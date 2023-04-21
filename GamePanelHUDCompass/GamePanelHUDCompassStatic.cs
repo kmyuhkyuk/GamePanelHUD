@@ -58,6 +58,9 @@ namespace GamePanelHUDCompass
         [SerializeField]
         private TMP_Text _Description;
 
+        [SerializeField]
+        private TMP_Text _Distance;
+
         private Transform InfoPanel;
 
         private RectTransform InfoPanelRect;
@@ -158,20 +161,26 @@ namespace GamePanelHUDCompass
 
                             ui.transform.SetAsLastSibling();
 
+                            string nameText = LocalizedHelp.Localized(ui.NameKey);
                             string necessaryText = ui.IsNotNecessary ? LocalizedHelp.Localized("(optional)") : "";
 
                             _Name.fontStyle = HUD.SettingsData.KeyCompassStaticNameStyles.Value;
                             if (ui.HasRequirement)
                             {
-                                _Name.text = StringBuilderDatas._Name.StringConcat("<color=", HUD.SettingsData.KeyCompassStaticNameColor.Value.ColorToHtml(), ">", LocalizedHelp.Localized(ui.NameKey), necessaryText, "(", LocalizedHelp.Localized("hideout/Requirements are not fulfilled"), ")", "</color>");
+                                _Name.text = StringBuilderDatas._Name.StringConcat("<color=", HUD.SettingsData.KeyCompassStaticNameColor.Value.ColorToHtml(), ">", nameText, "</color>", "<color=", HUD.SettingsData.KeyCompassStaticNecessaryColor.Value.ColorToHtml(), ">", necessaryText, "</color>", "<color=", HUD.SettingsData.KeyCompassStaticRequirementsColor.Value.ColorToHtml(), ">", "(", LocalizedHelp.Localized("hideout/Requirements are not fulfilled"), ")", "</color>");
                             }
                             else
                             {
-                                _Name.text = StringBuilderDatas._Name.StringConcat("<color=", HUD.SettingsData.KeyCompassStaticNameColor.Value.ColorToHtml(), ">", LocalizedHelp.Localized(ui.NameKey), necessaryText, "</color>");
+                                _Name.text = StringBuilderDatas._Name.StringConcat("<color=", HUD.SettingsData.KeyCompassStaticNameColor.Value.ColorToHtml(), ">", nameText, "</color>", "<color=", HUD.SettingsData.KeyCompassStaticNecessaryColor.Value.ColorToHtml(), ">", necessaryText, "</color>");
                             }
 
                             _Description.fontStyle = HUD.SettingsData.KeyCompassStaticDescriptionStyles.Value;
                             _Description.text = StringBuilderDatas._Description.StringConcat("<color=", HUD.SettingsData.KeyCompassStaticDescriptionColor.Value.ColorToHtml(), ">", LocalizedHelp.Localized(ui.DescriptionKey), "</color>");
+
+                            string distance = Vector3.Distance(ui.Where, HUD.Info.PlayerPosition).ToString("F0");
+
+                            _Distance.fontStyle = HUD.SettingsData.KeyCompassStaticDistanceStyles.Value;
+                            _Distance.text = StringBuilderDatas._Distance.StringConcat("<color=", HUD.SettingsData.KeyCompassStaticDistanceColor.Value.ColorToHtml(), ">", distance, "</color>", " ", "<color=", HUD.SettingsData.KeyCompassStaticMetersColor.Value.ColorToHtml(), ">", LocalizedHelp.Localized("meters", EStringCase.None), "</color>");
 
                             isCenter = true;
                         }
@@ -185,7 +194,9 @@ namespace GamePanelHUDCompass
                     _Airdrops.SetSiblingIndex(2);
                 }
 
-                InfoPanel.gameObject.SetActive(HUD.SettingsData.KeyCompassStaticInfoHUDSW.Value && isCenter);
+                InfoPanel.gameObject.SetActive(isCenter && HUD.SettingsData.KeyCompassStaticInfoHUDSW.Value);
+
+                _Distance.gameObject.SetActive(HUD.SettingsData.KeyCompassStaticDistanceHUDSW.Value);
             }
 #endif
         }
@@ -286,6 +297,7 @@ namespace GamePanelHUDCompass
         {
             public StringBuilder _Name = new StringBuilder(128);
             public StringBuilder _Description = new StringBuilder(128);
+            public StringBuilder _Distance = new StringBuilder(128);
         }
     }
 }
