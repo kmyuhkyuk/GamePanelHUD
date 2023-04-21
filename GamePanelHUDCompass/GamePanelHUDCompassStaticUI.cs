@@ -152,42 +152,81 @@ namespace GamePanelHUDCompass
 
             IconX = -(angle / 15 * 120);
 
+            float iconXLeft = IconXLeft;
+            float iconXRight = IconXRight;
+            float iconXRightRight = IconXRightRight;
+
             float compassX = HUD.Info.CompassX;
             float[] diff = new float[]
             {
                 -IconX - compassX,
-                -IconXLeft - compassX,
-                -IconXRight - compassX,
-                -IconXRightRight - compassX
+                -iconXLeft - compassX,
+                -iconXRight - compassX,
+                -iconXRightRight - compassX
             };
 
             //Closest to 0
             XDiff = diff.Aggregate((current, next) => Math.Abs(current) < Math.Abs(next) ? current : next);
 
             float height = HUD.SettingsData.KeyCompassStaticHeight.Value;
-
             RealRect.anchoredPosition = new Vector2(IconX, height);
-            VirtualRect.anchoredPosition = new Vector2(IconXLeft, height);
-            Virtual2Rect.anchoredPosition = new Vector2(IconXRight, height);
-            Virtual3Rect.anchoredPosition = new Vector2(IconXRightRight, height);
+            VirtualRect.anchoredPosition = new Vector2(iconXLeft, height);
+            Virtual2Rect.anchoredPosition = new Vector2(iconXRight, height);
+            Virtual3Rect.anchoredPosition = new Vector2(iconXRightRight, height);
 
             switch (InfoType)
             {
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Exfiltration:
-                    HasRequirement = HUD.Info.ExfiltrationPoints[ExIndex].UncompleteRequirements;
-                    Enabled(!HUD.Info.ExfiltrationPoints[ExIndex].NotPresent);
+                    var point = HUD.Info.ExfiltrationPoints[ExIndex];
+                    HasRequirement = point.UncompleteRequirements;
+                    if (HUD.SettingsData.KeyCompassStaticHideRequirements.Value)
+                    {
+                        Enabled(!HasRequirement && !point.NotPresent);
+                    }
+                    else
+                    {
+                        Enabled(!point.NotPresent);
+                    }
                     break;
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Switch:
-                    Enabled(!HUD.Info.ExfiltrationPoints[ExIndex].Swtichs[ExIndex2]);
+                    point = HUD.Info.ExfiltrationPoints[ExIndex];
+                    if (HUD.SettingsData.KeyCompassStaticHideRequirements.Value)
+                    {
+                        Enabled(!point.UncompleteRequirements && !point.Swtichs[ExIndex2]);
+                    }
+                    else
+                    {
+                        Enabled(!point.Swtichs[ExIndex2]);
+                    }
                     break;
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionLeaveItemAtLocation:
                     HasRequirement = !Target.All(x => HUD.Info.AllPlayerItems.Contains(x));
-                    Enabled(true);
+                    if (HUD.SettingsData.KeyCompassStaticHideRequirements.Value)
+                    {
+                        Enabled(!HasRequirement);
+                    }
+                    if (HUD.SettingsData.KeyCompassStaticHideOptional.Value)
+                    {
+                        Enabled(!IsNotNecessary && !HasRequirement);
+                    }
+                    else
+                    {
+                        Enabled(true);
+                    }
                     break;
-                case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Airdrop:
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionFindItem:
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionVisitPlace:
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionInZone:
+                    if (HUD.SettingsData.KeyCompassStaticHideOptional.Value)
+                    {
+                        Enabled(!IsNotNecessary);
+                    }
+                    else
+                    {
+                        Enabled(true);
+                    }
+                    break;
+                case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Airdrop:
                     Enabled(true);
                     break;
             }
