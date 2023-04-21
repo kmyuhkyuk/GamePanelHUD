@@ -47,7 +47,5 @@ namespace GamePanelHUDCore.Utils
         public static readonly int ToSmallSpeed = Animator.StringToHash("ToSmallSpeed");
 
         public static readonly int SmallSpeed = Animator.StringToHash("SmallSpeed");
-
-        public static readonly int Destroy = Animator.StringToHash("Destroy");
     }
 }

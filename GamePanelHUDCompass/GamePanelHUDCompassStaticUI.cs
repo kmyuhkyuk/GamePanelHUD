@@ -236,8 +236,6 @@ namespace GamePanelHUDCompass
             if (ToDestroy)
             {
                 Destroy();
-
-                ToDestroy = false;
             }
 #endif
         }
