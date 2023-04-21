@@ -375,11 +375,11 @@ namespace GamePanelHUDCompass
 
                         IList conditionsList = Traverse.Create(conditions).Field("list_0").GetValue<IList>();
 
-                        foreach (object ccounter in conditionsList)
+                        foreach (object ccondition in conditionsList)
                         {
-                            if (ccounter is ConditionVisitPlace)
+                            if (ccondition is ConditionVisitPlace)
                             {
-                                ConditionVisitPlace nowCondition = (ConditionVisitPlace)ccounter;
+                                ConditionVisitPlace nowCondition = (ConditionVisitPlace)ccondition;
                                 string zoneId = nowCondition.target;
 
                                 if (ZoneHelp.TryGetValues(zoneId, out IEnumerable<ExperienceTrigger> triggers))
@@ -402,9 +402,9 @@ namespace GamePanelHUDCompass
                                     }
                                 }
                             }
-                            else if (ccounter is ConditionInZone)
+                            else if (ccondition is ConditionInZone)
                             {
-                                ConditionInZone nowCondition = (ConditionInZone)ccounter;
+                                ConditionInZone nowCondition = (ConditionInZone)ccondition;
                                 string[] zoneIds = nowCondition.zoneIds;
 
                                 foreach (string zoneid in zoneIds)
@@ -454,7 +454,7 @@ namespace GamePanelHUDCompass
                 exfiltrationPoints = Traverse.Create(exfiltrationController).Property("ScavExfiltrationPoints").GetValue<ScavExfiltrationPoint[]>().Where(x => x.EligibleIds.Contains(player.ProfileId)).ToArray();
             }
 
-            List<ExfiltrationData> datas = new List<ExfiltrationData>();
+            List<ExfiltrationData> exfiltrationDatas = new List<ExfiltrationData>();
 
             for (int i = 0; i < exfiltrationPoints.Length; i++)
             {
@@ -497,10 +497,10 @@ namespace GamePanelHUDCompass
                     }
                 }
 
-                datas.Add(new ExfiltrationData(point, switchs));
+                exfiltrationDatas.Add(new ExfiltrationData(point, switchs));
             }
 
-            return datas.ToArray();
+            return exfiltrationDatas.ToArray();
         }
 
         float GetAngle(Vector3 eulerangles, float northdirection)

@@ -124,15 +124,15 @@ namespace GamePanelHUDCompass
                 bool isCenter = false;
                 if (CompassStatics.Count > 0)
                 {
-                    GamePanelHUDCompassStaticUI[] workUI = CompassStatics.Values.SelectMany(x => x).Where(x => x.Work).ToArray();
+                    GamePanelHUDCompassStaticUI[] workUIs = CompassStatics.Values.SelectMany(x => x).Where(x => x.Work).ToArray();
 
-                    if (workUI.Length > 0)
+                    if (workUIs.Length > 0)
                     {
-                        float[] xDiffs = workUI.Select(x => x.XDiff).ToArray();
+                        float[] xDiffs = workUIs.Select(x => x.XDiff).ToArray();
 
                         float xDiff = xDiffs.Aggregate((current, next) => Math.Abs(current) < Math.Abs(next) ? current : next);
 
-                        GamePanelHUDCompassStaticUI ui = workUI[Array.IndexOf(xDiffs, xDiff)];
+                        GamePanelHUDCompassStaticUI ui = workUIs[Array.IndexOf(xDiffs, xDiff)];
 
                         int range = HUD.SettingsData.KeyCompassStaticCenterPointRange.Value;
 
@@ -158,16 +158,16 @@ namespace GamePanelHUDCompass
 
                             ui.transform.SetAsLastSibling();
 
-                            string necessary = ui.IsNotNecessary ? LocalizedHelp.Localized("(optional)") : "";
+                            string necessaryText = ui.IsNotNecessary ? LocalizedHelp.Localized("(optional)") : "";
 
                             _Name.fontStyle = HUD.SettingsData.KeyCompassStaticNameStyles.Value;
                             if (ui.HasRequirement)
                             {
-                                _Name.text = StringBuilderDatas._Name.StringConcat("<color=", HUD.SettingsData.KeyCompassStaticNameColor.Value.ColorToHtml(), ">", LocalizedHelp.Localized(ui.NameKey), necessary, "(", LocalizedHelp.Localized("hideout/Requirements are not fulfilled"), ")", "</color>");
+                                _Name.text = StringBuilderDatas._Name.StringConcat("<color=", HUD.SettingsData.KeyCompassStaticNameColor.Value.ColorToHtml(), ">", LocalizedHelp.Localized(ui.NameKey), necessaryText, "(", LocalizedHelp.Localized("hideout/Requirements are not fulfilled"), ")", "</color>");
                             }
                             else
                             {
-                                _Name.text = StringBuilderDatas._Name.StringConcat("<color=", HUD.SettingsData.KeyCompassStaticNameColor.Value.ColorToHtml(), ">", LocalizedHelp.Localized(ui.NameKey), necessary, "</color>");
+                                _Name.text = StringBuilderDatas._Name.StringConcat("<color=", HUD.SettingsData.KeyCompassStaticNameColor.Value.ColorToHtml(), ">", LocalizedHelp.Localized(ui.NameKey), necessaryText, "</color>");
                             }
 
                             _Description.fontStyle = HUD.SettingsData.KeyCompassStaticDescriptionStyles.Value;

@@ -158,7 +158,7 @@ namespace GamePanelHUDCompass
             float iconXRightRight = IconXRightRight;
 
             float compassX = HUD.Info.CompassX;
-            float[] diff = new float[]
+            float[] diffs = new float[]
             {
                 -IconX - compassX,
                 -iconXLeft - compassX,
@@ -167,7 +167,7 @@ namespace GamePanelHUDCompass
             };
 
             //Closest to 0
-            XDiff = diff.Aggregate((current, next) => Math.Abs(current) < Math.Abs(next) ? current : next);
+            XDiff = diffs.Aggregate((current, next) => Math.Abs(current) < Math.Abs(next) ? current : next);
 
             float height = HUD.SettingsData.KeyCompassStaticHeight.Value;
             RealRect.anchoredPosition = new Vector2(IconX, height);
