@@ -207,9 +207,9 @@ namespace GamePanelHUDCompass
                     {
                         Enabled(!HasRequirement);
                     }
-                    if (HUD.SettingsData.KeyCompassStaticHideOptional.Value)
+                    else if (HUD.SettingsData.KeyCompassStaticHideOptional.Value)
                     {
-                        Enabled(!IsNotNecessary && !HasRequirement);
+                        Enabled(!IsNotNecessary);
                     }
                     else
                     {
