@@ -159,18 +159,15 @@ namespace GamePanelHUDCompass
 
                             string necessary = ui.IsNotNecessary ? LocalizedHelp.Localized("(optional)") : "";
 
-                            string name;
+                            _Name.fontStyle = HUD.SettingsData.KeyCompassStaticNameStyles.Value;
                             if (ui.HasRequirement)
                             {
-                                name = StringBuilderDatas._Name.StringConcat("<color=", HUD.SettingsData.KeyCompassStaticNameColor.Value.ColorToHtml(), ">", LocalizedHelp.Localized(ui.NameKey), necessary, "(", LocalizedHelp.Localized("hideout/Requirements are not fulfilled"), ")", "</color>");
+                                _Name.text = StringBuilderDatas._Name.StringConcat("<color=", HUD.SettingsData.KeyCompassStaticNameColor.Value.ColorToHtml(), ">", LocalizedHelp.Localized(ui.NameKey), necessary, "(", LocalizedHelp.Localized("hideout/Requirements are not fulfilled"), ")", "</color>");
                             }
                             else
                             {
-                                name = StringBuilderDatas._Name.StringConcat("<color=", HUD.SettingsData.KeyCompassStaticNameColor.Value.ColorToHtml(), ">", LocalizedHelp.Localized(ui.NameKey), necessary, "</color>");
+                                _Name.text = StringBuilderDatas._Name.StringConcat("<color=", HUD.SettingsData.KeyCompassStaticNameColor.Value.ColorToHtml(), ">", LocalizedHelp.Localized(ui.NameKey), necessary, "</color>");
                             }
-
-                            _Name.fontStyle = HUD.SettingsData.KeyCompassStaticNameStyles.Value;
-                            _Name.text = name;
 
                             _Description.fontStyle = HUD.SettingsData.KeyCompassStaticDescriptionStyles.Value;
                             _Description.text = StringBuilderDatas._Description.StringConcat("<color=", HUD.SettingsData.KeyCompassStaticDescriptionColor.Value.ColorToHtml(), ">", LocalizedHelp.Localized(ui.DescriptionKey), "</color>");
@@ -178,6 +175,13 @@ namespace GamePanelHUDCompass
                             isCenter = true;
                         }
                     }
+                }
+
+                if (!isCenter)
+                {
+                    _Quests.SetSiblingIndex(0);
+                    _Exfiltrations.SetSiblingIndex(1);
+                    _Airdrops.SetSiblingIndex(2);
                 }
 
                 InfoPanel.gameObject.SetActive(HUD.SettingsData.KeyCompassStaticInfoHUDSW.Value && isCenter);

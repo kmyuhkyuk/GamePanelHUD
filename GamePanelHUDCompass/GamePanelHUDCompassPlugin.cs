@@ -18,7 +18,7 @@ using GamePanelHUDCompass.Patches;
 
 namespace GamePanelHUDCompass
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCompass", "kmyuhkyuk-GamePanelHUDCompass", "2.4.3")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCompass", "kmyuhkyuk-GamePanelHUDCompass", "2.5.0")]
     [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore")]
     public class GamePanelHUDCompassPlugin : BaseUnityPlugin, IUpdate
     {
@@ -105,6 +105,8 @@ namespace GamePanelHUDCompass
             SettingsDatas.KeyCompassStaticExfiltration = Config.Bind<bool>(mainSettings, "罗盘静态撤离点显示 Compass Static Exfiltration display", true);
             SettingsDatas.KeyCompassStaticQuest = Config.Bind<bool>(mainSettings, "罗盘静态任务显示 Compass Static Quest display", true);
             SettingsDatas.KeyCompassStaticInfoHUDSW = Config.Bind<bool>(mainSettings, "罗盘静态信息显示 Compass Static Info HUD display", true);
+            SettingsDatas.KeyCompassStaticHideRequirements = Config.Bind<bool>(mainSettings, "罗盘静态隐藏需求 Compass Static Hide Requirements", false);
+            SettingsDatas.KeyCompassStaticHideOptional = Config.Bind<bool>(mainSettings, "罗盘静态隐藏选项 Compass Static Hide Optional", false);
             SettingsDatas.KeyAutoSizeDelta = Config.Bind<bool>(mainSettings, "自动高度 Auto Size Delta", true);
 
             SettingsDatas.KeyAnchoredPosition = Config.Bind<Vector2>(positionScaleSettings, "指示栏位置 Anchored Position", new Vector2(0, 0));
@@ -246,6 +248,7 @@ namespace GamePanelHUDCompass
             }
             else
             {
+                ExfiltrationPoints = null;
                 AirdropCount = 0;
                 CompassQuestCacheBool = true;
             }
@@ -346,11 +349,11 @@ namespace GamePanelHUDCompass
 
                         IList conditionsList = Traverse.Create(conditions).Field("list_0").GetValue<IList>();
 
-                        foreach (object counterCondition in conditionsList)
+                        foreach (object ccounter in conditionsList)
                         {
-                            if (counterCondition is ConditionVisitPlace)
+                            if (ccounter is ConditionVisitPlace)
                             {
-                                ConditionVisitPlace nowCondition = (ConditionVisitPlace)counterCondition;
+                                ConditionVisitPlace nowCondition = (ConditionVisitPlace)ccounter;
                                 string zoneId = nowCondition.target;
 
                                 if (ZoneHelp.TryGetValues(zoneId, out IEnumerable<ExperienceTrigger> triggers))
@@ -365,7 +368,7 @@ namespace GamePanelHUDCompass
                                             NameKey = name,
                                             DescriptionKey = beforeCondition.id,
                                             TraderId = traderId,
-                                            IsNotNecessary = !nowCondition.IsNecessary,
+                                            IsNotNecessary = !beforeCondition.IsNecessary,
                                             InfoType = CompassStaticInfo.Type.ConditionVisitPlace
                                         };
 
@@ -373,9 +376,9 @@ namespace GamePanelHUDCompass
                                     }
                                 }
                             }
-                            else if (condition is ConditionInZone)
+                            else if (ccounter is ConditionInZone)
                             {
-                                ConditionInZone nowCondition = (ConditionInZone)counterCondition;
+                                ConditionInZone nowCondition = (ConditionInZone)ccounter;
                                 string[] zoneIds = nowCondition.zoneIds;
 
                                 foreach (string zoneid in zoneIds)
@@ -392,7 +395,7 @@ namespace GamePanelHUDCompass
                                                 NameKey = name,
                                                 DescriptionKey = beforeCondition.id,
                                                 TraderId = traderId,
-                                                IsNotNecessary = !nowCondition.IsNecessary,
+                                                IsNotNecessary = !beforeCondition.IsNecessary,
                                                 InfoType = CompassStaticInfo.Type.ConditionInZone
                                             };
 
@@ -638,6 +641,8 @@ namespace GamePanelHUDCompass
             public ConfigEntry<bool> KeyCompassStaticExfiltration;
             public ConfigEntry<bool> KeyCompassStaticQuest;
             public ConfigEntry<bool> KeyCompassStaticInfoHUDSW;
+            public ConfigEntry<bool> KeyCompassStaticHideRequirements;
+            public ConfigEntry<bool> KeyCompassStaticHideOptional;  
             public ConfigEntry<bool> KeyAutoSizeDelta;
 
             public ConfigEntry<Vector2> KeyAnchoredPosition;
