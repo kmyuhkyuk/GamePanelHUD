@@ -180,7 +180,7 @@ namespace GamePanelHUDCompass
                             string distance = Vector3.Distance(ui.Where, HUD.Info.PlayerPosition).ToString("F0");
 
                             _Distance.fontStyle = HUD.SettingsData.KeyCompassStaticDistanceStyles.Value;
-                            _Distance.text = StringBuilderDatas._Distance.StringConcat("<color=", HUD.SettingsData.KeyCompassStaticDistanceColor.Value.ColorToHtml(), ">", distance, "</color>", " ", "<color=", HUD.SettingsData.KeyCompassStaticMetersColor.Value.ColorToHtml(), ">", LocalizedHelp.Localized("meters", EStringCase.None), "</color>");
+                            _Distance.text = StringBuilderDatas._Distance.StringConcat("<color=", HUD.SettingsData.KeyCompassStaticDistanceColor.Value.ColorToHtml(), ">", distance, "</color>", " ", "<color=", HUD.SettingsData.KeyCompassStaticMetersColor.Value.ColorToHtml(), ">", "M", "</color>");
 
                             isCenter = true;
                         }
