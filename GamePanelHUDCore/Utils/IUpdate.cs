@@ -1,7 +1,6 @@
 ﻿#if !UNITY_EDITOR
 using BepInEx.Logging;
 using System;
-using System.Text;
 using System.Diagnostics;
 using System.Collections.Generic;
 
@@ -81,7 +80,7 @@ namespace GamePanelHUDCore.Utils
                         {
                             if (i == 0)
                             {
-                                LogSource.LogMessage(Debugs.StringBuilderDatas.Start.StringConcat("----------Start----------:CurrentTime:", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")));
+                                LogSource.LogMessage(string.Concat("----------Start----------:CurrentTime:", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")));
 
                                 Debugs.AllMethodTime.Start();
                             }
@@ -92,7 +91,7 @@ namespace GamePanelHUDCore.Utils
 
                             Debugs.MethodTime.Stop();
 
-                            LogSource.LogMessage(Debugs.StringBuilderDatas.NeedTime.StringConcat(update.GetType().Name, ":NeedTime:", Debugs.MethodTime.Elapsed));
+                            LogSource.LogMessage(string.Concat(update.GetType().Name, ":NeedTime:", Debugs.MethodTime.Elapsed));
 
                             Debugs.MethodTime.Reset();
 
@@ -109,7 +108,7 @@ namespace GamePanelHUDCore.Utils
                                     Debugs.MinTime = Debugs.AllMethodTime.Elapsed;
                                 }
 
-                                LogSource.LogMessage(Debugs.StringBuilderDatas.End.StringConcat("----------End----------:TotalNeedTime:", Debugs.AllMethodTime.Elapsed, ":MaxTime:", Debugs.MaxTime, ":MinTime:", Debugs.MinTime));
+                                LogSource.LogMessage(string.Concat("----------End----------:TotalNeedTime:", Debugs.AllMethodTime.Elapsed, ":MaxTime:", Debugs.MaxTime, ":MinTime:", Debugs.MinTime));
 
                                 Debugs.AllMethodTime.Reset();
                             }
@@ -136,15 +135,6 @@ namespace GamePanelHUDCore.Utils
             public TimeSpan MaxTime;
 
             public TimeSpan MinTime;
-
-            public StringBuilderData StringBuilderDatas = new StringBuilderData();
-
-            public class StringBuilderData
-            {
-                public StringBuilder Start = new StringBuilder(128);
-                public StringBuilder NeedTime = new StringBuilder(128);
-                public StringBuilder End = new StringBuilder(128);
-            }
         }
     }
 }

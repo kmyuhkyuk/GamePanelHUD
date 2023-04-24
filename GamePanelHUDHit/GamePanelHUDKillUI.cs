@@ -1,5 +1,4 @@
-﻿using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using UnityEngine;
 using TMPro;
 #if !UNITY_EDITOR
@@ -50,8 +49,6 @@ namespace GamePanelHUDHit
 
         private Animator Animator_KillUI;
 
-        private readonly StringBuilderData StringBuilderDatas = new StringBuilderData();
-
 #if !UNITY_EDITOR
         void Start()
         {
@@ -63,7 +60,7 @@ namespace GamePanelHUDHit
 
             if (HasXp)
             {
-                _XpValue.text = StringBuilderDatas._XpValue.StringConcat("<color=", HUD.SettingsData.KeyKillXpColor.Value.ColorToHtml(), ">", Xp, "</color>");
+                _XpValue.text = string.Concat("<color=", HUD.SettingsData.KeyKillXpColor.Value.ColorToHtml(), ">", Xp, "</color>");
             }
 
             GamePanelHUDCorePlugin.UpdateManger.Register(this);
@@ -115,7 +112,7 @@ namespace GamePanelHUDHit
             GamePanelHUDKill.HasWaitInfoMinu();
         }
 
-        async Task TextTask(TMP_Text text, int speed, bool isLefttoright)
+        async Task TextTask(TMP_Text text, int speed, bool toright)
         {
             text.ForceMeshUpdate();
             TMP_TextInfo textInfo = text.textInfo;
@@ -124,7 +121,7 @@ namespace GamePanelHUDHit
             bool complete = false;
             int current;
 
-            if (isLefttoright)
+            if (toright)
             {
                 _TextValue.maxVisibleCharacters = 0;
 
@@ -168,11 +165,6 @@ namespace GamePanelHUDHit
             }
         }
 #endif
-
-        public class StringBuilderData
-        {
-            public StringBuilder _XpValue = new StringBuilder(128);
-        }
 
         void Destroy()
         {

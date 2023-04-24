@@ -1,5 +1,4 @@
-﻿using System.Text;
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
 #if !UNITY_EDITOR
 using GamePanelHUDCore;
@@ -95,7 +94,7 @@ namespace GamePanelHUDMag
 
         private Animator Animator_Current;
 
-        private readonly StringBuilderData StringBuilderDatas = new StringBuilderData();
+        private readonly IStringBuilderData IStringBuilderDatas = new IStringBuilderData();
 
         void Start()
         {
@@ -143,22 +142,22 @@ namespace GamePanelHUDMag
             }
 
             _CurrentValue.fontStyle = CurrentStyles;
-            _CurrentValue.text = StringBuilderDatas._CurrentValue.StringConcat("<color=", AddZerosColor, ">", addZeros, "</color>", "<color=", currentColor, ">", Current, "</color>");
+            _CurrentValue.text = IStringBuilderDatas._CurrentValue.Concat("<color=", AddZerosColor, ">", addZeros, "</color>", "<color=", currentColor, ">", Current.ToString(), "</color>");
 
             //Set Maximum float and color and Style to String
             _MaxValue.fontStyle = MaximumStyles;
-            _MaxValue.text = StringBuilderDatas._MaxValue.StringConcat("<color=", MaxColor, ">", "/", Maximum, "</color>");
+            _MaxValue.text = IStringBuilderDatas._MaxValue.Concat("<color=", MaxColor, ">", "/", Maximum.ToString(), "</color>");
 
             //Patron HUD display
             _PatronValue.gameObject.SetActive(Patron > 0);
 
             //Set Patron float and color and Style to String
             _PatronValue.fontStyle = PatronStyles;
-            _PatronValue.text = StringBuilderDatas._PatronValue.StringConcat("<color=", PatronColor, ">", "+", Patron, "</color>");
+            _PatronValue.text = IStringBuilderDatas._PatronValue.Concat("<color=", PatronColor, ">", "+", Patron.ToString(), "</color>");
 
             //Set Weapon Name
             _WeaponNameValue.fontStyle = WeaponNameStyles;
-            _WeaponNameValue.text = StringBuilderDatas._WeaponValue.StringConcat("<color=", WeaponNameColor, ">", WeaponName, "</color>");
+            _WeaponNameValue.text = IStringBuilderDatas._WeaponValue.Concat("<color=", WeaponNameColor, ">", WeaponName, "</color>");
 
             Animator_WeaponName.SetBool(AnimatorHash.Always, WeaponNameAlways);
             Animator_WeaponName.SetFloat(AnimatorHash.Speed, WeaponNameSpeed);
@@ -171,12 +170,12 @@ namespace GamePanelHUDMag
 
             //Set Fire Mode
             _FiremodeValue.fontStyle = FireModeStyles;
-            _FiremodeValue.text = StringBuilderDatas._FiremodeValue.StringConcat("<color=", FireModeColor, ">", FireMode, "</color>");
+            _FiremodeValue.text = IStringBuilderDatas._FiremodeValue.Concat("<color=", FireModeColor, ">", FireMode, "</color>");
 
             _AmmoTypeValue.gameObject.SetActive(AmmoTypeHUDSW);
 
             _AmmoTypeValue.fontStyle = AmmoTypeStyles;
-            _AmmoTypeValue.text = StringBuilderDatas._AmmoValue.StringConcat("<color=", AmmoTypeColor, ">", AmmoType, "</color>");
+            _AmmoTypeValue.text = IStringBuilderDatas._AmmoValue.Concat("<color=", AmmoTypeColor, ">", AmmoType, "</color>");
 
             if (WeaponTirgger)
             {
@@ -186,14 +185,14 @@ namespace GamePanelHUDMag
             }
         }
 
-        public class StringBuilderData
+        public class IStringBuilderData
         {
-            public StringBuilder _CurrentValue = new StringBuilder(128);
-            public StringBuilder _MaxValue = new StringBuilder(128);
-            public StringBuilder _PatronValue = new StringBuilder(128);
-            public StringBuilder _WeaponValue = new StringBuilder(128);
-            public StringBuilder _FiremodeValue = new StringBuilder(128);
-            public StringBuilder _AmmoValue = new StringBuilder(128);
+            public IStringBuilder _CurrentValue = new IStringBuilder(128);
+            public IStringBuilder _MaxValue = new IStringBuilder(128);
+            public IStringBuilder _PatronValue = new IStringBuilder(128);
+            public IStringBuilder _WeaponValue = new IStringBuilder(128);
+            public IStringBuilder _FiremodeValue = new IStringBuilder(128);
+            public IStringBuilder _AmmoValue = new IStringBuilder(128);
         }
     }
 }

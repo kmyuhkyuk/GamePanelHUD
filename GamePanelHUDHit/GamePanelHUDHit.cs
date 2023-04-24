@@ -3,8 +3,8 @@ using UnityEngine;
 using EFT.UI;
 #if !UNITY_EDITOR
 using GamePanelHUDCore;
-using GamePanelHUDCore.Utils;
 #endif
+using GamePanelHUDCore.Utils;
 
 namespace GamePanelHUDHit
 {
