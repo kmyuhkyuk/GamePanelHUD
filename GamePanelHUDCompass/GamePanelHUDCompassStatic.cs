@@ -287,9 +287,9 @@ namespace GamePanelHUDCompass
 
         public class IStringBuilderData
         {
-            public IStringBuilder _Name = new IStringBuilder(128);
-            public IStringBuilder _Description = new IStringBuilder(128);
-            public IStringBuilder _Distance = new IStringBuilder(128);
+            public IStringBuilder _Name = new IStringBuilder();
+            public IStringBuilder _Description = new IStringBuilder();
+            public IStringBuilder _Distance = new IStringBuilder();
         }
     }
 }

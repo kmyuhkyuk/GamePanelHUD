@@ -187,12 +187,12 @@ namespace GamePanelHUDMag
 
         public class IStringBuilderData
         {
-            public IStringBuilder _CurrentValue = new IStringBuilder(128);
-            public IStringBuilder _MaxValue = new IStringBuilder(128);
-            public IStringBuilder _PatronValue = new IStringBuilder(128);
-            public IStringBuilder _WeaponValue = new IStringBuilder(128);
-            public IStringBuilder _FiremodeValue = new IStringBuilder(128);
-            public IStringBuilder _AmmoValue = new IStringBuilder(128);
+            public IStringBuilder _CurrentValue = new IStringBuilder();
+            public IStringBuilder _MaxValue = new IStringBuilder();
+            public IStringBuilder _PatronValue = new IStringBuilder();
+            public IStringBuilder _WeaponValue = new IStringBuilder();
+            public IStringBuilder _FiremodeValue = new IStringBuilder();
+            public IStringBuilder _AmmoValue = new IStringBuilder();
         }
     }
 }

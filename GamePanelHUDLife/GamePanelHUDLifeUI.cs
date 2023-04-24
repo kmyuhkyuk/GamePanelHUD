@@ -189,9 +189,9 @@ namespace GamePanelHUDLife
 
         public class IStringBuilderData
         {
-            public IStringBuilder _CurrentValue = new IStringBuilder(128);
-            public IStringBuilder _MaxValue = new IStringBuilder(128);
-            public IStringBuilder _BuffValue = new IStringBuilder(128);
+            public IStringBuilder _CurrentValue = new IStringBuilder();
+            public IStringBuilder _MaxValue = new IStringBuilder();
+            public IStringBuilder _BuffValue = new IStringBuilder();
         }
     }
 }

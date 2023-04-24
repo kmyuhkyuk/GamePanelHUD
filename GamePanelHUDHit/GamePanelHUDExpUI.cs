@@ -108,7 +108,7 @@ namespace GamePanelHUDHit
 
         public class IStringBuilderData
         {
-            public IStringBuilder _XpValue = new IStringBuilder(128);
+            public IStringBuilder _XpValue = new IStringBuilder();
         }
 
         void ClearXp()
