@@ -1,5 +1,4 @@
-﻿using System.Text;
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
 #if !UNITY_EDITOR
 using GamePanelHUDCore;
@@ -30,7 +29,7 @@ namespace GamePanelHUDHit
 
         private Animator Animator_ExpUI;
 
-        private readonly StringBuilderData StringBuilderDatas = new StringBuilderData();
+        private readonly IStringBuilderData IStringBuilderDatas = new IStringBuilderData();
 
         void Start()
         {
@@ -63,7 +62,7 @@ namespace GamePanelHUDHit
 
                 WaitXP = 0;
 
-                _XpValue.text = StringBuilderDatas._XpValue.StringConcat("<color=", XPColor, ">", XP, "</color>");
+                _XpValue.text = IStringBuilderDatas._XpValue.Concat("<color=", XPColor, ">", XP.ToString(), "</color>");
 
                 Animator_ExpUI.SetTrigger(AnimatorHash.Active);
 
@@ -107,9 +106,9 @@ namespace GamePanelHUDHit
             return Animator_ExpUI.GetCurrentAnimatorStateInfo(0).shortNameHash == AnimatorHash.Clear;
         }
 
-        public class StringBuilderData
+        public class IStringBuilderData
         {
-            public StringBuilder _XpValue = new StringBuilder(128);
+            public IStringBuilder _XpValue = new IStringBuilder(128);
         }
 
         void ClearXp()

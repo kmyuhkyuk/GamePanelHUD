@@ -13,7 +13,7 @@ using GamePanelHUDCore.Utils;
 
 namespace GamePanelHUDMag
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDMag", "kmyuhkyuk-GamePanelHUDMag", "2.5.2")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDMag", "kmyuhkyuk-GamePanelHUDMag", "2.5.3")]
     [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore")]
     public class GamePanelHUDMagPlugin : BaseUnityPlugin, IUpdate
     {

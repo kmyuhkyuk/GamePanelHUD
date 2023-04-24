@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Text;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using EFT;
 using EFT.UI;
-using GamePanelHUDCore;
-using GamePanelHUDCore.Utils;
 #if !UNITY_EDITOR
+using GamePanelHUDCore;
 using GamePanelHUDCore.Utils.Session;
 #endif
+using GamePanelHUDCore.Utils;
 
 namespace GamePanelHUDCompass
 {
@@ -73,7 +72,7 @@ namespace GamePanelHUDCompass
 
         private CanvasGroup ExfiltrationGroup;
 
-        private readonly StringBuilderData StringBuilderDatas = new StringBuilderData();
+        private readonly IStringBuilderData IStringBuilderDatas = new IStringBuilderData();
 
         internal static Action<string> Remove;
 
@@ -97,17 +96,12 @@ namespace GamePanelHUDCompass
         }
 
         public void IUpdate()
-#endif
-#if UNITY_EDITOR
-        void Update()
-#endif
         {
             CompassStaticHUD();
         }
 
         void CompassStaticHUD()
         {
-#if !UNITY_EDITOR
             RectTransform.anchoredPosition = HUD.SettingsData.KeyAnchoredPosition.Value;
             RectTransform.sizeDelta = new Vector2(HUD.Info.SizeDelta.x, HUD.Info.SizeDelta.y * 1.5f);
             RectTransform.localScale = HUD.SettingsData.KeyLocalScale.Value;
@@ -167,20 +161,20 @@ namespace GamePanelHUDCompass
                             _Name.fontStyle = HUD.SettingsData.KeyCompassStaticNameStyles.Value;
                             if (ui.HasRequirement)
                             {
-                                _Name.text = StringBuilderDatas._Name.StringConcat("<color=", HUD.SettingsData.KeyCompassStaticNameColor.Value.ColorToHtml(), ">", nameText, "</color>", "<color=", HUD.SettingsData.KeyCompassStaticNecessaryColor.Value.ColorToHtml(), ">", necessaryText, "</color>", "<color=", HUD.SettingsData.KeyCompassStaticRequirementsColor.Value.ColorToHtml(), ">", "(", LocalizedHelp.Localized("hideout/Requirements are not fulfilled"), ")", "</color>");
+                                _Name.text = IStringBuilderDatas._Name.Concat("<color=", HUD.SettingsData.KeyCompassStaticNameColor.Value.ColorToHtml(), ">", nameText, "</color>", "<color=", HUD.SettingsData.KeyCompassStaticNecessaryColor.Value.ColorToHtml(), ">", necessaryText, "</color>", "<color=", HUD.SettingsData.KeyCompassStaticRequirementsColor.Value.ColorToHtml(), ">", "(", LocalizedHelp.Localized("hideout/Requirements are not fulfilled"), ")", "</color>");
                             }
                             else
                             {
-                                _Name.text = StringBuilderDatas._Name.StringConcat("<color=", HUD.SettingsData.KeyCompassStaticNameColor.Value.ColorToHtml(), ">", nameText, "</color>", "<color=", HUD.SettingsData.KeyCompassStaticNecessaryColor.Value.ColorToHtml(), ">", necessaryText, "</color>");
+                                _Name.text = IStringBuilderDatas._Name.Concat("<color=", HUD.SettingsData.KeyCompassStaticNameColor.Value.ColorToHtml(), ">", nameText, "</color>", "<color=", HUD.SettingsData.KeyCompassStaticNecessaryColor.Value.ColorToHtml(), ">", necessaryText, "</color>");
                             }
 
                             _Description.fontStyle = HUD.SettingsData.KeyCompassStaticDescriptionStyles.Value;
-                            _Description.text = StringBuilderDatas._Description.StringConcat("<color=", HUD.SettingsData.KeyCompassStaticDescriptionColor.Value.ColorToHtml(), ">", LocalizedHelp.Localized(ui.DescriptionKey), "</color>");
+                            _Description.text = IStringBuilderDatas._Description.Concat("<color=", HUD.SettingsData.KeyCompassStaticDescriptionColor.Value.ColorToHtml(), ">", LocalizedHelp.Localized(ui.DescriptionKey), "</color>");
 
                             string distance = Vector3.Distance(ui.Where, HUD.Info.PlayerPosition).ToString("F0");
 
                             _Distance.fontStyle = HUD.SettingsData.KeyCompassStaticDistanceStyles.Value;
-                            _Distance.text = StringBuilderDatas._Distance.StringConcat("<color=", HUD.SettingsData.KeyCompassStaticDistanceColor.Value.ColorToHtml(), ">", distance, "</color>", " ", "<color=", HUD.SettingsData.KeyCompassStaticMetersColor.Value.ColorToHtml(), ">", "M", "</color>");
+                            _Distance.text = IStringBuilderDatas._Distance.Concat("<color=", HUD.SettingsData.KeyCompassStaticDistanceColor.Value.ColorToHtml(), ">", distance, "</color>", " ", "<color=", HUD.SettingsData.KeyCompassStaticMetersColor.Value.ColorToHtml(), ">", "M", "</color>");
 
                             isCenter = true;
                         }
@@ -198,10 +192,8 @@ namespace GamePanelHUDCompass
 
                 _Distance.gameObject.SetActive(HUD.SettingsData.KeyCompassStaticDistanceHUDSW.Value);
             }
-#endif
         }
 
-#if !UNITY_EDITOR
         void ShowStatic(GamePanelHUDCompassPlugin.CompassStaticInfo staticinfo)
         {
             Transform root;
@@ -293,11 +285,11 @@ namespace GamePanelHUDCompass
             CompassStatics.Remove(id);
         }
 
-        public class StringBuilderData
+        public class IStringBuilderData
         {
-            public StringBuilder _Name = new StringBuilder(128);
-            public StringBuilder _Description = new StringBuilder(128);
-            public StringBuilder _Distance = new StringBuilder(128);
+            public IStringBuilder _Name = new IStringBuilder(128);
+            public IStringBuilder _Description = new IStringBuilder(128);
+            public IStringBuilder _Distance = new IStringBuilder(128);
         }
     }
 }

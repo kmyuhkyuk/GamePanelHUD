@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -115,7 +114,7 @@ namespace GamePanelHUDHit
 
         private Animator Animator_HitUI;
 
-        private readonly StringBuilderData StringBuilderDatas = new StringBuilderData();
+        private readonly IStringBuilderData IStringBuilderDatas = new IStringBuilderData();
 
         void Start()
         {
@@ -210,12 +209,12 @@ namespace GamePanelHUDHit
             _Hp.gameObject.SetActive(DamageHUDSW);
 
             _HpValue.fontStyle = DamageStyles;
-            _HpValue.text = StringBuilderDatas._DamageValue.StringConcat("<color=", DamageInfoColor, ">", Math.Round(Damage), "</color>");
+            _HpValue.text = IStringBuilderDatas._DamageValue.Concat("<color=", DamageInfoColor, ">", Damage.ToString("F0"), "</color>");
 
             _Armor.gameObject.SetActive(HasArmorHit && DamageHUDSW);
 
             _ArmorValue.fontStyle = ArmorDamageStyles;
-            _ArmorValue.text = StringBuilderDatas._ArmorValue.StringConcat("<color=", ArmorDamageInfoColor, ">", ArmorDamage.ToString("F2"), "</color>");
+            _ArmorValue.text = IStringBuilderDatas._ArmorValue.Concat("<color=", ArmorDamageInfoColor, ">", ArmorDamage.ToString("F2"), "</color>");
 
             Animator_HitUI.SetFloat(AnimatorHash.ActiveSpeed, ActiveSpeed);
             Animator_HitUI.SetFloat(AnimatorHash.EndSpeed, EndSpeed);
@@ -291,10 +290,10 @@ namespace GamePanelHUDHit
         }
 #endif
 
-        public class StringBuilderData
+        public class IStringBuilderData
         {
-            public StringBuilder _DamageValue = new StringBuilder(128);
-            public StringBuilder _ArmorValue = new StringBuilder(128);
+            public IStringBuilder _DamageValue = new IStringBuilder(128);
+            public IStringBuilder _ArmorValue = new IStringBuilder(128);
         }
     }
 }

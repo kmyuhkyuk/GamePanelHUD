@@ -16,7 +16,7 @@ using GamePanelHUDCore.Utils;
 
 namespace GamePanelHUDCore
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCore", "kmyuhkyuk-GamePanelHUDCore", "2.5.2")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCore", "kmyuhkyuk-GamePanelHUDCore", "2.5.3")]
     public class GamePanelHUDCorePlugin : BaseUnityPlugin
     {
         public static readonly IUpdateManger UpdateManger = new IUpdateManger();
@@ -164,9 +164,9 @@ namespace GamePanelHUDCore
 
             public class AssetData<T>
             {
-                public IReadOnlyDictionary<string, T> Asset;
+                public readonly IReadOnlyDictionary<string, T> Asset;
 
-                public IReadOnlyDictionary<string, T> Init;
+                public readonly IReadOnlyDictionary<string, T> Init;
 
                 public AssetData(Dictionary<string, T> asset, Dictionary<string, T> init)
                 {

@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Text;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using EFT.UI;
 #if !UNITY_EDITOR
 using GamePanelHUDCore;
-using GamePanelHUDCore.Utils;
 #endif
+using GamePanelHUDCore.Utils;
 
 namespace GamePanelHUDCompass
 {
@@ -49,7 +48,7 @@ namespace GamePanelHUDCompass
 
         private RectTransform FireRightRect;
 
-        private readonly StringBuilderData StringBuilderDatas = new StringBuilderData();
+        private readonly IStringBuilderData IStringBuilderDatas = new IStringBuilderData();
 
         internal static Action<int> Remove;
 
@@ -142,8 +141,8 @@ namespace GamePanelHUDCompass
                     }
                 }
 
-                _FireLeft.text = StringBuilderDatas._FireLeft.StringConcat("<color=", leftDirectionColor, ">", "<", "</color>");
-                _FireRight.text = StringBuilderDatas._FireLeft.StringConcat("<color=", rightDirectionColor, ">", ">", "</color>");
+                _FireLeft.text = IStringBuilderDatas._FireLeft.Concat("<color=", leftDirectionColor, ">", "<", "</color>");
+                _FireRight.text = IStringBuilderDatas._FireLeft.Concat("<color=", rightDirectionColor, ">", ">", "</color>");
 
                 _FireLeft.gameObject.SetActive(left && HUD.SettingsData.KeyCompassFireDirectionHUDSW.Value);
                 _FireRight.gameObject.SetActive(right && HUD.SettingsData.KeyCompassFireDirectionHUDSW.Value);
@@ -221,10 +220,10 @@ namespace GamePanelHUDCompass
         }
 #endif
 
-        public class StringBuilderData
+        public class IStringBuilderData
         {
-            public StringBuilder _FireLeft = new StringBuilder(128);
-            public StringBuilder _FireRight = new StringBuilder(128);
+            public IStringBuilder _FireLeft = new IStringBuilder(128);
+            public IStringBuilder _FireRight = new IStringBuilder(128);
         }
     }
 }

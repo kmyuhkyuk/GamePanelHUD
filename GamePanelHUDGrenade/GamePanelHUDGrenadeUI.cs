@@ -1,5 +1,4 @@
-﻿using System.Text;
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
 #if !UNITY_EDITOR
 using GamePanelHUDCore;
@@ -26,7 +25,7 @@ namespace GamePanelHUDGrenade
         [SerializeField]
         private TMP_Text _GrenadeValue;
 
-        private readonly StringBuilderData StringBuilderDatas = new StringBuilderData();
+        private readonly IStringBuilderData IStringBuilderDatas = new IStringBuilderData();
 
 #if !UNITY_EDITOR
         void Start()
@@ -67,12 +66,12 @@ namespace GamePanelHUDGrenade
             }
 
             _GrenadeValue.fontStyle = GrenadeStyles;
-            _GrenadeValue.text = StringBuilderDatas._GrenadeValue.StringConcat("<color=", grenadeColor, ">", GrenadeAmount, "</color>");
+            _GrenadeValue.text = IStringBuilderDatas._GrenadeValue.Concat("<color=", grenadeColor, ">", GrenadeAmount.ToString(), "</color>");
         }
 
-        public class StringBuilderData
+        public class IStringBuilderData
         {
-            public StringBuilder _GrenadeValue = new StringBuilder(128);
+            public IStringBuilder _GrenadeValue = new IStringBuilder(128);
         }
     }
 }
