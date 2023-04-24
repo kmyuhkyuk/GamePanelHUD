@@ -158,7 +158,7 @@ namespace GamePanelHUDHit
                     }
 
                     text.firstVisibleCharacter = current;
-                    current -= 1;
+                    current--;
 
                     await Task.Delay(speed);
                 }
