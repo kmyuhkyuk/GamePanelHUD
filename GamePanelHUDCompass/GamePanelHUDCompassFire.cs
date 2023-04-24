@@ -222,8 +222,8 @@ namespace GamePanelHUDCompass
 
         public class IStringBuilderData
         {
-            public IStringBuilder _FireLeft = new IStringBuilder(128);
-            public IStringBuilder _FireRight = new IStringBuilder(128);
+            public IStringBuilder _FireLeft = new IStringBuilder();
+            public IStringBuilder _FireRight = new IStringBuilder();
         }
     }
 }

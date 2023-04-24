@@ -292,8 +292,8 @@ namespace GamePanelHUDHit
 
         public class IStringBuilderData
         {
-            public IStringBuilder _DamageValue = new IStringBuilder(128);
-            public IStringBuilder _ArmorValue = new IStringBuilder(128);
+            public IStringBuilder _DamageValue = new IStringBuilder();
+            public IStringBuilder _ArmorValue = new IStringBuilder();
         }
     }
 }

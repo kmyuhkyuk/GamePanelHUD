@@ -74,7 +74,7 @@ namespace GamePanelHUDCompass
 
             for (int i = 0; i < AngleTexts.Length; i++)
             {
-                changes.Add(new IStringBuilder(128));
+                changes.Add(new IStringBuilder());
             }
 
             IStringBuilderDatas._AzimuthsAngle = changes.ToArray();
@@ -169,8 +169,8 @@ namespace GamePanelHUDCompass
         public class IStringBuilderData
         {
             public IStringBuilder[] _AzimuthsAngle;
-            public IStringBuilder _DirectionValue = new IStringBuilder(128);
-            public IStringBuilder _AngleValue = new IStringBuilder(128);
+            public IStringBuilder _DirectionValue = new IStringBuilder();
+            public IStringBuilder _AngleValue = new IStringBuilder();
         }
     }
 }

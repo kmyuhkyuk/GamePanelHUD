@@ -71,7 +71,7 @@ namespace GamePanelHUDGrenade
 
         public class IStringBuilderData
         {
-            public IStringBuilder _GrenadeValue = new IStringBuilder(128);
+            public IStringBuilder _GrenadeValue = new IStringBuilder();
         }
     }
 }
