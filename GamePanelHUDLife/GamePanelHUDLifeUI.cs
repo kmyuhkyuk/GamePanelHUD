@@ -40,24 +40,30 @@ namespace GamePanelHUDLife
 
         public Color DownBuffArrowColor;
 
-        public string CurrentColor;
+        public Color CurrentColor;
 
-        public string MaxColor;
+        public Color MaxColor;
 
-        public string AddZerosColor;
+        public Color AddZerosColor;
 
-        public string WarningColor;
+        public Color WarningColor;
 
-        public string UpBuffColor;
+        public Color UpBuffColor;
 
-        public string DownBuffColor;
+        public Color DownBuffColor;
 
         public FontStyles CurrentStyles;
 
         public FontStyles MaximumStyles;
 
         [SerializeField]
+        private TMP_Text _ZerosValue;
+
+        [SerializeField]
         private TMP_Text _CurrentValue;
+
+        [SerializeField]
+        private TMP_Text _MaxSignValue;
 
         [SerializeField]
         private TMP_Text _MaxValue;
@@ -77,8 +83,6 @@ namespace GamePanelHUDLife
         private Animator Animator_UpBuffArrow;
 
         private Animator Animator_DownBuffArrow;
-
-        private readonly IStringBuilderData StringBuilderdDatas = new IStringBuilderData();
 
         void Start()
         {
@@ -132,24 +136,38 @@ namespace GamePanelHUDLife
             {
                 addZeros = "";
 
+                _ZerosValue.gameObject.SetActive(false);
             }
             else if (current < 100 && current >= 10)
             {
                 addZeros = "0";
+
+                _ZerosValue.gameObject.SetActive(true);
             }
             else
             {
                 addZeros = "00";
+
+                _ZerosValue.gameObject.SetActive(true);
             }
 
-            string currentColor = Normalized > WarningRate ? CurrentColor : WarningColor;
+            _ZerosValue.fontStyle = CurrentStyles;
+            _ZerosValue.color = AddZerosColor;
+            _ZerosValue.text = addZeros;
+
+            Color currentColor = Normalized > WarningRate ? CurrentColor : WarningColor;
 
             _CurrentValue.fontStyle = CurrentStyles;
-            _CurrentValue.text = StringBuilderdDatas._CurrentValue.Concat("<color=", AddZerosColor, ">", addZeros, "</color>", "<color=", currentColor, ">", current.ToString(), "</color>");
+            _CurrentValue.color = currentColor;
+            _CurrentValue.text = current.ToString();
+
+            _MaxSignValue.fontStyle = MaximumStyles;
+            _MaxSignValue.color = MaxColor;
 
             //Set Maximum float and color and Style to String
             _MaxValue.fontStyle = MaximumStyles;
-            _MaxValue.text = StringBuilderdDatas._MaxValue.Concat("<color=", MaxColor, ">", "/", Maximum.ToString("F0"), "</color>");
+            _MaxValue.color = MaxColor;
+            _MaxValue.text = Maximum.ToString("F0");
 
             //Buff HUD display
             _BuffValue.gameObject.SetActive(BuffRate != 0 && BuffHUDSW);
@@ -163,9 +181,10 @@ namespace GamePanelHUDLife
             _DownBuffArrow.color = DownBuffArrowColor;
 
             //Buff Up Down Color 
-            string buffColor = BuffRate > 0 ? UpBuffColor : DownBuffColor;
+            Color buffColor = BuffRate > 0 ? UpBuffColor : DownBuffColor;
 
-            _BuffValue.text = StringBuilderdDatas._BuffValue.Concat("<color=", buffColor, ">", BuffRate.ToString("F2"), "</color>");
+            _BuffValue.color = buffColor;
+            _BuffValue.text = BuffRate.ToString("F2");
 
             //Arrow Animation display
             bool Arrow = !AtMaximum && ArrowAnimation;
@@ -185,13 +204,6 @@ namespace GamePanelHUDLife
             {
                 _Glow.gameObject.SetActive(Normalized < WarningRate);
             }
-        }
-
-        public class IStringBuilderData
-        {
-            public IStringBuilder _CurrentValue = new IStringBuilder();
-            public IStringBuilder _MaxValue = new IStringBuilder();
-            public IStringBuilder _BuffValue = new IStringBuilder();
         }
     }
 }

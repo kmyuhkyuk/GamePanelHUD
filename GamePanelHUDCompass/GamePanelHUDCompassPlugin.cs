@@ -117,7 +117,7 @@ namespace GamePanelHUDCompass
             SettingsDatas.KeyCompassFireOutlineSizeDelta = Config.Bind<Vector2>(positionScaleSettings, "罗盘开火轮廓高度 Compass Fire Outline Size Delta", new Vector2(26, 26));
             SettingsDatas.KeyCompassFireDirectionAnchoredPosition = Config.Bind<Vector2>(positionScaleSettings, "罗盘开火方向位置 Compass Fire Direction Anchored Position", new Vector2(15, -63));
             SettingsDatas.KeyCompassFireDirectionScale = Config.Bind<Vector2>(positionScaleSettings, "罗盘开火方向大小 Compass Fire Direction Local Scale", new Vector2(1, 1));
-            SettingsDatas.KeyCompasStaticInfoAnchoredPosition = Config.Bind<Vector2>(positionScaleSettings, "罗盘静态信息位置 Compass Static Info Anchored Position", new Vector2(0, 15));
+            SettingsDatas.KeyCompasStaticInfoAnchoredPosition = Config.Bind<Vector2>(positionScaleSettings, "罗盘静态信息位置 Compass Static Info Anchored Position", new Vector2(0, -15));
             SettingsDatas.KeyCompassStaticInfoScale = Config.Bind<Vector2>(positionScaleSettings, "罗盘静态信息大小 Compass Static Info Local Scale", new Vector2(1, 1));
 
             SettingsDatas.KeyCompassFireActiveSpeed = Config.Bind<float>(speedSettings, "罗盘开火激活速度 Compass Fire Active Speed", 1, new ConfigDescription("", new AcceptableValueRange<float>(0, 10)));
@@ -226,7 +226,7 @@ namespace GamePanelHUDCompass
 
                 CompassStaticDatas.CopyFrom(CompassFireDatas);
 
-                CompassStaticDatas.AllPlayerItems = HUDCore.YourPlayer.Profile.Inventory.AllPlayerItems.Select(x => x.TemplateId);
+                CompassStaticDatas.AllPlayerItems = HUDCore.YourPlayer.Profile.Inventory.AllPlayerItems.Select(x => x.TemplateId).ToHashSet();
 
                 if (CompassQuestCacheBool)
                 {
@@ -571,7 +571,7 @@ namespace GamePanelHUDCompass
 
         public class CompassStaticData : CompassFireData
         {
-            public IEnumerable<string> AllPlayerItems;
+            public HashSet<string> AllPlayerItems;
 
             public ExfiltrationUIData[] ExfiltrationPoints;
 

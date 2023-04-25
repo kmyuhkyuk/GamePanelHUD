@@ -121,7 +121,6 @@
     <Compile Include="Utils\Session\ExperienceHelp.cs" />
     <Compile Include="Utils\Session\ISessionHelp.cs" />
     <Compile Include="Utils\Session\TradersAvatar.cs" />
-    <Compile Include="Utils\IStringBuilder.cs" />
     <Compile Include="Utils\Zone\ZoneHelp.cs" />
   </ItemGroup>
   <ItemGroup>

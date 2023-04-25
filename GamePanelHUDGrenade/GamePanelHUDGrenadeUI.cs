@@ -16,16 +16,14 @@ namespace GamePanelHUDGrenade
 
         public int GrenadeAmount;
 
-        public string GrenadeColor;
+        public Color GrenadeColor;
 
-        public string WarningColor;
+        public Color WarningColor;
 
         public FontStyles GrenadeStyles;
 
         [SerializeField]
         private TMP_Text _GrenadeValue;
-
-        private readonly IStringBuilderData IStringBuilderDatas = new IStringBuilderData();
 
 #if !UNITY_EDITOR
         void Start()
@@ -55,7 +53,7 @@ namespace GamePanelHUDGrenade
 #endif
         {
             //Set GrenadeAmount int and color and Style to String
-            string grenadeColor;
+            Color grenadeColor;
             if (ZeroWarning && GrenadeAmount > 0 || !ZeroWarning)
             {
                 grenadeColor = GrenadeColor;
@@ -66,12 +64,8 @@ namespace GamePanelHUDGrenade
             }
 
             _GrenadeValue.fontStyle = GrenadeStyles;
-            _GrenadeValue.text = IStringBuilderDatas._GrenadeValue.Concat("<color=", grenadeColor, ">", GrenadeAmount.ToString(), "</color>");
-        }
-
-        public class IStringBuilderData
-        {
-            public IStringBuilder _GrenadeValue = new IStringBuilder();
+            _GrenadeValue.color = grenadeColor;
+            _GrenadeValue.text = GrenadeAmount.ToString();
         }
     }
 }

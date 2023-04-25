@@ -83,8 +83,8 @@ namespace GamePanelHUDHit
             _hit.ArmorDamageColor = HUD.SettingsData.KeyHitArmorDamageColor.Value;
             _hit.DeadColor = HUD.SettingsData.KeyHitDeadColor.Value;
             _hit.HeadColor = HUD.SettingsData.KeyHitHeadColor.Value;
-            _hit.DamageInfoColor = HUD.SettingsData.KeyHitDamageInfoColor.Value.ColorToHtml();
-            _hit.ArmorDamageInfoColor = HUD.SettingsData.KeyHitArmorDamageInfoColor.Value.ColorToHtml();
+            _hit.DamageInfoColor = HUD.SettingsData.KeyHitDamageInfoColor.Value;
+            _hit.ArmorDamageInfoColor = HUD.SettingsData.KeyHitArmorDamageInfoColor.Value;
 
             _hit.DamageStyles = HUD.SettingsData.KeyHitDamageStyles.Value;
             _hit.ArmorDamageStyles = HUD.SettingsData.KeyHitArmorDamageStyles.Value;

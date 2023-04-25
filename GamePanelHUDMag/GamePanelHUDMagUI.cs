@@ -44,21 +44,21 @@ namespace GamePanelHUDMag
 
         public float ZeroWarningSpeed;
 
-        public string CurrentColor;
+        public Color CurrentColor;
 
-        public string MaxColor;
+        public Color MaxColor;
 
-        public string PatronColor;
+        public Color PatronColor;
 
-        public string WeaponNameColor;
+        public Color WeaponNameColor;
 
-        public string AmmoTypeColor;
+        public Color AmmoTypeColor;
 
-        public string FireModeColor;
+        public Color FireModeColor;
 
-        public string AddZerosColor;
+        public Color AddZerosColor;
 
-        public string WarningColor;
+        public Color WarningColor;
 
         public FontStyles CurrentStyles;
 
@@ -73,13 +73,22 @@ namespace GamePanelHUDMag
         public FontStyles FireModeStyles;
 
         [SerializeField]
+        private TMP_Text _ZerosValue;
+
+        [SerializeField]
         private TMP_Text _CurrentValue;
+
+        [SerializeField]
+        private TMP_Text _MaxSignValue;
 
         [SerializeField]
         private TMP_Text _MaxValue;
 
         [SerializeField]
         private TMP_Text _PatronValue;
+
+        [SerializeField]
+        private TMP_Text _PatronSignValue;
 
         [SerializeField]
         private TMP_Text _WeaponNameValue;
@@ -94,12 +103,17 @@ namespace GamePanelHUDMag
 
         private Animator Animator_Current;
 
-        private readonly IStringBuilderData IStringBuilderDatas = new IStringBuilderData();
+        private Transform PatronPanel;
+
+        private Transform FiremodePanel;
 
         void Start()
         {
             Animator_WeaponName = _WeaponNameValue.transform.parent.GetComponent<Animator>();
             Animator_Current = _CurrentValue.GetComponent<Animator>();
+
+            PatronPanel = _PatronValue.transform.parent;
+            FiremodePanel = _FiremodeValue.transform.parent;
 
 #if !UNITY_EDITOR
             GamePanelHUDCorePlugin.UpdateManger.Register(this);
@@ -129,9 +143,7 @@ namespace GamePanelHUDMag
 #endif
         {
             //Set Current float and color and Style to String
-            string addZeros = Current < 10 && Maximum > 10 ? "0" : "";
-
-            string currentColor;
+            Color currentColor;
             if ((Normalized > WarningRate10 && Maximum <= 10 || Normalized >= WarningRate100 && Maximum > 10) && Current != 0)
             {
                 currentColor = CurrentColor;
@@ -141,23 +153,47 @@ namespace GamePanelHUDMag
                 currentColor = WarningColor;
             }
 
+            if (Current < 10 && Maximum > 10)
+            {
+                _ZerosValue.gameObject.SetActive(true);
+                _CurrentValue.alignment = TextAlignmentOptions.TopLeft;
+            }
+            else
+            {
+                _ZerosValue.gameObject.SetActive(false);
+                _CurrentValue.alignment = TextAlignmentOptions.TopRight;
+            }
+
+            _ZerosValue.fontStyle = CurrentStyles;
+            _ZerosValue.color = AddZerosColor;
+
             _CurrentValue.fontStyle = CurrentStyles;
-            _CurrentValue.text = IStringBuilderDatas._CurrentValue.Concat("<color=", AddZerosColor, ">", addZeros, "</color>", "<color=", currentColor, ">", Current.ToString(), "</color>");
+            _CurrentValue.color = currentColor;
+            _CurrentValue.text = Current.ToString();
+
+            _MaxSignValue.fontStyle = MaximumStyles;
+            _MaxSignValue.color = MaxColor;
 
             //Set Maximum float and color and Style to String
             _MaxValue.fontStyle = MaximumStyles;
-            _MaxValue.text = IStringBuilderDatas._MaxValue.Concat("<color=", MaxColor, ">", "/", Maximum.ToString(), "</color>");
+            _MaxValue.color = MaxColor;
+            _MaxValue.text = Maximum.ToString();
+
+            _PatronSignValue.fontStyle = PatronStyles;
+            _PatronSignValue.color = PatronColor;
 
             //Patron HUD display
-            _PatronValue.gameObject.SetActive(Patron > 0);
+            PatronPanel.gameObject.SetActive(Patron > 0);
 
             //Set Patron float and color and Style to String
             _PatronValue.fontStyle = PatronStyles;
-            _PatronValue.text = IStringBuilderDatas._PatronValue.Concat("<color=", PatronColor, ">", "+", Patron.ToString(), "</color>");
+            _PatronValue.color = PatronColor;
+            _PatronValue.text = Patron.ToString();
 
             //Set Weapon Name
             _WeaponNameValue.fontStyle = WeaponNameStyles;
-            _WeaponNameValue.text = IStringBuilderDatas._WeaponValue.Concat("<color=", WeaponNameColor, ">", WeaponName, "</color>");
+            _WeaponNameValue.color = WeaponNameColor;
+            _WeaponNameValue.text = WeaponName;
 
             Animator_WeaponName.SetBool(AnimatorHash.Always, WeaponNameAlways);
             Animator_WeaponName.SetFloat(AnimatorHash.Speed, WeaponNameSpeed);
@@ -166,16 +202,18 @@ namespace GamePanelHUDMag
             Animator_Current.SetFloat(AnimatorHash.Speed, ZeroWarningSpeed);
 
             //Fire Mode HUD display
-            _FiremodeValue.gameObject.SetActive(FireModeHUDSW);
+            FiremodePanel.gameObject.SetActive(FireModeHUDSW);
 
             //Set Fire Mode
             _FiremodeValue.fontStyle = FireModeStyles;
-            _FiremodeValue.text = IStringBuilderDatas._FiremodeValue.Concat("<color=", FireModeColor, ">", FireMode, "</color>");
+            _FiremodeValue.color = FireModeColor;
+            _FiremodeValue.text = FireMode;
 
             _AmmoTypeValue.gameObject.SetActive(AmmoTypeHUDSW);
 
             _AmmoTypeValue.fontStyle = AmmoTypeStyles;
-            _AmmoTypeValue.text = IStringBuilderDatas._AmmoValue.Concat("<color=", AmmoTypeColor, ">", AmmoType, "</color>");
+            _AmmoTypeValue.color = AmmoTypeColor;
+            _AmmoTypeValue.text = AmmoType;
 
             if (WeaponTirgger)
             {
@@ -183,16 +221,6 @@ namespace GamePanelHUDMag
 
                 WeaponTirgger = false;
             }
-        }
-
-        public class IStringBuilderData
-        {
-            public IStringBuilder _CurrentValue = new IStringBuilder();
-            public IStringBuilder _MaxValue = new IStringBuilder();
-            public IStringBuilder _PatronValue = new IStringBuilder();
-            public IStringBuilder _WeaponValue = new IStringBuilder();
-            public IStringBuilder _FiremodeValue = new IStringBuilder();
-            public IStringBuilder _AmmoValue = new IStringBuilder();
         }
     }
 }

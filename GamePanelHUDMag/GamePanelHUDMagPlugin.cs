@@ -358,7 +358,7 @@ namespace GamePanelHUDMag
                         WeaponTemplate launcherTemplate = ReflectionDatas.RefWeaponTemplate.GetValue(NowLauncher);
 
                         //Get Fire Mode
-                        WeaponDatas.FireMode = LocalizedHelp.Localized(Weapon.EFireMode.single.ToString(), EStringCase.None);
+                        WeaponDatas.FireMode = LocalizedHelp.Localized(nameof(Weapon.EFireMode.single), EStringCase.None);
 
                         WeaponDatas.AmmonType = LocalizedHelp.Localized(launcherTemplate.ammoCaliber, EStringCase.None);
 

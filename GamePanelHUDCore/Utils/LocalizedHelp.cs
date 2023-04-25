@@ -10,8 +10,6 @@ namespace GamePanelHUDCore.Utils
     {
         private static Func<string, EStringCase, string> RefLocalized;
 
-        private static Func<string, string, string> RefLocalizedPrefix;
-
         public static void Init()
         {
             BindingFlags flags = BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
@@ -23,22 +21,11 @@ namespace GamePanelHUDCore.Utils
                 && x.GetParameters().Length == 2
                 && x.GetParameters()[0].ParameterType == typeof(string)
                 && x.GetParameters()[1].ParameterType == typeof(EStringCase)));
-
-            RefLocalizedPrefix = AccessTools.MethodDelegate<Func<string, string, string>>(RefHelp.GetEftMethod(type, flags,
-                x => x.Name == "Localized"
-                && x.GetParameters().Length == 2
-                && x.GetParameters()[0].ParameterType == typeof(string)
-                && x.GetParameters()[1].ParameterType == typeof(string)));
         }
 
         public static string Localized(string id, EStringCase @case)
         {
             return RefLocalized(id, @case);
-        }
-
-        public static string Localized(string id, string prefix = null)
-        {
-            return RefLocalizedPrefix(id, prefix);
         }
     }
 }

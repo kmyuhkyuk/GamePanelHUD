@@ -18,7 +18,7 @@ namespace GamePanelHUDHit
 
         public int WaitXP;
 
-        public string XPColor;
+        public Color XPColor;
 
         public float XPWaitSpeed;
 
@@ -28,8 +28,6 @@ namespace GamePanelHUDHit
         private TMP_Text _XpValue;
 
         private Animator Animator_ExpUI;
-
-        private readonly IStringBuilderData IStringBuilderDatas = new IStringBuilderData();
 
         void Start()
         {
@@ -52,8 +50,6 @@ namespace GamePanelHUDHit
         void Update()
 #endif
         {
-            _XpValue.fontStyle = XPStyles;
-
             Animator_ExpUI.SetFloat(AnimatorHash.Speed, XPWaitSpeed);
 
             if (Active && !IsClear())
@@ -62,7 +58,9 @@ namespace GamePanelHUDHit
 
                 WaitXP = 0;
 
-                _XpValue.text = IStringBuilderDatas._XpValue.Concat("<color=", XPColor, ">", XP.ToString(), "</color>");
+                _XpValue.fontStyle = XPStyles;
+                _XpValue.color = XPColor;
+                _XpValue.text = XP.ToString();
 
                 Animator_ExpUI.SetTrigger(AnimatorHash.Active);
 
@@ -104,11 +102,6 @@ namespace GamePanelHUDHit
         public bool IsClear()
         {
             return Animator_ExpUI.GetCurrentAnimatorStateInfo(0).shortNameHash == AnimatorHash.Clear;
-        }
-
-        public class IStringBuilderData
-        {
-            public IStringBuilder _XpValue = new IStringBuilder();
         }
 
         void ClearXp()

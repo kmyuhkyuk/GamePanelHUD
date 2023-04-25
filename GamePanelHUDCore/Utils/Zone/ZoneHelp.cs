@@ -58,7 +58,7 @@ namespace GamePanelHUDCore.Utils.Zone
                 return false;
             }
 
-            return triggers.Count() > 0 ? true : false;
+            return triggers.Any();
         }
     }
 }

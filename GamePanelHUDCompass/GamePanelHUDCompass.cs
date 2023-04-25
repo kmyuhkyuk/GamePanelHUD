@@ -52,9 +52,8 @@ namespace GamePanelHUDCompass
 
                 _Compass.ArrowColor = HUD.SettingsData.KeyArrowColor.Value;
                 _Compass.AzimuthsColor = HUD.SettingsData.KeyAzimuthsColor.Value;
-                _Compass.AzimuthsAngleColor = HUD.SettingsData.KeyAzimuthsAngleColor.Value.ColorToHtml();
-                _Compass.DirectionColor = HUD.SettingsData.KeyDirectionColor.Value.ColorToHtml();
-                _Compass.AngleColor = HUD.SettingsData.KeyAngleColor.Value.ColorToHtml();
+                _Compass.DirectionColor = HUD.SettingsData.KeyDirectionColor.Value;
+                _Compass.AngleColor = HUD.SettingsData.KeyAngleColor.Value;
 
                 _Compass.AzimuthsAngleStyles = HUD.SettingsData.KeyAzimuthsAngleStyles.Value;
                 _Compass.DirectionStyles = HUD.SettingsData.KeyDirectionStyles.Value;

@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 #if !UNITY_EDITOR
@@ -52,9 +51,9 @@ namespace GamePanelHUDHit
 
         public Color HeadColor;
 
-        public string DamageInfoColor;
+        public Color DamageInfoColor;
 
-        public string ArmorDamageInfoColor;
+        public Color ArmorDamageInfoColor;
 
         public FontStyles DamageStyles;
 
@@ -113,8 +112,6 @@ namespace GamePanelHUDHit
         private Image _RightDowmHead;
 
         private Animator Animator_HitUI;
-
-        private readonly IStringBuilderData IStringBuilderDatas = new IStringBuilderData();
 
         void Start()
         {
@@ -209,12 +206,14 @@ namespace GamePanelHUDHit
             _Hp.gameObject.SetActive(DamageHUDSW);
 
             _HpValue.fontStyle = DamageStyles;
-            _HpValue.text = IStringBuilderDatas._DamageValue.Concat("<color=", DamageInfoColor, ">", Damage.ToString("F0"), "</color>");
+            _HpValue.color = DamageInfoColor;
+            _HpValue.text = Damage.ToString("F0");
 
             _Armor.gameObject.SetActive(HasArmorHit && DamageHUDSW);
 
             _ArmorValue.fontStyle = ArmorDamageStyles;
-            _ArmorValue.text = IStringBuilderDatas._ArmorValue.Concat("<color=", ArmorDamageInfoColor, ">", ArmorDamage.ToString("F2"), "</color>");
+            _ArmorValue.color = ArmorDamageInfoColor;
+            _ArmorValue.text = ArmorDamage.ToString("F2");
 
             Animator_HitUI.SetFloat(AnimatorHash.ActiveSpeed, ActiveSpeed);
             Animator_HitUI.SetFloat(AnimatorHash.EndSpeed, EndSpeed);
@@ -289,11 +288,5 @@ namespace GamePanelHUDHit
             Animator_HitUI.SetTrigger(AnimatorHash.ActiveDead);
         }
 #endif
-
-        public class IStringBuilderData
-        {
-            public IStringBuilder _DamageValue = new IStringBuilder();
-            public IStringBuilder _ArmorValue = new IStringBuilder();
-        }
     }
 }

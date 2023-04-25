@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 #if !UNITY_EDITOR
@@ -25,11 +23,9 @@ namespace GamePanelHUDCompass
 
         public Color ArrowColor;
 
-        public string AzimuthsAngleColor;
+        public Color DirectionColor;
 
-        public string DirectionColor;
-
-        public string AngleColor;
+        public Color AngleColor;
 
         public FontStyles AzimuthsAngleStyles;
 
@@ -58,26 +54,11 @@ namespace GamePanelHUDCompass
 
         private TMP_Text[] AzimuthsAngles;
 
-        private string[] AngleTexts;
-
-        private readonly IStringBuilderData IStringBuilderDatas = new IStringBuilderData();
-
         void Start()
         {
             AzimuthsImages = _AzimuthsValue.GetComponentsInChildren<Image>();
             AzimuthsAngles = _AzimuthsValue.GetComponentsInChildren<TMP_Text>();
             AnglePanel = _DirectionValue.transform.parent;
-
-            AngleTexts = AzimuthsAngles.Select(x => x.text).ToArray();
-
-            List<IStringBuilder> changes = new List<IStringBuilder>();
-
-            for (int i = 0; i < AngleTexts.Length; i++)
-            {
-                changes.Add(new IStringBuilder());
-            }
-
-            IStringBuilderDatas._AzimuthsAngle = changes.ToArray();
 
 #if !UNITY_EDITOR
             GamePanelHUDCorePlugin.UpdateManger.Register(this);
@@ -113,12 +94,10 @@ namespace GamePanelHUDCompass
                 image.color = AzimuthsColor;
             }
 
-            for (int i = 0; i < AzimuthsAngles.Length; i++)
+            foreach (var text in AzimuthsAngles)
             {
-                TMP_Text _azimuthsAngle = AzimuthsAngles[i];
-
-                _azimuthsAngle.fontStyle = AzimuthsAngleStyles;
-                _azimuthsAngle.text = IStringBuilderDatas._AzimuthsAngle[i].Concat("<color=", AzimuthsAngleColor, ">", AngleTexts[i], "</color>");
+                text.fontStyle = AzimuthsAngleStyles;
+                text.color = AzimuthsColor;
             }
 
             _Azimuths.anchoredPosition = new Vector2(CompassX, 0);
@@ -160,17 +139,12 @@ namespace GamePanelHUDCompass
             AnglePanel.gameObject.SetActive(AngleHUDSW);
 
             _DirectionValue.fontStyle = DirectionStyles;
-            _DirectionValue.text = IStringBuilderDatas._DirectionValue.Concat("<color=", DirectionColor, ">", direction, "</color>");
+            _DirectionValue.color = DirectionColor;
+            _DirectionValue.text = direction;
 
             _AngleValue.fontStyle = AngleStyles;
-            _AngleValue.text = IStringBuilderDatas._AngleValue.Concat("<color=", AngleColor, ">", ((int)AngleNum).ToString(), "</color>");
-        }
-
-        public class IStringBuilderData
-        {
-            public IStringBuilder[] _AzimuthsAngle;
-            public IStringBuilder _DirectionValue = new IStringBuilder();
-            public IStringBuilder _AngleValue = new IStringBuilder();
+            _AngleValue.color = AngleColor;
+            _AngleValue.text = ((int)AngleNum).ToString();
         }
     }
 }
