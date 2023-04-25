@@ -37,6 +37,8 @@ namespace GamePanelHUDHit
 
         public int Xp;
 
+        public Color XpColor;
+
         public FontStyles TextFontStyles;
 
         public GamePanelHUDKillUI After;
@@ -56,11 +58,11 @@ namespace GamePanelHUDHit
 
             _TextValue.fontStyle = TextFontStyles;
 
-            _XpValue.fontStyle = HUD.SettingsData.KeyKillXpStyles.Value;
-
             if (HasXp)
             {
-                _XpValue.text = string.Concat("<color=", HUD.SettingsData.KeyKillXpColor.Value.ColorToHtml(), ">", Xp, "</color>");
+                _XpValue.fontStyle = HUD.SettingsData.KeyKillXpStyles.Value;
+                _XpValue.color = XpColor;
+                _XpValue.text = Xp.ToString();
             }
 
             GamePanelHUDCorePlugin.UpdateManger.Register(this);

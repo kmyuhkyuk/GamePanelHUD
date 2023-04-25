@@ -121,7 +121,7 @@ namespace GamePanelHUDHit
                 ExpRect.sizeDelta = HUD.SettingsData.KeyKillExpSizeDelta.Value;
                 ExpRect.localScale = HUD.SettingsData.KeyKillExpLocalScale.Value;
 
-                _Exp.XPColor = HUD.SettingsData.KeyExpColor.Value.ColorToHtml();
+                _Exp.XPColor = HUD.SettingsData.KeyExpColor.Value;
                 _Exp.XPStyles = HUD.SettingsData.KeyExpStyles.Value;
                 _Exp.XPWaitSpeed = HUD.SettingsData.KeyExpWaitSpeed.Value;
 
@@ -131,7 +131,7 @@ namespace GamePanelHUDHit
                 TestExpRect.sizeDelta = HUD.SettingsData.KeyKillExpSizeDelta.Value;
                 TestExpRect.localScale = HUD.SettingsData.KeyKillExpLocalScale.Value;
 
-                _TestExp.XPColor = HUD.SettingsData.KeyExpColor.Value.ColorToHtml();
+                _TestExp.XPColor = HUD.SettingsData.KeyExpColor.Value;
                 _TestExp.XPStyles = HUD.SettingsData.KeyExpStyles.Value;
                 _TestExp.XPWaitSpeed = HUD.SettingsData.KeyExpWaitSpeed.Value;
             }
@@ -387,12 +387,16 @@ namespace GamePanelHUDHit
 
             GamePanelHUDKillUI _kill = kill.GetComponent<GamePanelHUDKillUI>();
 
-            _kill.Text = string.Concat("<color=", settingsdata.KeyKillOtherColor.Value.ColorToHtml(), ">", text, "</color>");
+            string otherColor = settingsdata.KeyKillOtherColor.Value.ColorToHtml();
+
+            _kill.Text = string.Concat("<color=", otherColor, ">", text, "</color>");
             _kill.TextFontStyles = settingsdata.KeyKillOtherStyles.Value;
 
             _kill.Xp = exp;
 
             _kill.HasXp = hasxp && settingsdata.KeyKillHasXp.Value;
+
+            _kill.XpColor = settingsdata.KeyKillXpColor.Value;
 
             _kill.transform.SetAsFirstSibling();
 

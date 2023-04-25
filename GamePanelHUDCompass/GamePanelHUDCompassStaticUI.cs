@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 #if !UNITY_EDITOR
@@ -30,7 +29,7 @@ namespace GamePanelHUDCompass
 
         public float XDiff { get; private set; }
 
-        public bool HasRequirement { get; private set; }
+        public bool HasRequirements { get; private set; }
 
         public string Id;
 
@@ -157,17 +156,8 @@ namespace GamePanelHUDCompass
             float iconXRight = IconXRight;
             float iconXRightRight = IconXRightRight;
 
-            float compassX = HUD.Info.CompassX;
-            float[] diffs = new float[]
-            {
-                -IconX - compassX,
-                -iconXLeft - compassX,
-                -iconXRight - compassX,
-                -iconXRightRight - compassX
-            };
-
-            //Closest to 0
-            XDiff = diffs.Aggregate((current, next) => Math.Abs(current) < Math.Abs(next) ? current : next);
+            //Center always is Virtual2
+            XDiff = -iconXRight - HUD.Info.CompassX;
 
             float height = HUD.SettingsData.KeyCompassStaticHeight.Value;
             RealRect.anchoredPosition = new Vector2(IconX, height);
@@ -179,10 +169,10 @@ namespace GamePanelHUDCompass
             {
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Exfiltration:
                     var point = HUD.Info.ExfiltrationPoints[ExIndex];
-                    HasRequirement = point.UncompleteRequirements;
+                    HasRequirements = point.UncompleteRequirements;
                     if (HUD.SettingsData.KeyCompassStaticHideRequirements.Value)
                     {
-                        Enabled(!HasRequirement && !point.NotPresent);
+                        Enabled(!HasRequirements && !point.NotPresent);
                     }
                     else
                     {
@@ -202,10 +192,10 @@ namespace GamePanelHUDCompass
                     break;
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionLeaveItemAtLocation:
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionPlaceBeacon:
-                    HasRequirement = !Target.All(x => HUD.Info.AllPlayerItems.Contains(x));
+                    HasRequirements = !Target.All(x => HUD.Info.AllPlayerItems.Contains(x));
                     if (HUD.SettingsData.KeyCompassStaticHideRequirements.Value)
                     {
-                        Enabled(!HasRequirement);
+                        Enabled(!HasRequirements);
                     }
                     else if (HUD.SettingsData.KeyCompassStaticHideOptional.Value)
                     {

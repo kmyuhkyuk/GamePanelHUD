@@ -66,14 +66,14 @@ namespace GamePanelHUDMag
                 _Mag.WeaponNameSpeed = HUD.SettingsData.KeyWeaponNameSpeed.Value;
                 _Mag.ZeroWarningSpeed = HUD.SettingsData.KeyZeroWarningSpeed.Value;
 
-                _Mag.CurrentColor = HUD.SettingsData.KeyCurrentColor.Value.ColorToHtml();
-                _Mag.MaxColor = HUD.SettingsData.KeyMaxColor.Value.ColorToHtml();
-                _Mag.PatronColor = HUD.SettingsData.KeyPatronColor.Value.ColorToHtml();
-                _Mag.WeaponNameColor = HUD.SettingsData.KeyWeaponNameColor.Value.ColorToHtml();
-                _Mag.AmmoTypeColor = HUD.SettingsData.KeyAmmonTypeColor.Value.ColorToHtml();
-                _Mag.FireModeColor = HUD.SettingsData.KeyFireModeColor.Value.ColorToHtml();
-                _Mag.AddZerosColor = HUD.SettingsData.KeyAddZerosColor.Value.ColorToHtml();
-                _Mag.WarningColor = HUD.SettingsData.KeyWarningColor.Value.ColorToHtml();
+                _Mag.CurrentColor = HUD.SettingsData.KeyCurrentColor.Value;
+                _Mag.MaxColor = HUD.SettingsData.KeyMaxColor.Value;
+                _Mag.PatronColor = HUD.SettingsData.KeyPatronColor.Value;
+                _Mag.WeaponNameColor = HUD.SettingsData.KeyWeaponNameColor.Value;
+                _Mag.AmmoTypeColor = HUD.SettingsData.KeyAmmonTypeColor.Value;
+                _Mag.FireModeColor = HUD.SettingsData.KeyFireModeColor.Value;
+                _Mag.AddZerosColor = HUD.SettingsData.KeyAddZerosColor.Value;
+                _Mag.WarningColor = HUD.SettingsData.KeyWarningColor.Value;
 
                 _Mag.CurrentStyles = HUD.SettingsData.KeyCurrentStyles.Value;
                 _Mag.MaximumStyles = HUD.SettingsData.KeyMaximumStyles.Value;

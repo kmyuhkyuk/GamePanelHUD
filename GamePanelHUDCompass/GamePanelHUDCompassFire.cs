@@ -48,8 +48,6 @@ namespace GamePanelHUDCompass
 
         private RectTransform FireRightRect;
 
-        private readonly IStringBuilderData IStringBuilderDatas = new IStringBuilderData();
-
         internal static Action<int> Remove;
 
 #if !UNITY_EDITOR
@@ -93,8 +91,8 @@ namespace GamePanelHUDCompass
                 _FireLeft.fontStyle = HUD.SettingsData.KeyCompassFireDirectionStyles.Value;
                 _FireRight.fontStyle = HUD.SettingsData.KeyCompassFireDirectionStyles.Value;
 
-                string leftDirectionColor = HUD.SettingsData.KeyCompassFireColor.Value.ColorToHtml();
-                string rightDirectionColor = HUD.SettingsData.KeyCompassFireColor.Value.ColorToHtml();
+                Color leftDirectionColor = HUD.SettingsData.KeyCompassFireColor.Value;
+                Color rightDirectionColor = HUD.SettingsData.KeyCompassFireColor.Value;
 
                 bool left = false;
                 bool right = false;
@@ -117,11 +115,11 @@ namespace GamePanelHUDCompass
 
                                 if (isBoos)
                                 {
-                                    leftDirectionColor = HUD.SettingsData.KeyCompassFireBossColor.Value.ColorToHtml();
+                                    leftDirectionColor = HUD.SettingsData.KeyCompassFireBossColor.Value;
                                 }
                                 else if (isFollower)
                                 {
-                                    leftDirectionColor = HUD.SettingsData.KeyCompassFireFollowerColor.Value.ColorToHtml();
+                                    leftDirectionColor = HUD.SettingsData.KeyCompassFireFollowerColor.Value;
                                 }
                             }
                             else
@@ -130,19 +128,19 @@ namespace GamePanelHUDCompass
 
                                 if (isBoos)
                                 {
-                                    rightDirectionColor = HUD.SettingsData.KeyCompassFireBossColor.Value.ColorToHtml();
+                                    rightDirectionColor = HUD.SettingsData.KeyCompassFireBossColor.Value;
                                 }
                                 else if (isFollower)
                                 {
-                                    rightDirectionColor = HUD.SettingsData.KeyCompassFireFollowerColor.Value.ColorToHtml();
+                                    rightDirectionColor = HUD.SettingsData.KeyCompassFireFollowerColor.Value;
                                 }
                             }
                         }
                     }
                 }
 
-                _FireLeft.text = IStringBuilderDatas._FireLeft.Concat("<color=", leftDirectionColor, ">", "<", "</color>");
-                _FireRight.text = IStringBuilderDatas._FireLeft.Concat("<color=", rightDirectionColor, ">", ">", "</color>");
+                _FireLeft.color = leftDirectionColor;
+                _FireRight.color = rightDirectionColor;
 
                 _FireLeft.gameObject.SetActive(left && HUD.SettingsData.KeyCompassFireDirectionHUDSW.Value);
                 _FireRight.gameObject.SetActive(right && HUD.SettingsData.KeyCompassFireDirectionHUDSW.Value);
@@ -219,11 +217,5 @@ namespace GamePanelHUDCompass
             CompassFires.Remove(id);
         }
 #endif
-
-        public class IStringBuilderData
-        {
-            public IStringBuilder _FireLeft = new IStringBuilder();
-            public IStringBuilder _FireRight = new IStringBuilder();
-        }
     }
 }

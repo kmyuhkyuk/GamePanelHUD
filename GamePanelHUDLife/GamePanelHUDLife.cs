@@ -83,12 +83,12 @@ namespace GamePanelHUDLife
 
                 _OverallHealth.UpBuffArrowColor = HUD.SettingsData.KeyUpBuffArrowColor.Value;
                 _OverallHealth.DownBuffArrowColor = HUD.SettingsData.KeyDownBuffArrowColor.Value;
-                _OverallHealth.CurrentColor = HUD.SettingsData.KeyHealthColor.Value.ColorToHtml();
-                _OverallHealth.MaxColor = HUD.SettingsData.KeyMaxColor.Value.ColorToHtml();
-                _OverallHealth.AddZerosColor = HUD.SettingsData.KeyAddZerosColor.Value.ColorToHtml();
-                _OverallHealth.WarningColor = HUD.SettingsData.KeyWarningColor.Value.ColorToHtml();
-                _OverallHealth.UpBuffColor = HUD.SettingsData.KeyUpBuffColor.Value.ColorToHtml();
-                _OverallHealth.DownBuffColor = HUD.SettingsData.KeyDownBuffColor.Value.ColorToHtml();
+                _OverallHealth.CurrentColor = HUD.SettingsData.KeyHealthColor.Value;
+                _OverallHealth.MaxColor = HUD.SettingsData.KeyMaxColor.Value;
+                _OverallHealth.AddZerosColor = HUD.SettingsData.KeyAddZerosColor.Value;
+                _OverallHealth.WarningColor = HUD.SettingsData.KeyWarningColor.Value;
+                _OverallHealth.UpBuffColor = HUD.SettingsData.KeyUpBuffColor.Value;
+                _OverallHealth.DownBuffColor = HUD.SettingsData.KeyDownBuffColor.Value;
 
                 _OverallHealth.CurrentStyles = HUD.SettingsData.KeyCurrentStyles.Value;
                 _OverallHealth.MaximumStyles = HUD.SettingsData.KeyMaximumStyles.Value;
@@ -111,12 +111,12 @@ namespace GamePanelHUDLife
 
                 _Hydration.UpBuffArrowColor = HUD.SettingsData.KeyUpBuffArrowColor.Value;
                 _Hydration.DownBuffArrowColor = HUD.SettingsData.KeyDownBuffArrowColor.Value;
-                _Hydration.CurrentColor = HUD.SettingsData.KeyHydrationColor.Value.ColorToHtml();
-                _Hydration.MaxColor = HUD.SettingsData.KeyMaxColor.Value.ColorToHtml();
-                _Hydration.AddZerosColor = HUD.SettingsData.KeyAddZerosColor.Value.ColorToHtml();
-                _Hydration.WarningColor = HUD.SettingsData.KeyWarningColor.Value.ColorToHtml();
-                _Hydration.UpBuffColor = HUD.SettingsData.KeyUpBuffColor.Value.ColorToHtml();
-                _Hydration.DownBuffColor = HUD.SettingsData.KeyDownBuffColor.Value.ColorToHtml();
+                _Hydration.CurrentColor = HUD.SettingsData.KeyHydrationColor.Value;
+                _Hydration.MaxColor = HUD.SettingsData.KeyMaxColor.Value;
+                _Hydration.AddZerosColor = HUD.SettingsData.KeyAddZerosColor.Value;
+                _Hydration.WarningColor = HUD.SettingsData.KeyWarningColor.Value;
+                _Hydration.UpBuffColor = HUD.SettingsData.KeyUpBuffColor.Value;
+                _Hydration.DownBuffColor = HUD.SettingsData.KeyDownBuffColor.Value;
 
                 _Hydration.CurrentStyles = HUD.SettingsData.KeyCurrentStyles.Value;
                 _Hydration.MaximumStyles = HUD.SettingsData.KeyMaximumStyles.Value;
@@ -139,12 +139,12 @@ namespace GamePanelHUDLife
 
                 _Energy.UpBuffArrowColor = HUD.SettingsData.KeyUpBuffArrowColor.Value;
                 _Energy.DownBuffArrowColor = HUD.SettingsData.KeyDownBuffArrowColor.Value;
-                _Energy.CurrentColor = HUD.SettingsData.KeyEnergyColor.Value.ColorToHtml();
-                _Energy.MaxColor = HUD.SettingsData.KeyMaxColor.Value.ColorToHtml();
-                _Energy.AddZerosColor = HUD.SettingsData.KeyAddZerosColor.Value.ColorToHtml();
-                _Energy.WarningColor = HUD.SettingsData.KeyWarningColor.Value.ColorToHtml();
-                _Energy.UpBuffColor = HUD.SettingsData.KeyUpBuffColor.Value.ColorToHtml();
-                _Energy.DownBuffColor = HUD.SettingsData.KeyDownBuffColor.Value.ColorToHtml();
+                _Energy.CurrentColor = HUD.SettingsData.KeyEnergyColor.Value;
+                _Energy.MaxColor = HUD.SettingsData.KeyMaxColor.Value;
+                _Energy.AddZerosColor = HUD.SettingsData.KeyAddZerosColor.Value;
+                _Energy.WarningColor = HUD.SettingsData.KeyWarningColor.Value;
+                _Energy.UpBuffColor = HUD.SettingsData.KeyUpBuffColor.Value;
+                _Energy.DownBuffColor = HUD.SettingsData.KeyDownBuffColor.Value;
 
                 _Energy.CurrentStyles = HUD.SettingsData.KeyCurrentStyles.Value;
                 _Energy.MaximumStyles = HUD.SettingsData.KeyMaximumStyles.Value;

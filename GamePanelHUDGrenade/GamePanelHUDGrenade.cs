@@ -56,8 +56,8 @@ namespace GamePanelHUDGrenade
 
                 _FragAmount.GrenadeAmount = HUD.Info.Frag;
 
-                _FragAmount.GrenadeColor = HUD.SettingsData.KeyFragColor.Value.ColorToHtml();
-                _FragAmount.WarningColor = HUD.SettingsData.KeyWarningColor.Value.ColorToHtml();
+                _FragAmount.GrenadeColor = HUD.SettingsData.KeyFragColor.Value;
+                _FragAmount.WarningColor = HUD.SettingsData.KeyWarningColor.Value;
 
                 _FragAmount.GrenadeStyles = HUD.SettingsData.KeyFragStyles.Value;
             }
@@ -68,8 +68,8 @@ namespace GamePanelHUDGrenade
 
                 _StunAmount.GrenadeAmount = HUD.Info.Stun + HUD.Info.Flash;
 
-                _StunAmount.GrenadeColor = HUD.SettingsData.KeyStunColor.Value.ColorToHtml();
-                _StunAmount.WarningColor = HUD.SettingsData.KeyWarningColor.Value.ColorToHtml();
+                _StunAmount.GrenadeColor = HUD.SettingsData.KeyStunColor.Value;
+                _StunAmount.WarningColor = HUD.SettingsData.KeyWarningColor.Value;
 
                 _StunAmount.GrenadeStyles = HUD.SettingsData.KeyStunStyles.Value;
             }
@@ -80,8 +80,8 @@ namespace GamePanelHUDGrenade
 
                 _SmokeAmount.GrenadeAmount = HUD.Info.Smoke;
 
-                _SmokeAmount.GrenadeColor = HUD.SettingsData.KeySmokeColor.Value.ColorToHtml();
-                _SmokeAmount.WarningColor = HUD.SettingsData.KeyWarningColor.Value.ColorToHtml();
+                _SmokeAmount.GrenadeColor = HUD.SettingsData.KeySmokeColor.Value;
+                _SmokeAmount.WarningColor = HUD.SettingsData.KeyWarningColor.Value;
 
                 _SmokeAmount.GrenadeStyles = HUD.SettingsData.KeySmokeStyles.Value;
             }
