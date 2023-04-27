@@ -132,80 +132,98 @@ namespace GamePanelHUDCompass
                 bool isCenter = false;
                 if (CompassStatics.Count > 0)
                 {
-                    GamePanelHUDCompassStaticUI[] workUIs = CompassStatics.Values.SelectMany(x => x).Where(x => x.Work).ToArray();
+                    int range = HUD.SettingsData.KeyCompassStaticCenterPointRange.Value;
 
-                    if (workUIs.Length > 0)
+                    List<Tuple<float, GamePanelHUDCompassStaticUI>> allXDiff = new List<Tuple<float, GamePanelHUDCompassStaticUI>>();
+
+                    foreach (List<GamePanelHUDCompassStaticUI> uis in CompassStatics.Values)
                     {
-                        float[] xDiffs = workUIs.Select(x => x.XDiff).ToArray();
-
-                        //Closest to 0
-                        float xDiff = xDiffs.Aggregate((current, next) => Math.Abs(current) < Math.Abs(next) ? current : next);
-
-                        GamePanelHUDCompassStaticUI ui = workUIs[Array.IndexOf(xDiffs, xDiff)];
-
-                        int range = HUD.SettingsData.KeyCompassStaticCenterPointRange.Value;
-
-                        if (xDiff < range && xDiff > -range)
+                        foreach (GamePanelHUDCompassStaticUI ui in uis)
                         {
-                            switch (ui.InfoType)
+                            if (!ui.Work)
+                                continue;
+
+                            float xDiff = ui.XDiff;
+
+                            if (xDiff < range && xDiff > -range)
                             {
-                                case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Airdrop:
-                                    _Airdrops.SetAsLastSibling();
-                                    break;
-                                case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Exfiltration:
-                                case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Switch:
-                                    _Exfiltrations.SetAsLastSibling();
-                                    break;
-                                case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionLeaveItemAtLocation:
-                                case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionPlaceBeacon:
-                                case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionFindItem:
-                                case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionVisitPlace:
-                                case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionInZone:
-                                    _Quests.SetAsLastSibling();
-                                    break;
+                                allXDiff.Add(new Tuple<float, GamePanelHUDCompassStaticUI>(xDiff, ui));
+                                isCenter = true;
                             }
-
-                            ui.transform.SetAsLastSibling();
-
-                            string necessaryText = ui.IsNotNecessary ? LocalizedHelp.Localized("(optional)", EStringCase.None) : "";
-                            string requirementsText = ui.HasRequirements ? LocalizedHelp.Localized("hideout/Requirements are not fulfilled", EStringCase.None) : "";
-
-                            FontStyles nameStyles = HUD.SettingsData.KeyCompassStaticNameStyles.Value;
-                            Color nameColor = HUD.SettingsData.KeyCompassStaticNameColor.Value;
-
-                            _NameValue.fontStyle = nameStyles;
-                            _NameValue.color = nameColor;
-                            _NameValue.text = LocalizedHelp.Localized(ui.NameKey, EStringCase.None);
-
-                            _NecessaryValue.gameObject.SetActive(ui.IsNotNecessary);
-                            _RequirementsValue.gameObject.SetActive(ui.HasRequirements);
-
-                            _NecessaryValue.fontStyle = nameStyles;
-                            _NecessaryValue.text = necessaryText;
-                            _NecessaryValue.color = nameColor;
-
-                            _RequirementsValue.fontStyle = nameStyles;
-                            _RequirementsValue.color = nameColor;
-                            _RequirementsValue.text = requirementsText;
-
-                            _DescriptionValue.fontStyle = HUD.SettingsData.KeyCompassStaticDescriptionStyles.Value;
-                            _DescriptionValue.color = HUD.SettingsData.KeyCompassStaticDescriptionColor.Value;
-                            _DescriptionValue.text = LocalizedHelp.Localized(ui.DescriptionKey, EStringCase.None);
-
-                            FontStyles distanceStyles = HUD.SettingsData.KeyCompassStaticDistanceStyles.Value;
-                            Color distanceColor = HUD.SettingsData.KeyCompassStaticDistanceColor.Value;
-
-                            string distance = Vector3.Distance(ui.Where, HUD.Info.PlayerPosition).ToString("F0");
-
-                            _DistanceValue.fontStyle = distanceStyles;
-                            _DistanceValue.color = distanceColor;
-                            _DistanceValue.text = distance.ToString();
-
-                            _DistanceSignValue.fontStyle = distanceStyles;
-                            _DistanceSignValue.color = distanceColor;
-
-                            isCenter = true;
                         }
+                    }
+
+                    if (isCenter)
+                    {
+                        float minXDiff = range;
+                        GamePanelHUDCompassStaticUI minUI = default;
+
+                        foreach (var xdiff in allXDiff)
+                        {
+                            if (Math.Abs(xdiff.Item1) < minXDiff)
+                            {
+                                minXDiff = xdiff.Item1;
+
+                                minUI = xdiff.Item2;
+                            }
+                        }
+
+                        switch (minUI.InfoType)
+                        {
+                            case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Airdrop:
+                                _Airdrops.SetAsLastSibling();
+                                break;
+                            case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Exfiltration:
+                            case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Switch:
+                                _Exfiltrations.SetAsLastSibling();
+                                break;
+                            case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionLeaveItemAtLocation:
+                            case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionPlaceBeacon:
+                            case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionFindItem:
+                            case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionVisitPlace:
+                            case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionInZone:
+                                _Quests.SetAsLastSibling();
+                                break;
+                        }
+
+                        minUI.transform.SetAsLastSibling();
+
+                        string necessaryText = minUI.IsNotNecessary ? LocalizedHelp.Localized("(optional)", EStringCase.None) : "";
+                        string requirementsText = minUI.HasRequirements ? LocalizedHelp.Localized("hideout/Requirements are not fulfilled", EStringCase.None) : "";
+
+                        FontStyles nameStyles = HUD.SettingsData.KeyCompassStaticNameStyles.Value;
+                        Color nameColor = HUD.SettingsData.KeyCompassStaticNameColor.Value;
+
+                        _NameValue.fontStyle = nameStyles;
+                        _NameValue.color = nameColor;
+                        _NameValue.text = LocalizedHelp.Localized(minUI.NameKey, EStringCase.None);
+
+                        _NecessaryValue.gameObject.SetActive(minUI.IsNotNecessary);
+                        _RequirementsValue.gameObject.SetActive(minUI.HasRequirements);
+
+                        _NecessaryValue.fontStyle = nameStyles;
+                        _NecessaryValue.text = necessaryText;
+                        _NecessaryValue.color = nameColor;
+
+                        _RequirementsValue.fontStyle = nameStyles;
+                        _RequirementsValue.color = nameColor;
+                        _RequirementsValue.text = requirementsText;
+
+                        _DescriptionValue.fontStyle = HUD.SettingsData.KeyCompassStaticDescriptionStyles.Value;
+                        _DescriptionValue.color = HUD.SettingsData.KeyCompassStaticDescriptionColor.Value;
+                        _DescriptionValue.text = LocalizedHelp.Localized(minUI.DescriptionKey, EStringCase.None);
+
+                        FontStyles distanceStyles = HUD.SettingsData.KeyCompassStaticDistanceStyles.Value;
+                        Color distanceColor = HUD.SettingsData.KeyCompassStaticDistanceColor.Value;
+
+                        string distance = Vector3.Distance(minUI.Where, HUD.Info.PlayerPosition).ToString("F0");
+
+                        _DistanceValue.fontStyle = distanceStyles;
+                        _DistanceValue.color = distanceColor;
+                        _DistanceValue.text = distance.ToString();
+
+                        _DistanceSignValue.fontStyle = distanceStyles;
+                        _DistanceSignValue.color = distanceColor;
                     }
                 }
 
@@ -290,7 +308,7 @@ namespace GamePanelHUDCompass
 
         void DestroyAll(GameWorld world)
         {
-            foreach (var ui in CompassStatics.Values.SelectMany(x => x))
+            foreach (GamePanelHUDCompassStaticUI ui in CompassStatics.Values.SelectMany(x => x))
             {
                 ui.ToDestroy = true;
             }

@@ -10,6 +10,128 @@ namespace GamePanelHUDCore.Utils
 {
     public static class RefHelp
     {
+        public static Func<T, F> ObjectFieldGetAccess<T, F>(FieldInfo fieldInfo)
+        {
+            if (fieldInfo == null)
+            {
+                throw new ArgumentNullException(nameof(fieldInfo));
+            }
+
+            var delegateInstanceType = typeof(T);
+            var declaringType = fieldInfo.DeclaringType;
+
+            bool isObject = typeof(F) == typeof(object);
+            bool needBox;
+
+            if (isObject && fieldInfo.FieldType.IsValueType)
+            {
+                needBox = true;
+            }
+            else
+            {
+                needBox = false;
+            }
+
+            var dmd = new DynamicMethod($"__get_{delegateInstanceType.Name}_fi_{fieldInfo.Name}", typeof(F), new[] { delegateInstanceType });
+
+            var ilGen = dmd.GetILGenerator();
+            if (fieldInfo.IsStatic)
+            {
+                ilGen.Emit(OpCodes.Ldsfld, fieldInfo);
+            }
+            else
+            {
+                ilGen.Emit(OpCodes.Ldarg_0);
+
+                if (typeof(T) == typeof(object))
+                {
+                    ilGen.Emit(OpCodes.Castclass, declaringType);
+                }
+
+                ilGen.Emit(OpCodes.Ldfld, fieldInfo);
+            }
+
+            if (needBox)
+            {
+                ilGen.Emit(OpCodes.Box, fieldInfo.FieldType);
+            }
+            else if (isObject)
+            {
+                ilGen.Emit(OpCodes.Castclass, typeof(F));
+            }
+
+            ilGen.Emit(OpCodes.Ret);
+
+            return (Func<T, F>)dmd.CreateDelegate(typeof(Func<T, F>));
+        }
+
+        public static Action<T, F> ObjectFieldSetAccess<T, F>(FieldInfo fieldInfo)
+        {
+            if (fieldInfo == null)
+            {
+                throw new ArgumentNullException(nameof(fieldInfo));
+            }
+
+            var delegateInstanceType = typeof(T);
+            var declaringType = fieldInfo.DeclaringType;
+
+            bool isObject = typeof(F) == typeof(object);
+            bool needBox;
+
+            if (isObject && fieldInfo.FieldType.IsValueType)
+            {
+                needBox = true;
+            }
+            else
+            {
+                needBox = false;
+            }
+
+            var dmd = new DynamicMethod($"__get_{delegateInstanceType.Name}_fi_{fieldInfo.Name}", null, new[] { typeof(T), typeof(F) });
+
+            var ilGen = dmd.GetILGenerator();
+            if (fieldInfo.IsStatic)
+            {
+                ilGen.Emit(OpCodes.Ldarg_1);
+
+                if (needBox)
+                {
+                    ilGen.Emit(OpCodes.Unbox_Any, fieldInfo.FieldType);
+                }
+                else if (isObject)
+                {
+                    ilGen.Emit(OpCodes.Castclass, typeof(F));
+                }
+
+                ilGen.Emit(OpCodes.Stsfld, fieldInfo);
+            }
+            else
+            {
+                ilGen.Emit(OpCodes.Ldarg_0);
+
+                if (typeof(T) == typeof(object))
+                {
+                    ilGen.Emit(OpCodes.Castclass, declaringType);
+                }
+
+                ilGen.Emit(OpCodes.Ldarg_1);
+
+                if (needBox)
+                {
+                    ilGen.Emit(OpCodes.Unbox_Any, fieldInfo.FieldType);
+                }
+                else if (isObject)
+                {
+                    ilGen.Emit(OpCodes.Castclass, typeof(F));
+                }
+
+                ilGen.Emit(OpCodes.Stfld, fieldInfo);
+            }
+            ilGen.Emit(OpCodes.Ret);
+
+            return (Action<T, F>)dmd.CreateDelegate(typeof(Action<T, F>));
+        }
+
         public static DelegateType ObjectMethodDelegate<DelegateType>(MethodInfo method, bool virtualCall = true) where DelegateType : Delegate
         {
             if (method == null)
@@ -196,18 +318,34 @@ namespace GamePanelHUDCore.Utils
 
                 Instance = (T)instance;
 
+                bool isObject = typeof(T) == typeof(object);
+
                 if (PropertyInfo.CanRead)
                 {
                     GetMethodInfo = PropertyInfo.GetGetMethod(true);
 
-                    RefGetValue = ObjectMethodDelegate<Func<T, F>>(GetMethodInfo);
+                    if (isObject)
+                    {
+                        RefGetValue = ObjectMethodDelegate<Func<T, F>>(GetMethodInfo);
+                    }
+                    else
+                    {
+                        RefGetValue = AccessTools.MethodDelegate<Func<T, F>>(GetMethodInfo);    
+                    }     
                 }
 
                 if (PropertyInfo.CanWrite)
                 {
                     SetMethodInfo = PropertyInfo.GetSetMethod(true);
 
-                    RefSetValue = ObjectMethodDelegate<Action<T, F>>(SetMethodInfo);
+                    if (isObject)
+                    {
+                        RefSetValue = ObjectMethodDelegate<Action<T, F>>(SetMethodInfo);
+                    }
+                    else
+                    {
+                        RefSetValue = AccessTools.MethodDelegate<Action<T, F>>(SetMethodInfo);
+                    }     
                 }
             }
 
@@ -279,11 +417,17 @@ namespace GamePanelHUDCore.Utils
         {
             private AccessTools.FieldRef<T, F> HarmonyFieldRef;
 
+            private Func<T, F> RefGetValue;
+
+            private Action<T, F> RefSetValue;
+
             private FieldInfo FieldInfo;
 
             private Type TType;
 
             private T Instance;
+
+            private bool UseHarmony;
 
             public Type InType
             {
@@ -372,44 +516,96 @@ namespace GamePanelHUDCore.Utils
 
                 Instance = (T)instance;
 
-                HarmonyFieldRef = AccessTools.FieldRefAccess<T, F>(FieldInfo);
+                if (typeof(F) == typeof(object))
+                {
+                    RefGetValue = ObjectFieldGetAccess<T, F>(FieldInfo);
+                    RefSetValue = ObjectFieldSetAccess<T, F>(FieldInfo);    
+                    UseHarmony = false;
+                }
+                else
+                {
+                    HarmonyFieldRef = AccessTools.FieldRefAccess<T, F>(FieldInfo);
+                    UseHarmony = true;
+                }
             }
 
             public F GetValue(T instance)
             {
-                if (HarmonyFieldRef == null)
+                if (UseHarmony)
                 {
-                    throw new ArgumentNullException(nameof(HarmonyFieldRef));
-                }
+                    if (HarmonyFieldRef == null)
+                    {
+                        throw new ArgumentNullException(nameof(HarmonyFieldRef));
+                    }
 
-                if (instance != null && TType.IsAssignableFrom(instance.GetType()))
-                {
-                    return HarmonyFieldRef(instance);
-                }
-                else if (Instance != null && instance == null)
-                {
-                    return HarmonyFieldRef(Instance);
+                    if (instance != null && TType.IsAssignableFrom(instance.GetType()))
+                    {
+                        return HarmonyFieldRef(instance);
+                    }
+                    else if (Instance != null && instance == null)
+                    {
+                        return HarmonyFieldRef(Instance);
+                    }
+                    else
+                    {
+                        return default;
+                    }
                 }
                 else
                 {
-                    return default;
+                    if (RefGetValue == null)
+                    {
+                        throw new ArgumentNullException(nameof(RefGetValue));
+                    }
+
+                    if (instance != null && TType.IsAssignableFrom(instance.GetType()))
+                    {
+                        return RefGetValue(instance);
+                    }
+                    else if (Instance != null && instance == null)
+                    {
+                        return RefGetValue(Instance);
+                    }
+                    else
+                    {
+                        return default;
+                    }
                 }
             }
 
             public void SetValue(T instance, F value)
             {
-                if (HarmonyFieldRef == null)
+                if (UseHarmony)
                 {
-                    throw new ArgumentNullException(nameof(HarmonyFieldRef));
-                }
+                    if (HarmonyFieldRef == null)
+                    {
+                        throw new ArgumentNullException(nameof(HarmonyFieldRef));
+                    }
 
-                if (instance != null && TType.IsAssignableFrom(instance.GetType()))
-                {
-                    HarmonyFieldRef(instance) = value;
+                    if (instance != null && TType.IsAssignableFrom(instance.GetType()))
+                    {
+                        HarmonyFieldRef(instance) = value;
+                    }
+                    else if (Instance != null && instance == null)
+                    {
+                        HarmonyFieldRef(Instance) = value;
+                    }
                 }
-                else if (Instance != null && instance == null)
+                else
                 {
-                    HarmonyFieldRef(Instance) = value;
+                    if (RefSetValue == null)
+                    {
+                        throw new ArgumentNullException(nameof(RefSetValue));
+                    }
+
+                    if (instance != null && TType.IsAssignableFrom(instance.GetType()))
+                    {
+                        RefSetValue(instance, value);
+                    }
+                    else if (Instance != null && instance == null)
+                    {
+                        RefSetValue(Instance, value);
+                    }
                 }
             }
         }

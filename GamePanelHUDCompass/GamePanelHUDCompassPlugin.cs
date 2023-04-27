@@ -4,6 +4,7 @@ using BepInEx.Configuration;
 using HarmonyLib;
 using System;
 using System.Linq;
+using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,6 +12,7 @@ using TMPro;
 using EFT;
 using EFT.Quests;
 using EFT.Interactive;
+using EFT.InventoryLogic;
 using GamePanelHUDCore;
 using GamePanelHUDCore.Utils;
 using GamePanelHUDCore.Utils.Zone;
@@ -18,7 +20,7 @@ using GamePanelHUDCompass.Patches;
 
 namespace GamePanelHUDCompass
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCompass", "kmyuhkyuk-GamePanelHUDCompass", "2.5.3")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCompass", "kmyuhkyuk-GamePanelHUDCompass", "2.6.0")]
     [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore")]
     public class GamePanelHUDCompassPlugin : BaseUnityPlugin, IUpdate
     {
@@ -62,7 +64,7 @@ namespace GamePanelHUDCompass
 
         private readonly SettingsData SettingsDatas = new SettingsData();
 
-        private ExfiltrationData[] ExfiltrationPoints;
+        private readonly ReflectionData ReflectionDatas = new ReflectionData();
 
         internal static int AirdropCount;
 
@@ -160,6 +162,15 @@ namespace GamePanelHUDCompass
             SettingsDatas.KeyCompassStaticDescriptionStyles = Config.Bind<FontStyles>(fontStylesSettings, "罗盘静态说明 Compass Static Description", FontStyles.Normal);
             SettingsDatas.KeyCompassStaticDistanceStyles = Config.Bind<FontStyles>(fontStylesSettings, "罗盘静态距离 Compass Static Distance", FontStyles.Bold);
 
+            BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
+
+            ReflectionDatas.RefEquipment = RefHelp.FieldRef<InventoryClass, object>.Create("Equipment");
+            ReflectionDatas.RefQuestRaidItems = RefHelp.FieldRef<InventoryClass, object>.Create("QuestRaidItems");
+            ReflectionDatas.RefSlots = RefHelp.FieldRef<object, Slot[]>.Create(ReflectionDatas.RefEquipment.FieldType, "Slots");
+            ReflectionDatas.RefGrids = RefHelp.FieldRef<object, object[]>.Create(RefHelp.GetEftType(x => x.GetMethod("TryGetLastForbiddenItem", BindingFlags.DeclaredOnly | flags) != null), "Grids");
+
+            ReflectionDatas.RefItems = RefHelp.PropertyRef<object, IEnumerable<Item>>.Create(ReflectionDatas.RefGrids.FieldType.GetElementType(), "Items");
+
             new LevelSettingsPatch().Enable();
             new PlayerShotPatch().Enable();
             new PlayerDeadPatch().Enable();
@@ -226,7 +237,16 @@ namespace GamePanelHUDCompass
 
                 CompassStaticDatas.CopyFrom(CompassFireDatas);
 
-                CompassStaticDatas.AllPlayerItems = HUDCore.YourPlayer.Profile.Inventory.AllPlayerItems.Select(x => x.TemplateId).ToHashSet();
+                //Performance Optimization
+                if (Time.frameCount % 20 == 0)
+                {
+                    HashSet<string> hashList = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+                    GetGearTemplateId(ReflectionDatas.RefEquipment.GetValue(HUDCore.YourPlayer.Profile.Inventory), hashList);
+                    GetGearTemplateId(ReflectionDatas.RefQuestRaidItems.GetValue(HUDCore.YourPlayer.Profile.Inventory), hashList);
+
+                    CompassStaticDatas.EquipmentAndQuestRaidItems = hashList;
+                }
 
                 if (CompassQuestCacheBool)
                 {
@@ -237,24 +257,13 @@ namespace GamePanelHUDCompass
 
                 if (CompassExitCacheBool)
                 {
-                    ExfiltrationPoints = ShowExfiltration(HUDCore.YourPlayer, HUDCore.TheWorld, ShowStatic);
+                    CompassStaticDatas.ExfiltrationPoints = ShowExfiltration(HUDCore.YourPlayer, HUDCore.TheWorld, ShowStatic);
 
                     CompassExitCacheBool = false;
-                }
-
-                if (ExfiltrationPoints != null)
-                {
-                    CompassStaticDatas.ExfiltrationPoints = ExfiltrationPoints.Select(x => new ExfiltrationUIData()
-                    {
-                        NotPresent = x.Exfiltration.Status == EExfiltrationStatus.NotPresent,
-                        UncompleteRequirements = x.Exfiltration.Status == EExfiltrationStatus.UncompleteRequirements,
-                        Swtichs = x.Swtichs.Select(j => j.DoorState == EDoorState.Open).ToArray()
-                    }).ToArray();
                 }
             }
             else
             {
-                ExfiltrationPoints = null;
                 AirdropCount = 0;
                 CompassQuestCacheBool = true;
             }
@@ -519,6 +528,24 @@ namespace GamePanelHUDCompass
                 return num + 360;
         }
 
+        void GetGearTemplateId(object data, HashSet<string> hashset)
+        {
+            foreach (Slot slots in ReflectionDatas.RefSlots.GetValue(data))
+            {
+                Item gear = slots.ContainedItem;
+                if (gear == null)
+                    continue;
+
+                foreach (object grid in ReflectionDatas.RefGrids.GetValue(gear))
+                {
+                    foreach (Item item in ReflectionDatas.RefItems.GetValue(grid))
+                    {
+                        hashset.Add(item.TemplateId);
+                    }
+                }
+            }
+        }
+
         public class CompassData
         {
             public float Angle;
@@ -571,9 +598,32 @@ namespace GamePanelHUDCompass
 
         public class CompassStaticData : CompassFireData
         {
-            public HashSet<string> AllPlayerItems;
+            public ExfiltrationData[] ExfiltrationPoints;
 
-            public ExfiltrationUIData[] ExfiltrationPoints;
+            public HashSet<string> EquipmentAndQuestRaidItems;
+
+            public bool HasEquipmentAndQuestRaidItems
+            {
+                get
+                {
+                    return EquipmentAndQuestRaidItems != null;
+                }
+            }
+
+            public void ExfiltrationGetStatus(int index, out bool notpresent, out bool requirements)
+            {
+                ExfiltrationData point = ExfiltrationPoints[index];
+
+                EExfiltrationStatus status = point.Exfiltration.Status;
+
+                notpresent = status == EExfiltrationStatus.NotPresent;
+                requirements = status == EExfiltrationStatus.UncompleteRequirements;
+            }
+
+            public void ExfiltrationGetSwitch(int index, int index2, out bool open)
+            {
+                open = ExfiltrationPoints[index].Swtichs[index2].DoorState == EDoorState.Open;
+            }
 
             public void CopyFrom(CompassStaticData data)
             {
@@ -584,18 +634,8 @@ namespace GamePanelHUDCompass
                 PlayerPosition = data.PlayerPosition;
                 PlayerRight = data.PlayerRight;
 
-                AllPlayerItems = data.AllPlayerItems;
                 ExfiltrationPoints = data.ExfiltrationPoints;
             }
-        }
-
-        public class ExfiltrationUIData
-        {
-            public bool NotPresent;
-
-            public bool UncompleteRequirements;
-
-            public bool[] Swtichs;
         }
 
         public class ExfiltrationData
@@ -659,6 +699,16 @@ namespace GamePanelHUDCompass
                 ConditionVisitPlace,
                 ConditionInZone
             }
+        }
+
+        public class ReflectionData
+        {
+            public RefHelp.FieldRef<InventoryClass, object> RefEquipment;
+            public RefHelp.FieldRef<InventoryClass, object> RefQuestRaidItems;
+            public RefHelp.FieldRef<object, Slot[]> RefSlots;
+            public RefHelp.FieldRef<object, object[]> RefGrids;
+
+            public RefHelp.PropertyRef<object, IEnumerable<Item>> RefItems;
         }
 
         public class SettingsData
