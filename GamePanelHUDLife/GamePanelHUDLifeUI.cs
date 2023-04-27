@@ -137,18 +137,21 @@ namespace GamePanelHUDLife
                 addZeros = "";
 
                 _ZerosValue.gameObject.SetActive(false);
+                _CurrentValue.alignment = TextAlignmentOptions.Top;
             }
             else if (current < 100 && current >= 10)
             {
                 addZeros = "0";
 
                 _ZerosValue.gameObject.SetActive(true);
+                _CurrentValue.alignment = TextAlignmentOptions.TopLeft;
             }
             else
             {
                 addZeros = "00";
 
                 _ZerosValue.gameObject.SetActive(true);
+                _CurrentValue.alignment = TextAlignmentOptions.TopLeft;
             }
 
             _ZerosValue.fontStyle = CurrentStyles;

@@ -1,19 +1,17 @@
 ﻿#if !UNITY_EDITOR
 using BepInEx;
 using BepInEx.Configuration;
-using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using EFT;
 using EFT.InventoryLogic;
 using GamePanelHUDCore;
 using GamePanelHUDCore.Utils;
 
 namespace GamePanelHUDGrenade
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDGrenade", "kmyuhkyuk-GamePanelHUDGrenade", "2.5.3")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDGrenade", "kmyuhkyuk-GamePanelHUDGrenade", "2.6.0")]
     [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore")]
     public class GamePanelHUDGrenadePlugin : BaseUnityPlugin, IUpdate
     {
@@ -31,11 +29,10 @@ namespace GamePanelHUDGrenade
 
         private bool GrenadeHUDSW;
 
-        private object Inventory;
-        private Item[] ContainedItems;
+        private object Equipment;
 
-        private object Rig;
-        private object Pocket;
+        private Item Rig;
+        private Item Pocket;
 
         private readonly GrenadeAmount RigAmount = new GrenadeAmount();
 
@@ -73,12 +70,12 @@ namespace GamePanelHUDGrenade
             SettingsDatas.KeyStunStyles = Config.Bind<FontStyles>(fontStylesSettings, "闪光 Stun", FontStyles.Normal);
             SettingsDatas.KeySmokeStyles = Config.Bind<FontStyles>(fontStylesSettings, "烟雾 Smoke", FontStyles.Normal);
 
-            ReflectionDatas.RefInventory = RefHelp.FieldRef<Player, object>.Create("_inventoryController");
-            ReflectionDatas.RefContainedItems = RefHelp.PropertyRef<object, Item[]>.Create(ReflectionDatas.RefInventory.FieldType, "ContainedItems");
-
             BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
 
+            ReflectionDatas.RefEquipment = RefHelp.FieldRef<InventoryClass, object>.Create("Equipment");
+            ReflectionDatas.RefSlots = RefHelp.FieldRef<object, Slot[]>.Create(ReflectionDatas.RefEquipment.FieldType, "Slots");
             ReflectionDatas.RefGrids = RefHelp.FieldRef<object, object[]>.Create(RefHelp.GetEftType(x => x.GetMethod("TryGetLastForbiddenItem", BindingFlags.DeclaredOnly | flags) != null), "Grids");
+
             ReflectionDatas.RefItems = RefHelp.PropertyRef<object, IEnumerable<Item>>.Create(ReflectionDatas.RefGrids.FieldType.GetElementType(), "Items");
             ReflectionDatas.RefThrowType = RefHelp.PropertyRef<object, ThrowWeapType>.Create(RefHelp.GetEftType(x => x.GetProperty("ThrowType", flags) != null), "ThrowType");
 
@@ -97,22 +94,24 @@ namespace GamePanelHUDGrenade
 
         void GrenadePlugin()
         {
-            GrenadeHUDSW = HUDCore.AllHUDSW && Inventory != null && HUDCore.HasPlayer && SettingsDatas.KeyGrenadeHUDSW.Value;
+            GrenadeHUDSW = HUDCore.AllHUDSW && HUDCore.HasPlayer && SettingsDatas.KeyGrenadeHUDSW.Value;
 
             HUD.Set(AllAmount, SettingsDatas, GrenadeHUDSW);
 
             if (HUDCore.HasPlayer)
             {
-                //Get Inventory and ContainedItems
-                Inventory = ReflectionDatas.RefInventory.GetValue(HUDCore.YourPlayer);
-                ContainedItems = ReflectionDatas.RefContainedItems.GetValue(Inventory);
+                //Performance Optimization
+                if (Time.frameCount % 20 == 0)
+                {
+                    Slot[] slots = ReflectionDatas.RefSlots.GetValue(ReflectionDatas.RefEquipment.GetValue(HUDCore.YourPlayer.Profile.Inventory));
 
-                //Get Rig and Pocket
-                Rig = ContainedItems[6];
-                Pocket = ContainedItems[10];
+                    //Get Rig and Pocket
+                    Rig = slots[6].ContainedItem;
+                    Pocket = slots[10].ContainedItem;
 
-                GetGrenadeAmount(Rig, RigAmount);
-                GetGrenadeAmount(Pocket, PocketAmount);
+                    GetGrenadeAmount(Rig, out RigAmount.Frag, out RigAmount.Stun, out RigAmount.Flash, out RigAmount.Smoke);
+                    GetGrenadeAmount(Pocket, out PocketAmount.Frag, out PocketAmount.Stun, out PocketAmount.Frag, out PocketAmount.Smoke);
+                }
 
                 AllAmount.Frag = RigAmount.Frag + PocketAmount.Frag;
                 AllAmount.Stun = RigAmount.Stun + PocketAmount.Stun;
@@ -121,48 +120,54 @@ namespace GamePanelHUDGrenade
             }
         }
 
-        void GetGrenadeAmount(object gear, GrenadeAmount grenadeamount)
+        void GetGrenadeAmount(Item gear, out int frag, out int stun, out int flash, out int smoke)
         {
+            frag = 0;
+            stun = 0;
+            flash = 0;
+            smoke = 0;
+
             if (gear != null)
             {
                 object[] grids = ReflectionDatas.RefGrids.GetValue(gear);
 
-                IEnumerable<Item> items = grids.SelectMany(x => ReflectionDatas.RefItems.GetValue(x));
-
                 if (!SettingsDatas.KeyMergeGrenade.Value)
                 {
-                    grenadeamount.Clear();
-                    foreach (Item item in items)
+                    foreach (object grid in grids)
                     {
-                        if (item.GetType() == GrenadeType.GrenadeItemType)
+                        foreach (Item item in ReflectionDatas.RefItems.GetValue(grid))
                         {
-                            switch (ReflectionDatas.RefThrowType.GetValue(item))
+                            if (item.GetType() == GrenadeType.GrenadeItemType)
                             {
-                                case ThrowWeapType.frag_grenade:
-                                    grenadeamount.Frag++;
-                                    break;
-                                case ThrowWeapType.stun_grenade:
-                                    grenadeamount.Stun++;
-                                    break;
-                                case ThrowWeapType.flash_grenade:
-                                    grenadeamount.Flash++;
-                                    break;
-                                case ThrowWeapType.smoke_grenade:
-                                    grenadeamount.Smoke++;
-                                    break;
+                                switch (ReflectionDatas.RefThrowType.GetValue(item))
+                                {
+                                    case ThrowWeapType.frag_grenade:
+                                        frag++;
+                                        break;
+                                    case ThrowWeapType.stun_grenade:
+                                        stun++;
+                                        break;
+                                    case ThrowWeapType.flash_grenade:
+                                        flash++;
+                                        break;
+                                    case ThrowWeapType.smoke_grenade:
+                                        smoke++;
+                                        break;
+                                }
                             }
                         }
                     }
                 }
                 else
                 {
-                    grenadeamount.MergeClear();
-                    grenadeamount.Frag = items.Where(x => x.GetType() == GrenadeType.GrenadeItemType).Count();
+                    foreach (object grid in grids)
+                    {
+                        foreach (Item item in ReflectionDatas.RefItems.GetValue(grid))
+                        {
+                            frag++;
+                        }
+                    }
                 }
-            }
-            else
-            {
-                grenadeamount.Clear();
             }
         }
 
@@ -172,19 +177,6 @@ namespace GamePanelHUDGrenade
             public int Stun;
             public int Flash;
             public int Smoke;
-
-            public void Clear()
-            {
-                Frag = 0;
-                MergeClear();
-            }
-
-            public void MergeClear()
-            {
-                Stun = 0;
-                Flash = 0;
-                Smoke = 0;
-            }
         }
 
         public class SettingsData
@@ -209,10 +201,10 @@ namespace GamePanelHUDGrenade
 
         public class ReflectionData
         {
-            public RefHelp.FieldRef<Player, object> RefInventory;
+            public RefHelp.FieldRef<object, Slot[]> RefSlots;
             public RefHelp.FieldRef<object, object[]> RefGrids;
+            public RefHelp.FieldRef<InventoryClass, object> RefEquipment;
 
-            public RefHelp.PropertyRef<object, Item[]> RefContainedItems;
             public RefHelp.PropertyRef<object, IEnumerable<Item>> RefItems;
             public RefHelp.PropertyRef<object, ThrowWeapType> RefThrowType;
         }

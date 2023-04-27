@@ -13,7 +13,7 @@ namespace GamePanelHUDCore.Utils.Zone
         {
             get
             {
-                return TriggerPoints.Where(x => x is ExperienceTrigger).Select(x => (ExperienceTrigger)x);
+                return TriggerPoints.Where(x => x is ExperienceTrigger).Cast<ExperienceTrigger>();
             }
         }
 
@@ -21,7 +21,7 @@ namespace GamePanelHUDCore.Utils.Zone
         {
             get
             {
-                return TriggerPoints.Where(x => x is PlaceItemTrigger).Select(x => (PlaceItemTrigger)x);
+                return TriggerPoints.Where(x => x is PlaceItemTrigger).Cast<PlaceItemTrigger>();
             }
         }
 
@@ -29,7 +29,7 @@ namespace GamePanelHUDCore.Utils.Zone
         {
             get
             {
-                return TriggerPoints.Where(x => x is QuestTrigger).Select(x => (QuestTrigger)x);
+                return TriggerPoints.Where(x => x is QuestTrigger).Cast<QuestTrigger>();
             }
         }
 
