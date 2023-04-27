@@ -11,7 +11,7 @@ using GamePanelHUDCore.Utils;
 
 namespace GamePanelHUDGrenade
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDGrenade", "kmyuhkyuk-GamePanelHUDGrenade", "2.6.0")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDGrenade", "kmyuhkyuk-GamePanelHUDGrenade", "2.6.1")]
     [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore")]
     public class GamePanelHUDGrenadePlugin : BaseUnityPlugin, IUpdate
     {

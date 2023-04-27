@@ -75,24 +75,11 @@ namespace GamePanelHUDCompass
 
         private RectTransform InfoPanelRect;
 
-        private CanvasGroup CompassStaticGroup;
-
-        private CanvasGroup AirdropsGroup;
-
-        private CanvasGroup QuestsGroup;
-
-        private CanvasGroup ExfiltrationGroup;
-
         internal static Action<string> Remove;
 
 #if !UNITY_EDITOR
         void Start()
         {
-            CompassStaticGroup = _CompassStatic.GetComponent<CanvasGroup>();
-            AirdropsGroup = _Airdrops.GetComponent<CanvasGroup>();
-            QuestsGroup = _Quests.GetComponent<CanvasGroup>();
-            ExfiltrationGroup = _Exfiltrations.GetComponent<CanvasGroup>();
-
             InfoPanel = _NameValue.transform.parent.parent;
             InfoPanelRect = InfoPanel.GetComponent<RectTransform>();
 
@@ -119,10 +106,11 @@ namespace GamePanelHUDCompass
 
             if (_CompassStatic != null)
             {
-                CompassStaticGroup.alpha = HUD.HUDSW ? 1 : 0;
-                AirdropsGroup.alpha = HUD.SettingsData.KeyCompassStaticAirdrop.Value ? 1 : 0;
-                ExfiltrationGroup.alpha = HUD.SettingsData.KeyCompassStaticExfiltration.Value ? 1 : 0;
-                QuestsGroup.alpha = HUD.SettingsData.KeyCompassStaticQuest.Value ? 1 : 0;
+                _CompassStatic.gameObject.SetActive(HUD.HUDSW);
+
+                _Airdrops.gameObject.SetActive(HUD.SettingsData.KeyCompassStaticAirdrop.Value);
+                _Exfiltrations.gameObject.SetActive(HUD.SettingsData.KeyCompassStaticExfiltration.Value);
+                _Quests.gameObject.SetActive(HUD.SettingsData.KeyCompassStaticQuest.Value);
 
                 _Azimuths.anchoredPosition = new Vector2(HUD.Info.CompassX, 0);
 

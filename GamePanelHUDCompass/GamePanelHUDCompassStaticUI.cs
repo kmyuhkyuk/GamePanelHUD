@@ -133,6 +133,18 @@ namespace GamePanelHUDCompass
             GamePanelHUDCorePlugin.UpdateManger.Register(this);
         }
 
+        void OnEnable()
+        {
+            Work = true;
+            GamePanelHUDCorePlugin.UpdateManger.Run(this);
+        }
+
+        void OnDisable()
+        {
+            Work = false;
+            GamePanelHUDCorePlugin.UpdateManger.Stop(this);
+        }
+
         public void IUpdate()
 #endif
 #if UNITY_EDITOR
@@ -167,66 +179,59 @@ namespace GamePanelHUDCompass
             switch (InfoType)
             {
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Exfiltration:
-                    HUD.Info.ExfiltrationGetStatus(ExIndex, out bool notPresent, out bool hasRequirements);
-                    HasRequirements = hasRequirements;
-                    if (HUD.SettingsData.KeyCompassStaticHideRequirements.Value)
-                    {
-                        Enabled(!hasRequirements && !notPresent);
-                    }
-                    else
-                    {
-                        Enabled(!notPresent);
-                    }
+                    Exfiltration();
                     break;
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Switch:
-                    HUD.Info.ExfiltrationGetStatus(ExIndex, out notPresent, out hasRequirements);
-                    HUD.Info.ExfiltrationGetSwitch(ExIndex, ExIndex2, out bool open);
-                    if (HUD.SettingsData.KeyCompassStaticHideRequirements.Value)
+                    Switch();
+                    break;
+                case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionFindItem:
+                    if (HUD.SettingsData.KeyConditionFindItem.Value)
                     {
-                        Enabled(!hasRequirements && !open);
+                        FinItem();
                     }
                     else
                     {
-                        Enabled(!open);
+                        Enabled(false);
                     }
                     break;
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionLeaveItemAtLocation:
-                case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionPlaceBeacon:
-                    if (HUD.Info.HasEquipmentAndQuestRaidItems)
+                    if (HUD.SettingsData.KeyConditionLeaveItemAtLocation.Value)
                     {
-                        bool hasItems = true;
-                        foreach (string id in Target)
-                        {
-                            if (!HUD.Info.EquipmentAndQuestRaidItems.Contains(id))
-                            {
-                                hasItems = false;
-                            }
-                        }
-                        HasRequirements = !hasItems;
-                    }
-                    if (HUD.SettingsData.KeyCompassStaticHideRequirements.Value)
-                    {
-                        Enabled(!HasRequirements);
-                    }
-                    else if (HUD.SettingsData.KeyCompassStaticHideOptional.Value)
-                    {
-                        Enabled(!IsNotNecessary);
+                        PlaceItem();
                     }
                     else
                     {
-                        Enabled(true);
+                        Enabled(false);
                     }
                     break;
-                case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionFindItem:
-                case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionVisitPlace:
-                case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionInZone:
-                    if (HUD.SettingsData.KeyCompassStaticHideOptional.Value)
+                case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionPlaceBeacon:
+                    if (HUD.SettingsData.KeyConditionPlaceBeacon.Value)
                     {
-                        Enabled(!IsNotNecessary);
+                        PlaceItem();
                     }
                     else
                     {
-                        Enabled(true);
+                        Enabled(false);
+                    }
+                    break;
+                case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionVisitPlace:
+                    if (HUD.SettingsData.KeyConditionVisitPlace.Value)
+                    {
+                        Other();
+                    }
+                    else
+                    {
+                        Enabled(false);
+                    }
+                    break;
+                case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionInZone:
+                    if (HUD.SettingsData.KeyConditionInZone.Value)
+                    {
+                        Other();
+                    }
+                    else
+                    {
+                        Enabled(false);
                     }
                     break;
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Airdrop:
@@ -240,6 +245,104 @@ namespace GamePanelHUDCompass
             }
 #endif
         }
+
+#if !UNITY_EDITOR
+        void Exfiltration()
+        {
+            HUD.Info.ExfiltrationGetStatus(ExIndex, out bool notPresent, out bool hasRequirements);
+
+            HasRequirements = hasRequirements;
+
+            if (HUD.SettingsData.KeyCompassStaticHideRequirements.Value)
+            {
+                Enabled(!hasRequirements && !notPresent);
+            }
+            else
+            {
+                Enabled(!notPresent);
+            }
+        }
+
+        void Switch()
+        {
+            HUD.Info.ExfiltrationGetStatus(ExIndex, out bool notPresent, out bool hasRequirements);
+            HUD.Info.ExfiltrationGetSwitch(ExIndex, ExIndex2, out bool open);
+
+            if (HUD.SettingsData.KeyCompassStaticHideRequirements.Value)
+            {
+                Enabled(!hasRequirements && !open);
+            }
+            else
+            {
+                Enabled(!open);
+            }
+        }
+
+        void PlaceItem()
+        {
+            bool hasItems = true;
+            if (HUD.Info.HasEquipmentAndQuestRaidItems)
+            { 
+                foreach (string id in Target)
+                {
+                    if (!HUD.Info.EquipmentAndQuestRaidItems.Contains(id))
+                    {
+                        hasItems = false;
+                    }
+                } 
+            }
+
+            HasRequirements = !hasItems;
+
+            if (HUD.SettingsData.KeyCompassStaticHideRequirements.Value)
+            {
+                Enabled(!HasRequirements);
+            }
+            else if (HUD.SettingsData.KeyCompassStaticHideOptional.Value)
+            {
+                Enabled(!IsNotNecessary);
+            }
+            else
+            {
+                Enabled(true);
+            }
+        }
+
+        void FinItem()
+        {
+            bool hasItems = true;
+            if (HUD.Info.HasEquipmentAndQuestRaidItems)
+            {
+                foreach (string id in Target)
+                {
+                    if (!HUD.Info.EquipmentAndQuestRaidItems.Contains(id))
+                    {
+                        hasItems = false;
+                    }
+                }
+            }
+            if (HUD.SettingsData.KeyCompassStaticHideOptional.Value)
+            {
+                Enabled(!IsNotNecessary);
+            }
+            else
+            {
+                Enabled(!hasItems);
+            }
+        }
+
+        void Other()
+        {
+            if (HUD.SettingsData.KeyCompassStaticHideOptional.Value)
+            {
+                Enabled(!IsNotNecessary);
+            }
+            else
+            {
+                Enabled(true);
+            }
+        }
+#endif
 
         public void BindIcon(Sprite sprite)
         {
