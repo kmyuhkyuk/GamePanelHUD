@@ -10,20 +10,20 @@ namespace GamePanelHUDCore.Utils
 {
     public static class RefHelp
     {
-        public static Func<T, F> ObjectFieldGetAccess<T, F>(FieldInfo fieldInfo)
+        public static Func<T, F> ObjectFieldGetAccess<T, F>(FieldInfo fieldinfo)
         {
-            if (fieldInfo == null)
+            if (fieldinfo == null)
             {
-                throw new ArgumentNullException(nameof(fieldInfo));
+                throw new ArgumentNullException(nameof(fieldinfo));
             }
 
             var delegateInstanceType = typeof(T);
-            var declaringType = fieldInfo.DeclaringType;
+            var declaringType = fieldinfo.DeclaringType;
 
             bool isObject = typeof(F) == typeof(object);
             bool needBox;
 
-            if (isObject && fieldInfo.FieldType.IsValueType)
+            if (isObject && fieldinfo.FieldType.IsValueType)
             {
                 needBox = true;
             }
@@ -32,12 +32,12 @@ namespace GamePanelHUDCore.Utils
                 needBox = false;
             }
 
-            var dmd = new DynamicMethod($"__get_{delegateInstanceType.Name}_fi_{fieldInfo.Name}", typeof(F), new[] { delegateInstanceType });
+            var dmd = new DynamicMethod($"__get_{delegateInstanceType.Name}_fi_{fieldinfo.Name}", typeof(F), new[] { delegateInstanceType });
 
             var ilGen = dmd.GetILGenerator();
-            if (fieldInfo.IsStatic)
+            if (fieldinfo.IsStatic)
             {
-                ilGen.Emit(OpCodes.Ldsfld, fieldInfo);
+                ilGen.Emit(OpCodes.Ldsfld, fieldinfo);
             }
             else
             {
@@ -48,12 +48,12 @@ namespace GamePanelHUDCore.Utils
                     ilGen.Emit(OpCodes.Castclass, declaringType);
                 }
 
-                ilGen.Emit(OpCodes.Ldfld, fieldInfo);
+                ilGen.Emit(OpCodes.Ldfld, fieldinfo);
             }
 
             if (needBox)
             {
-                ilGen.Emit(OpCodes.Box, fieldInfo.FieldType);
+                ilGen.Emit(OpCodes.Box, fieldinfo.FieldType);
             }
             else if (isObject)
             {
@@ -65,20 +65,20 @@ namespace GamePanelHUDCore.Utils
             return (Func<T, F>)dmd.CreateDelegate(typeof(Func<T, F>));
         }
 
-        public static Action<T, F> ObjectFieldSetAccess<T, F>(FieldInfo fieldInfo)
+        public static Action<T, F> ObjectFieldSetAccess<T, F>(FieldInfo fieldinfo)
         {
-            if (fieldInfo == null)
+            if (fieldinfo == null)
             {
-                throw new ArgumentNullException(nameof(fieldInfo));
+                throw new ArgumentNullException(nameof(fieldinfo));
             }
 
             var delegateInstanceType = typeof(T);
-            var declaringType = fieldInfo.DeclaringType;
+            var declaringType = fieldinfo.DeclaringType;
 
             bool isObject = typeof(F) == typeof(object);
             bool needBox;
 
-            if (isObject && fieldInfo.FieldType.IsValueType)
+            if (isObject && fieldinfo.FieldType.IsValueType)
             {
                 needBox = true;
             }
@@ -87,23 +87,23 @@ namespace GamePanelHUDCore.Utils
                 needBox = false;
             }
 
-            var dmd = new DynamicMethod($"__get_{delegateInstanceType.Name}_fi_{fieldInfo.Name}", null, new[] { typeof(T), typeof(F) });
+            var dmd = new DynamicMethod($"__get_{delegateInstanceType.Name}_fi_{fieldinfo.Name}", null, new[] { typeof(T), typeof(F) });
 
             var ilGen = dmd.GetILGenerator();
-            if (fieldInfo.IsStatic)
+            if (fieldinfo.IsStatic)
             {
                 ilGen.Emit(OpCodes.Ldarg_1);
 
                 if (needBox)
                 {
-                    ilGen.Emit(OpCodes.Unbox_Any, fieldInfo.FieldType);
+                    ilGen.Emit(OpCodes.Unbox_Any, fieldinfo.FieldType);
                 }
                 else if (isObject)
                 {
                     ilGen.Emit(OpCodes.Castclass, typeof(F));
                 }
 
-                ilGen.Emit(OpCodes.Stsfld, fieldInfo);
+                ilGen.Emit(OpCodes.Stsfld, fieldinfo);
             }
             else
             {
@@ -118,14 +118,14 @@ namespace GamePanelHUDCore.Utils
 
                 if (needBox)
                 {
-                    ilGen.Emit(OpCodes.Unbox_Any, fieldInfo.FieldType);
+                    ilGen.Emit(OpCodes.Unbox_Any, fieldinfo.FieldType);
                 }
                 else if (isObject)
                 {
                     ilGen.Emit(OpCodes.Castclass, typeof(F));
                 }
 
-                ilGen.Emit(OpCodes.Stfld, fieldInfo);
+                ilGen.Emit(OpCodes.Stfld, fieldinfo);
             }
             ilGen.Emit(OpCodes.Ret);
 
