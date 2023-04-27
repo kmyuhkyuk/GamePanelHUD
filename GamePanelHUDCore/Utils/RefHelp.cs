@@ -32,7 +32,7 @@ namespace GamePanelHUDCore.Utils
                 needBox = false;
             }
 
-            var dmd = new DynamicMethod($"__get_{delegateInstanceType.Name}_fi_{fieldinfo.Name}", typeof(F), new[] { delegateInstanceType });
+            var dmd = new DynamicMethod($"__get_{delegateInstanceType.Name}_fi_{fieldinfo.Name}", typeof(F), new Type[] { delegateInstanceType });
 
             var ilGen = dmd.GetILGenerator();
             if (fieldinfo.IsStatic)
@@ -87,7 +87,7 @@ namespace GamePanelHUDCore.Utils
                 needBox = false;
             }
 
-            var dmd = new DynamicMethod($"__get_{delegateInstanceType.Name}_fi_{fieldinfo.Name}", null, new[] { typeof(T), typeof(F) });
+            var dmd = new DynamicMethod($"__set_{delegateInstanceType.Name}_fi_{fieldinfo.Name}", null, new Type[] { delegateInstanceType, typeof(F) });
 
             var ilGen = dmd.GetILGenerator();
             if (fieldinfo.IsStatic)
