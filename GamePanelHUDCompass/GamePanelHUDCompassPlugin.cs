@@ -20,7 +20,7 @@ using GamePanelHUDCompass.Patches;
 
 namespace GamePanelHUDCompass
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCompass", "kmyuhkyuk-GamePanelHUDCompass", "2.6.0")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCompass", "kmyuhkyuk-GamePanelHUDCompass", "2.6.1")]
     [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore")]
     public class GamePanelHUDCompassPlugin : BaseUnityPlugin, IUpdate
     {
@@ -54,9 +54,7 @@ namespace GamePanelHUDCompass
 
         private bool CompassStaticHUDSW;
 
-        private bool CompassQuestCacheBool = true;
-
-        private bool CompassExitCacheBool;
+        private bool CompassStaicCacheBool;
 
         private Transform Cam;
 
@@ -89,6 +87,7 @@ namespace GamePanelHUDCompass
             ModUpdateCheck.DrawNeedUpdate(Config, Info.Metadata.Version);
 
             const string mainSettings = "主设置 Main Settings";
+            const string questSettings = "任务显示设置 Quest Display Settings";
             const string positionScaleSettings = "位置大小设置 Position Scale Settings";
             const string colorSettings = "颜色设置 Color Settings";
             const string fontStylesSettings = "字体样式设置 Font Styles Settings";
@@ -111,6 +110,12 @@ namespace GamePanelHUDCompass
             SettingsDatas.KeyCompassStaticHideRequirements = Config.Bind<bool>(mainSettings, "罗盘静态隐藏需求 Compass Static Hide Requirements", false);
             SettingsDatas.KeyCompassStaticHideOptional = Config.Bind<bool>(mainSettings, "罗盘静态隐藏可选项 Compass Static Hide Optional", false);
             SettingsDatas.KeyAutoSizeDelta = Config.Bind<bool>(mainSettings, "自动高度 Auto Size Delta", true);
+
+            SettingsDatas.KeyConditionFindItem = Config.Bind<bool>(questSettings, "FindItem", true);
+            SettingsDatas.KeyConditionLeaveItemAtLocation = Config.Bind<bool>(questSettings, "LeaveItemAtLocation", true);
+            SettingsDatas.KeyConditionPlaceBeacon = Config.Bind<bool>(questSettings, "PlaceBeacon", true);
+            SettingsDatas.KeyConditionVisitPlace = Config.Bind<bool>(questSettings, "VisitPlace", true);
+            SettingsDatas.KeyConditionInZone = Config.Bind<bool>(questSettings, "InZone", true);
 
             SettingsDatas.KeyAnchoredPosition = Config.Bind<Vector2>(positionScaleSettings, "指示栏位置 Anchored Position", new Vector2(0, 0));
             SettingsDatas.KeySizeDelta = Config.Bind<Vector2>(positionScaleSettings, "指示栏高度 Size Delta", new Vector2(600, 90));
@@ -181,7 +186,7 @@ namespace GamePanelHUDCompass
                 new AirdropBoxPatch().Enable();
             }
 
-            GamePanelHUDCorePlugin.HUDCoreClass.WorldStart += (GameWorld) => CompassExitCacheBool = true;
+            GamePanelHUDCorePlugin.HUDCoreClass.WorldStart += (GameWorld) => CompassStaicCacheBool = true;
 
             GamePanelHUDCorePlugin.UpdateManger.Register(this);
         }
@@ -240,32 +245,50 @@ namespace GamePanelHUDCompass
                 //Performance Optimization
                 if (Time.frameCount % 20 == 0)
                 {
-                    HashSet<string> hashList = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                    HashSet<string> hashSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-                    GetGearTemplateId(ReflectionDatas.RefEquipment.GetValue(HUDCore.YourPlayer.Profile.Inventory), hashList);
-                    GetGearTemplateId(ReflectionDatas.RefQuestRaidItems.GetValue(HUDCore.YourPlayer.Profile.Inventory), hashList);
+                    Slot[] slots = ReflectionDatas.RefSlots.GetValue(ReflectionDatas.RefEquipment.GetValue(HUDCore.YourPlayer.Profile.Inventory));
 
-                    CompassStaticDatas.EquipmentAndQuestRaidItems = hashList;
+                    foreach (Slot slot in new Slot[] { slots[6], slots[7], slots[8], slots[10] })
+                    {
+                        Item gear = slot.ContainedItem;
+
+                        if (gear == null)
+                            continue;
+
+                        foreach (object grid in ReflectionDatas.RefGrids.GetValue(gear))
+                        {
+                            foreach (Item item in ReflectionDatas.RefItems.GetValue(grid))
+                            {
+                                hashSet.Add(item.TemplateId);
+                            }
+                        }
+                    }
+
+                    foreach (object grid in ReflectionDatas.RefGrids.GetValue(ReflectionDatas.RefQuestRaidItems.GetValue(HUDCore.YourPlayer.Profile.Inventory)))
+                    {
+                        foreach (Item item in ReflectionDatas.RefItems.GetValue(grid))
+                        {
+                            hashSet.Add(item.TemplateId);
+                        }
+                    }
+
+                    CompassStaticDatas.EquipmentAndQuestRaidItems = hashSet;
                 }
 
-                if (CompassQuestCacheBool)
+                if (CompassStaicCacheBool)
                 {
                     ShowQuest(HUDCore.YourPlayer, HUDCore.TheWorld, Is231Up, ShowStatic);
 
-                    CompassQuestCacheBool = false;
-                }
-
-                if (CompassExitCacheBool)
-                {
                     CompassStaticDatas.ExfiltrationPoints = ShowExfiltration(HUDCore.YourPlayer, HUDCore.TheWorld, ShowStatic);
 
-                    CompassExitCacheBool = false;
+                    CompassStaicCacheBool = false;
                 }
             }
             else
             {
                 AirdropCount = 0;
-                CompassQuestCacheBool = true;
+                CompassStaticDatas.EquipmentAndQuestRaidItems = null;
             }
         }
 
@@ -282,7 +305,7 @@ namespace GamePanelHUDCompass
 
             List<LootItem> lootItemsList = Traverse.Create(Traverse.Create(world).Field("LootItems").GetValue<object>()).Field("list_0").GetValue<List<LootItem>>();
 
-            Dictionary<string, LootItem> questItemsDictionary = lootItemsList.Where(x => x.Item.QuestItem).ToDictionary(x => x.TemplateId, x => x);
+            IEnumerable<Tuple<string, LootItem>> questItems = lootItemsList.Where(x => x.Item.QuestItem).Select(x => new Tuple<string, LootItem>(x.TemplateId, x));
 
             foreach (object item in questsList)
             {
@@ -363,20 +386,24 @@ namespace GamePanelHUDCompass
 
                         foreach (string itemid in itemIds)
                         {
-                            if (questItemsDictionary.TryGetValue(itemid, out LootItem lootitem))
+                            foreach (var questitem in questItems)
                             {
-                                CompassStaticInfo staticInfo = new CompassStaticInfo()
+                                if (questitem.Item1.Equals(itemid, StringComparison.OrdinalIgnoreCase))
                                 {
-                                    Id = nowCondition.id,
-                                    Where = lootitem.transform.position,
-                                    NameKey = name,
-                                    DescriptionKey = nowCondition.id,
-                                    TraderId = traderId,
-                                    IsNotNecessary = !nowCondition.IsNecessary,
-                                    InfoType = CompassStaticInfo.Type.ConditionFindItem
-                                };
+                                    CompassStaticInfo staticInfo = new CompassStaticInfo()
+                                    {
+                                        Id = nowCondition.id,
+                                        Where = questitem.Item2.transform.position,
+                                        Target = new string[] { itemid },
+                                        NameKey = name,
+                                        DescriptionKey = nowCondition.id,
+                                        TraderId = traderId,
+                                        IsNotNecessary = !nowCondition.IsNecessary,
+                                        InfoType = CompassStaticInfo.Type.ConditionFindItem
+                                    };
 
-                                showstatic(staticInfo);
+                                    showstatic(staticInfo);
+                                }
                             }
                         }
                     }
@@ -526,24 +553,6 @@ namespace GamePanelHUDCompass
                 return num;
             else
                 return num + 360;
-        }
-
-        void GetGearTemplateId(object data, HashSet<string> hashset)
-        {
-            foreach (Slot slots in ReflectionDatas.RefSlots.GetValue(data))
-            {
-                Item gear = slots.ContainedItem;
-                if (gear == null)
-                    continue;
-
-                foreach (object grid in ReflectionDatas.RefGrids.GetValue(gear))
-                {
-                    foreach (Item item in ReflectionDatas.RefItems.GetValue(grid))
-                    {
-                        hashset.Add(item.TemplateId);
-                    }
-                }
-            }
         }
 
         public class CompassData
@@ -728,6 +737,12 @@ namespace GamePanelHUDCompass
             public ConfigEntry<bool> KeyCompassStaticHideRequirements;
             public ConfigEntry<bool> KeyCompassStaticHideOptional;
             public ConfigEntry<bool> KeyAutoSizeDelta;
+
+            public ConfigEntry<bool> KeyConditionFindItem;
+            public ConfigEntry<bool> KeyConditionLeaveItemAtLocation;
+            public ConfigEntry<bool> KeyConditionPlaceBeacon;
+            public ConfigEntry<bool> KeyConditionVisitPlace;
+            public ConfigEntry<bool> KeyConditionInZone;
 
             public ConfigEntry<Vector2> KeyAnchoredPosition;
             public ConfigEntry<Vector2> KeySizeDelta;

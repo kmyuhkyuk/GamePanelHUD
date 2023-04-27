@@ -85,10 +85,10 @@ namespace GamePanelHUDMag
         private TMP_Text _MaxValue;
 
         [SerializeField]
-        private TMP_Text _PatronValue;
+        private TMP_Text _PatronSignValue;
 
         [SerializeField]
-        private TMP_Text _PatronSignValue;
+        private TMP_Text _PatronValue;
 
         [SerializeField]
         private TMP_Text _WeaponNameValue;
