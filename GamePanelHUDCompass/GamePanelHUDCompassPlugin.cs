@@ -84,7 +84,7 @@ namespace GamePanelHUDCompass
         {
             Logger.LogInfo("Loaded: kmyuhkyuk-GamePanelHUDCompass");
 
-            ModUpdateCheck.DrawNeedUpdate(Config, Info.Metadata.Version);
+            ModUpdateCheck.DrawCheck(Config, Info.Metadata.Version);
 
             const string mainSettings = "主设置 Main Settings";
             const string questSettings = "任务显示设置 Quest Display Settings";

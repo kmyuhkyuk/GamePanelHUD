@@ -36,7 +36,7 @@ namespace GamePanelHUDLife
         {
             Logger.LogInfo("Loaded: kmyuhkyuk-GamePanelHUDLife");
 
-            ModUpdateCheck.DrawNeedUpdate(Config, Info.Metadata.Version);
+            ModUpdateCheck.DrawCheck(Config, Info.Metadata.Version);
 
             const string mainSettings = "主设置 Main Settings";
             const string positionScaleSettings = "位置高度大小设置 Position Size Scale Settings";

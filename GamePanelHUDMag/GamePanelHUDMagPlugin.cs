@@ -67,7 +67,7 @@ namespace GamePanelHUDMag
         {
             Logger.LogInfo("Loaded: kmyuhkyuk-GamePanelHUDMag");
 
-            ModUpdateCheck.DrawNeedUpdate(Config, Info.Metadata.Version);
+            ModUpdateCheck.DrawCheck(Config, Info.Metadata.Version);
 
             const string mainSettings = "主设置 Main Settings";
             const string positionScaleSettings = "位置大小设置 Position Scale Settings";
