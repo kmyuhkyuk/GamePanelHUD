@@ -2,7 +2,6 @@
 using BepInEx.Configuration;
 using System;
 using System.Threading.Tasks;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
@@ -13,18 +12,21 @@ namespace GamePanelHUDCore.Utils
     {
         private static readonly HUDVersion HUDVersions = new HUDVersion();
 
-        private static readonly List<UpdateData> UpdateDatas = new List<UpdateData>();
-
         private const string UpdateDataUrl = "https://dev.sp-tarkov.com/kmyuhkyuk/GamePanelHUD/raw/branch/master/Version.json";
 
         private const string Section = "主更新检查 Update Check";
 
-        public static async void ServerCheck()
+        public static async void ServerCheckAndPull()
         {
-            HUDVersions.ServerConnect = default;
+            if (HUDVersions.Connecting)
+                return;
+
+            HUDVersions.Connecting = true;
 
             using (UnityWebRequest www = UnityWebRequest.Get(UpdateDataUrl))
             {
+                www.timeout = 10;
+
                 www.SendWebRequest();
 
                 while (!www.isDone)
@@ -39,54 +41,22 @@ namespace GamePanelHUDCore.Utils
                     HUDVersions.Set(JsonConvert.DeserializeObject<HUDVersion>(www.downloadHandler.text));
                 }
             }
+
+            HUDVersions.Connecting = false;
         }
 
-        public static async void DrawNeedUpdate(ConfigFile config, Version version)
+        public static void DrawCheck(ConfigFile config, Version version)
         {
-            while (!HUDVersions.ServerConnect.HasValue)
-                await Task.Yield();
-
-            bool serverConnect = (bool)HUDVersions.ServerConnect;
-
-            Action<ConfigEntryBase> draw;
-            if (!serverConnect)
-            {
-                draw = Draw.CantKnowUpdate;
-            }
-            else if (HUDVersions.ModVersion > version)
-            {
-                draw = Draw.NeedUpdate;
-            }
-            else
-            {
-                draw = Draw.NotNeedUpdate;
-            }
-
-            ConfigEntry<string> configEntry = config.Bind(Section, "Update", "", new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 2, HideDefaultButton = true, CustomDrawer = draw, HideSettingName = true }));
-
-            ConfigEntry<string> warn = default;
-
-            if (serverConnect)
-            {
-                Version gameVersion = GamePanelHUDCorePlugin.HUDCoreClass.GameVersion;
-
-                if (HUDVersions.FirstGameVersion > gameVersion)
-                {
-                    warn = config.Bind(Section, "First Update", "", new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 1, HideDefaultButton = true, CustomDrawer = Draw.FirstUpdate, HideSettingName = true }));
-                }
-                else if (HUDVersions.LastGameVersion < gameVersion)
-                {
-                    warn = config.Bind(Section, "Last Update", "", new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 1, HideDefaultButton = true, CustomDrawer = Draw.LastUpdate, HideSettingName = true }));
-                }
-            }
-
-            UpdateDatas.Add(new UpdateData(config, configEntry, warn, version));
+            ConfigEntry<string> configEntry = config.Bind(Section, "Update", "", new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 1, HideDefaultButton = true, CustomDrawer = new Draw(version).OnGui, HideSettingName = true }));
         }
 
         public class HUDVersion
         {
             [NonSerialized]
-            public bool? ServerConnect;
+            public bool ServerConnect;
+
+            [NonSerialized]
+            public bool Connecting;
 
             public Version ModVersion;
 
@@ -112,31 +82,12 @@ namespace GamePanelHUDCore.Utils
 
             public void ConnectError()
             {
-                ServerConnect = default;
+                ServerConnect = false;
                 ModVersion = null;
                 FirstGameVersion = null;
                 LastGameVersion = null;
                 ModFileUrl = null;
                 ModDownloadUrl = null;
-            }
-        }
-
-        public class UpdateData
-        {
-            public ConfigFile ModConfigFile;
-            
-            public ConfigEntry<string> ModConfigEntry;
-
-            public ConfigEntry<string> ModWarn;
-
-            public Version ModVersion;
-
-            public UpdateData(ConfigFile configfile, ConfigEntry<string> configentry, ConfigEntry<string> warn, Version version)
-            {
-                ModConfigFile = configfile;
-                ModConfigEntry = configentry;
-                ModWarn = warn;
-                ModVersion = version;
             }
         }
 
@@ -147,6 +98,8 @@ namespace GamePanelHUDCore.Utils
             private static readonly GUIStyle Yellow = new GUIStyle();
 
             private static readonly GUIStyle Green = new GUIStyle();
+
+            public readonly Version ModVersion;
 
             static Draw()
             {
@@ -160,7 +113,49 @@ namespace GamePanelHUDCore.Utils
                 Green.fontStyle = FontStyle.Bold;
             }
 
-            public static void NeedUpdate(ConfigEntryBase entry)
+            public Draw(Version version)
+            {
+                ModVersion = version;
+            }
+
+            public void OnGui(ConfigEntryBase entry)
+            {
+                if (!HUDVersions.Connecting)
+                {
+                    if (HUDVersions.ServerConnect)
+                    {
+                        if (HUDVersions.ModVersion > ModVersion)
+                        {
+                            ConnectNeedUpdate();
+                        }
+                        else
+                        {
+                            ConnectNotUpdate();
+                        }
+
+                        Version gameVersion = GamePanelHUDCorePlugin.HUDCoreClass.GameVersion;
+
+                        if (HUDVersions.FirstGameVersion > gameVersion)
+                        {
+                            Support();
+                        }
+                        else if (HUDVersions.LastGameVersion < gameVersion)
+                        {
+                            NotSupport();
+                        }
+                    }
+                    else
+                    {
+                        ConnectFail();
+                    }
+                }
+                else
+                {
+                    Connect();
+                }
+            }
+
+            private static void ConnectNeedUpdate()
             {
                 GUILayout.BeginVertical();
 
@@ -190,7 +185,7 @@ namespace GamePanelHUDCore.Utils
                 GUILayout.EndVertical();
             }
 
-            public static void NotNeedUpdate(ConfigEntryBase entry)
+            private static void ConnectNotUpdate()
             {
                 GUILayout.Label("已经是最新版本 Already is latest version", Green);
 
@@ -209,7 +204,12 @@ namespace GamePanelHUDCore.Utils
                 GUILayout.EndVertical();
             }
 
-            public static void CantKnowUpdate(ConfigEntryBase entry)
+            private static void Connect()
+            {
+                GUILayout.Label("连接服务器中 Connecting Server", Yellow);
+            }
+
+            private static void ConnectFail()
             {
                 GUILayout.Label("无法连接服务器 Can't Connect Server", Red);
 
@@ -219,7 +219,7 @@ namespace GamePanelHUDCore.Utils
                 }
             }
 
-            public static void FirstUpdate(ConfigEntryBase entry)
+            private static void Support()
             {
                 GUILayout.BeginVertical();
 
@@ -229,7 +229,7 @@ namespace GamePanelHUDCore.Utils
                 GUILayout.EndVertical();
             }
 
-            public static void LastUpdate(ConfigEntryBase entry)
+            private static void NotSupport()
             {
                 GUILayout.BeginVertical();
 
@@ -239,55 +239,9 @@ namespace GamePanelHUDCore.Utils
                 GUILayout.EndVertical();
             }
 
-            private static async void Retry()
+            private static void Retry()
             {
-                ServerCheck();
-
-                while (!HUDVersions.ServerConnect.HasValue)
-                    await Task.Yield();
-
-                if ((bool)HUDVersions.ServerConnect)
-                {
-                    foreach (UpdateData data in UpdateDatas)
-                    {
-                        Action<ConfigEntryBase> draw;
-                        if (HUDVersions.ModVersion > data.ModVersion)
-                        {
-                            draw = NeedUpdate;
-                        }
-                        else
-                        {
-                            draw = NotNeedUpdate;
-                        }
-
-                        data.ModConfigFile.Remove(data.ModConfigEntry.Definition);
-                        data.ModConfigEntry = data.ModConfigFile.Bind(Section, "Update", "", new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 2, HideDefaultButton = true, CustomDrawer = draw, HideSettingName = true }));
-
-                        if (data.ModWarn != null)
-                        {
-                            data.ModConfigFile.Remove(data.ModWarn.Definition);
-                        }
-
-                        ConfigEntry<string> warn;
-
-                        Version gameVersion = GamePanelHUDCorePlugin.HUDCoreClass.GameVersion;
-
-                        if (HUDVersions.FirstGameVersion > gameVersion)
-                        {
-                            warn = data.ModConfigFile.Bind(Section, "First Update", "", new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 1, HideDefaultButton = true, CustomDrawer = FirstUpdate, HideSettingName = true }));
-                        }
-                        else if (HUDVersions.LastGameVersion < gameVersion)
-                        {
-                            warn = data.ModConfigFile.Bind(Section, "Last Update", "", new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 1, HideDefaultButton = true, CustomDrawer = LastUpdate, HideSettingName = true }));
-                        }
-                        else
-                        {
-                            warn = default;
-                        }
-
-                        data.ModWarn = warn;
-                    }
-                }
+                ServerCheckAndPull();
             }
         }
     }

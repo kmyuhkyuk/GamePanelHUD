@@ -56,7 +56,7 @@ namespace GamePanelHUDHit
         {
             Logger.LogInfo("Loaded: kmyuhkyuk-GamePanelHUDHit");
 
-            ModUpdateCheck.DrawNeedUpdate(Config, Info.Metadata.Version);
+            ModUpdateCheck.DrawCheck(Config, Info.Metadata.Version);
 
             const string mainSettings = "主设置 Main Settings";
             const string prsSettings = "位置旋转大小设置 Position Rotation Scale Settings";
