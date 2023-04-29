@@ -38,7 +38,7 @@ namespace GamePanelHUDCore
             Logger.LogInfo("Loaded: kmyuhkyuk-GamePanelHUDCore");
 
             ModUpdateCheck.ServerCheckAndPull();
-            ModUpdateCheck.DrawCheck(Config, Info.Metadata.Version);
+            ModUpdateCheck.DrawCheck(this);
 
             const string mainSettings = "主设置 Main Settings";
 
