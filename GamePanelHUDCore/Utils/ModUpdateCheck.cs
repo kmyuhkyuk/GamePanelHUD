@@ -151,7 +151,7 @@ namespace GamePanelHUDCore.Utils
                 }
                 else
                 {
-                    Connect();
+                    Connecting();
                 }
             }
 
@@ -204,7 +204,7 @@ namespace GamePanelHUDCore.Utils
                 GUILayout.EndVertical();
             }
 
-            private static void Connect()
+            private static void Connecting()
             {
                 GUILayout.Label("连接服务器中 Connecting Server", Yellow);
             }
