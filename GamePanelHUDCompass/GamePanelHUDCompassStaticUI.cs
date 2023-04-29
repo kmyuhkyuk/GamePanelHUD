@@ -30,8 +30,6 @@ namespace GamePanelHUDCompass
 
         public bool HasRequirements { get; private set; }
 
-        public string Id;
-
         public Vector3 Where;
 
         public string ZoneId;
@@ -49,8 +47,6 @@ namespace GamePanelHUDCompass
         public int ExIndex;
 
         public int ExIndex2;
-
-        public bool ToDestroy;
 
         [SerializeField]
         private Image _Real;
@@ -235,13 +231,8 @@ namespace GamePanelHUDCompass
                     }
                     break;
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Airdrop:
-                    Enabled(true);
+                    Airdrop();
                     break;
-            }
-
-            if (ToDestroy)
-            {
-                Destroy();
             }
 #endif
         }
@@ -289,7 +280,7 @@ namespace GamePanelHUDCompass
                     {
                         hasItems = false;
                     }
-                } 
+                }
             }
 
             HasRequirements = !hasItems;
@@ -321,6 +312,7 @@ namespace GamePanelHUDCompass
                     }
                 }
             }
+
             if (HUD.SettingsData.KeyCompassStaticHideOptional.Value)
             {
                 Enabled(!IsNotNecessary);
@@ -336,6 +328,18 @@ namespace GamePanelHUDCompass
             if (HUD.SettingsData.KeyCompassStaticHideOptional.Value)
             {
                 Enabled(!IsNotNecessary);
+            }
+            else
+            {
+                Enabled(true);
+            }
+        }
+
+        void Airdrop()
+        {
+            if (HUD.SettingsData.KeyCompassStaticHideSearchedAirdrop.Value)
+            {
+                Enabled(!HUD.Info.Airdrops[ExIndex].Contains(HUD.Info.YourProfileId));
             }
             else
             {
@@ -376,10 +380,9 @@ namespace GamePanelHUDCompass
             _Virtual3.SetNativeSize();
         }
 
-        void Destroy()
+        public void Destroy()
         {
 #if !UNITY_EDITOR
-            GamePanelHUDCompassStatic.Remove(Id);
             GamePanelHUDCorePlugin.UpdateManger.Remove(this);
             Destroy(gameObject);
 #endif

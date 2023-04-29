@@ -20,7 +20,7 @@ using GamePanelHUDCompass.Patches;
 
 namespace GamePanelHUDCompass
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCompass", "kmyuhkyuk-GamePanelHUDCompass", "2.6.1")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCompass", "kmyuhkyuk-GamePanelHUDCompass", "2.6.2")]
     [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore")]
     public class GamePanelHUDCompassPlugin : BaseUnityPlugin, IUpdate
     {
@@ -64,7 +64,7 @@ namespace GamePanelHUDCompass
 
         private readonly ReflectionData ReflectionDatas = new ReflectionData();
 
-        internal static int AirdropCount;
+        internal readonly static List<List<string>> Airdrops = new List<List<string>>();
 
         internal static GameObject FirePrefab { get; private set; }
 
@@ -72,7 +72,7 @@ namespace GamePanelHUDCompass
 
         internal static Action<CompassFireInfo> ShowFire;
 
-        internal static Action<int> DestroyFire;
+        internal static Action<string> DestroyFire;
 
         internal static Action<CompassStaticInfo> ShowStatic;
 
@@ -109,6 +109,7 @@ namespace GamePanelHUDCompass
             SettingsDatas.KeyCompassStaticDistanceHUDSW = Config.Bind<bool>(mainSettings, "罗盘静态距离显示 Compass Static Distance HUD display", true);
             SettingsDatas.KeyCompassStaticHideRequirements = Config.Bind<bool>(mainSettings, "罗盘静态隐藏需求 Compass Static Hide Requirements", false);
             SettingsDatas.KeyCompassStaticHideOptional = Config.Bind<bool>(mainSettings, "罗盘静态隐藏可选项 Compass Static Hide Optional", false);
+            SettingsDatas.KeyCompassStaticHideSearchedAirdrop = Config.Bind<bool>(mainSettings, "罗盘静态隐藏搜索过空投 Compass Static Hide Already Searched Airdrop", true);
             SettingsDatas.KeyAutoSizeDelta = Config.Bind<bool>(mainSettings, "自动高度 Auto Size Delta", true);
 
             SettingsDatas.KeyConditionFindItem = Config.Bind<bool>(questSettings, "FindItem", true);
@@ -242,6 +243,10 @@ namespace GamePanelHUDCompass
 
                 CompassStaticDatas.CopyFrom(CompassFireDatas);
 
+                CompassStaticDatas.YourProfileId = HUDCore.YourPlayer.ProfileId;
+
+                CompassStaticDatas.Airdrops = Airdrops;
+
                 //Performance Optimization
                 if (Time.frameCount % 20 == 0)
                 {
@@ -287,8 +292,9 @@ namespace GamePanelHUDCompass
             }
             else
             {
-                AirdropCount = 0;
+                Airdrops.Clear();
                 CompassStaticDatas.EquipmentAndQuestRaidItems = null;
+                CompassStaticDatas.ExfiltrationPoints = null;
             }
         }
 
@@ -611,6 +617,10 @@ namespace GamePanelHUDCompass
 
             public HashSet<string> EquipmentAndQuestRaidItems;
 
+            public List<List<string>> Airdrops;
+
+            public string YourProfileId;
+
             public bool HasEquipmentAndQuestRaidItems
             {
                 get
@@ -662,7 +672,7 @@ namespace GamePanelHUDCompass
 
         public struct CompassFireInfo
         {
-            public int Who;
+            public string Who;
 
             public Vector3 Where;
 
@@ -736,6 +746,7 @@ namespace GamePanelHUDCompass
             public ConfigEntry<bool> KeyCompassStaticDistanceHUDSW;
             public ConfigEntry<bool> KeyCompassStaticHideRequirements;
             public ConfigEntry<bool> KeyCompassStaticHideOptional;
+            public ConfigEntry<bool> KeyCompassStaticHideSearchedAirdrop;
             public ConfigEntry<bool> KeyAutoSizeDelta;
 
             public ConfigEntry<bool> KeyConditionFindItem;
