@@ -46,7 +46,7 @@ namespace GamePanelHUDGrenade
         {
             Logger.LogInfo("Loaded: kmyuhkyuk-GamePanelHUDGrenade");
 
-            ModUpdateCheck.DrawCheck(Config, Info.Metadata.Version);
+            ModUpdateCheck.DrawCheck(this);
 
             const string mainSettings = "主设置 Main Settings";
             const string positionScaleSettings = "位置大小设置 Position Scale Settings";

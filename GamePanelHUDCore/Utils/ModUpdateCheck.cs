@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
+using BepInEx;
 
 namespace GamePanelHUDCore.Utils
 {
@@ -45,9 +46,9 @@ namespace GamePanelHUDCore.Utils
             HUDVersions.Connecting = false;
         }
 
-        public static void DrawCheck(ConfigFile config, Version version)
+        public static void DrawCheck(BaseUnityPlugin plugin)
         {
-            ConfigEntry<string> configEntry = config.Bind(Section, "Update", "", new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 1, HideDefaultButton = true, CustomDrawer = new Draw(version).OnGui, HideSettingName = true }));
+            plugin.Config.Bind(Section, "Update", "", new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 1, HideDefaultButton = true, CustomDrawer = new Draw(plugin.Info.Metadata.Version).OnGui, HideSettingName = true }));
         }
 
         public class HUDVersion
