@@ -25,7 +25,7 @@ namespace GamePanelHUDCompass
         }
 #endif
 
-        private readonly Dictionary<int, GamePanelHUDCompassFireUI> CompassFires = new Dictionary<int, GamePanelHUDCompassFireUI>();
+        private readonly Dictionary<string, GamePanelHUDCompassFireUI> CompassFires = new Dictionary<string, GamePanelHUDCompassFireUI>();
 
         [SerializeField]
         private Transform _CompassFire;
@@ -48,7 +48,7 @@ namespace GamePanelHUDCompass
 
         private RectTransform FireRightRect;
 
-        internal static Action<int> Remove;
+        internal static Action<string> Remove;
 
 #if !UNITY_EDITOR
         void Start()
@@ -204,7 +204,7 @@ namespace GamePanelHUDCompass
             }
         }
 
-        void DestroyFireUI(int id)
+        void DestroyFireUI(string id)
         {
             if (HUD.SettingsData.KeyCompassFireDeadDestroy.Value && CompassFires.TryGetValue(id, out GamePanelHUDCompassFireUI fireui))
             {
@@ -212,7 +212,7 @@ namespace GamePanelHUDCompass
             }
         }
 
-        void RemoveFireUI(int id)
+        void RemoveFireUI(string id)
         {
             CompassFires.Remove(id);
         }

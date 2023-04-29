@@ -138,11 +138,11 @@ namespace GamePanelHUDCore.Utils
 
                         if (HUDVersions.FirstGameVersion > gameVersion)
                         {
-                            Support();
+                            BelowSupport();
                         }
                         else if (HUDVersions.LastGameVersion < gameVersion)
                         {
-                            NotSupport();
+                            HigherSupport();
                         }
                     }
                     else
@@ -180,7 +180,7 @@ namespace GamePanelHUDCore.Utils
 
                 if (GUILayout.Button("Retry", GUILayout.ExpandWidth(true)))
                 {
-                    Retry();
+                    ServerCheckAndPull();
                 }
 
                 GUILayout.EndVertical();
@@ -199,7 +199,7 @@ namespace GamePanelHUDCore.Utils
 
                 if (GUILayout.Button("Retry", GUILayout.ExpandWidth(true)))
                 {
-                    Retry();
+                    ServerCheckAndPull();
                 }
 
                 GUILayout.EndVertical();
@@ -216,11 +216,11 @@ namespace GamePanelHUDCore.Utils
 
                 if (GUILayout.Button("Retry", GUILayout.ExpandWidth(true)))
                 {
-                    Retry();
+                    ServerCheckAndPull();
                 }
             }
 
-            private static void Support()
+            private static void BelowSupport()
             {
                 GUILayout.BeginVertical();
 
@@ -230,7 +230,7 @@ namespace GamePanelHUDCore.Utils
                 GUILayout.EndVertical();
             }
 
-            private static void NotSupport()
+            private static void HigherSupport()
             {
                 GUILayout.BeginVertical();
 
@@ -238,11 +238,6 @@ namespace GamePanelHUDCore.Utils
                 GUILayout.Label("Game Version Higher than Mod Support Version, It Maybe Will Be Problems", Yellow);
 
                 GUILayout.EndVertical();
-            }
-
-            private static void Retry()
-            {
-                ServerCheckAndPull();
             }
         }
     }

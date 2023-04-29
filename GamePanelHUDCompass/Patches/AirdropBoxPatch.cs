@@ -3,7 +3,10 @@ using Aki.Reflection.Patching;
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Collections.Generic;
 using UnityEngine;
+using EFT.Interactive;
+using EFT.InventoryLogic;
 using GamePanelHUDCore;
 using GamePanelHUDCore.Utils;
 
@@ -24,6 +27,11 @@ namespace GamePanelHUDCompass.Patches
                 AirdropType = AppDomain.CurrentDomain.GetAssemblies().Single(x => x.ManifestModule.Name == "aki-custom.dll").GetTypes().Single(x => x.Name == "AirdropBox");
 
                 ReflectionDatas.RefAirdropType = RefHelp.FieldRef<object, int>.Create(RefHelp.GetEftType(x => x.Name == "AirdropSynchronizableObject"), "AirdropType");
+                ReflectionDatas.RefItemOwner = RefHelp.FieldRef<LootableContainer, object>.Create("ItemOwner");
+                ReflectionDatas.RefAllSearchersIds = RefHelp.FieldRef<Item, List<string>>.Create(RefHelp.GetEftType(x => x.GetMethod("AddNewSearcher", BindingFlags.DeclaredOnly |BindingFlags.Public | BindingFlags.Instance) != null), "_allSearchersIds");
+
+                ReflectionDatas.RefRootItem = RefHelp.PropertyRef<object, Item>.Create(ReflectionDatas.RefItemOwner.FieldType, "RootItem");
+
             }
         }
 
@@ -33,8 +41,18 @@ namespace GamePanelHUDCompass.Patches
         }
 
         [PatchPostfix]
-        private static void PatchPostfix(object __instance, object ___boxSync)
+        private static void PatchPostfix(MonoBehaviour __instance, object ___boxSync)
         {
+            LootableContainer lootable = __instance.GetComponentInChildren<LootableContainer>();
+
+            object controller = ReflectionDatas.RefItemOwner.GetValue(lootable);
+
+            Item item = ReflectionDatas.RefRootItem.GetValue(controller);
+
+            GamePanelHUDCompassPlugin.Airdrops.Add(ReflectionDatas.RefAllSearchersIds.GetValue(item));
+
+            int count = GamePanelHUDCompassPlugin.Airdrops.Count;
+
             string nameKey;
             string descriptionKey;
             switch (ReflectionDatas.RefAirdropType.GetValue(___boxSync))
@@ -56,17 +74,18 @@ namespace GamePanelHUDCompass.Patches
                     descriptionKey = "6223351bb5d97a7b2c635ca7 Description";
                     break;
                 default:
-                    nameKey = "Null";
-                    descriptionKey = "Null";
+                    nameKey = "Unknown";
+                    descriptionKey = "Unknown";
                     break;
             }
 
             GamePanelHUDCompassPlugin.CompassStaticInfo staticInfo = new GamePanelHUDCompassPlugin.CompassStaticInfo()
             {
-                Id = string.Concat("Airdrop", GamePanelHUDCompassPlugin.AirdropCount + 1),
-                Where = ((MonoBehaviour)__instance).transform.position,
+                Id = string.Concat("Airdrop", count),
+                Where = __instance.transform.position,
                 NameKey = nameKey,
                 DescriptionKey = descriptionKey,
+                ExIndex = count - 1,
                 InfoType = GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Airdrop
             };
 
@@ -76,6 +95,11 @@ namespace GamePanelHUDCompass.Patches
         public class ReflectionData
         {
             public RefHelp.FieldRef<object, int> RefAirdropType;
+
+            public RefHelp.FieldRef<LootableContainer, object> RefItemOwner;
+            public RefHelp.FieldRef<Item, List<string>> RefAllSearchersIds;
+
+            public RefHelp.PropertyRef<object, Item> RefRootItem;
         }
     }
 }

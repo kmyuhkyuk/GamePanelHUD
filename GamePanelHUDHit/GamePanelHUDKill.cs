@@ -326,6 +326,8 @@ namespace GamePanelHUDHit
 
             _kill.HasXp = settingsdata.KeyKillHasXp.Value;
 
+            _kill.XpColor = settingsdata.KeyKillXpColor.Value;
+
             _kill.transform.SetAsFirstSibling();
 
             _kill.Active = true;
@@ -373,6 +375,8 @@ namespace GamePanelHUDHit
             _kill.Xp = exp;
 
             _kill.HasXp = settingsdata.KeyKillHasXp.Value;
+
+            _kill.XpColor = settingsdata.KeyKillXpColor.Value;
 
             _kill.transform.SetAsFirstSibling();
 

@@ -32,7 +32,7 @@ namespace GamePanelHUDCompass
 
         public bool DeadDestroy;
 
-        public int Who;
+        public string Who;
 
         public Vector3 Where;
 

@@ -34,7 +34,7 @@ namespace GamePanelHUDCompass.Patches
 
                 GamePanelHUDCompassPlugin.CompassFireInfo fireInfo = new GamePanelHUDCompassPlugin.CompassFireInfo()
                 {
-                    Who = ____player.Id,
+                    Who = ____player.ProfileId,
                     Where = weaponPosition,
                     Role = ReflectionDatas.RefRole.GetValue(ReflectionDatas.RefSettings.GetValue(____player.Profile.Info)),
                     IsSilenced = __instance.IsSilenced && !__instance.IsInLauncherMode(),
@@ -64,7 +64,7 @@ namespace GamePanelHUDCompass.Patches
         {
             if (__instance != GamePanelHUDCorePlugin.HUDCore.YourPlayer)
             {
-                GamePanelHUDCompassPlugin.DestroyFire(__instance.Id);
+                GamePanelHUDCompassPlugin.DestroyFire(__instance.ProfileId);
             }
         }
     }

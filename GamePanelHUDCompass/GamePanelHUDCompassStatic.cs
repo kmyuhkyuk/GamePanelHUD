@@ -75,8 +75,6 @@ namespace GamePanelHUDCompass
 
         private RectTransform InfoPanelRect;
 
-        internal static Action<string> Remove;
-
 #if !UNITY_EDITOR
         void Start()
         {
@@ -85,7 +83,6 @@ namespace GamePanelHUDCompass
 
             DistancePanel = _DistanceValue.transform.parent;
 
-            Remove = RemoveStatic;
             GamePanelHUDCompassPlugin.ShowStatic = ShowStatic;
             GamePanelHUDCompassPlugin.DestroyStatic = DestroyStatic;
             GamePanelHUDCorePlugin.HUDCoreClass.WorldDispose += DestroyAll;
@@ -272,7 +269,6 @@ namespace GamePanelHUDCompass
                     break;
             }
 
-            _static.Id = staticinfo.Id;
             _static.Where = staticinfo.Where;
             _static.ZoneId = staticinfo.ZoneId;
             _static.Target = staticinfo.Target;
@@ -296,10 +292,14 @@ namespace GamePanelHUDCompass
 
         void DestroyAll(GameWorld world)
         {
-            foreach (GamePanelHUDCompassStaticUI ui in CompassStatics.Values.SelectMany(x => x))
+            GamePanelHUDCompassStaticUI[] uis = CompassStatics.Values.SelectMany(x => x).ToArray();
+
+            for (int i = 0; i < uis.Length; i++)
             {
-                ui.ToDestroy = true;
+                uis[i].Destroy();
             }
+
+            CompassStatics.Clear();
         }
 #endif
 
@@ -307,16 +307,13 @@ namespace GamePanelHUDCompass
         {
             if (CompassStatics.TryGetValue(id, out List<GamePanelHUDCompassStaticUI> list))
             {
-                foreach (GamePanelHUDCompassStaticUI ui in list)
+                for (int i = 0; i < list.Count; i++)
                 {
-                    ui.ToDestroy = true;
+                    list[i].Destroy();
                 }
-            }
-        }
 
-        void RemoveStatic(string id)
-        {
-            CompassStatics.Remove(id);
+                CompassStatics.Remove(id);
+            }
         }
     }
 }
