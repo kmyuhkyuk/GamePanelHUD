@@ -30,8 +30,6 @@ namespace GamePanelHUDCompass
 
         public bool? IsLeft { get; private set; }
 
-        public bool DeadDestroy;
-
         public string Who;
 
         public Vector3 Where;
@@ -204,11 +202,6 @@ namespace GamePanelHUDCompass
 
                 Active = false;
             }
-
-            if (DeadDestroy)
-            {
-                Destroy();
-            }
 #endif
         }
 
@@ -246,10 +239,16 @@ namespace GamePanelHUDCompass
         }
 #endif
 
-        void Destroy()
+        void ToDestroy()
         {
 #if !UNITY_EDITOR
             GamePanelHUDCompassFire.Remove(Who);
+#endif
+        }
+
+        public void Destroy()
+        {
+#if !UNITY_EDITOR
             GamePanelHUDCorePlugin.UpdateManger.Remove(this);
             Destroy(gameObject);
 #endif
