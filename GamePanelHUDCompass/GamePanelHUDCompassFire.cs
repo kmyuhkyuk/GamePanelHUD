@@ -27,6 +27,8 @@ namespace GamePanelHUDCompass
 
         private readonly Dictionary<string, GamePanelHUDCompassFireUI> CompassFires = new Dictionary<string, GamePanelHUDCompassFireUI>();
 
+        private readonly List<string> Removes = new List<string>();
+
         [SerializeField]
         private Transform _CompassFire;
 
@@ -96,6 +98,20 @@ namespace GamePanelHUDCompass
 
                 if (CompassFires.Count > 0)
                 {
+                    if (Removes.Count > 0)
+                    {
+                        for (int i = 0; i < Removes.Count;i++)
+                        {
+                            string remove = Removes[i];
+
+                            CompassFires[remove].Destroy();
+
+                            CompassFires.Remove(remove);
+
+                            Removes.RemoveAt(i);
+                        }
+                    }
+
                     foreach (GamePanelHUDCompassFireUI fire in CompassFires.Values)
                     {
                         bool? isLeft = fire.IsLeft;
@@ -153,7 +169,7 @@ namespace GamePanelHUDCompass
             {
                 if ((!fireinfo.IsSilenced || !HUD.SettingsData.KeyCompassFireSilenced.Value) && fireinfo.Distance <= HUD.SettingsData.KeyCompassFireDistance.Value)
                 {
-                    if (CompassFires.TryGetValue(fireinfo.Who, out GamePanelHUDCompassFireUI fireui) && !fireui.DeadDestroy)
+                    if (CompassFires.TryGetValue(fireinfo.Who, out GamePanelHUDCompassFireUI fireui))
                     {
                         fireui.Where = fireinfo.Where;
 
@@ -206,15 +222,18 @@ namespace GamePanelHUDCompass
 
         void DestroyFireUI(string id)
         {
-            if (HUD.SettingsData.KeyCompassFireDeadDestroy.Value && CompassFires.TryGetValue(id, out GamePanelHUDCompassFireUI fireui))
+            if (HUD.SettingsData.KeyCompassFireDeadDestroy.Value && CompassFires.ContainsKey(id))
             {
-                fireui.DeadDestroy = true;
+                RemoveFireUI(id);
             }
         }
 
         void RemoveFireUI(string id)
         {
-            CompassFires.Remove(id);
+            if (!Removes.Contains(id))
+            {
+                Removes.Add(id);
+            }
         }
 #endif
     }

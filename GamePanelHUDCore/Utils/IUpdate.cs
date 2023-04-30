@@ -113,8 +113,6 @@ namespace GamePanelHUDCore.Utils
                                 Debugs.AllMethodTime.Reset();
                             }
                         }
-
-                        update.IUpdate();
                     }
 
                     if (!NeedMethodTime)
