@@ -72,11 +72,7 @@ namespace GamePanelHUDCore.Utils
                     }
                     else if (!StopUpdates.Contains(update))
                     {
-                        if (!NeedMethodTime)
-                        {
-                            update.IUpdate();
-                        }
-                        else
+                        if (NeedMethodTime)
                         {
                             if (i == 0)
                             {
@@ -112,6 +108,10 @@ namespace GamePanelHUDCore.Utils
 
                                 Debugs.AllMethodTime.Reset();
                             }
+                        }
+                        else
+                        {
+                            update.IUpdate();
                         }
                     }
 
