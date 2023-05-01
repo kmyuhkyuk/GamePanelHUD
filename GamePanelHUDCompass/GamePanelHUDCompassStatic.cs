@@ -124,7 +124,7 @@ namespace GamePanelHUDCompass
                         {
                             string remove = Removes[i];
 
-                            foreach (var ui in CompassStatics[remove])
+                            foreach (GamePanelHUDCompassStaticUI ui in CompassStatics[remove])
                             {
                                 ui.Destroy();
                             }
