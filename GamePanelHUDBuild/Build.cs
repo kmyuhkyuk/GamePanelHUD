@@ -1,4 +1,5 @@
-﻿using GamePanelHUDCore;
+﻿// ReSharper disable RedundantUsingDirective
+using GamePanelHUDCore;
 using GamePanelHUDLife;
 using GamePanelHUDMag;
 using GamePanelHUDGrenade;

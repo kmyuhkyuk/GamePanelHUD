@@ -284,7 +284,7 @@ namespace GamePanelHUDHit
             _RightDownHead.color = color;
         }
 
-        public void HitDeadTirgger()
+        public void HitDeadTrigger()
         {
             Animator_HitUI.SetTrigger(AnimatorHash.ActiveDead);
         }

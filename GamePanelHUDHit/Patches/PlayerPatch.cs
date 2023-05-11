@@ -25,7 +25,7 @@ namespace GamePanelHUDHit.Patches
 
                 bool hasArmorHit;
 
-                if (GamePanelHUDHitPlugin.Armor.Activa)
+                if (GamePanelHUDHitPlugin.Armor.Activate)
                 {
                     armorDamage = GamePanelHUDHitPlugin.Armor.ArmorDamage;
                     hasArmorHit = true;
@@ -67,16 +67,16 @@ namespace GamePanelHUDHit.Patches
 
     public class PlayerKillPatch : ModulePatch
     {
-        private static readonly ReflectionData ReflectionDatas = new ReflectionData();
+        private static readonly ReflectionData RefData = new ReflectionData();
 
         static PlayerKillPatch()
         {
-            ReflectionDatas.RefSettings = RefHelp.FieldRef<InfoClass, object>.Create(typeof(InfoClass), "Settings");
+            RefData.RefSettings = RefHelp.FieldRef<InfoClass, object>.Create(typeof(InfoClass), "Settings");
 
-            Type settingsType = ReflectionDatas.RefSettings.FieldType;
+            Type settingsType = RefData.RefSettings.FieldType;
 
-            ReflectionDatas.RefExperience = RefHelp.FieldRef<object, int>.Create(settingsType, "Experience");
-            ReflectionDatas.RefRole = RefHelp.FieldRef<object, WildSpawnType>.Create(settingsType, "Role");
+            RefData.RefExperience = RefHelp.FieldRef<object, int>.Create(settingsType, "Experience");
+            RefData.RefRole = RefHelp.FieldRef<object, WildSpawnType>.Create(settingsType, "Role");
         }
 
         protected override MethodBase GetTargetMethod()
@@ -91,7 +91,7 @@ namespace GamePanelHUDHit.Patches
             {
                 GamePanelHUDHitPlugin.Kills++;
 
-                object settings = ReflectionDatas.RefSettings.GetValue(__instance.Profile.Info);
+                object settings = RefData.RefSettings.GetValue(__instance.Profile.Info);
 
                 GamePanelHUDHitPlugin.KillInfo info = new GamePanelHUDHitPlugin.KillInfo()
                 {
@@ -101,8 +101,8 @@ namespace GamePanelHUDHit.Patches
                     Distance = Vector3.Distance(aggressor.Position, __instance.Position),
                     Level = __instance.Profile.Info.Level,
                     Side = __instance.Profile.Info.Side,
-                    Exp = ReflectionDatas.RefExperience.GetValue(settings),
-                    Role = ReflectionDatas.RefRole.GetValue(settings),
+                    Exp = RefData.RefExperience.GetValue(settings),
+                    Role = RefData.RefRole.GetValue(settings),
                     Kills = GamePanelHUDHitPlugin.Kills
                 };
 

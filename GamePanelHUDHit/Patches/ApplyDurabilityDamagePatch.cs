@@ -17,7 +17,7 @@ namespace GamePanelHUDHit.Patches
         {
             if (__instance == GamePanelHUDHitPlugin.Armor.Component)
             {
-                GamePanelHUDHitPlugin.Armor.SetActiva(armorDamage);
+                GamePanelHUDHitPlugin.Armor.SetActivate(armorDamage);
             }
         }
     }

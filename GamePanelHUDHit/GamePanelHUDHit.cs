@@ -145,7 +145,7 @@ namespace GamePanelHUDHit
 
             if (hitInfo.HitType == GamePanelHUDHitPlugin.HitInfo.Hit.Dead)
             {
-                _hit.HitDeadTirgger();
+                _hit.HitDeadTrigger();
             }
 
             if (!setData.KeyHitHasDirection.Value)
