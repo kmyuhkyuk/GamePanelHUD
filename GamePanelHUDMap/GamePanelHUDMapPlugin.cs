@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace GamePanelHUDMap
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDMap", "kmyuhkyuk-GamePanelHUDMap", "2.6.3")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDMap", "kmyuhkyuk-GamePanelHUDMap", "2.6.4")]
     [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore")]
     public class GamePanelHUDMapPlugin : BaseUnityPlugin, IUpdate
     {
@@ -52,7 +52,7 @@ namespace GamePanelHUDMap
 
         private void Awake()
         {
-            GamePanelHUDCorePlugin.HUDCoreClass.LoadHUD("gamepanlmaphud.bundle", "gamepanlmaphud");
+            GamePanelHUDCorePlugin.HUDCoreClass.LoadHUD("gamepanelmaphud.bundle", "gamepanelmaphud");
         }
 
         public void IUpdate()

@@ -20,7 +20,7 @@ using GamePanelHUDCompass.Patches;
 
 namespace GamePanelHUDCompass
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCompass", "kmyuhkyuk-GamePanelHUDCompass", "2.6.3")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCompass", "kmyuhkyuk-GamePanelHUDCompass", "2.6.4")]
     [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore")]
     public class GamePanelHUDCompassPlugin : BaseUnityPlugin, IUpdate
     {

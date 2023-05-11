@@ -13,7 +13,7 @@ using GamePanelHUDHit.Patches;
 
 namespace GamePanelHUDHit
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDHit", "kmyuhkyuk-GamePanelHUDHit", "2.6.3")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDHit", "kmyuhkyuk-GamePanelHUDHit", "2.6.4")]
     [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore")]
     public class GamePanelHUDHitPlugin : BaseUnityPlugin, IUpdate
     {
@@ -320,24 +320,24 @@ namespace GamePanelHUDHit
 
             public float ArmorDamage;
 
-            public bool Activa;
+            public bool Activate;
 
             public void SetComponent(ArmorComponent component)
             {
                 Component = component;
             }
 
-            public void SetActiva(float damage)
+            public void SetActivate(float damage)
             {
                 ArmorDamage = damage;
-                Activa = true;
+                Activate = true;
             }
 
             public void Rest()
             {
                 Component = null;
                 ArmorDamage = 0;
-                Activa = false;
+                Activate = false;
             }
         }
 
