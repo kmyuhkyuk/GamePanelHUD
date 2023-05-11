@@ -23,7 +23,9 @@ namespace GamePanelHUDGrenade
         public FontStyles GrenadeStyles;
 
         [SerializeField]
+#pragma warning disable CS0649
         private TMP_Text _GrenadeValue;
+#pragma warning restore CS0649
 
 #if !UNITY_EDITOR
         void Start()
