@@ -8,7 +8,7 @@ using System.Reflection.Emit;
 
 namespace GamePanelHUDCore.Utils
 {
-    //1.0.0
+    //1.1.0
     public static class RefHelp
     {
         public static Func<T, F> ObjectFieldGetAccess<T, F>(FieldInfo fieldInfo)

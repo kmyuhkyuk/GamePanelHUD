@@ -5,6 +5,7 @@ using HarmonyLib;
 using System;
 using System.Reflection;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GamePanelHUDCore.Patches.Ex
 {
@@ -82,11 +83,11 @@ namespace GamePanelHUDCore.Patches.Ex
         /// </summary>
         public void Enable()
         {
-            var targets = GetTargetMethods();
+            var targets = GetTargetMethods().ToArray();
 
-            if (targets == null)
+            if (targets.Length == 0)
             {
-                throw new InvalidOperationException($"{_harmony.Id}: TargetMethod is null");
+                throw new InvalidOperationException($"{_harmony.Id}: TargetMethods is null");
             }
 
             try
@@ -145,9 +146,9 @@ namespace GamePanelHUDCore.Patches.Ex
         /// </summary>
         public void Disable()
         {
-            var targets = GetTargetMethods();
+            var targets = GetTargetMethods().ToArray();
 
-            if (targets == null)
+            if (targets.Length == 0)
             {
                 throw new InvalidOperationException($"{_harmony.Id}: TargetMethod is null");
             }

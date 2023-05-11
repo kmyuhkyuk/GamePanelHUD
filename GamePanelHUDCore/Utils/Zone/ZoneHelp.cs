@@ -37,7 +37,6 @@ namespace GamePanelHUDCore.Utils.Zone
             else
             {
                 triggers = null;
-                return false;
             }
 
             return triggers != null && triggers.Any();
