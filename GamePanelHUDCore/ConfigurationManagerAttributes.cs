@@ -1,4 +1,6 @@
-﻿#if !UNITY_EDITOR
+﻿// ReSharper disable IdentifierTypo
+// ReSharper disable CommentTypo
+#if !UNITY_EDITOR
 namespace GamePanelHUDCore
 {
     /// <summary>

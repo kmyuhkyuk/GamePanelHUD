@@ -93,7 +93,7 @@ namespace GamePanelHUDMag
             SetData.KeyMaxColor = Config.Bind<Color>(colorSettings, "最大值 Maximum", new Color(0.5882353f, 0.6039216f, 0.6078432f)); //#969A9B
             SetData.KeyPatronColor = Config.Bind<Color>(colorSettings, "枪膛 Patron", new Color(0.8901961f, 0.8901961f, 0.8392157f)); //#E3E3D6
             SetData.KeyWeaponNameColor = Config.Bind<Color>(colorSettings, "武器名字 Weapon Name", new Color(0.8901961f, 0.8901961f, 0.8392157f)); //#E3E3D6
-            SetData.KeyAmmoTypeColor = Config.Bind<Color>(colorSettings, "弹药类型 Ammon Type", new Color(0.8901961f, 0.8901961f, 0.8392157f)); //#E3E3D6
+            SetData.KeyAmmoTypeColor = Config.Bind<Color>(colorSettings, "弹药类型 Ammo Type", new Color(0.8901961f, 0.8901961f, 0.8392157f)); //#E3E3D6
             SetData.KeyFireModeColor = Config.Bind<Color>(colorSettings, "开火模式 Fire Mode", new Color(0.8901961f, 0.8901961f, 0.8392157f)); //#E3E3D6
             SetData.KeyAddZerosColor = Config.Bind<Color>(colorSettings, "零 Zeros", new Color(0.6f, 0.6f, 0.6f, 0.5f)); //#9999
             SetData.KeyWarningColor = Config.Bind<Color>(colorSettings, "警告 Warning", new Color(0.7294118f, 0f, 0f)); //#BA0000
@@ -114,7 +114,7 @@ namespace GamePanelHUDMag
             {
                 Type launcherType = RefHelp.GetEftType(x => x.GetMethod("GetCenterOfImpact", BindingFlags.Public | BindingFlags.Instance) != null);
 
-                RefData.RefUnderBarrelWeapon = RefHelp.FieldRef<Player.FirearmController, Item>.Create("UnderbarrelWeapon");
+                RefData.RefUnderbarrelWeapon = RefHelp.FieldRef<Player.FirearmController, Item>.Create("UnderbarrelWeapon");
                 RefData.RefChambers = RefHelp.FieldRef<object, Slot[]>.Create(launcherType, "Chambers");
 
                 RefData.RefWeaponTemplate = RefHelp.PropertyRef<object, WeaponTemplate>.Create(launcherType, "WeaponTemplate");
@@ -154,7 +154,7 @@ namespace GamePanelHUDMag
 
                 if (Is341Up)
                 {
-                    NowLauncher = RefData.RefUnderBarrelWeapon.GetValue(NowFirearmController); 
+                    NowLauncher = RefData.RefUnderbarrelWeapon.GetValue(NowFirearmController); 
                     Animator_Launcher = RefData.RefAnimator.GetValue(RefData.RefLauncherIAnimator.GetValue(HUDCore.YourPlayer));
                 }
 
@@ -460,7 +460,7 @@ namespace GamePanelHUDMag
 
         public class ReflectionData
         {
-            public RefHelp.FieldRef<Player.FirearmController, Item> RefUnderBarrelWeapon;
+            public RefHelp.FieldRef<Player.FirearmController, Item> RefUnderbarrelWeapon;
             public RefHelp.FieldRef<object, Slot[]> RefChambers;
             public RefHelp.FieldRef<BattleUIScreen, AmmoCountPanel> RefAmmoCountPanel;
             public RefHelp.FieldRef<AmmoCountPanel, CustomTextMeshProUGUI> RefAmmoCount;
