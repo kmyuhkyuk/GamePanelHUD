@@ -14,13 +14,7 @@ namespace GamePanelHUDHit
 #endif
     {
 #if !UNITY_EDITOR
-        private GamePanelHUDCorePlugin.HUDClass<RectTransform, GamePanelHUDHitPlugin.SettingsData> HUD
-        {
-            get
-            {
-                return GamePanelHUDHitPlugin.KillHUD;
-            }
-        }
+        private GamePanelHUDCorePlugin.HUDClass<RectTransform, GamePanelHUDHitPlugin.SettingsData> HUD => GamePanelHUDHitPlugin.KillHUD;
 #endif
 
         public bool Active;
@@ -60,7 +54,7 @@ namespace GamePanelHUDHit
 
             if (HasXp)
             {
-                _XpValue.fontStyle = HUD.SettingsData.KeyKillXpStyles.Value;
+                _XpValue.fontStyle = HUD.SetData.KeyKillXpStyles.Value;
                 _XpValue.color = XpColor;
                 _XpValue.text = Xp.ToString();
             }
@@ -75,13 +69,13 @@ namespace GamePanelHUDHit
 
         void KillUI()
         {
-            Animator_KillUI.SetFloat(AnimatorHash.Speed, HUD.SettingsData.KeyKillWaitSpeed.Value);
+            Animator_KillUI.SetFloat(AnimatorHash.Speed, HUD.SetData.KeyKillWaitSpeed.Value);
 
             if (Active)
             {
                 Animator_KillUI.SetBool(AnimatorHash.Active, Active);
 
-                TextPlay(HUD.SettingsData.KeyKillWriteSpeed.Value, HUD.SettingsData.KeyKillWrite2Speed.Value, HUD.SettingsData.KeyKillWaitTime.Value);
+                TextPlay(HUD.SetData.KeyKillWriteSpeed.Value, HUD.SetData.KeyKillWrite2Speed.Value, HUD.SetData.KeyKillWaitTime.Value);
 
                 Active = false;
             }
@@ -94,7 +88,7 @@ namespace GamePanelHUDHit
             }
         }
 
-        async void TextPlay(int speed, int speed2, int waittime)
+        async void TextPlay(int speed, int speed2, int waitTime)
         {
             _TextValue.text = Text;
 
@@ -102,7 +96,7 @@ namespace GamePanelHUDHit
 
             if (IsKillInfo)
             {
-                await Task.Delay(waittime);
+                await Task.Delay(waitTime);
 
                 _TextValue.text = Text2;
 
@@ -111,10 +105,10 @@ namespace GamePanelHUDHit
 
             Animator_KillUI.SetBool(AnimatorHash.Complete, true);
 
-            GamePanelHUDKill.HasWaitInfoMinu();
+            GamePanelHUDKill.HasWaitInfoMinus();
         }
 
-        async Task TextTask(TMP_Text text, int speed, bool toright)
+        async Task TextTask(TMP_Text text, int speed, bool toRight)
         {
             text.ForceMeshUpdate();
             TMP_TextInfo textInfo = text.textInfo;
@@ -123,7 +117,7 @@ namespace GamePanelHUDHit
             bool complete = false;
             int current;
 
-            if (toright)
+            if (toRight)
             {
                 _TextValue.maxVisibleCharacters = 0;
 
@@ -176,7 +170,7 @@ namespace GamePanelHUDHit
                 After.CanDestroy = true;
             }
 
-            GamePanelHUDKill.HasInfoMinu();
+            GamePanelHUDKill.HasInfoMinus();
             GamePanelHUDCorePlugin.UpdateManger.Remove(this);
             Destroy(gameObject);
 #endif

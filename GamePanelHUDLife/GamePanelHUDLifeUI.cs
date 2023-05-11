@@ -18,7 +18,7 @@ namespace GamePanelHUDLife
 
         public bool ArrowAnimationReverse;
 
-        public bool BuffHUDSW;
+        public bool BuffHUDSw;
 
         public bool IsHealth;
 
@@ -162,7 +162,7 @@ namespace GamePanelHUDLife
 
             _CurrentValue.fontStyle = CurrentStyles;
             _CurrentValue.color = currentColor;
-            _CurrentValue.text = current.ToString();
+            _CurrentValue.text = current.ToString("F0");
 
             _MaxSignValue.fontStyle = MaximumStyles;
             _MaxSignValue.color = MaxColor;
@@ -173,7 +173,7 @@ namespace GamePanelHUDLife
             _MaxValue.text = Maximum.ToString("F0");
 
             //Buff HUD display
-            _BuffValue.gameObject.SetActive(BuffRate != 0 && BuffHUDSW);
+            _BuffValue.gameObject.SetActive(BuffRate != 0 && BuffHUDSw);
 
             //Buff Arrow Up or Down
             _UpBuffArrow.gameObject.SetActive(BuffRate > 0);

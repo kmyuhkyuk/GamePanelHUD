@@ -50,7 +50,7 @@ namespace GamePanelHUDMap
         {
             if (_Map != null)
             {
-                _Map.gameObject.SetActive(HUD.HUDSW);
+                _Map.gameObject.SetActive(HUD.HUDSw);
             }
 
             /*if (MapUI != null)

@@ -1,8 +1,7 @@
 ﻿#if !UNITY_EDITOR
 using HarmonyLib;
-using GamePanelHUDCore.Utils.Session;
 
-namespace GamePanelHUDCore.Utils
+namespace GamePanelHUDCore.Utils.Session
 {
     public static class ISessionHelp
     {

@@ -31,18 +31,18 @@ namespace GamePanelHUDCore.Utils.Session
             }
         }
 
-        public static async Task<Sprite> GetAvatar(string traderid)
+        public static async Task<Sprite> GetAvatar(string traderId)
         {
-            if (AvatarSprites.TryGetValue(traderid, out Task<Sprite> sprite))
+            if (AvatarSprites.TryGetValue(traderId, out Task<Sprite> sprite))
             {
                 return await sprite;
             }
             else
             {
-                if (Avatar.TryGetValue(traderid, out object avatar))
+                if (Avatar.TryGetValue(traderId, out object avatar))
                 {
                     Task<Sprite> avatarSprite = Traverse.Create(avatar).Method("GetAvatar").GetValue<Task<Sprite>>();
-                    AvatarSprites.Add(traderid, avatarSprite);
+                    AvatarSprites.Add(traderId, avatarSprite);
 
                     return await avatarSprite;
                 }
@@ -53,9 +53,9 @@ namespace GamePanelHUDCore.Utils.Session
             }
         }
 
-        public static async void GetAvatar(string traderid, Action<Sprite> action)
+        public static async void GetAvatar(string traderId, Action<Sprite> action)
         {
-            var sprite = await GetAvatar(traderid);
+            var sprite = await GetAvatar(traderId);
 
             if (action != null)
             {

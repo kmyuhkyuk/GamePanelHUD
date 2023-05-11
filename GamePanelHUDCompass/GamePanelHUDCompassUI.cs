@@ -13,7 +13,7 @@ namespace GamePanelHUDCompass
         , IUpdate
 #endif
     {
-        public bool AngleHUDSW;
+        public bool AngleHUDSw;
 
         public float AngleNum;
 
@@ -136,7 +136,7 @@ namespace GamePanelHUDCompass
                 direction = "N";
             }
 
-            AnglePanel.gameObject.SetActive(AngleHUDSW);
+            AnglePanel.gameObject.SetActive(AngleHUDSw);
 
             _DirectionValue.fontStyle = DirectionStyles;
             _DirectionValue.color = DirectionColor;

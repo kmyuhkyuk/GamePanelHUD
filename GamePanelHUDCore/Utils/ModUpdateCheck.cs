@@ -1,11 +1,11 @@
 ﻿#if !UNITY_EDITOR
+using BepInEx;
 using BepInEx.Configuration;
 using System;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
-using BepInEx;
 
 namespace GamePanelHUDCore.Utils
 {
@@ -71,14 +71,14 @@ namespace GamePanelHUDCore.Utils
 
             public string ModDownloadUrl;
 
-            public void Set(HUDVersion hudversion)
+            public void Set(HUDVersion hudVersion)
             {
                 ServerConnect = true;
-                ModVersion = hudversion.ModVersion;
-                FirstGameVersion = hudversion.FirstGameVersion;
-                LastGameVersion = hudversion.LastGameVersion;
-                ModFileUrl = hudversion.ModFileUrl;
-                ModDownloadUrl = hudversion.ModDownloadUrl;
+                ModVersion = hudVersion.ModVersion;
+                FirstGameVersion = hudVersion.FirstGameVersion;
+                LastGameVersion = hudVersion.LastGameVersion;
+                ModFileUrl = hudVersion.ModFileUrl;
+                ModDownloadUrl = hudVersion.ModDownloadUrl;
             }
 
             public void ConnectError()

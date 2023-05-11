@@ -13,7 +13,7 @@ namespace GamePanelHUDHit
         , IUpdate
 #endif
     {
-        public bool DamageHUDSW;
+        public bool DamageHUDSw;
 
         public bool HasArmorHit;
 
@@ -65,7 +65,7 @@ namespace GamePanelHUDHit
 
         private RectTransform RightUpRect;
 
-        private RectTransform RightDowmRect;
+        private RectTransform RightDownRect;
 
         private RectTransform LeftUpHeadRect;
 
@@ -73,7 +73,7 @@ namespace GamePanelHUDHit
 
         private RectTransform RightUpHeadRect;
 
-        private RectTransform RightDowmHeadRect;
+        private RectTransform RightDownHeadRect;
 
         private RectTransform DamageValueRect;
 
@@ -97,7 +97,7 @@ namespace GamePanelHUDHit
         private Image _RightUp;
 
         [SerializeField]
-        private Image _RightDowm;
+        private Image _RightDown;
 
         [SerializeField]
         private Image _LeftUpHead;
@@ -109,7 +109,7 @@ namespace GamePanelHUDHit
         private Image _RightUpHead;
 
         [SerializeField]
-        private Image _RightDowmHead;
+        private Image _RightDownHead;
 
         private Animator Animator_HitUI;
 
@@ -117,20 +117,21 @@ namespace GamePanelHUDHit
         {
             Animator_HitUI = GetComponent<Animator>();
 
-            _Hp = _HpValue.transform.parent;
+            var parent = _HpValue.transform.parent;
+            _Hp = parent;
             _Armor = _ArmorValue.transform.parent;
 
             LeftUpRect = _LeftUp.GetComponent<RectTransform>();
             LeftDownRect = _LeftDown.GetComponent<RectTransform>();
             RightUpRect = _RightUp.GetComponent<RectTransform>();
-            RightDowmRect = _RightDowm.GetComponent<RectTransform>();
+            RightDownRect = _RightDown.GetComponent<RectTransform>();
 
             LeftUpHeadRect = _LeftUpHead.GetComponent<RectTransform>();
             LeftDownHeadRect = _LeftDownHead.GetComponent<RectTransform>();
             RightUpHeadRect = _RightUpHead.GetComponent<RectTransform>();
-            RightDowmHeadRect = _RightDowmHead.GetComponent<RectTransform>();
+            RightDownHeadRect = _RightDownHead.GetComponent<RectTransform>();
 
-            DamageValueRect = _HpValue.transform.parent.parent.GetComponent<RectTransform>();
+            DamageValueRect = parent.parent.GetComponent<RectTransform>();
 
 #if !UNITY_EDITOR
             GamePanelHUDCorePlugin.UpdateManger.Register(this);
@@ -162,54 +163,54 @@ namespace GamePanelHUDHit
             LeftUpRect.sizeDelta = HitSizeDelta;
             LeftDownRect.sizeDelta = HitSizeDelta;
             RightUpRect.sizeDelta = HitSizeDelta;
-            RightDowmRect.sizeDelta = HitSizeDelta;
+            RightDownRect.sizeDelta = HitSizeDelta;
 
             LeftUpRect.anchoredPosition = leftUpPos;
             LeftDownRect.anchoredPosition = leftDownPos;
             RightUpRect.anchoredPosition = rightUpPos;
-            RightDowmRect.anchoredPosition = rightDownPos;
+            RightDownRect.anchoredPosition = rightDownPos;
 
             LeftUpRect.localEulerAngles = leftUpRot;
             LeftDownRect.localEulerAngles = leftDownRot;
             RightUpRect.localEulerAngles = rightUpRot;
-            RightDowmRect.localEulerAngles = rightDownRot;
+            RightDownRect.localEulerAngles = rightDownRot;
 
             LeftUpRect.localScale = HitLocalScale;
             LeftDownRect.localScale = HitLocalScale;
             RightUpRect.localScale = HitLocalScale;
-            RightDowmRect.localScale = HitLocalScale;
+            RightDownRect.localScale = HitLocalScale;
 
             LeftUpHeadRect.sizeDelta = HitHeadSizeDelta;
             LeftDownHeadRect.sizeDelta = HitHeadSizeDelta;
             RightUpHeadRect.sizeDelta = HitHeadSizeDelta;
-            RightDowmHeadRect.sizeDelta = HitHeadSizeDelta;
+            RightDownHeadRect.sizeDelta = HitHeadSizeDelta;
 
             LeftUpHeadRect.anchoredPosition = leftUpPos;
             LeftDownHeadRect.anchoredPosition = leftDownPos;
             RightUpHeadRect.anchoredPosition = rightUpPos;
-            RightDowmHeadRect.anchoredPosition = rightDownPos;
+            RightDownHeadRect.anchoredPosition = rightDownPos;
 
             LeftUpHeadRect.localEulerAngles = leftUpRot;
             LeftDownHeadRect.localEulerAngles = leftDownRot;
             RightUpHeadRect.localEulerAngles = rightUpRot;
-            RightDowmHeadRect.localEulerAngles = rightDownRot;
+            RightDownHeadRect.localEulerAngles = rightDownRot;
 
             LeftUpHeadRect.localScale = HitLocalScale;
             LeftDownHeadRect.localScale = HitLocalScale;
             RightUpHeadRect.localScale = HitLocalScale;
-            RightDowmHeadRect.localScale = HitLocalScale;
+            RightDownHeadRect.localScale = HitLocalScale;
 
             DamageValueRect.anchoredPosition = HitDamageAnchoredPosition;
             DamageValueRect.sizeDelta = HitDamageSizeDelta;
             DamageValueRect.localScale = HitDamageLocalScale;
 
-            _Hp.gameObject.SetActive(DamageHUDSW);
+            _Hp.gameObject.SetActive(DamageHUDSw);
 
             _HpValue.fontStyle = DamageStyles;
             _HpValue.color = DamageInfoColor;
             _HpValue.text = Damage.ToString("F0");
 
-            _Armor.gameObject.SetActive(HasArmorHit && DamageHUDSW);
+            _Armor.gameObject.SetActive(HasArmorHit && DamageHUDSw);
 
             _ArmorValue.fontStyle = ArmorDamageStyles;
             _ArmorValue.color = ArmorDamageInfoColor;
@@ -221,10 +222,10 @@ namespace GamePanelHUDHit
         }
 #if !UNITY_EDITOR
 
-        public void HitTirgger(bool ishead, GamePanelHUDHitPlugin.HitInfo hitinfo, GamePanelHUDHitPlugin.HitInfo.Direction direction)
+        public void HitTrigger(bool isHead, GamePanelHUDHitPlugin.HitInfo hitInfo, GamePanelHUDHitPlugin.HitInfo.Direction direction)
         {
             Color hitColor;
-            switch (hitinfo.HitType)
+            switch (hitInfo.HitType)
             {
                 case GamePanelHUDHitPlugin.HitInfo.Hit.OnlyHp:
                     hitColor = DamageColor;
@@ -245,7 +246,7 @@ namespace GamePanelHUDHit
 
             HitColor(hitColor);
 
-            HitHead(ishead);
+            HitHead(isHead);
 
             switch (direction)
             {
@@ -267,7 +268,7 @@ namespace GamePanelHUDHit
             _LeftDownHead.gameObject.SetActive(sw);
             _LeftUpHead.gameObject.SetActive(sw);
             _RightUpHead.gameObject.SetActive(sw);
-            _RightDowmHead.gameObject.SetActive(sw);
+            _RightDownHead.gameObject.SetActive(sw);
         }
 
         void HitColor(Color color)
@@ -275,12 +276,12 @@ namespace GamePanelHUDHit
             _LeftUp.color = color;
             _LeftDown.color = color;
             _RightUp.color = color;
-            _RightDowm.color = color;
+            _RightDown.color = color;
 
             _LeftUpHead.color = color;
             _LeftDownHead.color = color;
             _RightUpHead.color = color;
-            _RightDowmHead.color = color;
+            _RightDownHead.color = color;
         }
 
         public void HitDeadTirgger()

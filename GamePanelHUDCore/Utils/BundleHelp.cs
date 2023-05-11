@@ -8,13 +8,13 @@ namespace GamePanelHUDCore.Utils
 {
     public static class BundleHelp
     {
-        public static AssetBundle LoadBundle(ManualLogSource logsource, string bundlepath)
+        public static AssetBundle LoadBundle(ManualLogSource logSource, string bundlePath)
         {
-            AssetBundle assetBundle = AssetBundle.LoadFromFile(bundlepath);
+            AssetBundle assetBundle = AssetBundle.LoadFromFile(bundlePath);
 
             if (assetBundle == null)
             {
-                logsource.LogError("Failed to load AssetBundle!");
+                logSource.LogError("Failed to load AssetBundle!");
 
                 return null;
             }
@@ -24,16 +24,16 @@ namespace GamePanelHUDCore.Utils
             }
         }
 
-        public static async Task<AssetBundle> LoadAsyncBundle(ManualLogSource logsource, string bundlepath)
+        public static async Task<AssetBundle> LoadAsyncBundle(ManualLogSource logSource, string bundlePath)
         {
-            var www = AssetBundle.LoadFromFileAsync(bundlepath);
+            var www = AssetBundle.LoadFromFileAsync(bundlePath);
 
             while (!www.isDone)
                 await Task.Yield();
 
             if (www.assetBundle == null)
             {
-                logsource.LogError("Failed to load AssetBundle!");
+                logSource.LogError("Failed to load AssetBundle!");
 
                 return null;
             }
@@ -43,11 +43,11 @@ namespace GamePanelHUDCore.Utils
             }
         }
 
-        public static async Task<T[]> LoadAsyncAllAsset<T>(AssetBundle assetbundle) where T : UnityEngine.Object
+        public static async Task<T[]> LoadAsyncAllAsset<T>(AssetBundle assetBundle) where T : UnityEngine.Object
         {
-            if (assetbundle != null)
+            if (assetBundle != null)
             {
-                var www = assetbundle.LoadAllAssetsAsync<T>();
+                var www = assetBundle.LoadAllAssetsAsync<T>();
 
                 while (!www.isDone)
                     await Task.Yield();

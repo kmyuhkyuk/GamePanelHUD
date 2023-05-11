@@ -14,13 +14,13 @@ namespace GamePanelHUDMag
     {
         public bool WeaponNameAlways;
 
-        public bool AmmoTypeHUDSW;
+        public bool AmmoTypeHUDSw;
 
-        public bool FireModeHUDSW;
+        public bool FireModeHUDSw;
 
         public bool ZeroWarning;
 
-        public bool WeaponTirgger;
+        public bool WeaponTrigger;
 
         public int Current;
 
@@ -97,7 +97,7 @@ namespace GamePanelHUDMag
         private TMP_Text _AmmoTypeValue;
 
         [SerializeField]
-        private TMP_Text _FiremodeValue;
+        private TMP_Text _FireModeValue;
 
         private Animator Animator_WeaponName;
 
@@ -105,7 +105,7 @@ namespace GamePanelHUDMag
 
         private Transform PatronPanel;
 
-        private Transform FiremodePanel;
+        private Transform FireModePanel;
 
         void Start()
         {
@@ -113,7 +113,7 @@ namespace GamePanelHUDMag
             Animator_Current = _CurrentValue.GetComponent<Animator>();
 
             PatronPanel = _PatronValue.transform.parent;
-            FiremodePanel = _FiremodeValue.transform.parent;
+            FireModePanel = _FireModeValue.transform.parent;
 
 #if !UNITY_EDITOR
             GamePanelHUDCorePlugin.UpdateManger.Register(this);
@@ -202,24 +202,24 @@ namespace GamePanelHUDMag
             Animator_Current.SetFloat(AnimatorHash.Speed, ZeroWarningSpeed);
 
             //Fire Mode HUD display
-            FiremodePanel.gameObject.SetActive(FireModeHUDSW);
+            FireModePanel.gameObject.SetActive(FireModeHUDSw);
 
             //Set Fire Mode
-            _FiremodeValue.fontStyle = FireModeStyles;
-            _FiremodeValue.color = FireModeColor;
-            _FiremodeValue.text = FireMode;
+            _FireModeValue.fontStyle = FireModeStyles;
+            _FireModeValue.color = FireModeColor;
+            _FireModeValue.text = FireMode;
 
-            _AmmoTypeValue.gameObject.SetActive(AmmoTypeHUDSW);
+            _AmmoTypeValue.gameObject.SetActive(AmmoTypeHUDSw);
 
             _AmmoTypeValue.fontStyle = AmmoTypeStyles;
             _AmmoTypeValue.color = AmmoTypeColor;
             _AmmoTypeValue.text = AmmoType;
 
-            if (WeaponTirgger)
+            if (WeaponTrigger)
             {
                 Animator_WeaponName.SetTrigger(AnimatorHash.Active);
 
-                WeaponTirgger = false;
+                WeaponTrigger = false;
             }
         }
     }

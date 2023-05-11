@@ -29,9 +29,9 @@ namespace GamePanelHUDCore
 
         public static readonly HUDCoreClass HUDCore = new HUDCoreClass();
 
-        private bool AllHUDSW;
+        private bool AllHUDSw;
 
-        private readonly SettingsData SettingsDatas = new SettingsData();
+        private readonly SettingsData SetData = new SettingsData();
 
         private void Start()
         {
@@ -42,8 +42,8 @@ namespace GamePanelHUDCore
 
             const string mainSettings = "主设置 Main Settings";
 
-            SettingsDatas.KeyAllHUDAlways = Config.Bind<bool>(mainSettings, "所有指示栏始终显示 All HUD Always display", false);
-            SettingsDatas.KeyDebugMethodTime = Config.Bind<bool>(mainSettings, "调试所有指示栏调用时间 Debug All HUD Method Invoke Time", false, new ConfigDescription("", null, new ConfigurationManagerAttributes() { IsAdvanced = true }));
+            SetData.KeyAllHUDAlways = Config.Bind<bool>(mainSettings, "所有指示栏始终显示 All HUD Always display", false);
+            SetData.KeyDebugMethodTime = Config.Bind<bool>(mainSettings, "调试所有指示栏调用时间 Debug All HUD Method Invoke Time", false, new ConfigDescription("", null, new ConfigurationManagerAttributes() { IsAdvanced = true }));
 
             new PlayerPatch().Enable();
             new GameWorldAwakePatch().Enable();
@@ -63,23 +63,23 @@ namespace GamePanelHUDCore
         void Update()
         {
             //All HUD always display 
-            if (SettingsDatas.KeyAllHUDAlways.Value)
+            if (SetData.KeyAllHUDAlways.Value)
             {
-                AllHUDSW = true;
+                AllHUDSw = true;
             }
             //All HUD display 
             else if (YourGameUI != null && YourGameUI.BattleUiScreen != null)
             {
-                AllHUDSW = YourGameUI.BattleUiScreen.gameObject.activeSelf;
+                AllHUDSw = YourGameUI.BattleUiScreen.gameObject.activeSelf;
             }
             else
             {
-                AllHUDSW = false;
+                AllHUDSw = false;
             }
 
-            HUDCore.Set(YourPlayer, YourGameUI, TheWorld, AllHUDSW);
+            HUDCore.Set(YourPlayer, YourGameUI, TheWorld, AllHUDSw);
 
-            UpdateManger.NeedMethodTime = SettingsDatas.KeyDebugMethodTime.Value;
+            UpdateManger.NeedMethodTime = SetData.KeyDebugMethodTime.Value;
 
             UpdateManger.Update();
         }
@@ -96,17 +96,11 @@ namespace GamePanelHUDCore
 
             public static event Action<GameWorld> WorldDispose;
 
-            public bool HasPlayer
-            {
-                get
-                {
-                    return YourPlayer != null;
-                }
-            }
+            public bool HasPlayer => YourPlayer != null;
 
-            public bool AllHUDSW;
+            public bool AllHUDSw;
 
-            public static readonly GameObject GamePanlHUDPublic = new GameObject("GamePanlHUDPublic", new Type[] { typeof(Canvas), typeof(CanvasScaler) });
+            public static readonly GameObject GamePanelHUDPublic = new GameObject("GamePanelHUDPublic", typeof(Canvas), typeof(CanvasScaler));
 
             public static readonly string ModPath  = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "BepInEx/plugins/kmyuhkyuk-GamePanelHUD");
 
@@ -116,38 +110,42 @@ namespace GamePanelHUDCore
 
             static HUDCoreClass()
             {
-                FileVersionInfo exeInfo = Process.GetCurrentProcess().MainModule.FileVersionInfo;
+                var processModule = Process.GetCurrentProcess().MainModule;
+                if (processModule != null)
+                {
+                    FileVersionInfo exeInfo = processModule.FileVersionInfo;
 
-                GameVersion = new Version(exeInfo.FileMajorPart, exeInfo.ProductMinorPart, exeInfo.ProductBuildPart, exeInfo.FilePrivatePart);
+                    GameVersion = new Version(exeInfo.FileMajorPart, exeInfo.ProductMinorPart, exeInfo.ProductBuildPart, exeInfo.FilePrivatePart);
+                }
 
-                Canvas canvas = GamePanlHUDPublic.GetComponent<Canvas>();
+                Canvas canvas = GamePanelHUDPublic.GetComponent<Canvas>();
 
                 canvas.renderMode = RenderMode.ScreenSpaceOverlay;
                 canvas.sortingOrder = 1;
                 canvas.additionalShaderChannels = AdditionalCanvasShaderChannels.TexCoord1 | AdditionalCanvasShaderChannels.Normal | AdditionalCanvasShaderChannels.Tangent;
 
-                DontDestroyOnLoad(GamePanlHUDPublic);
+                DontDestroyOnLoad(GamePanelHUDPublic);
             }
 
-            public static string GetBundlePath(string bundlename)
+            public static string GetBundlePath(string bundleName)
             {
-                return Path.Combine(ModPath, "bundles", bundlename);
+                return Path.Combine(ModPath, "bundles", bundleName);
             }
 
-            public static AssetData<GameObject> LoadHUD(string bundlename, string initassetname)
+            public static AssetData<GameObject> LoadHUD(string bundleName, string initAssetName)
             {
-                return LoadHUD(bundlename, new string[] { initassetname });
+                return LoadHUD(bundleName, new[] { initAssetName });
             }
 
-            public static AssetData<GameObject> LoadHUD(string bundlename, string[] initassetname)
+            public static AssetData<GameObject> LoadHUD(string bundleName, string[] initAssetName)
             {
-                AssetBundle assetBundle = BundleHelp.LoadBundle(LogSource, GetBundlePath(bundlename));
+                AssetBundle assetBundle = BundleHelp.LoadBundle(LogSource, GetBundlePath(bundleName));
 
                 Dictionary<string, GameObject> asset = assetBundle.LoadAllAssets<GameObject>().ToDictionary(x => x.name, x => x);
 
                 Dictionary<string, GameObject> init = new Dictionary<string, GameObject>();
 
-                foreach (string name in initassetname)
+                foreach (string name in initAssetName)
                 {
                     InitAsset(asset, init, name);
                 }
@@ -157,9 +155,9 @@ namespace GamePanelHUDCore
                 return new AssetData<GameObject>(asset, init);
             }
 
-            private static void InitAsset(Dictionary<string, GameObject> asset, Dictionary<string, GameObject> init, string initassetname)
+            private static void InitAsset(Dictionary<string, GameObject> asset, Dictionary<string, GameObject> init, string initAssetName)
             {
-                init.Add(initassetname, GameObject.Instantiate(asset[initassetname], GamePanlHUDPublic.transform));
+                init.Add(initAssetName, Instantiate(asset[initAssetName], GamePanelHUDPublic.transform));
             }
 
             public class AssetData<T>
@@ -191,12 +189,12 @@ namespace GamePanelHUDCore
                 }
             }
 
-            public void Set(Player yourplayer, GameUI yourgameui, GameWorld theworld, bool hudsw)
+            public void Set(Player yourPlayer, GameUI yourGameUI, GameWorld theWorld, bool hudSw)
             {
-                YourPlayer = yourplayer;
-                YourGameUI = yourgameui;
-                TheWorld = theworld;
-                AllHUDSW = hudsw;
+                YourPlayer = yourPlayer;
+                YourGameUI = yourGameUI;
+                TheWorld = theWorld;
+                AllHUDSw = hudSw;
             }
         }
 
@@ -204,15 +202,15 @@ namespace GamePanelHUDCore
         {
             public T Info;
 
-            public V SettingsData;
+            public V SetData;
 
-            public bool HUDSW;
+            public bool HUDSw;
 
-            public void Set(T info, V settingsdata, bool hudsw)
+            public void Set(T info, V setData, bool hudSw)
             {
                 Info = info;
-                SettingsData = settingsdata;
-                HUDSW = hudsw;
+                SetData = setData;
+                HUDSw = hudSw;
             }
         }
 

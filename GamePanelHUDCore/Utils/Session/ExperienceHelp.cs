@@ -1,10 +1,10 @@
 ﻿#if !UNITY_EDITOR
-using HarmonyLib;
 using System;
 using System.Reflection;
 using EFT;
+using HarmonyLib;
 
-namespace GamePanelHUDCore.Utils
+namespace GamePanelHUDCore.Utils.Session
 {
     public static class ExperienceHelp
     {
@@ -14,7 +14,7 @@ namespace GamePanelHUDCore.Utils
 
         private static object Kill;
 
-        private static Func<object, int, int> RefKillingBonusPercent;
+        private static readonly Func<object, int, int> RefKillingBonusPercent;
 
         private static int VictimLevelExp;
 
@@ -31,9 +31,9 @@ namespace GamePanelHUDCore.Utils
             RefKillingBonusPercent = RefHelp.ObjectMethodDelegate<Func<object, int, int>>(RefHelp.GetEftMethod(x => x.GetMethod("GetKillingBonusPercent") != null, flags, x => x.Name == "GetKillingBonusPercent"));
         }
 
-        public static void Init(object backendconfig)
+        public static void Init(object backendConfig)
         {
-            Config = Traverse.Create(backendconfig).Field("Config").GetValue<object>();
+            Config = Traverse.Create(backendConfig).Field("Config").GetValue<object>();
 
             Experience = Traverse.Create(Config).Field("Experience").GetValue<object>();
 
@@ -67,12 +67,12 @@ namespace GamePanelHUDCore.Utils
 
         public static int GetHeadExp(int exp, EPlayerSide side)
         {
-            return (int)((float)GetBaseExp(exp, side) * HeadShotMult);
+            return (int)(GetBaseExp(exp, side) * HeadShotMult);
         }
 
         public static int GetStreakExp(int exp, EPlayerSide side, int kills)
         {
-            return (int)((float)GetBaseExp(exp, side) * ((float)GetKillingBonusPercent(kills) / 100f));
+            return (int)(GetBaseExp(exp, side) * (GetKillingBonusPercent(kills) / 100f));
         }
 
         public static int GetKillingBonusPercent(int killed)

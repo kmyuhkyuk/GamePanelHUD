@@ -4,6 +4,7 @@ using HarmonyLib;
 using System;
 using System.Reflection;
 using GamePanelHUDCore.Utils;
+using GamePanelHUDCore.Utils.Session;
 
 namespace GamePanelHUDCore.Patches
 {

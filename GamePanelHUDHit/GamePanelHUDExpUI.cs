@@ -68,17 +68,17 @@ namespace GamePanelHUDHit
             }
         }
 
-        public void XpUp(int up, int lastxp)
+        public void XpUp(int up, int lastXp)
         {
             if (!IsClear())
             {
-                XP += up + lastxp;
+                XP += up + lastXp;
 
                 Active = true;
             }
             else
             {
-                WaitXP += up + lastxp;
+                WaitXP += up + lastXp;
 
                 Active = true;
             }

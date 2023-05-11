@@ -62,7 +62,7 @@ namespace GamePanelHUDMap
 
         void MapPlugin()
         {
-            MapHUDSW = HUDCore.AllHUDSW && HasMap && !MapDatas.IsLoadMap && HUDCore.HasPlayer;
+            MapHUDSW = HUDCore.AllHUDSw && HasMap && !MapDatas.IsLoadMap && HUDCore.HasPlayer;
 
             HUD.Set(MapDatas, SettingsDatas, MapHUDSW);
 

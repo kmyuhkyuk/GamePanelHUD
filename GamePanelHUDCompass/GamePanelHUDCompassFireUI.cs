@@ -13,13 +13,7 @@ namespace GamePanelHUDCompass
 #endif
     {
 #if !UNITY_EDITOR
-        private GamePanelHUDCorePlugin.HUDClass<GamePanelHUDCompassPlugin.CompassFireData, GamePanelHUDCompassPlugin.SettingsData> HUD
-        {
-            get
-            {
-                return GamePanelHUDCompassPlugin.CompassFireHUD;
-            }
-        }
+        private GamePanelHUDCorePlugin.HUDClass<GamePanelHUDCompassPlugin.CompassFireData, GamePanelHUDCompassPlugin.SettingsData> HUD => GamePanelHUDCompassPlugin.CompassFireHUD;
 #endif
 
         public bool Active;
@@ -94,29 +88,11 @@ namespace GamePanelHUDCompass
 
         private float FireX;
 
-        private float FireXLeft
-        {
-            get
-            {
-                return FireX - 2880;
-            }
-        }
+        private float FireXLeft => FireX - 2880;
 
-        private float FireXRight
-        {
-            get
-            {
-                return FireX + 2880;
-            }
-        }
+        private float FireXRight => FireX + 2880;
 
-        private float FireXRightRight
-        {
-            get
-            {
-                return FireX + 5760; //2880 * 2
-            }
-        }
+        private float FireXRightRight => FireX + 5760; //2880 * 2
 
 #if !UNITY_EDITOR
         void Start()
@@ -185,16 +161,16 @@ namespace GamePanelHUDCompass
 
             IsLeft = GetDirection(HUD.Info.SizeDelta.x, HUD.Info.CompassX, FireX, fireXLeft, fireXRight, fireXRightRight, lhs, HUD.Info.PlayerRight);
 
-            float height = HUD.SettingsData.KeyCompassFireHeight.Value;
+            float height = HUD.SetData.KeyCompassFireHeight.Value;
             RealRect.anchoredPosition = new Vector2(FireX, height);
             VirtualRect.anchoredPosition = new Vector2(fireXLeft, height);
             Virtual2Rect.anchoredPosition = new Vector2(fireXRight, height);
             Virtual3Rect.anchoredPosition = new Vector2(fireXRightRight, height);
 
-            Animator_Fire.SetFloat(AnimatorHash.Active, HUD.SettingsData.KeyCompassFireActiveSpeed.Value);
-            Animator_Fire.SetFloat(AnimatorHash.Speed, HUD.SettingsData.KeyCompassFireWaitSpeed.Value);
-            Animator_Fire.SetFloat(AnimatorHash.ToSmallSpeed, HUD.SettingsData.KeyCompassFireToSmallSpeed.Value);
-            Animator_Fire.SetFloat(AnimatorHash.SmallSpeed, HUD.SettingsData.KeyCompassFireSmallWaitSpeed.Value);
+            Animator_Fire.SetFloat(AnimatorHash.Active, HUD.SetData.KeyCompassFireActiveSpeed.Value);
+            Animator_Fire.SetFloat(AnimatorHash.Speed, HUD.SetData.KeyCompassFireWaitSpeed.Value);
+            Animator_Fire.SetFloat(AnimatorHash.ToSmallSpeed, HUD.SetData.KeyCompassFireToSmallSpeed.Value);
+            Animator_Fire.SetFloat(AnimatorHash.SmallSpeed, HUD.SetData.KeyCompassFireSmallWaitSpeed.Value);
 
             if (Active)
             {
@@ -211,17 +187,17 @@ namespace GamePanelHUDCompass
             Animator_Fire.SetTrigger(AnimatorHash.Fire);
         }
 
-        bool? GetDirection(float panelx, float compassx, float firex, float firexleft, float firexright, float firexrightright, Vector3 lhs, Vector3 right)
+        bool? GetDirection(float panelX, float compassX, float fireX, float fireXLeft, float fireXRight, float fireXRightRight, Vector3 lhs, Vector3 right)
         {
-            float panelHalf = panelx / 2;
+            float panelHalf = panelX / 2;
 
-            float panelMaxX = panelHalf + compassx;
+            float panelMaxX = panelHalf + compassX;
 
-            float panelMinX = -panelHalf + compassx;
+            float panelMinX = -panelHalf + compassX;
 
-            bool realInPanel = -firex < panelMaxX && -firex > panelMinX;
+            bool realInPanel = -fireX < panelMaxX && -fireX > panelMinX;
 
-            bool virtualInPanel = -firexleft < panelMaxX && -firexleft > panelMinX || -firexright < panelMaxX && -firexright > panelMinX || -firexrightright < panelMaxX && -firexrightright > panelMinX;
+            bool virtualInPanel = -fireXLeft < panelMaxX && -fireXLeft > panelMinX || -fireXRight < panelMaxX && -fireXRight > panelMinX || -fireXRightRight < panelMaxX && -fireXRightRight > panelMinX;
 
             if (!realInPanel && !virtualInPanel)
             {
@@ -233,9 +209,9 @@ namespace GamePanelHUDCompass
             }
         }
 
-        bool RealDirection(Vector3 lhs, Vector3 right)
+        static bool RealDirection(Vector3 lhs, Vector3 right)
         {
-            return Vector3.Dot(lhs, right) < 0 ? true : false;
+            return Vector3.Dot(lhs, right) < 0;
         }
 #endif
 

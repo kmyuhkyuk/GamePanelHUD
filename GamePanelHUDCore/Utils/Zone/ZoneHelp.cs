@@ -9,33 +9,15 @@ namespace GamePanelHUDCore.Utils.Zone
     {
         internal static readonly List<TriggerWithId> TriggerPoints = new List<TriggerWithId>();
 
-        public static IEnumerable<ExperienceTrigger> ExperienceTriggers
-        {
-            get
-            {
-                return TriggerPoints.OfType<ExperienceTrigger>();
-            }
-        }
+        public static IEnumerable<ExperienceTrigger> ExperienceTriggers => TriggerPoints.OfType<ExperienceTrigger>();
 
-        public static IEnumerable<PlaceItemTrigger> PlaceItemTriggers
-        {
-            get
-            {
-                return TriggerPoints.OfType<PlaceItemTrigger>();
-            }
-        }
+        public static IEnumerable<PlaceItemTrigger> PlaceItemTriggers => TriggerPoints.OfType<PlaceItemTrigger>();
 
-        public static IEnumerable<QuestTrigger> QuestTriggers
-        {
-            get
-            {
-                return TriggerPoints.OfType<QuestTrigger>();
-            }
-        }
+        public static IEnumerable<QuestTrigger> QuestTriggers => TriggerPoints.OfType<QuestTrigger>();
 
         static ZoneHelp()
         {
-            GamePanelHUDCorePlugin.HUDCoreClass.WorldDispose += (GameWorld) => TriggerPoints.Clear();
+            GamePanelHUDCorePlugin.HUDCoreClass.WorldDispose += GameWorld => TriggerPoints.Clear();
         }
 
         public static bool TryGetValues<T>(string id, out IEnumerable<T> triggers) where T : TriggerWithId
@@ -58,7 +40,7 @@ namespace GamePanelHUDCore.Utils.Zone
                 return false;
             }
 
-            return triggers.Any();
+            return triggers != null && triggers.Any();
         }
     }
 }

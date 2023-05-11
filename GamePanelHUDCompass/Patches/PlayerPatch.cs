@@ -10,12 +10,12 @@ namespace GamePanelHUDCompass.Patches
 {
     public class PlayerShotPatch : ModulePatch
     {
-        private static ReflectionData ReflectionDatas = new ReflectionData();
+        private static readonly ReflectionData RefData = new ReflectionData();
 
         static PlayerShotPatch()
         {
-            ReflectionDatas.RefSettings = RefHelp.FieldRef<InfoClass, object>.Create(typeof(InfoClass), "Settings");
-            ReflectionDatas.RefRole = RefHelp.FieldRef<object, WildSpawnType>.Create(ReflectionDatas.RefSettings.FieldType, "Role");
+            RefData.RefSettings = RefHelp.FieldRef<InfoClass, object>.Create(typeof(InfoClass), "Settings");
+            RefData.RefRole = RefHelp.FieldRef<object, WildSpawnType>.Create(RefData.RefSettings.FieldType, "Role");
         }
 
         protected override MethodBase GetTargetMethod()
@@ -36,7 +36,7 @@ namespace GamePanelHUDCompass.Patches
                 {
                     Who = ____player.ProfileId,
                     Where = weaponPosition,
-                    Role = ReflectionDatas.RefRole.GetValue(ReflectionDatas.RefSettings.GetValue(____player.Profile.Info)),
+                    Role = RefData.RefRole.GetValue(RefData.RefSettings.GetValue(____player.Profile.Info)),
                     IsSilenced = __instance.IsSilenced && !__instance.IsInLauncherMode(),
                     Distance = Vector3.Distance(weaponPosition, yourPlayer.Position)
                 };

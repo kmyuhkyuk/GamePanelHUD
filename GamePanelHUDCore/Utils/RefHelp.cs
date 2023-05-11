@@ -8,22 +8,27 @@ using System.Reflection.Emit;
 
 namespace GamePanelHUDCore.Utils
 {
+    //1.0.0
     public static class RefHelp
     {
-        public static Func<T, F> ObjectFieldGetAccess<T, F>(FieldInfo fieldinfo)
+        public static Func<T, F> ObjectFieldGetAccess<T, F>(FieldInfo fieldInfo)
         {
-            if (fieldinfo == null)
+            if (fieldInfo == null)
             {
-                throw new ArgumentNullException(nameof(fieldinfo));
+                throw new ArgumentNullException(nameof(fieldInfo));
             }
 
             var delegateInstanceType = typeof(T);
-            var declaringType = fieldinfo.DeclaringType;
+            var declaringType = fieldInfo.DeclaringType;
+            if (declaringType == null)
+            {
+                throw new ArgumentNullException(nameof(declaringType));
+            }
 
             bool isObject = typeof(F) == typeof(object);
             bool needBox;
 
-            if (isObject && fieldinfo.FieldType.IsValueType)
+            if (isObject && fieldInfo.FieldType.IsValueType)
             {
                 needBox = true;
             }
@@ -32,12 +37,12 @@ namespace GamePanelHUDCore.Utils
                 needBox = false;
             }
 
-            var dmd = new DynamicMethod($"__get_{delegateInstanceType.Name}_fi_{fieldinfo.Name}", typeof(F), new Type[] { delegateInstanceType });
+            var dmd = new DynamicMethod($"__get_{delegateInstanceType.Name}_fi_{fieldInfo.Name}", typeof(F), new[] { delegateInstanceType });
 
             var ilGen = dmd.GetILGenerator();
-            if (fieldinfo.IsStatic)
+            if (fieldInfo.IsStatic)
             {
-                ilGen.Emit(OpCodes.Ldsfld, fieldinfo);
+                ilGen.Emit(OpCodes.Ldsfld, fieldInfo);
             }
             else
             {
@@ -48,12 +53,12 @@ namespace GamePanelHUDCore.Utils
                     ilGen.Emit(OpCodes.Castclass, declaringType);
                 }
 
-                ilGen.Emit(OpCodes.Ldfld, fieldinfo);
+                ilGen.Emit(OpCodes.Ldfld, fieldInfo);
             }
 
             if (needBox)
             {
-                ilGen.Emit(OpCodes.Box, fieldinfo.FieldType);
+                ilGen.Emit(OpCodes.Box, fieldInfo.FieldType);
             }
             else if (isObject)
             {
@@ -65,20 +70,24 @@ namespace GamePanelHUDCore.Utils
             return (Func<T, F>)dmd.CreateDelegate(typeof(Func<T, F>));
         }
 
-        public static Action<T, F> ObjectFieldSetAccess<T, F>(FieldInfo fieldinfo)
+        public static Action<T, F> ObjectFieldSetAccess<T, F>(FieldInfo fieldInfo)
         {
-            if (fieldinfo == null)
+            if (fieldInfo == null)
             {
-                throw new ArgumentNullException(nameof(fieldinfo));
+                throw new ArgumentNullException(nameof(fieldInfo));
             }
 
             var delegateInstanceType = typeof(T);
-            var declaringType = fieldinfo.DeclaringType;
+            var declaringType = fieldInfo.DeclaringType;
+            if (declaringType == null)
+            {
+                throw new ArgumentNullException(nameof(declaringType));
+            }
 
             bool isObject = typeof(F) == typeof(object);
             bool needBox;
 
-            if (isObject && fieldinfo.FieldType.IsValueType)
+            if (isObject && fieldInfo.FieldType.IsValueType)
             {
                 needBox = true;
             }
@@ -87,23 +96,23 @@ namespace GamePanelHUDCore.Utils
                 needBox = false;
             }
 
-            var dmd = new DynamicMethod($"__set_{delegateInstanceType.Name}_fi_{fieldinfo.Name}", null, new Type[] { delegateInstanceType, typeof(F) });
+            var dmd = new DynamicMethod($"__set_{delegateInstanceType.Name}_fi_{fieldInfo.Name}", null, new[] { delegateInstanceType, typeof(F) });
 
             var ilGen = dmd.GetILGenerator();
-            if (fieldinfo.IsStatic)
+            if (fieldInfo.IsStatic)
             {
                 ilGen.Emit(OpCodes.Ldarg_1);
 
                 if (needBox)
                 {
-                    ilGen.Emit(OpCodes.Unbox_Any, fieldinfo.FieldType);
+                    ilGen.Emit(OpCodes.Unbox_Any, fieldInfo.FieldType);
                 }
                 else if (isObject)
                 {
                     ilGen.Emit(OpCodes.Castclass, typeof(F));
                 }
 
-                ilGen.Emit(OpCodes.Stsfld, fieldinfo);
+                ilGen.Emit(OpCodes.Stsfld, fieldInfo);
             }
             else
             {
@@ -118,14 +127,14 @@ namespace GamePanelHUDCore.Utils
 
                 if (needBox)
                 {
-                    ilGen.Emit(OpCodes.Unbox_Any, fieldinfo.FieldType);
+                    ilGen.Emit(OpCodes.Unbox_Any, fieldInfo.FieldType);
                 }
                 else if (isObject)
                 {
                     ilGen.Emit(OpCodes.Castclass, typeof(F));
                 }
 
-                ilGen.Emit(OpCodes.Stfld, fieldinfo);
+                ilGen.Emit(OpCodes.Stfld, fieldInfo);
             }
             ilGen.Emit(OpCodes.Ret);
 
@@ -142,8 +151,16 @@ namespace GamePanelHUDCore.Utils
             var delegateType = typeof(DelegateType);
 
             var declaringType = method.DeclaringType;
+            if (declaringType == null)
+            {
+                throw new ArgumentNullException(nameof(declaringType));
+            }
 
             var delegateMethod = delegateType.GetMethod("Invoke");
+            if (delegateMethod == null)
+            {
+                throw new ArgumentNullException(nameof(delegateMethod));
+            }
             var delegateParameters = delegateMethod.GetParameters();
             var delegateParameterTypes = delegateParameters.Select(x => x.ParameterType).ToArray();
 
@@ -182,7 +199,7 @@ namespace GamePanelHUDCore.Utils
                     parameterTypes[i + 1] = parameters[i].ParameterType;
                 }
 
-                if (declaringType != null && declaringType.IsValueType)
+                if (declaringType.IsValueType)
                 {
                     ilGen.Emit(OpCodes.Ldarga_S, 0);
                 }
@@ -214,8 +231,8 @@ namespace GamePanelHUDCore.Utils
                 {
                     ilGen.Emit(OpCodes.Castclass, parameterType);
                 }
-                //DelegateparameterTypes i == parameterTypes i
-                else if (delegateParameterTypes[i] == typeof(object) && isValueType)
+                //DelegateParameterTypes i == parameterTypes i
+                else if (delegateParameterTypes[i] == typeof(object))
                 {
                     ilGen.Emit(OpCodes.Unbox_Any, parameterType);
                 }
@@ -256,63 +273,51 @@ namespace GamePanelHUDCore.Utils
 
             private T Instance;
 
-            public Type InType
-            {
-                get
-                {
-                    return TType;
-                }
-            }
+            public Type InType => TType;
 
-            public Type PropertyType
-            {
-                get
-                {
-                    return PropertyInfo.PropertyType;
-                }
-            }
+            public Type PropertyType => PropertyInfo.PropertyType;
 
-            public PropertyRef(PropertyInfo propertyinfo, object instance)
+            public PropertyRef(PropertyInfo propertyInfo, object instance)
             {
-                if (propertyinfo == null)
+                if (propertyInfo == null)
                 {
                     throw new Exception("PropertyInfo is null");
                 }
 
-                Init(propertyinfo, instance);
+                Init(propertyInfo, instance);
             }
 
-            public PropertyRef(Type type, string propertyname, bool declaredonly, object instance)
+            public PropertyRef(Type type, string propertyName, bool declaredOnly, object instance)
             {
-                BindingFlags flags = declaredonly ? AccessTools.allDeclared : AccessTools.all;
+                BindingFlags flags = declaredOnly ? AccessTools.allDeclared : AccessTools.all;
 
-                PropertyInfo propertyInfo = type.GetProperty(propertyname, flags);
+                PropertyInfo propertyInfo = type.GetProperty(propertyName, flags);
                 
                 if (propertyInfo == null)
                 {
-                    throw new Exception(propertyname + " is null");
+                    throw new Exception(propertyName + " is null");
                 }
 
                 Init(propertyInfo, instance);
             }
 
-            public PropertyRef(Type type, string[] propertynames, bool declaredonly, object instance)
+            public PropertyRef(Type type, string[] propertyNames, bool declaredOnly, object instance)
             {
-                BindingFlags flags = declaredonly ? AccessTools.allDeclared : AccessTools.all;
+                BindingFlags flags = declaredOnly ? AccessTools.allDeclared : AccessTools.all;
 
-                PropertyInfo propertyInfo = propertyInfo = propertynames.Select(x => type.GetProperty(x, flags)).FirstOrDefault(x => x != null);
+                PropertyInfo propertyInfo = propertyNames.Select(x => type.GetProperty(x, flags)).FirstOrDefault(x => x != null);
 
                 if (propertyInfo == null)
                 {
-                    throw new Exception(propertynames.First() + " is null");
+                    throw new Exception(propertyNames.First() + " is null");
                 }
 
                 Init(propertyInfo, instance);
             }
 
-            private void Init(PropertyInfo propertyinfo, object instance)
+            private void Init(PropertyInfo propertyInfo, object instance)
             {
-                PropertyInfo = propertyinfo;
+                PropertyInfo = propertyInfo;
 
                 TType = PropertyInfo.DeclaringType;
 
@@ -349,29 +354,29 @@ namespace GamePanelHUDCore.Utils
                 }
             }
 
-            public static PropertyRef<T, F> Create(PropertyInfo propertyinfo, object instance)
+            public static PropertyRef<T, F> Create(PropertyInfo propertyInfo, object instance)
             {
-                return new PropertyRef<T, F>(propertyinfo, instance);
+                return new PropertyRef<T, F>(propertyInfo, instance);
             }
 
-            public static PropertyRef<T, F> Create(string propertyname, bool declaredonly = false, object instance = null)
+            public static PropertyRef<T, F> Create(string propertyName, bool declaredOnly = false, object instance = null)
             {
-                return new PropertyRef<T, F>(typeof(T), propertyname, declaredonly, instance);
+                return new PropertyRef<T, F>(typeof(T), propertyName, declaredOnly, instance);
             }
 
-            public static PropertyRef<T, F> Create(string[] propertynames, bool declaredonly = false, object instance = null)
+            public static PropertyRef<T, F> Create(string[] propertyNames, bool declaredOnly = false, object instance = null)
             {
-                return new PropertyRef<T, F>(typeof(T), propertynames, declaredonly, instance);
+                return new PropertyRef<T, F>(typeof(T), propertyNames, declaredOnly, instance);
             }
 
-            public static PropertyRef<T, F> Create(Type type, string propertyname, bool declaredonly = false, object instance = null)
+            public static PropertyRef<T, F> Create(Type type, string propertyName, bool declaredOnly = false, object instance = null)
             {
-                return new PropertyRef<T, F>(type, propertyname, declaredonly, instance);
+                return new PropertyRef<T, F>(type, propertyName, declaredOnly, instance);
             }
 
-            public static PropertyRef<T, F> Create(Type type, string[] propertynames, bool declaredonly = false, object instance = null)
+            public static PropertyRef<T, F> Create(Type type, string[] propertyNames, bool declaredOnly = false, object instance = null)
             {
-                return new PropertyRef<T, F>(type, propertynames, declaredonly, instance);
+                return new PropertyRef<T, F>(type, propertyNames, declaredOnly, instance);
             }
 
             public F GetValue(T instance)
@@ -381,7 +386,7 @@ namespace GamePanelHUDCore.Utils
                     throw new ArgumentNullException(nameof(RefGetValue));
                 }
 
-                if (instance != null && TType.IsAssignableFrom(instance.GetType()))
+                if (instance != null && TType.IsInstanceOfType(instance))
                 {
                     return RefGetValue(instance);
                 }
@@ -402,7 +407,7 @@ namespace GamePanelHUDCore.Utils
                     throw new ArgumentNullException(nameof(RefSetValue));
                 }
 
-                if (instance != null && TType.IsAssignableFrom(instance.GetType()))
+                if (instance != null && TType.IsInstanceOfType(instance))
                 {
                     RefSetValue(instance, value);
                 }
@@ -429,88 +434,76 @@ namespace GamePanelHUDCore.Utils
 
             private bool UseHarmony;
 
-            public Type InType
-            {
-                get
-                {
-                    return TType;
-                }
-            }
+            public Type InType => TType;
 
-            public Type FieldType
-            {
-                get
-                {
-                    return FieldInfo.FieldType;
-                }
-            }
+            public Type FieldType => FieldInfo.FieldType;
 
-            public FieldRef(FieldInfo fieldinfo, object instance)
+            public FieldRef(FieldInfo fieldInfo, object instance)
             {
-                if (fieldinfo == null)
+                if (fieldInfo == null)
                 {
                     throw new Exception("FieldInfo is null");
                 }
 
-                Init(fieldinfo, instance);
+                Init(fieldInfo, instance);
             }
 
-            public FieldRef(Type type, string fieldname, bool declaredonly, object instance)
+            public FieldRef(Type type, string fieldName, bool declaredOnly, object instance)
             {
-                BindingFlags flags = declaredonly ? AccessTools.allDeclared : AccessTools.all;
+                BindingFlags flags = declaredOnly ? AccessTools.allDeclared : AccessTools.all;
 
-                FieldInfo fieldInfo = type.GetField(fieldname, flags);
+                FieldInfo fieldInfo = type.GetField(fieldName, flags);
 
                 if (fieldInfo == null)
                 {
-                    throw new Exception(fieldname + " is null");
+                    throw new Exception(fieldName + " is null");
                 }
 
                 Init(fieldInfo, instance);
             }
 
-            public FieldRef(Type type, string[] fieldnames, bool declaredonly, object instance)
+            public FieldRef(Type type, string[] fieldNames, bool declaredOnly, object instance)
             {
-                BindingFlags flags = declaredonly ? AccessTools.allDeclared : AccessTools.all;
+                BindingFlags flags = declaredOnly ? AccessTools.allDeclared : AccessTools.all;
 
-                FieldInfo fieldInfo = fieldnames.Select(x => type.GetField(x, flags)).FirstOrDefault(x => x != null);
+                FieldInfo fieldInfo = fieldNames.Select(x => type.GetField(x, flags)).FirstOrDefault(x => x != null);
 
                 if (fieldInfo == null)
                 {
-                    throw new Exception(fieldnames.First() + " is null");
+                    throw new Exception(fieldNames.First() + " is null");
                 }
 
                 Init(fieldInfo, instance);
             }
 
-            public static FieldRef<T, F> Create(FieldInfo fieldinfo, object instance = null)
+            public static FieldRef<T, F> Create(FieldInfo fieldInfo, object instance = null)
             {
-                return new FieldRef<T, F>(fieldinfo, instance);
+                return new FieldRef<T, F>(fieldInfo, instance);
             }
 
-            public static FieldRef<T, F> Create(string fieldname, bool declaredonly = false, object instance = null)
+            public static FieldRef<T, F> Create(string fieldName, bool declaredOnly = false, object instance = null)
             {
-                return new FieldRef<T, F>(typeof(T), fieldname, declaredonly, instance);
+                return new FieldRef<T, F>(typeof(T), fieldName, declaredOnly, instance);
             }
 
-            public static FieldRef<T, F> Create(string[] fieldnames, bool declaredonly = false, object instance = null)
+            public static FieldRef<T, F> Create(string[] fieldNames, bool declaredOnly = false, object instance = null)
             {
-                return new FieldRef<T, F>(typeof(T), fieldnames, declaredonly, instance);
+                return new FieldRef<T, F>(typeof(T), fieldNames, declaredOnly, instance);
             }
 
-            public static FieldRef<T, F> Create(Type type, string fieldname, bool declaredonly = false, object instance = null)
+            public static FieldRef<T, F> Create(Type type, string fieldName, bool declaredOnly = false, object instance = null)
             {
-                return new FieldRef<T, F>(type, fieldname, declaredonly, instance);
+                return new FieldRef<T, F>(type, fieldName, declaredOnly, instance);
             }
 
-            public static FieldRef<T, F> Create(Type type, string[] fieldnames, bool declaredonly = false, object instance = null)
+            public static FieldRef<T, F> Create(Type type, string[] fieldNames, bool declaredOnly = false, object instance = null)
             {
-                return new FieldRef<T, F>(type, fieldnames, declaredonly, instance);
+                return new FieldRef<T, F>(type, fieldNames, declaredOnly, instance);
             }
 
-            private void Init(FieldInfo fieldinfo, object instance = null)
+            private void Init(FieldInfo fieldInfo, object instance = null)
             {
-                FieldInfo = fieldinfo;
+                FieldInfo = fieldInfo;
 
                 TType = FieldInfo.DeclaringType;
 
@@ -538,7 +531,7 @@ namespace GamePanelHUDCore.Utils
                         throw new ArgumentNullException(nameof(HarmonyFieldRef));
                     }
 
-                    if (instance != null && TType.IsAssignableFrom(instance.GetType()))
+                    if (instance != null && TType.IsInstanceOfType(instance))
                     {
                         return HarmonyFieldRef(instance);
                     }
@@ -558,7 +551,7 @@ namespace GamePanelHUDCore.Utils
                         throw new ArgumentNullException(nameof(RefGetValue));
                     }
 
-                    if (instance != null && TType.IsAssignableFrom(instance.GetType()))
+                    if (instance != null && TType.IsInstanceOfType(instance))
                     {
                         return RefGetValue(instance);
                     }
@@ -582,7 +575,7 @@ namespace GamePanelHUDCore.Utils
                         throw new ArgumentNullException(nameof(HarmonyFieldRef));
                     }
 
-                    if (instance != null && TType.IsAssignableFrom(instance.GetType()))
+                    if (instance != null && TType.IsInstanceOfType(instance))
                     {
                         HarmonyFieldRef(instance) = value;
                     }
@@ -598,7 +591,7 @@ namespace GamePanelHUDCore.Utils
                         throw new ArgumentNullException(nameof(RefSetValue));
                     }
 
-                    if (instance != null && TType.IsAssignableFrom(instance.GetType()))
+                    if (instance != null && TType.IsInstanceOfType(instance))
                     {
                         RefSetValue(instance, value);
                     }
