@@ -13,13 +13,7 @@ namespace GamePanelHUDCompass
 #endif
     {
 #if !UNITY_EDITOR
-        private GamePanelHUDCorePlugin.HUDClass<GamePanelHUDCompassPlugin.CompassData, GamePanelHUDCompassPlugin.SettingsData> HUD
-        {
-            get
-            {
-                return GamePanelHUDCompassPlugin.CompassHUD;
-            }
-        }
+        private GamePanelHUDCorePlugin.HUDClass<GamePanelHUDCompassPlugin.CompassData, GamePanelHUDCompassPlugin.SettingsData> HUD => GamePanelHUDCompassPlugin.CompassHUD;
 #endif
 
         [SerializeField]
@@ -38,26 +32,26 @@ namespace GamePanelHUDCompass
 
         void CompassHUD()
         {
-            RectTransform.anchoredPosition = HUD.SettingsData.KeyAnchoredPosition.Value;
+            RectTransform.anchoredPosition = HUD.SetData.KeyAnchoredPosition.Value;
             RectTransform.sizeDelta = HUD.Info.SizeDelta;
-            RectTransform.localScale = HUD.SettingsData.KeyLocalScale.Value;
+            RectTransform.localScale = HUD.SetData.KeyLocalScale.Value;
 
             if (_Compass != null)
             {
-                _Compass.gameObject.SetActive(HUD.HUDSW);
-                _Compass.AngleHUDSW = HUD.SettingsData.KeyAngleHUDSW.Value;
+                _Compass.gameObject.SetActive(HUD.HUDSw);
+                _Compass.AngleHUDSw = HUD.SetData.KeyAngleHUDSw.Value;
 
                 _Compass.AngleNum = HUD.Info.Angle;
                 _Compass.CompassX = HUD.Info.CompassX;
 
-                _Compass.ArrowColor = HUD.SettingsData.KeyArrowColor.Value;
-                _Compass.AzimuthsColor = HUD.SettingsData.KeyAzimuthsColor.Value;
-                _Compass.DirectionColor = HUD.SettingsData.KeyDirectionColor.Value;
-                _Compass.AngleColor = HUD.SettingsData.KeyAngleColor.Value;
+                _Compass.ArrowColor = HUD.SetData.KeyArrowColor.Value;
+                _Compass.AzimuthsColor = HUD.SetData.KeyAzimuthsColor.Value;
+                _Compass.DirectionColor = HUD.SetData.KeyDirectionColor.Value;
+                _Compass.AngleColor = HUD.SetData.KeyAngleColor.Value;
 
-                _Compass.AzimuthsAngleStyles = HUD.SettingsData.KeyAzimuthsAngleStyles.Value;
-                _Compass.DirectionStyles = HUD.SettingsData.KeyDirectionStyles.Value;
-                _Compass.AngleStyles = HUD.SettingsData.KeyAngleStyles.Value;
+                _Compass.AzimuthsAngleStyles = HUD.SetData.KeyAzimuthsAngleStyles.Value;
+                _Compass.DirectionStyles = HUD.SetData.KeyDirectionStyles.Value;
+                _Compass.AngleStyles = HUD.SetData.KeyAngleStyles.Value;
             }
         }
 #endif

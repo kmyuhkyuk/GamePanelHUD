@@ -13,13 +13,7 @@ namespace GamePanelHUDCompass
 #endif
     {
 #if !UNITY_EDITOR
-        private GamePanelHUDCorePlugin.HUDClass<GamePanelHUDCompassPlugin.CompassStaticData, GamePanelHUDCompassPlugin.SettingsData> HUD
-        {
-            get
-            {
-                return GamePanelHUDCompassPlugin.CompassStaticHUD;
-            }
-        }
+        private GamePanelHUDCorePlugin.HUDClass<GamePanelHUDCompassPlugin.CompassStaticData, GamePanelHUDCompassPlugin.SettingsData> HUD => GamePanelHUDCompassPlugin.CompassStaticHUD;
 
         public GamePanelHUDCompassPlugin.CompassStaticInfo.Type InfoType;
 #endif
@@ -74,29 +68,11 @@ namespace GamePanelHUDCompass
 
         private float IconX;
 
-        private float IconXLeft
-        {
-            get
-            {
-                return IconX - 2880;
-            }
-        }
+        private float IconXLeft => IconX - 2880;
 
-        private float IconXRight
-        {
-            get
-            {
-                return IconX + 2880;
-            }
-        }
+        private float IconXRight => IconX + 2880;
 
-        private float IconXRightRight
-        {
-            get
-            {
-                return IconX + 5760; //2880 * 2
-            }
-        }
+        private float IconXRightRight => IconX + 5760; //2880 * 2
 
 #if !UNITY_EDITOR
         void Start()
@@ -166,7 +142,7 @@ namespace GamePanelHUDCompass
             //Center always is Virtual2
             XDiff = -iconXRight - HUD.Info.CompassX;
 
-            float height = HUD.SettingsData.KeyCompassStaticHeight.Value;
+            float height = HUD.SetData.KeyCompassStaticHeight.Value;
             RealRect.anchoredPosition = new Vector2(IconX, height);
             VirtualRect.anchoredPosition = new Vector2(iconXLeft, height);
             Virtual2Rect.anchoredPosition = new Vector2(iconXRight, height);
@@ -181,9 +157,9 @@ namespace GamePanelHUDCompass
                     Switch();
                     break;
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionFindItem:
-                    if (HUD.SettingsData.KeyConditionFindItem.Value)
+                    if (HUD.SetData.KeyConditionFindItem.Value)
                     {
-                        FinItem();
+                        FindItem();
                     }
                     else
                     {
@@ -191,7 +167,7 @@ namespace GamePanelHUDCompass
                     }
                     break;
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionLeaveItemAtLocation:
-                    if (HUD.SettingsData.KeyConditionLeaveItemAtLocation.Value)
+                    if (HUD.SetData.KeyConditionLeaveItemAtLocation.Value)
                     {
                         PlaceItem();
                     }
@@ -201,7 +177,7 @@ namespace GamePanelHUDCompass
                     }
                     break;
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionPlaceBeacon:
-                    if (HUD.SettingsData.KeyConditionPlaceBeacon.Value)
+                    if (HUD.SetData.KeyConditionPlaceBeacon.Value)
                     {
                         PlaceItem();
                     }
@@ -211,7 +187,7 @@ namespace GamePanelHUDCompass
                     }
                     break;
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionVisitPlace:
-                    if (HUD.SettingsData.KeyConditionVisitPlace.Value)
+                    if (HUD.SetData.KeyConditionVisitPlace.Value)
                     {
                         Other();
                     }
@@ -221,7 +197,7 @@ namespace GamePanelHUDCompass
                     }
                     break;
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionInZone:
-                    if (HUD.SettingsData.KeyConditionInZone.Value)
+                    if (HUD.SetData.KeyConditionInZone.Value)
                     {
                         Other();
                     }
@@ -244,7 +220,7 @@ namespace GamePanelHUDCompass
 
             HasRequirements = hasRequirements;
 
-            if (HUD.SettingsData.KeyCompassStaticHideRequirements.Value)
+            if (HUD.SetData.KeyCompassStaticHideRequirements.Value)
             {
                 Enabled(!hasRequirements && !notPresent);
             }
@@ -256,10 +232,10 @@ namespace GamePanelHUDCompass
 
         void Switch()
         {
-            HUD.Info.ExfiltrationGetStatus(ExIndex, out bool notPresent, out bool hasRequirements);
+            HUD.Info.ExfiltrationGetStatus(ExIndex, out _, out bool hasRequirements);
             HUD.Info.ExfiltrationGetSwitch(ExIndex, ExIndex2, out bool open);
 
-            if (HUD.SettingsData.KeyCompassStaticHideRequirements.Value)
+            if (HUD.SetData.KeyCompassStaticHideRequirements.Value)
             {
                 Enabled(!hasRequirements && !open);
             }
@@ -285,11 +261,11 @@ namespace GamePanelHUDCompass
 
             HasRequirements = !hasItems;
 
-            if (HUD.SettingsData.KeyCompassStaticHideRequirements.Value)
+            if (HUD.SetData.KeyCompassStaticHideRequirements.Value)
             {
                 Enabled(!HasRequirements);
             }
-            else if (HUD.SettingsData.KeyCompassStaticHideOptional.Value)
+            else if (HUD.SetData.KeyCompassStaticHideOptional.Value)
             {
                 Enabled(!IsNotNecessary);
             }
@@ -299,7 +275,7 @@ namespace GamePanelHUDCompass
             }
         }
 
-        void FinItem()
+        void FindItem()
         {
             bool hasItems = true;
             if (HUD.Info.HasEquipmentAndQuestRaidItems)
@@ -313,7 +289,7 @@ namespace GamePanelHUDCompass
                 }
             }
 
-            if (HUD.SettingsData.KeyCompassStaticHideOptional.Value)
+            if (HUD.SetData.KeyCompassStaticHideOptional.Value)
             {
                 Enabled(!IsNotNecessary);
             }
@@ -325,7 +301,7 @@ namespace GamePanelHUDCompass
 
         void Other()
         {
-            if (HUD.SettingsData.KeyCompassStaticHideOptional.Value)
+            if (HUD.SetData.KeyCompassStaticHideOptional.Value)
             {
                 Enabled(!IsNotNecessary);
             }
@@ -337,7 +313,7 @@ namespace GamePanelHUDCompass
 
         void Airdrop()
         {
-            if (HUD.SettingsData.KeyCompassStaticHideSearchedAirdrop.Value)
+            if (HUD.SetData.KeyCompassStaticHideSearchedAirdrop.Value)
             {
                 Enabled(!HUD.Info.Airdrops[ExIndex].Contains(HUD.Info.YourProfileId));
             }

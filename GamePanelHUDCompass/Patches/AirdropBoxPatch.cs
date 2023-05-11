@@ -14,23 +14,23 @@ namespace GamePanelHUDCompass.Patches
 {
     public class AirdropBoxPatch : ModulePatch
     {
-        private static bool Is231Up = GamePanelHUDCorePlugin.HUDCoreClass.GameVersion > new Version("0.12.12.17349");
+        private static readonly bool Is350Up = GamePanelHUDCorePlugin.HUDCoreClass.GameVersion > new Version("0.13.0.21734");
 
-        private static readonly ReflectionData ReflectionDatas = new ReflectionData();
+        private static readonly ReflectionData RefData = new ReflectionData();
 
         private static readonly Type AirdropType;
 
         static AirdropBoxPatch()
         {
-            if (Is231Up)
+            if (Is350Up)
             {
                 AirdropType = AppDomain.CurrentDomain.GetAssemblies().Single(x => x.ManifestModule.Name == "aki-custom.dll").GetTypes().Single(x => x.Name == "AirdropBox");
 
-                ReflectionDatas.RefAirdropType = RefHelp.FieldRef<object, int>.Create(RefHelp.GetEftType(x => x.Name == "AirdropSynchronizableObject"), "AirdropType");
-                ReflectionDatas.RefItemOwner = RefHelp.FieldRef<LootableContainer, object>.Create("ItemOwner");
-                ReflectionDatas.RefAllSearchersIds = RefHelp.FieldRef<Item, List<string>>.Create(RefHelp.GetEftType(x => x.GetMethod("AddNewSearcher", BindingFlags.DeclaredOnly |BindingFlags.Public | BindingFlags.Instance) != null), "_allSearchersIds");
+                RefData.RefAirdropType = RefHelp.FieldRef<object, int>.Create(RefHelp.GetEftType(x => x.Name == "AirdropSynchronizableObject"), "AirdropType");
+                RefData.RefItemOwner = RefHelp.FieldRef<LootableContainer, object>.Create("ItemOwner");
+                RefData.RefAllSearchersIds = RefHelp.FieldRef<Item, List<string>>.Create(RefHelp.GetEftType(x => x.GetMethod("AddNewSearcher", BindingFlags.DeclaredOnly |BindingFlags.Public | BindingFlags.Instance) != null), "_allSearchersIds");
 
-                ReflectionDatas.RefRootItem = RefHelp.PropertyRef<object, Item>.Create(ReflectionDatas.RefItemOwner.FieldType, "RootItem");
+                RefData.RefRootItem = RefHelp.PropertyRef<object, Item>.Create(RefData.RefItemOwner.FieldType, "RootItem");
 
             }
         }
@@ -43,19 +43,19 @@ namespace GamePanelHUDCompass.Patches
         [PatchPostfix]
         private static void PatchPostfix(MonoBehaviour __instance, object ___boxSync)
         {
-            LootableContainer lootable = __instance.GetComponentInChildren<LootableContainer>();
+            LootableContainer looTable = __instance.GetComponentInChildren<LootableContainer>();
 
-            object controller = ReflectionDatas.RefItemOwner.GetValue(lootable);
+            object controller = RefData.RefItemOwner.GetValue(looTable);
 
-            Item item = ReflectionDatas.RefRootItem.GetValue(controller);
+            Item item = RefData.RefRootItem.GetValue(controller);
 
-            GamePanelHUDCompassPlugin.Airdrops.Add(ReflectionDatas.RefAllSearchersIds.GetValue(item));
+            GamePanelHUDCompassPlugin.Airdrops.Add(RefData.RefAllSearchersIds.GetValue(item));
 
             int count = GamePanelHUDCompassPlugin.Airdrops.Count;
 
             string nameKey;
             string descriptionKey;
-            switch (ReflectionDatas.RefAirdropType.GetValue(___boxSync))
+            switch (RefData.RefAirdropType.GetValue(___boxSync))
             {
                 case 0:
                     nameKey = "6223349b3136504a544d1608 Name";

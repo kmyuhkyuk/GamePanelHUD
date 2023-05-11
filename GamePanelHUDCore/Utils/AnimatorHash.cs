@@ -20,8 +20,6 @@ namespace GamePanelHUDCore.Utils
 
         public static readonly int AmmoInMag = Animator.StringToHash("AmmoInMag");
 
-        public static readonly int HasDistance = Animator.StringToHash("HasDistance");
-
         public static readonly int Complete = Animator.StringToHash("Complete");
 
         public static readonly int ActiveDead = Animator.StringToHash("ActiveDead");
