@@ -305,7 +305,7 @@ namespace GamePanelHUDCompass
             }
             else
             {
-                CompassStatics.Add(staticInfo.Id, new List<GamePanelHUDCompassStaticUI>() { _static });
+                CompassStatics.Add(staticInfo.Id, new List<GamePanelHUDCompassStaticUI> { _static });
             }
         }
 
