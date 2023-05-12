@@ -14,7 +14,7 @@ namespace GamePanelHUDDebug.MagDebug
 
         public static GamePanelHUDMagPlugin.AnimatorStateData animatorstatedata = new GamePanelHUDMagPlugin.AnimatorStateData()
         {
-            ExternalMagazine = new List<int>()
+            ExternalMagazine = new List<int>
             {
                 1051831248,
                 2082422867,
@@ -46,7 +46,7 @@ namespace GamePanelHUDDebug.MagDebug
                 -1200126267
             },
 
-            OnlyBarrel = new List<int>()
+            OnlyBarrel = new List<int>
             {
                 -2070245439,
                 1051831248,
@@ -63,7 +63,7 @@ namespace GamePanelHUDDebug.MagDebug
                 -1191338705
             },
 
-            InternalMagazine = new List<int>()
+            InternalMagazine = new List<int>
             {
                 1051831248,
                 -1756868607,
@@ -82,7 +82,7 @@ namespace GamePanelHUDDebug.MagDebug
                 1058993437
             },
 
-            ExternalMagazineWithInternalReloadSupport = new List<int>()
+            ExternalMagazineWithInternalReloadSupport = new List<int>
             {
                 -987374909,
                 10403175,
