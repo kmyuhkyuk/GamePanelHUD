@@ -1,57 +1,63 @@
-﻿using UnityEngine;
-using EFT.UI;
+﻿using GamePanelHUDCore.Utils;
+using UnityEngine;
 #if !UNITY_EDITOR
 using GamePanelHUDCore;
 #endif
-using GamePanelHUDCore.Utils;
 
 namespace GamePanelHUDCompass
 {
-    public class GamePanelHUDCompass : UIElement
+    public class GamePanelHUDCompass : MonoBehaviour
 #if !UNITY_EDITOR
         , IUpdate
 #endif
     {
 #if !UNITY_EDITOR
-        private GamePanelHUDCorePlugin.HUDClass<GamePanelHUDCompassPlugin.CompassData, GamePanelHUDCompassPlugin.SettingsData> HUD => GamePanelHUDCompassPlugin.CompassHUD;
+        private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
+        private static
+            GamePanelHUDCorePlugin.HUDClass<GamePanelHUDCompassPlugin.CompassData,
+                GamePanelHUDCompassPlugin.SettingsData> HUD => GamePanelHUDCompassPlugin.CompassHUD;
 #endif
 
-        [SerializeField]
-        private GamePanelHUDCompassUI _Compass;
+        [SerializeField] private GamePanelHUDCompassUI compass;
+
+        private RectTransform _rectTransform;
 
 #if !UNITY_EDITOR
-        void Start()
+        private void Start()
         {
-            GamePanelHUDCorePlugin.UpdateManger.Register(this);
+            _rectTransform = GetComponent<RectTransform>();
+
+            HUDCore.UpdateManger.Register(this);
         }
 
-        public void IUpdate()
+        public void CustomUpdate()
         {
             CompassHUD();
         }
 
-        void CompassHUD()
+        private void CompassHUD()
         {
-            RectTransform.anchoredPosition = HUD.SetData.KeyAnchoredPosition.Value;
-            RectTransform.sizeDelta = HUD.Info.SizeDelta;
-            RectTransform.localScale = HUD.SetData.KeyLocalScale.Value;
+            _rectTransform.anchoredPosition = HUD.SetData.KeyAnchoredPosition.Value;
+            _rectTransform.sizeDelta = HUD.Info.SizeDelta;
+            _rectTransform.localScale = HUD.SetData.KeyLocalScale.Value;
 
-            if (_Compass != null)
+            if (compass != null)
             {
-                _Compass.gameObject.SetActive(HUD.HUDSw);
-                _Compass.AngleHUDSw = HUD.SetData.KeyAngleHUDSw.Value;
+                compass.gameObject.SetActive(HUD.HUDSw);
+                compass.angleHUDSw = HUD.SetData.KeyAngleHUDSw.Value;
 
-                _Compass.AngleNum = HUD.Info.Angle;
-                _Compass.CompassX = HUD.Info.CompassX;
+                compass.angleNum = HUD.Info.Angle;
+                compass.compassX = HUD.Info.CompassX;
 
-                _Compass.ArrowColor = HUD.SetData.KeyArrowColor.Value;
-                _Compass.AzimuthsColor = HUD.SetData.KeyAzimuthsColor.Value;
-                _Compass.DirectionColor = HUD.SetData.KeyDirectionColor.Value;
-                _Compass.AngleColor = HUD.SetData.KeyAngleColor.Value;
+                compass.arrowColor = HUD.SetData.KeyArrowColor.Value;
+                compass.azimuthsColor = HUD.SetData.KeyAzimuthsColor.Value;
+                compass.azimuthAngleColor = HUD.SetData.KeyAzimuthsAngleColor.Value;
+                compass.directionColor = HUD.SetData.KeyDirectionColor.Value;
+                compass.angleColor = HUD.SetData.KeyAngleColor.Value;
 
-                _Compass.AzimuthsAngleStyles = HUD.SetData.KeyAzimuthsAngleStyles.Value;
-                _Compass.DirectionStyles = HUD.SetData.KeyDirectionStyles.Value;
-                _Compass.AngleStyles = HUD.SetData.KeyAngleStyles.Value;
+                compass.azimuthsAngleStyles = HUD.SetData.KeyAzimuthsAngleStyles.Value;
+                compass.directionStyles = HUD.SetData.KeyDirectionStyles.Value;
+                compass.angleStyles = HUD.SetData.KeyAngleStyles.Value;
             }
         }
 #endif

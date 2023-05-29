@@ -1,10 +1,10 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using GamePanelHUDCore.Utils;
 using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 #if !UNITY_EDITOR
 using GamePanelHUDCore;
 #endif
-using GamePanelHUDCore.Utils;
 
 namespace GamePanelHUDHit
 {
@@ -13,231 +13,226 @@ namespace GamePanelHUDHit
         , IUpdate
 #endif
     {
-        public bool DamageHUDSw;
+#if !UNITY_EDITOR
+        private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
+#endif
 
-        public bool HasArmorHit;
+        public bool damageHUDSw;
 
-        public float Damage;
+        public bool hasArmorHit;
 
-        public float ArmorDamage;
+        public float damage;
 
-        public float ActiveSpeed;
+        public float armorDamage;
 
-        public float EndSpeed;
+        public float activeSpeed;
 
-        public float DeadSpeed;
+        public float endSpeed;
 
-        public Vector2 HitAnchoredPosition;
+        public float deadSpeed;
 
-        public Vector2 HitSizeDelta;
+        public Vector2 hitAnchoredPosition;
 
-        public Vector2 HitHeadSizeDelta;
+        public Vector2 hitSizeDelta;
 
-        public Vector2 HitLocalScale;
+        public Vector2 hitHeadSizeDelta;
 
-        public Vector2 HitDamageAnchoredPosition;
+        public Vector2 hitLocalScale;
 
-        public Vector2 HitDamageSizeDelta;
+        public Vector2 hitDamageAnchoredPosition;
 
-        public Vector2 HitDamageLocalScale;
+        public Vector2 hitDamageSizeDelta;
 
-        public Vector3 HitLocalRotation;
+        public Vector2 hitDamageLocalScale;
 
-        public Color DamageColor;
+        public Vector3 hitLocalRotation;
 
-        public Color ArmorDamageColor;
+        public Color damageColor;
 
-        public Color DeadColor;
+        public Color armorDamageColor;
 
-        public Color HeadColor;
+        public Color deadColor;
 
-        public Color DamageInfoColor;
+        public Color headColor;
 
-        public Color ArmorDamageInfoColor;
+        public Color damageInfoColor;
 
-        public FontStyles DamageStyles;
+        public Color armorDamageInfoColor;
 
-        public FontStyles ArmorDamageStyles;
+        public FontStyles damageStyles;
 
-        private RectTransform LeftUpRect;
+        public FontStyles armorDamageStyles;
 
-        private RectTransform LeftDownRect;
+        private RectTransform _leftUpRect;
 
-        private RectTransform RightUpRect;
+        private RectTransform _leftDownRect;
 
-        private RectTransform RightDownRect;
+        private RectTransform _rightUpRect;
 
-        private RectTransform LeftUpHeadRect;
+        private RectTransform _rightDownRect;
 
-        private RectTransform LeftDownHeadRect;
+        private RectTransform _leftUpHeadRect;
 
-        private RectTransform RightUpHeadRect;
+        private RectTransform _leftDownHeadRect;
 
-        private RectTransform RightDownHeadRect;
+        private RectTransform _rightUpHeadRect;
 
-        private RectTransform DamageValueRect;
+        private RectTransform _rightDownHeadRect;
 
-        private Transform _Hp;
+        private RectTransform _damageValueRect;
 
-        private Transform _Armor;
+        private Transform _hpTransform;
 
-        [SerializeField]
-        private TMP_Text _HpValue;
+        private Transform _armorTransform;
 
-        [SerializeField]
-        private TMP_Text _ArmorValue;
+        [SerializeField] private TMP_Text hpValue;
 
-        [SerializeField]
-        private Image _LeftUp;
+        [SerializeField] private TMP_Text armorValue;
 
-        [SerializeField]
-        private Image _LeftDown;
+        [SerializeField] private Image leftUp;
 
-        [SerializeField]
-        private Image _RightUp;
+        [SerializeField] private Image leftDown;
 
-        [SerializeField]
-        private Image _RightDown;
+        [SerializeField] private Image rightUp;
 
-        [SerializeField]
-        private Image _LeftUpHead;
+        [SerializeField] private Image rightDown;
 
-        [SerializeField]
-        private Image _LeftDownHead;
+        [SerializeField] private Image leftUpHead;
 
-        [SerializeField]
-        private Image _RightUpHead;
+        [SerializeField] private Image leftDownHead;
 
-        [SerializeField]
-        private Image _RightDownHead;
+        [SerializeField] private Image rightUpHead;
 
-        private Animator Animator_HitUI;
+        [SerializeField] private Image rightDownHead;
 
-        void Start()
+        private Animator _animatorHitUI;
+
+        private void Start()
         {
-            Animator_HitUI = GetComponent<Animator>();
+            _animatorHitUI = GetComponent<Animator>();
 
-            var parent = _HpValue.transform.parent;
-            _Hp = parent;
-            _Armor = _ArmorValue.transform.parent;
+            var parent = hpValue.transform.parent;
+            _hpTransform = parent;
+            _armorTransform = armorValue.transform.parent;
 
-            LeftUpRect = _LeftUp.GetComponent<RectTransform>();
-            LeftDownRect = _LeftDown.GetComponent<RectTransform>();
-            RightUpRect = _RightUp.GetComponent<RectTransform>();
-            RightDownRect = _RightDown.GetComponent<RectTransform>();
+            _leftUpRect = leftUp.GetComponent<RectTransform>();
+            _leftDownRect = leftDown.GetComponent<RectTransform>();
+            _rightUpRect = rightUp.GetComponent<RectTransform>();
+            _rightDownRect = rightDown.GetComponent<RectTransform>();
 
-            LeftUpHeadRect = _LeftUpHead.GetComponent<RectTransform>();
-            LeftDownHeadRect = _LeftDownHead.GetComponent<RectTransform>();
-            RightUpHeadRect = _RightUpHead.GetComponent<RectTransform>();
-            RightDownHeadRect = _RightDownHead.GetComponent<RectTransform>();
+            _leftUpHeadRect = leftUpHead.GetComponent<RectTransform>();
+            _leftDownHeadRect = leftDownHead.GetComponent<RectTransform>();
+            _rightUpHeadRect = rightUpHead.GetComponent<RectTransform>();
+            _rightDownHeadRect = rightDownHead.GetComponent<RectTransform>();
 
-            DamageValueRect = parent.parent.GetComponent<RectTransform>();
+            _damageValueRect = parent.parent.GetComponent<RectTransform>();
 
 #if !UNITY_EDITOR
-            GamePanelHUDCorePlugin.UpdateManger.Register(this);
+            HUDCore.UpdateManger.Register(this);
 #endif
         }
 #if !UNITY_EDITOR
 
-        public void IUpdate()
+        public void CustomUpdate()
         {
             HitUI();
         }
 
-        void HitUI()
+        private void HitUI()
 #endif
 #if UNITY_EDITOR
         void Update()
 #endif
         {
-            Vector2 leftUpPos = new Vector2(-HitAnchoredPosition.x, HitAnchoredPosition.y);
-            Vector2 leftDownPos = new Vector2(-HitAnchoredPosition.x, -HitAnchoredPosition.y);
-            Vector2 rightUpPos = HitAnchoredPosition;
-            Vector2 rightDownPos = new Vector2(HitAnchoredPosition.x, -HitAnchoredPosition.y);
+            var leftUpPos = new Vector2(-hitAnchoredPosition.x, hitAnchoredPosition.y);
+            var leftDownPos = new Vector2(-hitAnchoredPosition.x, -hitAnchoredPosition.y);
+            var rightUpPos = hitAnchoredPosition;
+            var rightDownPos = new Vector2(hitAnchoredPosition.x, -hitAnchoredPosition.y);
 
-            Vector3 leftUpRot = new Vector3(-HitLocalRotation.x, HitLocalRotation.y, HitLocalRotation.z);
-            Vector3 leftDownRot = new Vector3(-HitLocalRotation.x, -HitLocalRotation.y, -HitLocalRotation.z);
-            Vector3 rightUpRot = new Vector3(HitLocalRotation.x, HitLocalRotation.y, -HitLocalRotation.z);
-            Vector3 rightDownRot = new Vector3(HitLocalRotation.x, -HitLocalRotation.y, HitLocalRotation.z);
+            var leftUpRot = new Vector3(-hitLocalRotation.x, hitLocalRotation.y, hitLocalRotation.z);
+            var leftDownRot = new Vector3(-hitLocalRotation.x, -hitLocalRotation.y, -hitLocalRotation.z);
+            var rightUpRot = new Vector3(hitLocalRotation.x, hitLocalRotation.y, -hitLocalRotation.z);
+            var rightDownRot = new Vector3(hitLocalRotation.x, -hitLocalRotation.y, hitLocalRotation.z);
 
-            LeftUpRect.sizeDelta = HitSizeDelta;
-            LeftDownRect.sizeDelta = HitSizeDelta;
-            RightUpRect.sizeDelta = HitSizeDelta;
-            RightDownRect.sizeDelta = HitSizeDelta;
+            _leftUpRect.sizeDelta = hitSizeDelta;
+            _leftDownRect.sizeDelta = hitSizeDelta;
+            _rightUpRect.sizeDelta = hitSizeDelta;
+            _rightDownRect.sizeDelta = hitSizeDelta;
 
-            LeftUpRect.anchoredPosition = leftUpPos;
-            LeftDownRect.anchoredPosition = leftDownPos;
-            RightUpRect.anchoredPosition = rightUpPos;
-            RightDownRect.anchoredPosition = rightDownPos;
+            _leftUpRect.anchoredPosition = leftUpPos;
+            _leftDownRect.anchoredPosition = leftDownPos;
+            _rightUpRect.anchoredPosition = rightUpPos;
+            _rightDownRect.anchoredPosition = rightDownPos;
 
-            LeftUpRect.localEulerAngles = leftUpRot;
-            LeftDownRect.localEulerAngles = leftDownRot;
-            RightUpRect.localEulerAngles = rightUpRot;
-            RightDownRect.localEulerAngles = rightDownRot;
+            _leftUpRect.localEulerAngles = leftUpRot;
+            _leftDownRect.localEulerAngles = leftDownRot;
+            _rightUpRect.localEulerAngles = rightUpRot;
+            _rightDownRect.localEulerAngles = rightDownRot;
 
-            LeftUpRect.localScale = HitLocalScale;
-            LeftDownRect.localScale = HitLocalScale;
-            RightUpRect.localScale = HitLocalScale;
-            RightDownRect.localScale = HitLocalScale;
+            _leftUpRect.localScale = hitLocalScale;
+            _leftDownRect.localScale = hitLocalScale;
+            _rightUpRect.localScale = hitLocalScale;
+            _rightDownRect.localScale = hitLocalScale;
 
-            LeftUpHeadRect.sizeDelta = HitHeadSizeDelta;
-            LeftDownHeadRect.sizeDelta = HitHeadSizeDelta;
-            RightUpHeadRect.sizeDelta = HitHeadSizeDelta;
-            RightDownHeadRect.sizeDelta = HitHeadSizeDelta;
+            _leftUpHeadRect.sizeDelta = hitHeadSizeDelta;
+            _leftDownHeadRect.sizeDelta = hitHeadSizeDelta;
+            _rightUpHeadRect.sizeDelta = hitHeadSizeDelta;
+            _rightDownHeadRect.sizeDelta = hitHeadSizeDelta;
 
-            LeftUpHeadRect.anchoredPosition = leftUpPos;
-            LeftDownHeadRect.anchoredPosition = leftDownPos;
-            RightUpHeadRect.anchoredPosition = rightUpPos;
-            RightDownHeadRect.anchoredPosition = rightDownPos;
+            _leftUpHeadRect.anchoredPosition = leftUpPos;
+            _leftDownHeadRect.anchoredPosition = leftDownPos;
+            _rightUpHeadRect.anchoredPosition = rightUpPos;
+            _rightDownHeadRect.anchoredPosition = rightDownPos;
 
-            LeftUpHeadRect.localEulerAngles = leftUpRot;
-            LeftDownHeadRect.localEulerAngles = leftDownRot;
-            RightUpHeadRect.localEulerAngles = rightUpRot;
-            RightDownHeadRect.localEulerAngles = rightDownRot;
+            _leftUpHeadRect.localEulerAngles = leftUpRot;
+            _leftDownHeadRect.localEulerAngles = leftDownRot;
+            _rightUpHeadRect.localEulerAngles = rightUpRot;
+            _rightDownHeadRect.localEulerAngles = rightDownRot;
 
-            LeftUpHeadRect.localScale = HitLocalScale;
-            LeftDownHeadRect.localScale = HitLocalScale;
-            RightUpHeadRect.localScale = HitLocalScale;
-            RightDownHeadRect.localScale = HitLocalScale;
+            _leftUpHeadRect.localScale = hitLocalScale;
+            _leftDownHeadRect.localScale = hitLocalScale;
+            _rightUpHeadRect.localScale = hitLocalScale;
+            _rightDownHeadRect.localScale = hitLocalScale;
 
-            DamageValueRect.anchoredPosition = HitDamageAnchoredPosition;
-            DamageValueRect.sizeDelta = HitDamageSizeDelta;
-            DamageValueRect.localScale = HitDamageLocalScale;
+            _damageValueRect.anchoredPosition = hitDamageAnchoredPosition;
+            _damageValueRect.sizeDelta = hitDamageSizeDelta;
+            _damageValueRect.localScale = hitDamageLocalScale;
 
-            _Hp.gameObject.SetActive(DamageHUDSw);
+            _hpTransform.gameObject.SetActive(damageHUDSw);
 
-            _HpValue.fontStyle = DamageStyles;
-            _HpValue.color = DamageInfoColor;
-            _HpValue.text = Damage.ToString("F0");
+            hpValue.fontStyle = damageStyles;
+            hpValue.color = damageInfoColor;
+            hpValue.text = damage.ToString("F0");
 
-            _Armor.gameObject.SetActive(HasArmorHit && DamageHUDSw);
+            _armorTransform.gameObject.SetActive(hasArmorHit && damageHUDSw);
 
-            _ArmorValue.fontStyle = ArmorDamageStyles;
-            _ArmorValue.color = ArmorDamageInfoColor;
-            _ArmorValue.text = ArmorDamage.ToString("F2");
+            armorValue.fontStyle = armorDamageStyles;
+            armorValue.color = armorDamageInfoColor;
+            armorValue.text = armorDamage.ToString("F2");
 
-            Animator_HitUI.SetFloat(AnimatorHash.ActiveSpeed, ActiveSpeed);
-            Animator_HitUI.SetFloat(AnimatorHash.EndSpeed, EndSpeed);
-            Animator_HitUI.SetFloat(AnimatorHash.DeadSpeed, DeadSpeed);
+            _animatorHitUI.SetFloat(AnimatorHash.ActiveSpeed, activeSpeed);
+            _animatorHitUI.SetFloat(AnimatorHash.EndSpeed, endSpeed);
+            _animatorHitUI.SetFloat(AnimatorHash.DeadSpeed, deadSpeed);
         }
 #if !UNITY_EDITOR
 
-        public void HitTrigger(bool isHead, GamePanelHUDHitPlugin.HitInfo hitInfo, GamePanelHUDHitPlugin.HitInfo.Direction direction)
+        public void HitTrigger(bool isHead, GamePanelHUDHitPlugin.HitInfo hitInfo,
+            GamePanelHUDHitPlugin.HitInfo.Direction direction)
         {
             Color hitColor;
             switch (hitInfo.HitType)
             {
                 case GamePanelHUDHitPlugin.HitInfo.Hit.OnlyHp:
-                    hitColor = DamageColor;
+                    hitColor = damageColor;
                     break;
                 case GamePanelHUDHitPlugin.HitInfo.Hit.HasArmorHit:
-                    hitColor = ArmorDamageColor;
+                    hitColor = armorDamageColor;
                     break;
                 case GamePanelHUDHitPlugin.HitInfo.Hit.Dead:
-                    hitColor = DeadColor;
+                    hitColor = deadColor;
                     break;
                 case GamePanelHUDHitPlugin.HitInfo.Hit.Head:
-                    hitColor = HeadColor;
+                    hitColor = headColor;
                     break;
                 default:
                     hitColor = Color.black;
@@ -251,42 +246,42 @@ namespace GamePanelHUDHit
             switch (direction)
             {
                 case GamePanelHUDHitPlugin.HitInfo.Direction.Center:
-                    Animator_HitUI.SetTrigger(AnimatorHash.Active);
+                    _animatorHitUI.SetTrigger(AnimatorHash.Active);
                     break;
                 case GamePanelHUDHitPlugin.HitInfo.Direction.Left:
-                    Animator_HitUI.SetTrigger(AnimatorHash.ActiveLeft);
+                    _animatorHitUI.SetTrigger(AnimatorHash.ActiveLeft);
                     break;
                 case GamePanelHUDHitPlugin.HitInfo.Direction.Right:
-                    Animator_HitUI.SetTrigger(AnimatorHash.ActiveRight);
+                    _animatorHitUI.SetTrigger(AnimatorHash.ActiveRight);
                     break;
             }
         }
 
-        void HitHead(bool sw)
+        private void HitHead(bool sw)
         {
-            _LeftUpHead.gameObject.SetActive(sw);
-            _LeftDownHead.gameObject.SetActive(sw);
-            _LeftUpHead.gameObject.SetActive(sw);
-            _RightUpHead.gameObject.SetActive(sw);
-            _RightDownHead.gameObject.SetActive(sw);
+            leftUpHead.gameObject.SetActive(sw);
+            leftDownHead.gameObject.SetActive(sw);
+            leftUpHead.gameObject.SetActive(sw);
+            rightUpHead.gameObject.SetActive(sw);
+            rightDownHead.gameObject.SetActive(sw);
         }
 
-        void HitColor(Color color)
+        private void HitColor(Color color)
         {
-            _LeftUp.color = color;
-            _LeftDown.color = color;
-            _RightUp.color = color;
-            _RightDown.color = color;
+            leftUp.color = color;
+            leftDown.color = color;
+            rightUp.color = color;
+            rightDown.color = color;
 
-            _LeftUpHead.color = color;
-            _LeftDownHead.color = color;
-            _RightUpHead.color = color;
-            _RightDownHead.color = color;
+            leftUpHead.color = color;
+            leftDownHead.color = color;
+            rightUpHead.color = color;
+            rightDownHead.color = color;
         }
 
         public void HitDeadTrigger()
         {
-            Animator_HitUI.SetTrigger(AnimatorHash.ActiveDead);
+            _animatorHitUI.SetTrigger(AnimatorHash.ActiveDead);
         }
 #endif
     }

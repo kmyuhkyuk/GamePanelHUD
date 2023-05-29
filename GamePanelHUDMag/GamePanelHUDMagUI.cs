@@ -1,9 +1,9 @@
-﻿using UnityEngine;
+﻿using GamePanelHUDCore.Utils;
 using TMPro;
+using UnityEngine;
 #if !UNITY_EDITOR
 using GamePanelHUDCore;
 #endif
-using GamePanelHUDCore.Utils;
 
 namespace GamePanelHUDMag
 {
@@ -12,214 +12,209 @@ namespace GamePanelHUDMag
         , IUpdate
 #endif
     {
-        public bool WeaponNameAlways;
+#if !UNITY_EDITOR
+        private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
+#endif
+        public bool weaponNameAlways;
 
-        public bool AmmoTypeHUDSw;
+        public bool ammoTypeHUDSw;
 
-        public bool FireModeHUDSw;
+        public bool fireModeHUDSw;
 
-        public bool ZeroWarning;
+        public bool zeroWarning;
 
-        public bool WeaponTrigger;
+        public bool weaponTrigger;
 
-        public int Current;
+        public int current;
 
-        public int Maximum;
+        public int maximum;
 
-        public int Patron;
+        public int patron;
 
-        public float Normalized;
+        public float normalized;
 
-        public string WeaponName;
+        public string weaponName;
 
-        public string AmmoType;
+        public string ammoType;
 
-        public string FireMode;
+        public string fireMode;
 
-        public float WarningRate10;
+        public float warningRate10;
 
-        public float WarningRate100;
+        public float warningRate100;
 
-        public float WeaponNameSpeed;
+        public float weaponNameSpeed;
 
-        public float ZeroWarningSpeed;
+        public float zeroWarningSpeed;
 
-        public Color CurrentColor;
+        public Color currentColor;
 
-        public Color MaxColor;
+        public Color maxColor;
 
-        public Color PatronColor;
+        public Color patronColor;
 
-        public Color WeaponNameColor;
+        public Color weaponNameColor;
 
-        public Color AmmoTypeColor;
+        public Color ammoTypeColor;
 
-        public Color FireModeColor;
+        public Color fireModeColor;
 
-        public Color AddZerosColor;
+        public Color addZerosColor;
 
-        public Color WarningColor;
+        public Color warningColor;
 
-        public FontStyles CurrentStyles;
+        public FontStyles currentStyles;
 
-        public FontStyles MaximumStyles;
+        public FontStyles maximumStyles;
 
-        public FontStyles PatronStyles;
+        public FontStyles patronStyles;
 
-        public FontStyles WeaponNameStyles;
+        public FontStyles weaponNameStyles;
 
-        public FontStyles AmmoTypeStyles;
+        public FontStyles ammoTypeStyles;
 
-        public FontStyles FireModeStyles;
+        public FontStyles fireModeStyles;
 
-        [SerializeField]
-        private TMP_Text _ZerosValue;
+        [SerializeField] private TMP_Text zerosValue;
 
-        [SerializeField]
-        private TMP_Text _CurrentValue;
+        [SerializeField] private TMP_Text currentValue;
 
-        [SerializeField]
-        private TMP_Text _MaxSignValue;
+        [SerializeField] private TMP_Text maxSignValue;
 
-        [SerializeField]
-        private TMP_Text _MaxValue;
+        [SerializeField] private TMP_Text maxValue;
 
-        [SerializeField]
-        private TMP_Text _PatronSignValue;
+        [SerializeField] private TMP_Text patronSignValue;
 
-        [SerializeField]
-        private TMP_Text _PatronValue;
+        [SerializeField] private TMP_Text patronValue;
 
-        [SerializeField]
-        private TMP_Text _WeaponNameValue;
+        [SerializeField] private TMP_Text weaponNameValue;
 
-        [SerializeField]
-        private TMP_Text _AmmoTypeValue;
+        [SerializeField] private TMP_Text ammoTypeValue;
 
-        [SerializeField]
-        private TMP_Text _FireModeValue;
+        [SerializeField] private TMP_Text fireModeValue;
 
-        private Animator Animator_WeaponName;
+        private Animator _animatorWeaponName;
 
-        private Animator Animator_Current;
+        private Animator _animatorCurrent;
 
-        private Transform PatronPanel;
+        private Transform _patronPanelTransform;
 
-        private Transform FireModePanel;
+        private Transform _fireModePanelTransform;
 
-        void Start()
+        private void Start()
         {
-            Animator_WeaponName = _WeaponNameValue.transform.parent.GetComponent<Animator>();
-            Animator_Current = _CurrentValue.GetComponent<Animator>();
+            _animatorWeaponName = weaponNameValue.transform.parent.GetComponent<Animator>();
+            _animatorCurrent = currentValue.GetComponent<Animator>();
 
-            PatronPanel = _PatronValue.transform.parent;
-            FireModePanel = _FireModeValue.transform.parent;
+            _patronPanelTransform = patronValue.transform.parent;
+            _fireModePanelTransform = fireModeValue.transform.parent;
 
 #if !UNITY_EDITOR
-            GamePanelHUDCorePlugin.UpdateManger.Register(this);
+            HUDCore.UpdateManger.Register(this);
 #endif
         }
 #if !UNITY_EDITOR
 
-        void OnEnable()
+        private void OnEnable()
         {
-            GamePanelHUDCorePlugin.UpdateManger.Run(this);
+            HUDCore.UpdateManger.Run(this);
         }
 
-        void OnDisable()
+        private void OnDisable()
         {
-            GamePanelHUDCorePlugin.UpdateManger.Stop(this);
+            HUDCore.UpdateManger.Stop(this);
         }
 
-        public void IUpdate()
+        public void CustomUpdate()
         {
             MagUI();
         }
 
-        void MagUI()
+        private void MagUI()
 #endif
 #if UNITY_EDITOR
         void Update()
 #endif
         {
             //Set Current float and color and Style to String
-            Color currentColor;
-            if ((Normalized > WarningRate10 && Maximum <= 10 || Normalized >= WarningRate100 && Maximum > 10) && Current != 0)
+            Color currentValueColor;
+            if (current != 0 && (normalized > warningRate10 && maximum <= 10 ||
+                                 normalized >= warningRate100 && maximum > 10))
             {
-                currentColor = CurrentColor;
+                currentValueColor = currentColor;
             }
             else
             {
-                currentColor = WarningColor;
+                currentValueColor = warningColor;
             }
 
-            if (Current < 10 && Maximum > 10)
+            if (current < 10 && maximum > 10)
             {
-                _ZerosValue.gameObject.SetActive(true);
-                _CurrentValue.alignment = TextAlignmentOptions.TopLeft;
+                zerosValue.gameObject.SetActive(true);
+                currentValue.alignment = TextAlignmentOptions.TopLeft;
             }
             else
             {
-                _ZerosValue.gameObject.SetActive(false);
-                _CurrentValue.alignment = TextAlignmentOptions.TopRight;
+                zerosValue.gameObject.SetActive(false);
+                currentValue.alignment = TextAlignmentOptions.TopRight;
             }
 
-            _ZerosValue.fontStyle = CurrentStyles;
-            _ZerosValue.color = AddZerosColor;
+            zerosValue.fontStyle = currentStyles;
+            zerosValue.color = addZerosColor;
 
-            _CurrentValue.fontStyle = CurrentStyles;
-            _CurrentValue.color = currentColor;
-            _CurrentValue.text = Current.ToString();
+            currentValue.fontStyle = currentStyles;
+            currentValue.color = currentValueColor;
+            currentValue.text = current.ToString();
 
-            _MaxSignValue.fontStyle = MaximumStyles;
-            _MaxSignValue.color = MaxColor;
+            maxSignValue.fontStyle = maximumStyles;
+            maxSignValue.color = maxColor;
 
             //Set Maximum float and color and Style to String
-            _MaxValue.fontStyle = MaximumStyles;
-            _MaxValue.color = MaxColor;
-            _MaxValue.text = Maximum.ToString();
+            maxValue.fontStyle = maximumStyles;
+            maxValue.color = maxColor;
+            maxValue.text = maximum.ToString();
 
-            _PatronSignValue.fontStyle = PatronStyles;
-            _PatronSignValue.color = PatronColor;
+            patronSignValue.fontStyle = patronStyles;
+            patronSignValue.color = patronColor;
 
             //Patron HUD display
-            PatronPanel.gameObject.SetActive(Patron > 0);
+            _patronPanelTransform.gameObject.SetActive(patron > 0);
 
             //Set Patron float and color and Style to String
-            _PatronValue.fontStyle = PatronStyles;
-            _PatronValue.color = PatronColor;
-            _PatronValue.text = Patron.ToString();
+            patronValue.fontStyle = patronStyles;
+            patronValue.color = patronColor;
+            patronValue.text = patron.ToString();
 
             //Set Weapon Name
-            _WeaponNameValue.fontStyle = WeaponNameStyles;
-            _WeaponNameValue.color = WeaponNameColor;
-            _WeaponNameValue.text = WeaponName;
+            weaponNameValue.fontStyle = weaponNameStyles;
+            weaponNameValue.color = weaponNameColor;
+            weaponNameValue.text = weaponName;
 
-            Animator_WeaponName.SetBool(AnimatorHash.Always, WeaponNameAlways);
-            Animator_WeaponName.SetFloat(AnimatorHash.Speed, WeaponNameSpeed);
+            _animatorWeaponName.SetBool(AnimatorHash.Always, weaponNameAlways);
+            _animatorWeaponName.SetFloat(AnimatorHash.Speed, weaponNameSpeed);
 
-            Animator_Current.SetBool(AnimatorHash.Zero, Current == 0 && Patron == 0 && ZeroWarning);
-            Animator_Current.SetFloat(AnimatorHash.Speed, ZeroWarningSpeed);
+            _animatorCurrent.SetBool(AnimatorHash.Zero, current == 0 && patron == 0 && zeroWarning);
+            _animatorCurrent.SetFloat(AnimatorHash.Speed, zeroWarningSpeed);
 
             //Fire Mode HUD display
-            FireModePanel.gameObject.SetActive(FireModeHUDSw);
+            _fireModePanelTransform.gameObject.SetActive(fireModeHUDSw);
 
             //Set Fire Mode
-            _FireModeValue.fontStyle = FireModeStyles;
-            _FireModeValue.color = FireModeColor;
-            _FireModeValue.text = FireMode;
+            fireModeValue.fontStyle = fireModeStyles;
+            fireModeValue.color = fireModeColor;
+            fireModeValue.text = fireMode;
 
-            _AmmoTypeValue.gameObject.SetActive(AmmoTypeHUDSw);
+            ammoTypeValue.gameObject.SetActive(ammoTypeHUDSw);
 
-            _AmmoTypeValue.fontStyle = AmmoTypeStyles;
-            _AmmoTypeValue.color = AmmoTypeColor;
-            _AmmoTypeValue.text = AmmoType;
+            ammoTypeValue.fontStyle = ammoTypeStyles;
+            ammoTypeValue.color = ammoTypeColor;
+            ammoTypeValue.text = ammoType;
 
-            if (WeaponTrigger)
+            if (weaponTrigger)
             {
-                Animator_WeaponName.SetTrigger(AnimatorHash.Active);
+                _animatorWeaponName.SetTrigger(AnimatorHash.Active);
 
-                WeaponTrigger = false;
+                weaponTrigger = false;
             }
         }
     }

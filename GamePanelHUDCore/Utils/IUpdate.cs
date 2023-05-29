@@ -1,124 +1,128 @@
 ﻿#if !UNITY_EDITOR
-using BepInEx.Logging;
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
+using BepInEx.Logging;
 
 namespace GamePanelHUDCore.Utils
 {
     public interface IUpdate
     {
-        void IUpdate();
+        void CustomUpdate();
     }
 
-    public class IUpdateManger
+    public class UpdateManger
     {
-        private readonly List<IUpdate> Updates = new List<IUpdate>();
+        private readonly List<IUpdate> _updates = new List<IUpdate>();
 
-        private readonly List<IUpdate> StopUpdates = new List<IUpdate>();
+        private readonly List<IUpdate> _stopUpdates = new List<IUpdate>();
 
-        private readonly List<IUpdate> RemoveUpdates = new List<IUpdate>();
+        private readonly List<IUpdate> _removeUpdates = new List<IUpdate>();
 
-        private readonly Debug Debugs = new Debug();
+        private readonly Debug _debugs = new Debug();
 
         public bool NeedMethodTime;
 
-        private static readonly ManualLogSource LogSource = Logger.CreateLogSource("IUpdateManger");
+        private static readonly ManualLogSource LogSource = Logger.CreateLogSource(nameof(UpdateManger));
 
         public void Register(IUpdate update)
         {
-            if (!Updates.Contains(update))
+            if (!_updates.Contains(update))
             {
-                Updates.Add(update);
+                _updates.Add(update);
             }
         }
 
         public void Run(IUpdate update)
         {
-            StopUpdates.Remove(update);
+            _stopUpdates.Remove(update);
         }
 
         public void Stop(IUpdate update)
         {
-            if (!StopUpdates.Contains(update))
+            if (!_stopUpdates.Contains(update))
             {
-                StopUpdates.Add(update);
+                _stopUpdates.Add(update);
             }
         }
 
         public void Remove(IUpdate update)
         {
-            if (!RemoveUpdates.Contains(update))
+            if (!_removeUpdates.Contains(update))
             {
-                RemoveUpdates.Add(update);
+                _removeUpdates.Add(update);
             }
         }
 
         public void Update()
         {
-            if (Updates.Count > 0)
+            if (_updates.Count > 0)
             {
-                for (int i = 0; i < Updates.Count; i++)
+                for (var i = 0; i < _updates.Count; i++)
                 {
-                    IUpdate update = Updates[i];
+                    var update = _updates[i];
 
-                    if (RemoveUpdates.Contains(update))
+                    if (_removeUpdates.Contains(update))
                     {
-                        int num = RemoveUpdates.IndexOf(update);
+                        var num = _removeUpdates.IndexOf(update);
 
-                        Updates.RemoveAt(i);
+                        _updates.RemoveAt(i);
 
-                        RemoveUpdates.RemoveAt(num);
+                        _removeUpdates.RemoveAt(num);
                     }
-                    else if (!StopUpdates.Contains(update))
+                    else if (!_stopUpdates.Contains(update))
                     {
-                        if (NeedMethodTime)
+                        if (!NeedMethodTime)
                         {
-                            if (i == 0)
-                            {
-                                LogSource.LogMessage(string.Concat("----------Start----------:CurrentTime:", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")));
-
-                                Debugs.AllMethodTime.Start();
-                            }
-
-                            Debugs.MethodTime.Start();
-
-                            update.IUpdate();
-
-                            Debugs.MethodTime.Stop();
-
-                            LogSource.LogMessage(string.Concat(update.GetType().Name, ":NeedTime:", Debugs.MethodTime.Elapsed));
-
-                            Debugs.MethodTime.Reset();
-
-                            if (i == Updates.Count - 1)
-                            {
-                                Debugs.AllMethodTime.Stop();
-
-                                if (Debugs.AllMethodTime.Elapsed > Debugs.MaxTime)
-                                {
-                                    Debugs.MaxTime = Debugs.AllMethodTime.Elapsed;
-                                }
-                                else if (Debugs.AllMethodTime.Elapsed < Debugs.MinTime || Debugs.MinTime == TimeSpan.Zero)
-                                {
-                                    Debugs.MinTime = Debugs.AllMethodTime.Elapsed;
-                                }
-
-                                LogSource.LogMessage(string.Concat("----------End----------:TotalNeedTime:", Debugs.AllMethodTime.Elapsed, ":MaxTime:", Debugs.MaxTime, ":MinTime:", Debugs.MinTime));
-
-                                Debugs.AllMethodTime.Reset();
-                            }
+                            update.CustomUpdate();
                         }
                         else
                         {
-                            update.IUpdate();
+                            if (i == 0)
+                            {
+                                LogSource.LogMessage("----------Start----------:CurrentTime:" +
+                                                     DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+
+                                _debugs.AllMethodTime.Start();
+                            }
+
+                            _debugs.MethodTime.Start();
+
+                            update.CustomUpdate();
+
+                            _debugs.MethodTime.Stop();
+
+                            LogSource.LogMessage(update.GetType().Name + ":NeedTime:" + _debugs.MethodTime.Elapsed);
+
+                            _debugs.MethodTime.Reset();
+
+                            if (i == _updates.Count - 1)
+                            {
+                                _debugs.AllMethodTime.Stop();
+
+                                if (_debugs.AllMethodTime.Elapsed > _debugs.MaxTime)
+                                {
+                                    _debugs.MaxTime = _debugs.AllMethodTime.Elapsed;
+                                }
+                                else if (_debugs.AllMethodTime.Elapsed < _debugs.MinTime ||
+                                         _debugs.MinTime == TimeSpan.Zero)
+                                {
+                                    _debugs.MinTime = _debugs.AllMethodTime.Elapsed;
+                                }
+
+                                LogSource.LogMessage("----------End----------:TotalNeedTime:" +
+                                                     _debugs.AllMethodTime.Elapsed + ":MaxTime:" + _debugs.MaxTime +
+                                                     ":MinTime:" + _debugs.MinTime);
+
+                                _debugs.AllMethodTime.Reset();
+                            }
                         }
                     }
 
                     if (!NeedMethodTime)
                     {
-                        Debugs.MaxTime = TimeSpan.Zero;
-                        Debugs.MinTime = TimeSpan.Zero;
+                        _debugs.MaxTime = TimeSpan.Zero;
+                        _debugs.MinTime = TimeSpan.Zero;
                     }
                 }
             }

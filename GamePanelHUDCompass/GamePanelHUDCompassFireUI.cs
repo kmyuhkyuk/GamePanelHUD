@@ -1,9 +1,9 @@
-﻿using UnityEngine;
+﻿using GamePanelHUDCore.Utils;
+using UnityEngine;
 using UnityEngine.UI;
 #if !UNITY_EDITOR
 using GamePanelHUDCore;
 #endif
-using GamePanelHUDCore.Utils;
 
 namespace GamePanelHUDCompass
 {
@@ -13,131 +13,125 @@ namespace GamePanelHUDCompass
 #endif
     {
 #if !UNITY_EDITOR
-        private GamePanelHUDCorePlugin.HUDClass<GamePanelHUDCompassPlugin.CompassFireData, GamePanelHUDCompassPlugin.SettingsData> HUD => GamePanelHUDCompassPlugin.CompassFireHUD;
+        private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
+        private static
+            GamePanelHUDCorePlugin.HUDClass<GamePanelHUDCompassPlugin.CompassFireData,
+                GamePanelHUDCompassPlugin.SettingsData> HUD => GamePanelHUDCompassPlugin.CompassFireHUD;
 #endif
+        public bool active;
 
-        public bool Active;
+        public bool isBoss;
 
-        public bool IsBoss;
-
-        public bool IsFollower;
+        public bool isFollower;
 
         public bool? IsLeft { get; private set; }
 
-        public string Who;
+        public string who;
 
-        public Vector3 Where;
+        public Vector3 where;
 
-        public Color FireColor;
+        public Color fireColor;
 
-        public Color OutlineColor;
+        public Color outlineColor;
 
-        public Vector2 FireSizeDelta;
+        public Vector2 fireSizeDelta;
 
-        public Vector2 OutlineSizeDelta;
+        public Vector2 outlineSizeDelta;
 
-        [SerializeField]
-        private Image _RealOutline;
+        [SerializeField] private Image realOutline;
 
-        [SerializeField]
-        private Image _VirtualOutline;
+        [SerializeField] private Image virtualOutline;
 
-        [SerializeField]
-        private Image _Virtual2Outline;
+        [SerializeField] private Image virtual2Outline;
 
-        [SerializeField]
-        private Image _Virtual3Outline;
+        [SerializeField] private Image virtual3Outline;
 
-        [SerializeField]
-        private Image _RealRed;
+        [SerializeField] private Image realRed;
 
-        [SerializeField]
-        private Image _VirtualRed;
+        [SerializeField] private Image virtualRed;
 
-        [SerializeField]
-        private Image _Virtual2Red;
+        [SerializeField] private Image virtual2Red;
 
-        [SerializeField]
-        private Image _Virtual3Red;
+        [SerializeField] private Image virtual3Red;
 
-        private Animator Animator_Fire;
+        private Animator _animatorFire;
 
-        private RectTransform RealRect;
+        private RectTransform _realRect;
 
-        private RectTransform VirtualRect;
+        private RectTransform _virtualRect;
 
-        private RectTransform Virtual2Rect;
+        private RectTransform _virtual2Rect;
 
-        private RectTransform Virtual3Rect;
+        private RectTransform _virtual3Rect;
 
-        private RectTransform RealOutlineRect;
+        private RectTransform _realOutlineRect;
 
-        private RectTransform VirtualOutlineRect;
+        private RectTransform _virtualOutlineRect;
 
-        private RectTransform Virtual2OutlineRect;
+        private RectTransform _virtual2OutlineRect;
 
-        private RectTransform Virtual3OutlineRect;
+        private RectTransform _virtual3OutlineRect;
 
-        private RectTransform RealRedRect;
+        private RectTransform _realRedRect;
 
-        private RectTransform VirtualRedRect;
+        private RectTransform _virtualRedRect;
 
-        private RectTransform Virtual2RedRect;
+        private RectTransform _virtual2RedRect;
 
-        private RectTransform Virtual3RedRect;
+        private RectTransform _virtual3RedRect;
 
-        private float FireX;
+        private float _fireX;
 
-        private float FireXLeft => FireX - 2880;
+        private float FireXLeft => _fireX - 2880;
 
-        private float FireXRight => FireX + 2880;
+        private float FireXRight => _fireX + 2880;
 
-        private float FireXRightRight => FireX + 5760; //2880 * 2
+        private float FireXRightRight => _fireX + 5760; //2880 * 2
 
 #if !UNITY_EDITOR
-        void Start()
+        private void Start()
         {
-            Animator_Fire = GetComponent<Animator>();
+            _animatorFire = GetComponent<Animator>();
 
-            RealOutlineRect = _RealOutline.GetComponent<RectTransform>();
-            VirtualOutlineRect = _VirtualOutline.GetComponent<RectTransform>();
-            Virtual2OutlineRect = _Virtual2Outline.GetComponent<RectTransform>();
-            Virtual3OutlineRect = _Virtual3Outline.GetComponent<RectTransform>();
+            _realOutlineRect = realOutline.GetComponent<RectTransform>();
+            _virtualOutlineRect = virtualOutline.GetComponent<RectTransform>();
+            _virtual2OutlineRect = virtual2Outline.GetComponent<RectTransform>();
+            _virtual3OutlineRect = virtual3Outline.GetComponent<RectTransform>();
 
-            RealRedRect = _RealRed.GetComponent<RectTransform>();
-            VirtualRedRect = _VirtualRed.GetComponent<RectTransform>();
-            Virtual2RedRect = _Virtual2Red.GetComponent<RectTransform>();
-            Virtual3RedRect = _Virtual3Red.GetComponent<RectTransform>();
+            _realRedRect = realRed.GetComponent<RectTransform>();
+            _virtualRedRect = virtualRed.GetComponent<RectTransform>();
+            _virtual2RedRect = virtual2Red.GetComponent<RectTransform>();
+            _virtual3RedRect = virtual3Red.GetComponent<RectTransform>();
 
-            RealRect = RealRedRect.parent.GetComponent<RectTransform>();
-            VirtualRect = VirtualRedRect.parent.GetComponent<RectTransform>();
-            Virtual2Rect = Virtual2RedRect.parent.GetComponent<RectTransform>();
-            Virtual3Rect = Virtual3RedRect.parent.GetComponent<RectTransform>();
+            _realRect = _realRedRect.parent.GetComponent<RectTransform>();
+            _virtualRect = _virtualRedRect.parent.GetComponent<RectTransform>();
+            _virtual2Rect = _virtual2RedRect.parent.GetComponent<RectTransform>();
+            _virtual3Rect = _virtual3RedRect.parent.GetComponent<RectTransform>();
 
-            RealOutlineRect.sizeDelta = OutlineSizeDelta;
-            VirtualOutlineRect.sizeDelta = OutlineSizeDelta;
-            Virtual2OutlineRect.sizeDelta = OutlineSizeDelta;
-            Virtual3OutlineRect.sizeDelta = OutlineSizeDelta;
+            _realOutlineRect.sizeDelta = outlineSizeDelta;
+            _virtualOutlineRect.sizeDelta = outlineSizeDelta;
+            _virtual2OutlineRect.sizeDelta = outlineSizeDelta;
+            _virtual3OutlineRect.sizeDelta = outlineSizeDelta;
 
-            RealRedRect.sizeDelta = FireSizeDelta;
-            VirtualRedRect.sizeDelta = FireSizeDelta;
-            Virtual2RedRect.sizeDelta = FireSizeDelta;
-            Virtual3RedRect.sizeDelta = FireSizeDelta;
+            _realRedRect.sizeDelta = fireSizeDelta;
+            _virtualRedRect.sizeDelta = fireSizeDelta;
+            _virtual2RedRect.sizeDelta = fireSizeDelta;
+            _virtual3RedRect.sizeDelta = fireSizeDelta;
 
-            _RealOutline.color = OutlineColor;
-            _VirtualOutline.color = OutlineColor;
-            _Virtual2Outline.color = OutlineColor;
-            _Virtual3Outline.color = OutlineColor;
+            realOutline.color = outlineColor;
+            virtualOutline.color = outlineColor;
+            virtual2Outline.color = outlineColor;
+            virtual3Outline.color = outlineColor;
 
-            _RealRed.color = FireColor;
-            _VirtualRed.color = FireColor;
-            _Virtual2Red.color = FireColor;
-            _Virtual3Red.color = FireColor;
+            realRed.color = fireColor;
+            virtualRed.color = fireColor;
+            virtual2Red.color = fireColor;
+            virtual3Red.color = fireColor;
 
-            GamePanelHUDCorePlugin.UpdateManger.Register(this);
+            HUDCore.UpdateManger.Register(this);
         }
 
-        public void IUpdate()
+        public void CustomUpdate()
 #endif
 #if UNITY_EDITOR
         void Update()
@@ -146,37 +140,38 @@ namespace GamePanelHUDCompass
             CompassFireUI();
         }
 
-        void CompassFireUI()
+        private void CompassFireUI()
         {
 #if !UNITY_EDITOR
-            Vector3 lhs = Where - HUD.Info.PlayerPosition;
+            var lhs = where - HUD.Info.PlayerPosition;
 
-            float angle = HUD.Info.GetToAngle(lhs);
+            var angle = HUD.Info.GetToAngle(lhs);
 
-            FireX = -(angle / 15 * 120);
+            _fireX = -(angle / 15 * 120);
 
-            float fireXLeft = FireXLeft;
-            float fireXRight = FireXRight;
-            float fireXRightRight = FireXRightRight;
+            var fireXLeft = FireXLeft;
+            var fireXRight = FireXRight;
+            var fireXRightRight = FireXRightRight;
 
-            IsLeft = GetDirection(HUD.Info.SizeDelta.x, HUD.Info.CompassX, FireX, fireXLeft, fireXRight, fireXRightRight, lhs, HUD.Info.PlayerRight);
+            IsLeft = GetDirection(HUD.Info.SizeDelta.x, HUD.Info.CompassX, _fireX, fireXLeft, fireXRight,
+                fireXRightRight, lhs, HUD.Info.PlayerRight);
 
-            float height = HUD.SetData.KeyCompassFireHeight.Value;
-            RealRect.anchoredPosition = new Vector2(FireX, height);
-            VirtualRect.anchoredPosition = new Vector2(fireXLeft, height);
-            Virtual2Rect.anchoredPosition = new Vector2(fireXRight, height);
-            Virtual3Rect.anchoredPosition = new Vector2(fireXRightRight, height);
+            var height = HUD.SetData.KeyCompassFireHeight.Value;
+            _realRect.anchoredPosition = new Vector2(_fireX, height);
+            _virtualRect.anchoredPosition = new Vector2(fireXLeft, height);
+            _virtual2Rect.anchoredPosition = new Vector2(fireXRight, height);
+            _virtual3Rect.anchoredPosition = new Vector2(fireXRightRight, height);
 
-            Animator_Fire.SetFloat(AnimatorHash.Active, HUD.SetData.KeyCompassFireActiveSpeed.Value);
-            Animator_Fire.SetFloat(AnimatorHash.Speed, HUD.SetData.KeyCompassFireWaitSpeed.Value);
-            Animator_Fire.SetFloat(AnimatorHash.ToSmallSpeed, HUD.SetData.KeyCompassFireToSmallSpeed.Value);
-            Animator_Fire.SetFloat(AnimatorHash.SmallSpeed, HUD.SetData.KeyCompassFireSmallWaitSpeed.Value);
+            _animatorFire.SetFloat(AnimatorHash.Active, HUD.SetData.KeyCompassFireActiveSpeed.Value);
+            _animatorFire.SetFloat(AnimatorHash.Speed, HUD.SetData.KeyCompassFireWaitSpeed.Value);
+            _animatorFire.SetFloat(AnimatorHash.ToSmallSpeed, HUD.SetData.KeyCompassFireToSmallSpeed.Value);
+            _animatorFire.SetFloat(AnimatorHash.SmallSpeed, HUD.SetData.KeyCompassFireSmallWaitSpeed.Value);
 
-            if (Active)
+            if (active)
             {
-                Animator_Fire.SetBool(AnimatorHash.Active, Active);
+                _animatorFire.SetBool(AnimatorHash.Active, active);
 
-                Active = false;
+                active = false;
             }
 #endif
         }
@@ -184,20 +179,23 @@ namespace GamePanelHUDCompass
 #if !UNITY_EDITOR
         public void Fire()
         {
-            Animator_Fire.SetTrigger(AnimatorHash.Fire);
+            _animatorFire.SetTrigger(AnimatorHash.Fire);
         }
 
-        bool? GetDirection(float panelX, float compassX, float fireX, float fireXLeft, float fireXRight, float fireXRightRight, Vector3 lhs, Vector3 right)
+        private static bool? GetDirection(float panelX, float compassX, float fireX, float fireXLeft, float fireXRight,
+            float fireXRightRight, Vector3 lhs, Vector3 right)
         {
-            float panelHalf = panelX / 2;
+            var panelHalf = panelX / 2;
 
-            float panelMaxX = panelHalf + compassX;
+            var panelMaxX = panelHalf + compassX;
 
-            float panelMinX = -panelHalf + compassX;
+            var panelMinX = -panelHalf + compassX;
 
-            bool realInPanel = -fireX < panelMaxX && -fireX > panelMinX;
+            var realInPanel = -fireX < panelMaxX && -fireX > panelMinX;
 
-            bool virtualInPanel = -fireXLeft < panelMaxX && -fireXLeft > panelMinX || -fireXRight < panelMaxX && -fireXRight > panelMinX || -fireXRightRight < panelMaxX && -fireXRightRight > panelMinX;
+            var virtualInPanel = -fireXLeft < panelMaxX && -fireXLeft > panelMinX ||
+                                 -fireXRight < panelMaxX && -fireXRight > panelMinX ||
+                                 -fireXRightRight < panelMaxX && -fireXRightRight > panelMinX;
 
             if (!realInPanel && !virtualInPanel)
             {
@@ -209,23 +207,23 @@ namespace GamePanelHUDCompass
             }
         }
 
-        static bool RealDirection(Vector3 lhs, Vector3 right)
+        private static bool RealDirection(Vector3 lhs, Vector3 right)
         {
             return Vector3.Dot(lhs, right) < 0;
         }
 #endif
 
-        void ToDestroy()
+        private void ToDestroy()
         {
 #if !UNITY_EDITOR
-            GamePanelHUDCompassFire.Remove(Who);
+            GamePanelHUDCompassFire.Remove(who);
 #endif
         }
 
         public void Destroy()
         {
 #if !UNITY_EDITOR
-            GamePanelHUDCorePlugin.UpdateManger.Remove(this);
+            HUDCore.UpdateManger.Remove(this);
             Destroy(gameObject);
 #endif
         }

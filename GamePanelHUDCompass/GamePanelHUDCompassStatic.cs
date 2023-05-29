@@ -1,152 +1,148 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
-using TMPro;
-using EFT;
-using EFT.UI;
 using System.Globalization;
+using EFT;
+using GamePanelHUDCore.Utils;
+using TMPro;
+using UnityEngine;
 #if !UNITY_EDITOR
 using GamePanelHUDCore;
-using GamePanelHUDCore.Utils.Session;
+using static EFTApi.EFTHelpers;
 #endif
-using GamePanelHUDCore.Utils;
 
 namespace GamePanelHUDCompass
 {
-    public class GamePanelHUDCompassStatic : UIElement
+    public class GamePanelHUDCompassStatic : MonoBehaviour
 #if !UNITY_EDITOR
         , IUpdate
 #endif
     {
 #if !UNITY_EDITOR
-        private GamePanelHUDCorePlugin.HUDClass<GamePanelHUDCompassPlugin.CompassStaticData, GamePanelHUDCompassPlugin.SettingsData> HUD => GamePanelHUDCompassPlugin.CompassStaticHUD;
+        private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
+
+        private static
+            GamePanelHUDCorePlugin.HUDClass<GamePanelHUDCompassPlugin.CompassStaticData,
+                GamePanelHUDCompassPlugin.SettingsData> HUD => GamePanelHUDCompassPlugin.CompassStaticHUD;
 #endif
 
-        private readonly Dictionary<string, List<GamePanelHUDCompassStaticUI>> CompassStatics = new Dictionary<string, List<GamePanelHUDCompassStaticUI>>();
+        private readonly Dictionary<string, List<GamePanelHUDCompassStaticUI>> _compassStatics =
+            new Dictionary<string, List<GamePanelHUDCompassStaticUI>>();
 
-        private readonly List<string> Removes = new List<string>();
+        private readonly List<string> _removes = new List<string>();
 
-        [SerializeField]
-        private Transform _CompassStatic;
+        [SerializeField] private Transform compassStaticRoot;
 
-        [SerializeField]
-        private RectTransform _Azimuths;
+        [SerializeField] private RectTransform azimuthsRoot;
 
-        [SerializeField]
-        private Transform _Airdrops;
+        [SerializeField] private Transform airdropsRoot;
 
-        [SerializeField]
-        private Transform _Quests;
+        [SerializeField] private Transform questsRoot;
 
-        [SerializeField]
-        private Transform _Exfiltrations;
+        [SerializeField] private Transform exfiltrationsRoot;
 
-        [SerializeField]
-        private Sprite Airdrop;
+        [SerializeField] private Sprite airdrop;
 
-        [SerializeField]
-        private Sprite Exfiltration;
+        [SerializeField] private Sprite exfiltration;
 
-        [SerializeField]
-        private TMP_Text _NecessaryValue;
+        [SerializeField] private TMP_Text necessaryValue;
 
-        [SerializeField]
-        private TMP_Text _RequirementsValue;
+        [SerializeField] private TMP_Text requirementsValue;
 
-        [SerializeField]
-        private TMP_Text _NameValue;
+        [SerializeField] private TMP_Text nameValue;
 
-        [SerializeField]
-        private TMP_Text _DescriptionValue;
+        [SerializeField] private TMP_Text descriptionValue;
 
-        [SerializeField]
-        private TMP_Text _DistanceValue;
+        [SerializeField] private TMP_Text distanceValue;
 
-        [SerializeField]
-        private TMP_Text _DistanceSignValue;
+        [SerializeField] private TMP_Text distanceSignValue;
 
-        private Transform InfoPanel;
+        private Transform _infoPanelTransform;
 
-        private Transform DistancePanel;
+        private Transform _distancePanelTransform;
 
-        private RectTransform InfoPanelRect;
+        private RectTransform _rectTransform;
+
+        private RectTransform _infoPanelRect;
 
 #if !UNITY_EDITOR
-        void Start()
+        private void Start()
         {
-            InfoPanel = _NameValue.transform.parent.parent;
-            InfoPanelRect = InfoPanel.GetComponent<RectTransform>();
+            _rectTransform = GetComponent<RectTransform>();
 
-            DistancePanel = _DistanceValue.transform.parent;
+            _infoPanelTransform = nameValue.transform.parent.parent;
+            _infoPanelRect = _infoPanelTransform.GetComponent<RectTransform>();
+
+            _distancePanelTransform = distanceValue.transform.parent;
 
             GamePanelHUDCompassPlugin.ShowStatic = ShowStatic;
             GamePanelHUDCompassPlugin.DestroyStatic = DestroyStaticUI;
-            GamePanelHUDCorePlugin.HUDCoreClass.WorldDispose += DestroyAll;
+            HUDCore.WorldDispose += DestroyAll;
 
-            GamePanelHUDCorePlugin.UpdateManger.Register(this);
+            HUDCore.UpdateManger.Register(this);
         }
 
-        public void IUpdate()
+        public void CustomUpdate()
         {
             CompassStaticHUD();
         }
 
-        void CompassStaticHUD()
+        private void CompassStaticHUD()
         {
-            RectTransform.anchoredPosition = HUD.SetData.KeyAnchoredPosition.Value;
-            RectTransform.sizeDelta = new Vector2(HUD.Info.SizeDelta.x, HUD.Info.SizeDelta.y * 1.5f);
-            RectTransform.localScale = HUD.SetData.KeyLocalScale.Value;
+            _rectTransform.anchoredPosition = HUD.SetData.KeyAnchoredPosition.Value;
+            _rectTransform.sizeDelta = new Vector2(HUD.Info.SizeDelta.x, HUD.Info.SizeDelta.y * 1.5f);
+            _rectTransform.localScale = HUD.SetData.KeyLocalScale.Value;
 
-            if (_CompassStatic != null)
+            if (compassStaticRoot != null)
             {
-                _CompassStatic.gameObject.SetActive(HUD.HUDSw);
+                compassStaticRoot.gameObject.SetActive(HUD.HUDSw);
 
-                _Airdrops.gameObject.SetActive(HUD.SetData.KeyCompassStaticAirdrop.Value);
-                _Exfiltrations.gameObject.SetActive(HUD.SetData.KeyCompassStaticExfiltration.Value);
-                _Quests.gameObject.SetActive(HUD.SetData.KeyCompassStaticQuest.Value);
+                airdropsRoot.gameObject.SetActive(HUD.SetData.KeyCompassStaticAirdrop.Value);
+                exfiltrationsRoot.gameObject.SetActive(HUD.SetData.KeyCompassStaticExfiltration.Value);
+                questsRoot.gameObject.SetActive(HUD.SetData.KeyCompassStaticQuest.Value);
 
-                _Azimuths.anchoredPosition = new Vector2(HUD.Info.CompassX, 0);
+                azimuthsRoot.anchoredPosition = new Vector2(HUD.Info.CompassX, 0);
 
-                InfoPanelRect.anchoredPosition = HUD.SetData.KeyCompassStaticInfoAnchoredPosition.Value;
-                InfoPanelRect.localScale = HUD.SetData.KeyCompassStaticInfoScale.Value;
+                _infoPanelRect.anchoredPosition = HUD.SetData.KeyCompassStaticInfoAnchoredPosition.Value;
+                _infoPanelRect.localScale = HUD.SetData.KeyCompassStaticInfoScale.Value;
 
-                bool isCenter = false;
+                var isCenter = false;
 
-                if (CompassStatics.Count > 0 && Removes.Count > 0)
+                if (_compassStatics.Count > 0 && _removes.Count > 0)
                 {
-                    for (int i = 0; i < Removes.Count; i++)
+                    for (var i = 0; i < _removes.Count; i++)
                     {
-                        string remove = Removes[i];
+                        var remove = _removes[i];
 
-                        foreach (GamePanelHUDCompassStaticUI ui in CompassStatics[remove])
+                        foreach (var ui in _compassStatics[remove])
                         {
                             ui.Destroy();
                         }
 
-                        CompassStatics.Remove(remove);
+                        _compassStatics.Remove(remove);
 
-                        Removes.RemoveAt(i);
+                        _removes.RemoveAt(i);
                     }
                 }
 
-                if (CompassStatics.Count > 0)
+                if (_compassStatics.Count > 0)
                 {
-                    int range = HUD.SetData.KeyCompassStaticCenterPointRange.Value;
+                    var range = HUD.SetData.KeyCompassStaticCenterPointRange.Value;
 
-                    List<Tuple<float, GamePanelHUDCompassStaticUI>> allXDiff = new List<Tuple<float, GamePanelHUDCompassStaticUI>>();
+                    List<(float XDiff, GamePanelHUDCompassStaticUI StaticUI)> allDiff =
+                        new List<(float, GamePanelHUDCompassStaticUI)>();
 
-                    foreach (List<GamePanelHUDCompassStaticUI> uis in CompassStatics.Values)
+                    foreach (var uis in _compassStatics.Values)
                     {
-                        foreach (GamePanelHUDCompassStaticUI ui in uis)
+                        foreach (var ui in uis)
                         {
                             if (!ui.Work)
                                 continue;
 
-                            float xDiff = ui.XDiff;
+                            var xDiff = ui.XDiff;
 
                             if (xDiff < range && xDiff > -range)
                             {
-                                allXDiff.Add(new Tuple<float, GamePanelHUDCompassStaticUI>(xDiff, ui));
+                                allDiff.Add((xDiff, ui));
                                 isCenter = true;
                             }
                         }
@@ -157,179 +153,182 @@ namespace GamePanelHUDCompass
                         float minXDiff = range;
                         GamePanelHUDCompassStaticUI minUI = default;
 
-                        foreach (var xDiff in allXDiff)
+                        foreach (var diff in allDiff)
                         {
-                            if (Math.Abs(xDiff.Item1) < minXDiff)
+                            if (Math.Abs(diff.XDiff) < minXDiff)
                             {
-                                minXDiff = xDiff.Item1;
+                                minXDiff = diff.XDiff;
 
-                                minUI = xDiff.Item2;
+                                minUI = diff.StaticUI;
                             }
                         }
 
                         if (minUI != null)
                         {
-                            switch (minUI.InfoType)
+                            switch (minUI.infoType)
                             {
                                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Airdrop:
-                                    _Airdrops.SetAsLastSibling();
+                                    airdropsRoot.SetAsLastSibling();
                                     break;
                                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Exfiltration:
                                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Switch:
-                                    _Exfiltrations.SetAsLastSibling();
+                                    exfiltrationsRoot.SetAsLastSibling();
                                     break;
                                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionLeaveItemAtLocation:
                                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionPlaceBeacon:
                                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionFindItem:
                                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionVisitPlace:
                                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionInZone:
-                                    _Quests.SetAsLastSibling();
+                                    questsRoot.SetAsLastSibling();
                                     break;
                             }
 
                             minUI.transform.SetAsLastSibling();
 
-                            string necessaryText = minUI.IsNotNecessary ? LocalizedHelp.Localized("(optional)", EStringCase.None) : "";
+                            var necessaryText = minUI.isNotNecessary
+                                ? _LocalizedHelper.Localized("(optional)")
+                                : string.Empty;
 
-                            TextInfo textInfo = CultureInfo.CurrentCulture.TextInfo;
-                            string requirementsText = minUI.HasRequirements ? textInfo.ToTitleCase(LocalizedHelp.Localized("ragfair/REQUIREMENTS", EStringCase.Lower)) : "";
+                            var textInfo = CultureInfo.CurrentCulture.TextInfo;
+                            var requirementsText = minUI.HasRequirements
+                                ? textInfo.ToTitleCase(_LocalizedHelper.Localized("ragfair/REQUIREMENTS",
+                                    EStringCase.Lower))
+                                : string.Empty;
 
-                            FontStyles nameStyles = HUD.SetData.KeyCompassStaticNameStyles.Value;
-                            Color nameColor = HUD.SetData.KeyCompassStaticNameColor.Value;
+                            var nameStyles = HUD.SetData.KeyCompassStaticNameStyles.Value;
 
-                            _NameValue.fontStyle = nameStyles;
-                            _NameValue.color = nameColor;
-                            _NameValue.text = LocalizedHelp.Localized(minUI.NameKey, EStringCase.None);
+                            nameValue.fontStyle = nameStyles;
+                            nameValue.color = HUD.SetData.KeyCompassStaticNameColor.Value;
+                            nameValue.text = _LocalizedHelper.Localized(minUI.nameKey);
 
-                            _NecessaryValue.gameObject.SetActive(minUI.IsNotNecessary);
-                            _RequirementsValue.gameObject.SetActive(minUI.HasRequirements);
+                            necessaryValue.gameObject.SetActive(minUI.isNotNecessary);
+                            requirementsValue.gameObject.SetActive(minUI.HasRequirements);
 
-                            _NecessaryValue.fontStyle = nameStyles;
-                            _NecessaryValue.text = necessaryText;
-                            _NecessaryValue.color = nameColor;
+                            necessaryValue.fontStyle = nameStyles;
+                            necessaryValue.text = necessaryText;
+                            necessaryValue.color = HUD.SetData.KeyCompassStaticNecessaryColor.Value;
 
-                            _RequirementsValue.fontStyle = nameStyles;
-                            _RequirementsValue.color = nameColor;
-                            _RequirementsValue.text = requirementsText;
+                            requirementsValue.fontStyle = nameStyles;
+                            requirementsValue.color = HUD.SetData.KeyCompassStaticRequirementsColor.Value;
+                            requirementsValue.text = requirementsText;
 
-                            _DescriptionValue.fontStyle = HUD.SetData.KeyCompassStaticDescriptionStyles.Value;
-                            _DescriptionValue.color = HUD.SetData.KeyCompassStaticDescriptionColor.Value;
-                            _DescriptionValue.text = LocalizedHelp.Localized(minUI.DescriptionKey, EStringCase.None);
+                            descriptionValue.fontStyle = HUD.SetData.KeyCompassStaticDescriptionStyles.Value;
+                            descriptionValue.color = HUD.SetData.KeyCompassStaticDescriptionColor.Value;
+                            descriptionValue.text = _LocalizedHelper.Localized(minUI.descriptionKey);
 
-                            FontStyles distanceStyles = HUD.SetData.KeyCompassStaticDistanceStyles.Value;
-                            Color distanceColor = HUD.SetData.KeyCompassStaticDistanceColor.Value;
+                            var distanceStyles = HUD.SetData.KeyCompassStaticDistanceStyles.Value;
 
-                            string distance = Vector3.Distance(minUI.Where, HUD.Info.PlayerPosition).ToString("F0");
+                            var distance = Vector3.Distance(minUI.where, HUD.Info.PlayerPosition).ToString("F0");
 
-                            _DistanceValue.fontStyle = distanceStyles;
-                            _DistanceValue.color = distanceColor;
-                            _DistanceValue.text = distance;
+                            distanceValue.fontStyle = distanceStyles;
+                            distanceValue.color = HUD.SetData.KeyCompassStaticDistanceColor.Value;
+                            distanceValue.text = distance;
 
-                            _DistanceSignValue.fontStyle = distanceStyles;
-                            _DistanceSignValue.color = distanceColor;
+                            distanceSignValue.fontStyle = distanceStyles;
+                            distanceSignValue.color = HUD.SetData.KeyCompassStaticMetersColor.Value;
                         }
                     }
                 }
 
                 if (!isCenter)
                 {
-                    _Quests.SetSiblingIndex(0);
-                    _Exfiltrations.SetSiblingIndex(1);
-                    _Airdrops.SetSiblingIndex(2);
+                    questsRoot.SetSiblingIndex(0);
+                    exfiltrationsRoot.SetSiblingIndex(1);
+                    airdropsRoot.SetSiblingIndex(2);
                 }
 
-                InfoPanel.gameObject.SetActive(isCenter && HUD.SetData.KeyCompassStaticInfoHUDSw.Value);
+                _infoPanelTransform.gameObject.SetActive(isCenter && HUD.SetData.KeyCompassStaticInfoHUDSw.Value);
 
-                DistancePanel.gameObject.SetActive(HUD.SetData.KeyCompassStaticDistanceHUDSw.Value);
+                _distancePanelTransform.gameObject.SetActive(HUD.SetData.KeyCompassStaticDistanceHUDSw.Value);
             }
         }
 
-        void ShowStatic(GamePanelHUDCompassPlugin.CompassStaticInfo staticInfo)
+        private void ShowStatic(GamePanelHUDCompassPlugin.CompassStaticInfo staticInfo)
         {
             Transform root;
             switch (staticInfo.InfoType)
             {
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Airdrop:
-                    root = _Airdrops;
+                    root = airdropsRoot;
                     break;
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Exfiltration:
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Switch:
-                    root = _Exfiltrations;
+                    root = exfiltrationsRoot;
                     break;
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionLeaveItemAtLocation:
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionPlaceBeacon:
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionFindItem:
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionVisitPlace:
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionInZone:
-                    root = _Quests;
+                    root = questsRoot;
                     break;
                 default:
                     return;
             }
-            GameObject newInfo = Instantiate(GamePanelHUDCompassPlugin.StaticPrefab, root);
 
-            GamePanelHUDCompassStaticUI _static = newInfo.GetComponent<GamePanelHUDCompassStaticUI>();
+            var staticUI = Instantiate(GamePanelHUDCompassPlugin.StaticPrefab, root)
+                .GetComponent<GamePanelHUDCompassStaticUI>();
 
             switch (staticInfo.InfoType)
             {
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Airdrop:
-                    _static.BindIcon(Airdrop);
+                    staticUI.BindIcon(airdrop);
                     break;
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Exfiltration:
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Switch:
-                    _static.BindIcon(Exfiltration);
+                    staticUI.BindIcon(exfiltration);
                     break;
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionLeaveItemAtLocation:
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionPlaceBeacon:
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionFindItem:
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionVisitPlace:
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionInZone:
-                    TradersAvatar.GetAvatar(staticInfo.TraderId, _static.BindIcon);
+                    _SessionHelper.TradersHelper.TradersAvatarData.GetAvatar(staticInfo.TraderId, staticUI.BindIcon);
                     break;
             }
 
-            _static.Where = staticInfo.Where;
-            _static.ZoneId = staticInfo.ZoneId;
-            _static.Target = staticInfo.Target;
-            _static.NameKey = staticInfo.NameKey;
-            _static.TraderId = staticInfo.TraderId;
-            _static.IsNotNecessary = staticInfo.IsNotNecessary;
-            _static.DescriptionKey = staticInfo.DescriptionKey;
-            _static.ExIndex = staticInfo.ExIndex;
-            _static.ExIndex2 = staticInfo.ExIndex2;
-            _static.InfoType = staticInfo.InfoType;
+            staticUI.where = staticInfo.Where;
+            staticUI.zoneId = staticInfo.ZoneId;
+            staticUI.target = staticInfo.Target;
+            staticUI.nameKey = staticInfo.NameKey;
+            staticUI.traderId = staticInfo.TraderId;
+            staticUI.isNotNecessary = staticInfo.IsNotNecessary;
+            staticUI.descriptionKey = staticInfo.DescriptionKey;
+            staticUI.exIndex = staticInfo.ExIndex;
+            staticUI.exIndex2 = staticInfo.ExIndex2;
+            staticUI.infoType = staticInfo.InfoType;
 
-            if (CompassStatics.TryGetValue(staticInfo.Id, out List<GamePanelHUDCompassStaticUI> list))
+            if (_compassStatics.TryGetValue(staticInfo.Id, out var list))
             {
-                list.Add(_static);
+                list.Add(staticUI);
             }
             else
             {
-                CompassStatics.Add(staticInfo.Id, new List<GamePanelHUDCompassStaticUI> { _static });
+                _compassStatics.Add(staticInfo.Id, new List<GamePanelHUDCompassStaticUI> { staticUI });
             }
         }
 
-        void DestroyAll(GameWorld world)
+        private void DestroyAll(GameWorld world)
         {
-            foreach (string id in CompassStatics.Keys)
+            foreach (var id in _compassStatics.Keys)
             {
                 RemoveStaticUI(id);
             }
         }
 
-        void DestroyStaticUI(string id)
+        private void DestroyStaticUI(string id)
         {
-            if (CompassStatics.ContainsKey(id))
+            if (_compassStatics.ContainsKey(id))
             {
                 RemoveStaticUI(id);
             }
         }
 
-        void RemoveStaticUI(string id)
+        private void RemoveStaticUI(string id)
         {
-            if (!Removes.Contains(id))
+            if (!_removes.Contains(id))
             {
-                Removes.Add(id);
+                _removes.Add(id);
             }
         }
 #endif

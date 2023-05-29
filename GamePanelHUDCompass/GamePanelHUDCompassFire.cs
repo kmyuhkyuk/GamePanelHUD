@@ -1,121 +1,124 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEngine;
+using GamePanelHUDCore.Utils;
 using TMPro;
-using EFT.UI;
+using UnityEngine;
 #if !UNITY_EDITOR
 using GamePanelHUDCore;
+using static EFTApi.EFTHelpers;
 #endif
-using GamePanelHUDCore.Utils;
 
 namespace GamePanelHUDCompass
 {
-    public class GamePanelHUDCompassFire : UIElement
+    public class GamePanelHUDCompassFire : MonoBehaviour
 #if !UNITY_EDITOR
         , IUpdate
 #endif
     {
 #if !UNITY_EDITOR
-        private GamePanelHUDCorePlugin.HUDClass<GamePanelHUDCompassPlugin.CompassFireData, GamePanelHUDCompassPlugin.SettingsData> HUD => GamePanelHUDCompassPlugin.CompassFireHUD;
+        private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
+        private static
+            GamePanelHUDCorePlugin.HUDClass<GamePanelHUDCompassPlugin.CompassFireData,
+                GamePanelHUDCompassPlugin.SettingsData> HUD => GamePanelHUDCompassPlugin.CompassFireHUD;
 #endif
+        private readonly Dictionary<string, GamePanelHUDCompassFireUI> _compassFires =
+            new Dictionary<string, GamePanelHUDCompassFireUI>();
 
-        private readonly Dictionary<string, GamePanelHUDCompassFireUI> CompassFires = new Dictionary<string, GamePanelHUDCompassFireUI>();
+        private readonly List<string> _removes = new List<string>();
 
-        private readonly List<string> Removes = new List<string>();
+        [SerializeField] private Transform compassFireRoot;
 
-        [SerializeField]
-        private Transform _CompassFire;
+        [SerializeField] private RectTransform azimuthsRoot;
 
-        [SerializeField]
-        private RectTransform _Azimuths;
+        [SerializeField] private Transform firesRoot;
 
-        [SerializeField]
-        private Transform _Fires;
+        [SerializeField] private TMP_Text fireLeft;
 
-        [SerializeField]
-        private TMP_Text _FireLeft;
+        [SerializeField] private TMP_Text fireRight;
 
-        [SerializeField]
-        private TMP_Text _FireRight;
+        private CanvasGroup _compassFireGroup;
 
-        private CanvasGroup CompassFireGroup;
+        private RectTransform _rectTransform;
 
-        private RectTransform FireLeftRect;
+        private RectTransform _fireLeftRect;
 
-        private RectTransform FireRightRect;
+        private RectTransform _fireRightRect;
 
         internal static Action<string> Remove;
 
 #if !UNITY_EDITOR
-        void Start()
+        private void Start()
         {
-            CompassFireGroup = _CompassFire.GetComponent<CanvasGroup>();
+            _rectTransform = GetComponent<RectTransform>();
 
-            FireLeftRect = _FireLeft.GetComponent<RectTransform>();
-            FireRightRect = _FireRight.GetComponent<RectTransform>();
+            _compassFireGroup = compassFireRoot.GetComponent<CanvasGroup>();
+
+            _fireLeftRect = fireLeft.GetComponent<RectTransform>();
+            _fireRightRect = fireRight.GetComponent<RectTransform>();
 
             Remove = RemoveFireUI;
 
             GamePanelHUDCompassPlugin.ShowFire = ShowFire;
             GamePanelHUDCompassPlugin.DestroyFire = DestroyFireUI;
 
-            GamePanelHUDCorePlugin.UpdateManger.Register(this);
+            HUDCore.UpdateManger.Register(this);
         }
 
-        public void IUpdate()
+        public void CustomUpdate()
         {
             CompassFireHUD();
         }
 
-        void CompassFireHUD()
+        private void CompassFireHUD()
         {
-            RectTransform.anchoredPosition = HUD.SetData.KeyAnchoredPosition.Value;
-            RectTransform.sizeDelta = HUD.Info.SizeDelta;
-            RectTransform.localScale = HUD.SetData.KeyLocalScale.Value;
+            _rectTransform.anchoredPosition = HUD.SetData.KeyAnchoredPosition.Value;
+            _rectTransform.sizeDelta = HUD.Info.SizeDelta;
+            _rectTransform.localScale = HUD.SetData.KeyLocalScale.Value;
 
-            if (_CompassFire != null)
+            if (compassFireRoot != null)
             {
-                CompassFireGroup.alpha = HUD.HUDSw ? 1 : 0;
+                _compassFireGroup.alpha = HUD.HUDSw ? 1 : 0;
 
-                _Azimuths.anchoredPosition = new Vector2(HUD.Info.CompassX, 0);
+                azimuthsRoot.anchoredPosition = new Vector2(HUD.Info.CompassX, 0);
 
-                Vector2 directionPosition = HUD.SetData.KeyCompassFireDirectionAnchoredPosition.Value;
+                var directionPosition = HUD.SetData.KeyCompassFireDirectionAnchoredPosition.Value;
 
-                FireLeftRect.anchoredPosition = new Vector2(-directionPosition.x, directionPosition.y);
-                FireRightRect.anchoredPosition = directionPosition;
+                _fireLeftRect.anchoredPosition = new Vector2(-directionPosition.x, directionPosition.y);
+                _fireLeftRect.localScale = HUD.SetData.KeyCompassFireDirectionScale.Value;
+                var leftDirectionColor = HUD.SetData.KeyCompassFireColor.Value;
+                var left = false;
 
-                Color leftDirectionColor = HUD.SetData.KeyCompassFireColor.Value;
-                Color rightDirectionColor = HUD.SetData.KeyCompassFireColor.Value;
+                _fireRightRect.anchoredPosition = directionPosition;
+                _fireRightRect.localScale = HUD.SetData.KeyCompassFireDirectionScale.Value;
+                var rightDirectionColor = HUD.SetData.KeyCompassFireColor.Value;
+                var right = false;
 
-                bool left = false;
-                bool right = false;
-
-                if (CompassFires.Count > 0 && Removes.Count > 0)
+                if (_compassFires.Count > 0 && _removes.Count > 0)
                 {
-                    for (int i = 0; i < Removes.Count; i++)
+                    for (var i = 0; i < _removes.Count; i++)
                     {
-                        string remove = Removes[i];
+                        var remove = _removes[i];
 
-                        CompassFires[remove].Destroy();
+                        _compassFires[remove].Destroy();
 
-                        CompassFires.Remove(remove);
+                        _compassFires.Remove(remove);
 
-                        Removes.RemoveAt(i);
+                        _removes.RemoveAt(i);
                     }
                 }
 
-                if (CompassFires.Count > 0)
+                if (_compassFires.Count > 0)
                 {
-                    foreach (GamePanelHUDCompassFireUI fire in CompassFires.Values)
+                    foreach (var fireUI in _compassFires.Values)
                     {
-                        bool? isLeft = fire.IsLeft;
+                        var isLeft = fireUI.IsLeft;
 
                         if (!isLeft.HasValue)
                             continue;
 
-                        bool isBoos = fire.IsBoss;
+                        var isBoos = fireUI.isBoss;
 
-                        bool isFollower = fire.IsFollower;
+                        var isFollower = fireUI.isFollower;
 
                         if ((bool)isLeft)
                         {
@@ -146,87 +149,87 @@ namespace GamePanelHUDCompass
                     }
                 }
 
-                _FireLeft.gameObject.SetActive(left && HUD.SetData.KeyCompassFireDirectionHUDSw.Value);
-                _FireRight.gameObject.SetActive(right && HUD.SetData.KeyCompassFireDirectionHUDSw.Value);
+                fireLeft.gameObject.SetActive(left && HUD.SetData.KeyCompassFireDirectionHUDSw.Value);
+                fireRight.gameObject.SetActive(right && HUD.SetData.KeyCompassFireDirectionHUDSw.Value);
 
-                _FireLeft.fontStyle = HUD.SetData.KeyCompassFireDirectionStyles.Value;
-                _FireRight.fontStyle = HUD.SetData.KeyCompassFireDirectionStyles.Value;
+                fireLeft.fontStyle = HUD.SetData.KeyCompassFireDirectionStyles.Value;
+                fireRight.fontStyle = HUD.SetData.KeyCompassFireDirectionStyles.Value;
 
-                _FireLeft.color = leftDirectionColor;
-                _FireRight.color = rightDirectionColor;
+                fireLeft.color = leftDirectionColor;
+                fireRight.color = rightDirectionColor;
             }
         }
 
-        void ShowFire(GamePanelHUDCompassPlugin.CompassFireInfo fireInfo)
+        private void ShowFire(GamePanelHUDCompassPlugin.CompassFireInfo fireInfo)
         {
-            if (_Fires != null)
+            if (firesRoot != null)
             {
-                if ((!fireInfo.IsSilenced || !HUD.SetData.KeyCompassFireSilenced.Value) && fireInfo.Distance <= HUD.SetData.KeyCompassFireDistance.Value)
+                if ((!fireInfo.IsSilenced || !HUD.SetData.KeyCompassFireSilenced.Value) &&
+                    fireInfo.Distance <= HUD.SetData.KeyCompassFireDistance.Value)
                 {
-                    if (CompassFires.TryGetValue(fireInfo.Who, out GamePanelHUDCompassFireUI fireUI))
+                    if (_compassFires.TryGetValue(fireInfo.Who, out var fireUI))
                     {
-                        fireUI.Where = fireInfo.Where;
+                        fireUI.where = fireInfo.Where;
 
                         fireUI.Fire();
                     }
                     else
                     {
-                        GameObject fire = Instantiate(GamePanelHUDCompassPlugin.FirePrefab, _Fires);
+                        fireUI = Instantiate(GamePanelHUDCompassPlugin.FirePrefab, firesRoot)
+                            .GetComponent<GamePanelHUDCompassFireUI>();
 
-                        GamePanelHUDCompassFireUI _fire = fire.GetComponent<GamePanelHUDCompassFireUI>();
+                        fireUI.who = fireInfo.Who;
 
-                        _fire.Who = fireInfo.Who;
+                        fireUI.where = fireInfo.Where;
 
-                        _fire.Where = fireInfo.Where;
+                        var isBoss = _PlayerHelper.RoleHelper.IsBoss(fireInfo.Role);
+                        var isFollower = _PlayerHelper.RoleHelper.IsFollower(fireInfo.Role);
 
-                        bool isBoss = RoleHelp.IsBoss(fireInfo.Role);
-                        bool isFollower = RoleHelp.IsFollower(fireInfo.Role);
+                        fireUI.isBoss = isBoss;
 
-                        _fire.IsBoss = isBoss;
-
-                        _fire.IsFollower = isFollower;
+                        fireUI.isFollower = isFollower;
 
                         if (isBoss)
                         {
-                            _fire.FireColor = HUD.SetData.KeyCompassFireBossColor.Value;
-                            _fire.OutlineColor = HUD.SetData.KeyCompassFireBossOutlineColor.Value;
+                            fireUI.fireColor = HUD.SetData.KeyCompassFireBossColor.Value;
+                            fireUI.outlineColor = HUD.SetData.KeyCompassFireBossOutlineColor.Value;
                         }
                         else if (isFollower)
                         {
-                            _fire.FireColor = HUD.SetData.KeyCompassFireFollowerColor.Value;
-                            _fire.OutlineColor = HUD.SetData.KeyCompassFireFollowerOutlineColor.Value;
+                            fireUI.fireColor = HUD.SetData.KeyCompassFireFollowerColor.Value;
+                            fireUI.outlineColor = HUD.SetData.KeyCompassFireFollowerOutlineColor.Value;
                         }
                         else
                         {
-                            _fire.FireColor = HUD.SetData.KeyCompassFireColor.Value;
-                            _fire.OutlineColor = HUD.SetData.KeyCompassFireOutlineColor.Value;
+                            fireUI.fireColor = HUD.SetData.KeyCompassFireColor.Value;
+                            fireUI.outlineColor = HUD.SetData.KeyCompassFireOutlineColor.Value;
                         }
 
-                        _fire.FireSizeDelta = HUD.SetData.KeyCompassFireSizeDelta.Value;
+                        fireUI.fireSizeDelta = HUD.SetData.KeyCompassFireSizeDelta.Value;
 
-                        _fire.OutlineSizeDelta = HUD.SetData.KeyCompassFireOutlineSizeDelta.Value;
+                        fireUI.outlineSizeDelta = HUD.SetData.KeyCompassFireOutlineSizeDelta.Value;
 
-                        _fire.Active = true;
+                        fireUI.active = true;
 
-                        CompassFires.Add(fireInfo.Who, _fire);
+                        _compassFires.Add(fireInfo.Who, fireUI);
                     }
                 }
             }
         }
 
-        void DestroyFireUI(string id)
+        private void DestroyFireUI(string id)
         {
-            if (HUD.SetData.KeyCompassFireDeadDestroy.Value && CompassFires.ContainsKey(id))
+            if (HUD.SetData.KeyCompassFireDeadDestroy.Value && _compassFires.ContainsKey(id))
             {
                 RemoveFireUI(id);
             }
         }
 
-        void RemoveFireUI(string id)
+        private void RemoveFireUI(string id)
         {
-            if (!Removes.Contains(id))
+            if (!_removes.Contains(id))
             {
-                Removes.Add(id);
+                _removes.Add(id);
             }
         }
 #endif

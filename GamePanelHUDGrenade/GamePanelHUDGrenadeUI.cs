@@ -1,9 +1,9 @@
-﻿using UnityEngine;
+﻿using GamePanelHUDCore.Utils;
 using TMPro;
+using UnityEngine;
 #if !UNITY_EDITOR
 using GamePanelHUDCore;
 #endif
-using GamePanelHUDCore.Utils;
 
 namespace GamePanelHUDGrenade
 {
@@ -12,62 +12,66 @@ namespace GamePanelHUDGrenade
         , IUpdate
 #endif
     {
-        public bool ZeroWarning;
+#if !UNITY_EDITOR
+        private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
+#endif
 
-        public int GrenadeAmount;
+        public bool zeroWarning;
 
-        public Color GrenadeColor;
+        public int grenadeAmount;
 
-        public Color WarningColor;
+        public Color grenadeColor;
 
-        public FontStyles GrenadeStyles;
+        public Color warningColor;
+
+        public FontStyles grenadeStyles;
 
         [SerializeField]
 #pragma warning disable CS0649
-        private TMP_Text _GrenadeValue;
+        private TMP_Text _grenadeValue;
 #pragma warning restore CS0649
 
 #if !UNITY_EDITOR
-        void Start()
+        private void Start()
         {
-            GamePanelHUDCorePlugin.UpdateManger.Register(this);
+            HUDCore.UpdateManger.Register(this);
         }
 
-        void OnEnable()
+        private void OnEnable()
         {
-            GamePanelHUDCorePlugin.UpdateManger.Run(this);
+            HUDCore.UpdateManger.Run(this);
         }
 
-        void OnDisable()
+        private void OnDisable()
         {
-            GamePanelHUDCorePlugin.UpdateManger.Stop(this);
+            HUDCore.UpdateManger.Stop(this);
         }
 
-        public void IUpdate()
+        public void CustomUpdate()
         {
             GrenadeUI();
         }
 
-        void GrenadeUI()
+        private void GrenadeUI()
 #endif
 #if UNITY_EDITOR
         void Update()
 #endif
         {
             //Set GrenadeAmount int and color and Style to String
-            Color grenadeColor;
-            if (ZeroWarning && GrenadeAmount > 0 || !ZeroWarning)
+            Color grenadeValueColor;
+            if (zeroWarning && grenadeAmount > 0 || !zeroWarning)
             {
-                grenadeColor = GrenadeColor;
+                grenadeValueColor = grenadeColor;
             }
             else
             {
-                grenadeColor = WarningColor;
+                grenadeValueColor = warningColor;
             }
 
-            _GrenadeValue.fontStyle = GrenadeStyles;
-            _GrenadeValue.color = grenadeColor;
-            _GrenadeValue.text = GrenadeAmount.ToString();
+            _grenadeValue.fontStyle = grenadeStyles;
+            _grenadeValue.color = grenadeValueColor;
+            _grenadeValue.text = grenadeAmount.ToString();
         }
     }
 }

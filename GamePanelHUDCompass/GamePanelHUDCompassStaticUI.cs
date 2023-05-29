@@ -1,9 +1,9 @@
-﻿using UnityEngine;
+﻿using GamePanelHUDCore.Utils;
+using UnityEngine;
 using UnityEngine.UI;
 #if !UNITY_EDITOR
 using GamePanelHUDCore;
 #endif
-using GamePanelHUDCore.Utils;
 
 namespace GamePanelHUDCompass
 {
@@ -13,78 +13,75 @@ namespace GamePanelHUDCompass
 #endif
     {
 #if !UNITY_EDITOR
-        private GamePanelHUDCorePlugin.HUDClass<GamePanelHUDCompassPlugin.CompassStaticData, GamePanelHUDCompassPlugin.SettingsData> HUD => GamePanelHUDCompassPlugin.CompassStaticHUD;
+        private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
 
-        public GamePanelHUDCompassPlugin.CompassStaticInfo.Type InfoType;
+        private static
+            GamePanelHUDCorePlugin.HUDClass<GamePanelHUDCompassPlugin.CompassStaticData,
+                GamePanelHUDCompassPlugin.SettingsData> HUD => GamePanelHUDCompassPlugin.CompassStaticHUD;
+
+        public GamePanelHUDCompassPlugin.CompassStaticInfo.Type infoType;
 #endif
-
         public bool Work { get; private set; }
-
         public float XDiff { get; private set; }
-
         public bool HasRequirements { get; private set; }
 
-        public Vector3 Where;
+        public Vector3 where;
 
-        public string ZoneId;
+        public string zoneId;
 
-        public string[] Target;
+        public string[] target;
 
-        public string NameKey;
+        public string nameKey;
 
-        public string DescriptionKey;
+        public string descriptionKey;
 
-        public string TraderId;
+        public string traderId;
 
-        public bool IsNotNecessary;
+        public bool isNotNecessary;
 
-        public int ExIndex;
+        public int exIndex;
 
-        public int ExIndex2;
+        public int exIndex2;
 
-        [SerializeField]
-        private Image _Real;
+        [SerializeField] private Image real;
 
-        [SerializeField]
-        private Image _Virtual;
+        [SerializeField] private Image @virtual;
 
-        [SerializeField]
-        private Image _Virtual2;
+        [SerializeField] private Image virtual2;
 
-        [SerializeField]
-        private Image _Virtual3;
+        [SerializeField] private Image virtual3;
 
-        private Sprite Icon;
+        private Sprite _icon;
 
-        private RectTransform RealRect;
+        private RectTransform _realRect;
 
-        private RectTransform VirtualRect;
+        private RectTransform _virtualRect;
 
-        private RectTransform Virtual2Rect;
+        private RectTransform _virtual2Rect;
 
-        private RectTransform Virtual3Rect;
+        private RectTransform _virtual3Rect;
 
-        private CanvasGroup CanvasGroup;
+        private CanvasGroup _canvasGroup;
 
-        private float IconX;
+        private float _iconX;
 
-        private float IconXLeft => IconX - 2880;
+        private float IconXLeft => _iconX - 2880;
 
-        private float IconXRight => IconX + 2880;
+        private float IconXRight => _iconX + 2880;
 
-        private float IconXRightRight => IconX + 5760; //2880 * 2
+        private float IconXRightRight => _iconX + 5760; //2880 * 2
 
 #if !UNITY_EDITOR
-        void Start()
+        private void Start()
         {
-            CanvasGroup = GetComponent<CanvasGroup>();
+            _canvasGroup = GetComponent<CanvasGroup>();
 
-            RealRect = _Real.GetComponent<RectTransform>();
-            VirtualRect = _Virtual.GetComponent<RectTransform>();
-            Virtual2Rect = _Virtual2.GetComponent<RectTransform>();
-            Virtual3Rect = _Virtual3.GetComponent<RectTransform>();
+            _realRect = real.GetComponent<RectTransform>();
+            _virtualRect = @virtual.GetComponent<RectTransform>();
+            _virtual2Rect = virtual2.GetComponent<RectTransform>();
+            _virtual3Rect = virtual3.GetComponent<RectTransform>();
 
-            switch (InfoType)
+            switch (infoType)
             {
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Airdrop:
                     SetSizeDelta(new Vector2(32, 24));
@@ -102,22 +99,22 @@ namespace GamePanelHUDCompass
                     break;
             }
 
-            GamePanelHUDCorePlugin.UpdateManger.Register(this);
+            HUDCore.UpdateManger.Register(this);
         }
 
-        void OnEnable()
+        private void OnEnable()
         {
             Work = true;
-            GamePanelHUDCorePlugin.UpdateManger.Run(this);
+            HUDCore.UpdateManger.Run(this);
         }
 
-        void OnDisable()
+        private void OnDisable()
         {
             Work = false;
-            GamePanelHUDCorePlugin.UpdateManger.Stop(this);
+            HUDCore.UpdateManger.Stop(this);
         }
 
-        public void IUpdate()
+        public void CustomUpdate()
 #endif
 #if UNITY_EDITOR
         void Update()
@@ -126,29 +123,29 @@ namespace GamePanelHUDCompass
             CompassStaticUI();
         }
 
-        void CompassStaticUI()
+        private void CompassStaticUI()
         {
 #if !UNITY_EDITOR
-            Vector3 lhs = Where - HUD.Info.PlayerPosition;
+            var lhs = where - HUD.Info.PlayerPosition;
 
-            float angle = HUD.Info.GetToAngle(lhs);
+            var angle = HUD.Info.GetToAngle(lhs);
 
-            IconX = -(angle / 15 * 120);
+            _iconX = -(angle / 15 * 120);
 
-            float iconXLeft = IconXLeft;
-            float iconXRight = IconXRight;
-            float iconXRightRight = IconXRightRight;
+            var iconXLeft = IconXLeft;
+            var iconXRight = IconXRight;
+            var iconXRightRight = IconXRightRight;
 
             //Center always is Virtual2
             XDiff = -iconXRight - HUD.Info.CompassX;
 
-            float height = HUD.SetData.KeyCompassStaticHeight.Value;
-            RealRect.anchoredPosition = new Vector2(IconX, height);
-            VirtualRect.anchoredPosition = new Vector2(iconXLeft, height);
-            Virtual2Rect.anchoredPosition = new Vector2(iconXRight, height);
-            Virtual3Rect.anchoredPosition = new Vector2(iconXRightRight, height);
+            var height = HUD.SetData.KeyCompassStaticHeight.Value;
+            _realRect.anchoredPosition = new Vector2(_iconX, height);
+            _virtualRect.anchoredPosition = new Vector2(iconXLeft, height);
+            _virtual2Rect.anchoredPosition = new Vector2(iconXRight, height);
+            _virtual3Rect.anchoredPosition = new Vector2(iconXRightRight, height);
 
-            switch (InfoType)
+            switch (infoType)
             {
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Exfiltration:
                     Exfiltration();
@@ -165,6 +162,7 @@ namespace GamePanelHUDCompass
                     {
                         Enabled(false);
                     }
+
                     break;
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionLeaveItemAtLocation:
                     if (HUD.SetData.KeyConditionLeaveItemAtLocation.Value)
@@ -175,6 +173,7 @@ namespace GamePanelHUDCompass
                     {
                         Enabled(false);
                     }
+
                     break;
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionPlaceBeacon:
                     if (HUD.SetData.KeyConditionPlaceBeacon.Value)
@@ -185,6 +184,7 @@ namespace GamePanelHUDCompass
                     {
                         Enabled(false);
                     }
+
                     break;
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionVisitPlace:
                     if (HUD.SetData.KeyConditionVisitPlace.Value)
@@ -195,6 +195,7 @@ namespace GamePanelHUDCompass
                     {
                         Enabled(false);
                     }
+
                     break;
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionInZone:
                     if (HUD.SetData.KeyConditionInZone.Value)
@@ -205,6 +206,7 @@ namespace GamePanelHUDCompass
                     {
                         Enabled(false);
                     }
+
                     break;
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Airdrop:
                     Airdrop();
@@ -214,9 +216,9 @@ namespace GamePanelHUDCompass
         }
 
 #if !UNITY_EDITOR
-        void Exfiltration()
+        private void Exfiltration()
         {
-            HUD.Info.ExfiltrationGetStatus(ExIndex, out bool notPresent, out bool hasRequirements);
+            HUD.Info.ExfiltrationGetStatus(exIndex, out var notPresent, out var hasRequirements);
 
             HasRequirements = hasRequirements;
 
@@ -230,10 +232,10 @@ namespace GamePanelHUDCompass
             }
         }
 
-        void Switch()
+        private void Switch()
         {
-            HUD.Info.ExfiltrationGetStatus(ExIndex, out _, out bool hasRequirements);
-            HUD.Info.ExfiltrationGetSwitch(ExIndex, ExIndex2, out bool open);
+            HUD.Info.ExfiltrationGetStatus(exIndex, out _, out var hasRequirements);
+            HUD.Info.ExfiltrationGetSwitch(exIndex, exIndex2, out var open);
 
             if (HUD.SetData.KeyCompassStaticHideRequirements.Value)
             {
@@ -245,12 +247,12 @@ namespace GamePanelHUDCompass
             }
         }
 
-        void PlaceItem()
+        private void PlaceItem()
         {
-            bool hasItems = true;
+            var hasItems = true;
             if (HUD.Info.HasEquipmentAndQuestRaidItems)
-            { 
-                foreach (string id in Target)
+            {
+                foreach (var id in target)
                 {
                     if (!HUD.Info.EquipmentAndQuestRaidItems.Contains(id))
                     {
@@ -267,7 +269,7 @@ namespace GamePanelHUDCompass
             }
             else if (HUD.SetData.KeyCompassStaticHideOptional.Value)
             {
-                Enabled(!IsNotNecessary);
+                Enabled(!isNotNecessary);
             }
             else
             {
@@ -275,12 +277,12 @@ namespace GamePanelHUDCompass
             }
         }
 
-        void FindItem()
+        private void FindItem()
         {
-            bool hasItems = true;
+            var hasItems = true;
             if (HUD.Info.HasEquipmentAndQuestRaidItems)
             {
-                foreach (string id in Target)
+                foreach (var id in target)
                 {
                     if (!HUD.Info.EquipmentAndQuestRaidItems.Contains(id))
                     {
@@ -291,7 +293,7 @@ namespace GamePanelHUDCompass
 
             if (HUD.SetData.KeyCompassStaticHideOptional.Value)
             {
-                Enabled(!IsNotNecessary);
+                Enabled(!isNotNecessary);
             }
             else
             {
@@ -299,11 +301,11 @@ namespace GamePanelHUDCompass
             }
         }
 
-        void Other()
+        private void Other()
         {
             if (HUD.SetData.KeyCompassStaticHideOptional.Value)
             {
-                Enabled(!IsNotNecessary);
+                Enabled(!isNotNecessary);
             }
             else
             {
@@ -311,11 +313,11 @@ namespace GamePanelHUDCompass
             }
         }
 
-        void Airdrop()
+        private void Airdrop()
         {
             if (HUD.SetData.KeyCompassStaticHideSearchedAirdrop.Value)
             {
-                Enabled(!HUD.Info.Airdrops[ExIndex].Contains(HUD.Info.YourProfileId));
+                Enabled(!HUD.Info.Airdrops[exIndex].Contains(HUD.Info.YourProfileId));
             }
             else
             {
@@ -326,40 +328,40 @@ namespace GamePanelHUDCompass
 
         public void BindIcon(Sprite sprite)
         {
-            Icon = sprite;
+            _icon = sprite;
 
-            _Real.sprite = Icon;
-            _Virtual.sprite = Icon;
-            _Virtual2.sprite = Icon;
-            _Virtual3.sprite = Icon;
+            real.sprite = _icon;
+            @virtual.sprite = _icon;
+            virtual2.sprite = _icon;
+            virtual3.sprite = _icon;
         }
 
-        void Enabled(bool sw)
+        private void Enabled(bool sw)
         {
             Work = sw;
-            CanvasGroup.alpha = sw ? 1 : 0;
+            _canvasGroup.alpha = sw ? 1 : 0;
         }
 
-        void SetSizeDelta(Vector2 size)
+        private void SetSizeDelta(Vector2 size)
         {
-            RealRect.sizeDelta = size;
-            VirtualRect.sizeDelta = size;
-            Virtual2Rect.sizeDelta = size;
-            Virtual3Rect.sizeDelta = size;
+            _realRect.sizeDelta = size;
+            _virtualRect.sizeDelta = size;
+            _virtual2Rect.sizeDelta = size;
+            _virtual3Rect.sizeDelta = size;
         }
 
-        void SetNativeSize()
+        private void SetNativeSize()
         {
-            _Real.SetNativeSize();
-            _Virtual.SetNativeSize();
-            _Virtual2.SetNativeSize();
-            _Virtual3.SetNativeSize();
+            real.SetNativeSize();
+            @virtual.SetNativeSize();
+            virtual2.SetNativeSize();
+            virtual3.SetNativeSize();
         }
 
         public void Destroy()
         {
 #if !UNITY_EDITOR
-            GamePanelHUDCorePlugin.UpdateManger.Remove(this);
+            HUDCore.UpdateManger.Remove(this);
             Destroy(gameObject);
 #endif
         }

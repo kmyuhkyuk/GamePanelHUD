@@ -1,399 +1,363 @@
 ﻿#if !UNITY_EDITOR
+using System;
 using BepInEx;
 using BepInEx.Configuration;
-using System;
-using System.Reflection;
-using UnityEngine;
-using TMPro;
 using EFT;
-using EFT.UI;
 using EFT.InventoryLogic;
+using EFT.UI;
+using EFTApi;
+using EFTReflection;
 using GamePanelHUDCore;
+using GamePanelHUDCore.Attributes;
 using GamePanelHUDCore.Utils;
+using TMPro;
+using UnityEngine;
+using static EFTApi.EFTHelpers;
 
 namespace GamePanelHUDMag
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDMag", "kmyuhkyuk-GamePanelHUDMag", "2.6.4")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDMag", "kmyuhkyuk-GamePanelHUDMag", "2.7.0")]
     [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore")]
+    [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", "localized/mag")]
     public class GamePanelHUDMagPlugin : BaseUnityPlugin, IUpdate
     {
-        private GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
+        private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
 
-        internal static readonly GamePanelHUDCorePlugin.HUDClass<WeaponData, SettingsData> HUD = new GamePanelHUDCorePlugin.HUDClass<WeaponData, SettingsData>();
+        internal static readonly GamePanelHUDCorePlugin.HUDClass<WeaponData, SettingsData> HUD =
+            new GamePanelHUDCorePlugin.HUDClass<WeaponData, SettingsData>();
 
-        private readonly ReflectionData RefData = new ReflectionData(); 
+        private readonly ReflectionData _reflectionData = new ReflectionData();
 
-        private bool MagHUDSw;
+        private bool _magHUDSw;
 
-        private Weapon NowWeapon;
+        private Weapon _currentWeapon;
 
-        private Weapon OldWeapon;
+        private Weapon _oldWeapon;
 
-        private object NowLauncher;
+        private object _currentLauncher;
 
-        private object NowMag;
+        private object _currentMag;
 
-        private object OldMag;
+        private object _oldMag;
 
-        private Animator Animator_Weapon;
+        private Animator _animatorWeapon;
 
-        private Animator Animator_Launcher;
+        private Animator _animatorLauncher;
 
-        private readonly WeaponData WData = new WeaponData();
+        private readonly WeaponData _weaponData = new WeaponData();
 
-        private readonly SettingsData SetData = new SettingsData();
+        private readonly SettingsData _setData;
 
-        private Player.FirearmController NowFirearmController;
+        private Player.FirearmController _currentFirearmController;
 
-        private bool AllReloadBool;
+        private bool _allReloadBool;
 
-        private bool WeaponCacheBool = true;
+        private bool _weaponCacheBool = true;
 
-        private bool MagCacheBool = true;
+        private bool _magCacheBool = true;
 
-        private bool LauncherCacheBool;
+        private bool _launcherCacheBool;
 
-        private static readonly bool Is341Up = GamePanelHUDCorePlugin.HUDCoreClass.GameVersion > new Version("0.12.12.20765"); //3.5.0 Add Launcher
+        private static bool Is341Up => EFTVersion.Is341Up; //3.5.0 Add Launcher
 
         internal static Action WeaponTrigger;
 
+        public GamePanelHUDMagPlugin()
+        {
+            _setData = new SettingsData(Config);
+        }
+
         private void Start()
         {
-            Logger.LogInfo("Loaded: kmyuhkyuk-GamePanelHUDMag");
-
-            ModUpdateCheck.DrawCheck(this);
-
-            const string mainSettings = "主设置 Main Settings";
-            const string positionScaleSettings = "位置大小设置 Position Scale Settings";
-            const string colorSettings = "颜色设置 Color Settings";
-            const string fontStylesSettings = "字体样式设置 Font Styles Settings";
-            const string warningRateSettings = "警告率设置 Warning Rate Settings";
-            const string speedSettings = "动画速度设置 Animation Speed Settings";
-
-            SetData.KeyMagHUDSw = Config.Bind<bool>(mainSettings, "弹药计数器显示 Mag HUD display", true);
-            SetData.KeyAmmoTypeHUDSw = Config.Bind<bool>(mainSettings, "弹药类型显示 Ammo Type HUD display", true);
-            SetData.KeyFireModeHUDSw = Config.Bind<bool>(mainSettings, "开火模式显示 Fire Mode display", true);
-            SetData.KeyWeaponNameAlways = Config.Bind<bool>(mainSettings, "武器名始终显示 Weapon Name Always display", false);
-            SetData.KeyWeaponShortName = Config.Bind<bool>(mainSettings, "武器短名 Weapon ShortName", false);
-            SetData.KeyZeroWarning = Config.Bind<bool>(mainSettings, "零警告动画 Zero Warning Animation", true);
-            SetData.KeyLockWeaponName = Config.Bind<bool>(mainSettings, "检视时显示武器名 Weapon Name Inspect display", true);
-            SetData.KeyAutoWeaponName = Config.Bind<bool>(mainSettings, "自动显示武器名 Weapon Name Auto display", true);
-            SetData.KeyHideGameAmmoPanel = Config.Bind<bool>(mainSettings, "隐藏游戏弹药面板 Hide Game Ammo Panel", false);
-
-            SetData.KeyAnchoredPosition = Config.Bind<Vector2>(positionScaleSettings, "指示栏位置 Anchored Position", new Vector2(-100, 40));
-            SetData.KeyLocalScale = Config.Bind<Vector2>(positionScaleSettings, "指示栏大小 Local Scale", new Vector2(1, 1));
-
-            SetData.KeyWarningRate10 = Config.Bind<int>(warningRateSettings, "Max Ammo Within 10", 45, new ConfigDescription("When Max Ammo <= 10 and Current Ammo <= 45%, Current Color change to Red Warning", new AcceptableValueRange<int>(0, 100)));
-            SetData.KeyWarningRate100 = Config.Bind<int>(warningRateSettings, "Max Ammo Within 100", 30, new ConfigDescription("When Max Ammo > 10 and Current Ammo < 30%, Current Color change to Red Warning", new AcceptableValueRange<int>(0, 100)));
-
-            SetData.KeyWeaponNameSpeed = Config.Bind<float>(speedSettings, "武器名动画速度 Weapon Name Auto display Animation Speed", 1, new ConfigDescription("", new AcceptableValueRange<float>(0, 10)));
-            SetData.KeyZeroWarningSpeed = Config.Bind<float>(speedSettings, "零警告动画速度 Zero Warning Animation Speed", 1, new ConfigDescription("", new AcceptableValueRange<float>(0, 10)));
-
-            SetData.KeyCurrentColor = Config.Bind<Color>(colorSettings, "当前值 Current", new Color(0.8901961f, 0.8901961f, 0.8392157f)); //#E3E3D6
-            SetData.KeyMaxColor = Config.Bind<Color>(colorSettings, "最大值 Maximum", new Color(0.5882353f, 0.6039216f, 0.6078432f)); //#969A9B
-            SetData.KeyPatronColor = Config.Bind<Color>(colorSettings, "枪膛 Patron", new Color(0.8901961f, 0.8901961f, 0.8392157f)); //#E3E3D6
-            SetData.KeyWeaponNameColor = Config.Bind<Color>(colorSettings, "武器名字 Weapon Name", new Color(0.8901961f, 0.8901961f, 0.8392157f)); //#E3E3D6
-            SetData.KeyAmmoTypeColor = Config.Bind<Color>(colorSettings, "弹药类型 Ammo Type", new Color(0.8901961f, 0.8901961f, 0.8392157f)); //#E3E3D6
-            SetData.KeyFireModeColor = Config.Bind<Color>(colorSettings, "开火模式 Fire Mode", new Color(0.8901961f, 0.8901961f, 0.8392157f)); //#E3E3D6
-            SetData.KeyAddZerosColor = Config.Bind<Color>(colorSettings, "零 Zeros", new Color(0.6f, 0.6f, 0.6f, 0.5f)); //#9999
-            SetData.KeyWarningColor = Config.Bind<Color>(colorSettings, "警告 Warning", new Color(0.7294118f, 0f, 0f)); //#BA0000
-
-            SetData.KeyCurrentStyles = Config.Bind<FontStyles>(fontStylesSettings, "当前值 Current", FontStyles.Bold);
-            SetData.KeyMaximumStyles = Config.Bind<FontStyles>(fontStylesSettings, "最大值 Maximum", FontStyles.Normal);
-            SetData.KeyPatronStyles = Config.Bind<FontStyles>(fontStylesSettings, "枪膛 Patron", FontStyles.Normal);
-            SetData.KeyWeaponNameStyles = Config.Bind<FontStyles>(fontStylesSettings, "武器名字 Weapon Name", FontStyles.Normal);
-            SetData.KeyAmmoTypeStyles = Config.Bind<FontStyles>(fontStylesSettings, "弹药类型 AmmoType", FontStyles.Normal);
-            SetData.KeyFireModeStyles = Config.Bind<FontStyles>(fontStylesSettings, "开火模式 Fire Mode", FontStyles.Normal);
-
-            RefData.RefIAnimator = RefHelp.PropertyRef<Player, object>.Create("ArmsAnimatorCommon");
-            RefData.RefAnimator = RefHelp.PropertyRef<object, Animator>.Create(RefHelp.GetEftType(x => x.GetMethod("CreateAnimatorStateInfoWrapper", BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance) != null), "Animator");
-            RefData.RefAmmoCountPanel = RefHelp.FieldRef<BattleUIScreen, AmmoCountPanel>.Create("_ammoCountPanel");
-            RefData.RefAmmoCount = RefHelp.FieldRef<AmmoCountPanel, CustomTextMeshProUGUI>.Create("_ammoCount");
-
-            if (Is341Up)
-            {
-                Type launcherType = RefHelp.GetEftType(x => x.GetMethod("GetCenterOfImpact", BindingFlags.Public | BindingFlags.Instance) != null);
-
-                RefData.RefUnderbarrelWeapon = RefHelp.FieldRef<Player.FirearmController, Item>.Create("UnderbarrelWeapon");
-                RefData.RefChambers = RefHelp.FieldRef<object, Slot[]>.Create(launcherType, "Chambers");
-
-                RefData.RefWeaponTemplate = RefHelp.PropertyRef<object, WeaponTemplate>.Create(launcherType, "WeaponTemplate");
-                RefData.RefLauncherIAnimator = RefHelp.PropertyRef<Player, object>.Create("UnderbarrelWeaponArmsAnimator");
-                RefData.RefChamberAmmoCount = RefHelp.PropertyRef<object, int>.Create(launcherType, "ChamberAmmoCount");
-            }
-
-            GamePanelHUDCorePlugin.UpdateManger.Register(this);
+            HUDCore.UpdateManger.Register(this);
         }
 
         private void Awake()
         {
-            GamePanelHUDCorePlugin.HUDCoreClass.LoadHUD("gamepanelmaghud.bundle", "GamePanelMagHUD");
+            HUDCore.LoadHUD("gamepanelmaghud.bundle", "GamePanelMagHUD");
         }
 
-        public void IUpdate()
+        public void CustomUpdate()
         {
             MagPlugin();
         }
 
-        void MagPlugin()
+        private void MagPlugin()
         {
-            MagHUDSw = HUDCore.AllHUDSw && NowWeapon != null && HUDCore.HasPlayer && SetData.KeyMagHUDSw.Value;
+            _magHUDSw = HUDCore.AllHUDSw && _currentWeapon != null && HUDCore.HasPlayer && _setData.KeyMagHUDSw.Value;
 
-            HUD.Set(WData, SetData, MagHUDSw);
+            HUD.Set(_weaponData, _setData, _magHUDSw);
 
             //Get Player
             if (HUDCore.HasPlayer)
             {
-                RefData.RefAmmoCount.GetValue(RefData.RefAmmoCountPanel.GetValue(HUDCore.YourGameUI.BattleUiScreen)).gameObject.SetActive(!SetData.KeyHideGameAmmoPanel.Value);
+                _reflectionData.AmmoCount
+                    .GetValue(_reflectionData.AmmoCountPanel.GetValue(HUDCore.YourGameUI.BattleUiScreen)).gameObject
+                    .SetActive(!_setData.KeyHideGameAmmoPanel.Value);
 
-                NowFirearmController = HUDCore.YourPlayer.HandsController as Player.FirearmController;
+                _currentFirearmController = EFTGlobal.FirearmController;
 
                 //Get Weapon Class
-                NowWeapon = NowFirearmController != null ? NowFirearmController.Item : null;
-                Animator_Weapon = RefData.RefAnimator.GetValue(RefData.RefIAnimator.GetValue(HUDCore.YourPlayer));
+                _currentWeapon = EFTGlobal.Weapon;
+                _animatorWeapon = _PlayerHelper.WeaponHelper.WeaponAnimator;
 
                 if (Is341Up)
                 {
-                    NowLauncher = RefData.RefUnderbarrelWeapon.GetValue(NowFirearmController); 
-                    Animator_Launcher = RefData.RefAnimator.GetValue(RefData.RefLauncherIAnimator.GetValue(HUDCore.YourPlayer));
+                    _currentLauncher = EFTGlobal.UnderbarrelWeapon;
+                    _animatorLauncher = _PlayerHelper.WeaponHelper.LauncherIAnimator;
                 }
 
-                bool weaponActive = NowWeapon != null;
+                var weaponActive = _currentWeapon != null;
 
-                bool launcherActive = weaponActive && NowFirearmController != null && NowFirearmController.IsInLauncherMode();
+                var launcherActive = weaponActive && _currentFirearmController != null &&
+                                     _currentFirearmController.IsInLauncherMode();
 
-                if (WeaponCacheBool)
+                if (_weaponCacheBool)
                 {
-                    OldWeapon = NowWeapon;
+                    _oldWeapon = _currentWeapon;
 
-                    if (!SetData.KeyWeaponNameAlways.Value && SetData.KeyAutoWeaponName.Value)
+                    if (!_setData.KeyWeaponNameAlways.Value && _setData.KeyAutoWeaponName.Value)
                     {
                         WeaponTrigger();
                     }
 
-                    WeaponCacheBool = false;
-                    LauncherCacheBool = false;
+                    _weaponCacheBool = false;
+                    _launcherCacheBool = false;
                 }
                 //Not same Weapon trigger
-                else if (NowWeapon != OldWeapon && weaponActive || !weaponActive)
+                else if (weaponActive && _currentWeapon != _oldWeapon || !weaponActive)
                 {
-                    WeaponCacheBool = true;
-                    MagCacheBool = true;
+                    _weaponCacheBool = true;
+                    _magCacheBool = true;
                 }
 
                 //Switch Launcher trigger
-                if (launcherActive != LauncherCacheBool)
+                if (launcherActive != _launcherCacheBool)
                 {
-                    if (!SetData.KeyWeaponNameAlways.Value && SetData.KeyAutoWeaponName.Value)
+                    if (!_setData.KeyWeaponNameAlways.Value && _setData.KeyAutoWeaponName.Value)
                     {
                         WeaponTrigger();
                     }
 
-                    LauncherCacheBool = launcherActive;
+                    _launcherCacheBool = launcherActive;
                 }
                 else if (!launcherActive)
                 {
-                    LauncherCacheBool = false;
+                    _launcherCacheBool = false;
                 }
 
                 //Get Ammo Count
                 if (weaponActive)
                 {
-                    Animator currentAnimator = launcherActive ? Animator_Launcher : Animator_Weapon;
+                    var currentAnimator = launcherActive ? _animatorLauncher : _animatorWeapon;
 
-                    int currentState = currentAnimator.GetCurrentAnimatorStateInfo(1).fullPathHash;
+                    var currentState = currentAnimator.GetCurrentAnimatorStateInfo(1).fullPathHash;
 
-                    WData.WeaponNameAlways = SetData.KeyWeaponNameAlways.Value || currentState == 1355507738 && SetData.KeyLockWeaponName.Value; //2.LookWeapon
+                    _weaponData.WeaponNameAlways = _setData.KeyWeaponNameAlways.Value ||
+                                                   currentState == 1355507738 &&
+                                                   _setData.KeyLookWeaponName.Value; //2.LookWeapon
 
                     //MagCount and PatronCount
                     if (!launcherActive)
                     {
-                        AllReloadBool = NowFirearmController != null && NowFirearmController.IsInReloadOperation() || currentState == 1058993437; //1.OriginalReloadCheck 2.TakeHands
+                        _allReloadBool =
+                            _currentFirearmController != null && _currentFirearmController.IsInReloadOperation() ||
+                            currentState == 1058993437; //1.OriginalReloadCheck 2.TakeHands
 
                         //Get Weapon Name
-                        WData.WeaponName = LocalizedHelp.Localized(NowWeapon.Name, EStringCase.None);
+                        _weaponData.WeaponName = _LocalizedHelper.Localized(_currentWeapon.Name);
 
-                        WData.WeaponShortName = LocalizedHelp.Localized(NowWeapon.ShortName, EStringCase.None);
+                        _weaponData.WeaponShortName = _LocalizedHelper.Localized(_currentWeapon.ShortName);
 
                         //Get Fire Mode
-                        WData.FireMode = LocalizedHelp.Localized(NowWeapon.SelectedFireMode.ToString(), EStringCase.None);
+                        _weaponData.FireMode = _LocalizedHelper.Localized(_currentWeapon.SelectedFireMode.ToString());
 
-                        WData.AmmoType = LocalizedHelp.Localized(NowWeapon.AmmoCaliber, EStringCase.None);
+                        _weaponData.AmmoType = _LocalizedHelper.Localized(_currentWeapon.AmmoCaliber);
 
-                        if (NowWeapon.ReloadMode != Weapon.EReloadMode.OnlyBarrel)
+                        if (_currentWeapon.ReloadMode != Weapon.EReloadMode.OnlyBarrel)
                         {
-                            bool magInWeapon = Animator_Weapon.GetBool(AnimatorHash.MagInWeapon);
-                            bool magSame = NowMag == OldMag;
+                            var magInWeapon = _animatorWeapon.GetBool(AnimatorHash.MagInWeapon);
+                            var magSame = _currentMag == _oldMag;
 
-                            int ammoInChamber = (int)Animator_Weapon.GetFloat(AnimatorHash.AmmoInChamber);
-                            int chambersCount = NowWeapon.ChamberAmmoCount;
-                            int maxMagazineCount = NowWeapon.GetMaxMagazineCount();
+                            var ammoInChamber = (int)_animatorWeapon.GetFloat(AnimatorHash.AmmoInChamber);
+                            var chambersCount = _currentWeapon.ChamberAmmoCount;
+                            var maxMagazineCount = _currentWeapon.GetMaxMagazineCount();
 
-                            NowMag = GetMag.GetCurrentMagazine(NowWeapon);
+                            _currentMag = _PlayerHelper.WeaponHelper.CurrentMagazine;
 
-                            if (MagCacheBool)
+                            if (_magCacheBool)
                             {
-                                OldMag = NowMag;
+                                _oldMag = _currentMag;
 
-                                MagCacheBool = false;
+                                _magCacheBool = false;
                             }
 
-                            if (magInWeapon && !AllReloadBool && magSame)
+                            switch (magInWeapon)
                             {
-                                int count = NowWeapon.GetCurrentMagazineCount();
-                                int maxCount = maxMagazineCount;
+                                case true when !_allReloadBool && magSame:
+                                {
+                                    var count = _currentWeapon.GetCurrentMagazineCount();
+                                    var maxCount = maxMagazineCount;
 
-                                WData.Patron = chambersCount;
+                                    _weaponData.Patron = chambersCount;
 
-                                WData.Normalized = (float)count / maxCount;
+                                    _weaponData.Normalized = (float)count / maxCount;
 
-                                WData.MagCount = count;
+                                    _weaponData.MagCount = count;
 
-                                WData.MagMaxCount = maxCount;
-                            }
-                            else if (!magInWeapon && AllReloadBool)
-                            {
-                                WData.Patron = ammoInChamber;
+                                    _weaponData.MagMaxCount = maxCount;
+                                    break;
+                                }
+                                case false when _allReloadBool:
+                                    _weaponData.Patron = ammoInChamber;
 
-                                WData.Normalized = 0;
+                                    _weaponData.Normalized = 0;
 
-                                WData.MagCount = 0;
+                                    _weaponData.MagCount = 0;
 
-                                WData.MagMaxCount = 0;
+                                    _weaponData.MagMaxCount = 0;
 
-                                OldMag = NowMag;
-                            }
-                            else if (magInWeapon && AllReloadBool && magSame)
-                            {
-                                int count = (int)Animator_Weapon.GetFloat(AnimatorHash.AmmoInMag);
-                                int maxCount = maxMagazineCount;
+                                    _oldMag = _currentMag;
+                                    break;
+                                case true when _allReloadBool && magSame:
+                                {
+                                    var count = (int)_animatorWeapon.GetFloat(AnimatorHash.AmmoInMag);
+                                    var maxCount = maxMagazineCount;
 
-                                WData.Patron = ammoInChamber;
+                                    _weaponData.Patron = ammoInChamber;
 
-                                WData.Normalized = (float)count / maxCount;
+                                    _weaponData.Normalized = (float)count / maxCount;
 
-                                WData.MagCount = count;
+                                    _weaponData.MagCount = count;
 
-                                WData.MagMaxCount = maxCount;
-                            }
-                            else if (!magInWeapon && ammoInChamber != 0 && !AllReloadBool)
-                            {
-                                WData.Patron = chambersCount;
+                                    _weaponData.MagMaxCount = maxCount;
+                                    break;
+                                }
+                                case false when ammoInChamber != 0 && !_allReloadBool:
+                                    _weaponData.Patron = chambersCount;
 
-                                WData.Normalized = 0;
+                                    _weaponData.Normalized = 0;
 
-                                WData.MagCount = 0;
+                                    _weaponData.MagCount = 0;
 
-                                WData.MagMaxCount = 0;
-                            }
-                            else if (!magInWeapon && !AllReloadBool)
-                            {
-                                WData.Patron = 0;
+                                    _weaponData.MagMaxCount = 0;
+                                    break;
+                                case false when !_allReloadBool:
+                                    _weaponData.Patron = 0;
 
-                                WData.Normalized = 0;
+                                    _weaponData.Normalized = 0;
 
-                                WData.MagCount = 0;
+                                    _weaponData.MagCount = 0;
 
-                                WData.MagMaxCount = 0;
+                                    _weaponData.MagMaxCount = 0;
+                                    break;
                             }
                         }
                         else
                         {
-                            int ammoInChamber = (int)Animator_Weapon.GetFloat(AnimatorHash.AmmoInChamber);
-                            int chambersCount = NowWeapon.Chambers.Length;
+                            var ammoInChamber = (int)_animatorWeapon.GetFloat(AnimatorHash.AmmoInChamber);
+                            var chambersCount = _currentWeapon.Chambers.Length;
 
-                            if (!AllReloadBool && ammoInChamber != 0)
+                            switch (_allReloadBool)
                             {
-                                int count = NowWeapon.ChamberAmmoCount;
-                                int maxCount = chambersCount;
+                                case false when ammoInChamber != 0:
+                                {
+                                    var count = _currentWeapon.ChamberAmmoCount;
+                                    var maxCount = chambersCount;
 
-                                WData.Patron = 0;
+                                    _weaponData.Patron = 0;
 
-                                WData.MagCount = count;
+                                    _weaponData.MagCount = count;
 
-                                WData.MagMaxCount = maxCount;
+                                    _weaponData.MagMaxCount = maxCount;
 
-                                WData.Normalized = (float)count / maxCount - 0.1f;
-                            }
-                            else if (AllReloadBool)
-                            {
-                                int count = ammoInChamber;
-                                int maxCount = chambersCount;
+                                    _weaponData.Normalized = (float)count / maxCount - 0.1f;
+                                    break;
+                                }
+                                case true:
+                                {
+                                    var count = ammoInChamber;
+                                    var maxCount = chambersCount;
 
-                                WData.Patron = 0;
+                                    _weaponData.Patron = 0;
 
-                                WData.MagCount = count;
+                                    _weaponData.MagCount = count;
 
-                                WData.MagMaxCount = maxCount;
+                                    _weaponData.MagMaxCount = maxCount;
 
-                                WData.Normalized = (float)count / maxCount - 0.1f;
-                            }
-                            else if (!AllReloadBool)
-                            {
-                                WData.Patron = 0;
+                                    _weaponData.Normalized = (float)count / maxCount - 0.1f;
+                                    break;
+                                }
+                                case false:
+                                    _weaponData.Patron = 0;
 
-                                WData.MagCount = 0;
+                                    _weaponData.MagCount = 0;
 
-                                WData.MagMaxCount = chambersCount;
+                                    _weaponData.MagMaxCount = chambersCount;
 
-                                WData.Normalized = 0;
+                                    _weaponData.Normalized = 0;
+                                    break;
                             }
                         }
                     }
                     else
                     {
-                        AllReloadBool = currentState == 1285477936; //1.LauncherReload
+                        _allReloadBool = currentState == 1285477936; //1.LauncherReload
 
                         //Get Weapon Name
-                        WData.WeaponName = LocalizedHelp.Localized(((Item)NowLauncher).Name, EStringCase.None);
+                        _weaponData.WeaponName = _LocalizedHelper.Localized(((Item)_currentLauncher).Name);
 
-                        WData.WeaponShortName = LocalizedHelp.Localized(((Item)NowLauncher).ShortName, EStringCase.None);
+                        _weaponData.WeaponShortName = _LocalizedHelper.Localized(((Item)_currentLauncher).ShortName);
 
-                        WeaponTemplate launcherTemplate = RefData.RefWeaponTemplate.GetValue(NowLauncher);
+                        var launcherTemplate = _PlayerHelper.WeaponHelper.UnderbarrelWeaponTemplate;
 
                         //Get Fire Mode
-                        WData.FireMode = LocalizedHelp.Localized(nameof(Weapon.EFireMode.single), EStringCase.None);
+                        _weaponData.FireMode = _LocalizedHelper.Localized(nameof(Weapon.EFireMode.single));
 
-                        WData.AmmoType = LocalizedHelp.Localized(launcherTemplate.ammoCaliber, EStringCase.None);
+                        _weaponData.AmmoType = _LocalizedHelper.Localized(launcherTemplate.ammoCaliber);
 
-                        int ammoInChamber = (int)Animator_Launcher.GetFloat(AnimatorHash.AmmoInChamber);
-                        int chambersCount = RefData.RefChambers.GetValue(NowLauncher).Length;
+                        var ammoInChamber = (int)_animatorLauncher.GetFloat(AnimatorHash.AmmoInChamber);
+                        var chambersCount = _PlayerHelper.WeaponHelper.UnderbarrelChambers.Length;
 
-                        if (!AllReloadBool && ammoInChamber != 0)
+                        switch (_allReloadBool)
                         {
-                            int count = RefData.RefChamberAmmoCount.GetValue(NowLauncher);
-                            int maxCount = chambersCount;
+                            case false when ammoInChamber != 0:
+                            {
+                                var count = _PlayerHelper.WeaponHelper.UnderbarrelChamberAmmoCount;
+                                var maxCount = chambersCount;
 
-                            WData.Patron = 0;
+                                _weaponData.Patron = 0;
 
-                            WData.MagCount = count;
+                                _weaponData.MagCount = count;
 
-                            WData.MagMaxCount = maxCount;
+                                _weaponData.MagMaxCount = maxCount;
 
-                            WData.Normalized = (float)count / maxCount - 0.1f;
-                        }
-                        else if (AllReloadBool)
-                        {
-                            int count = ammoInChamber;
-                            int maxCount = chambersCount;
+                                _weaponData.Normalized = (float)count / maxCount - 0.1f;
+                                break;
+                            }
+                            case true:
+                            {
+                                var count = ammoInChamber;
+                                var maxCount = chambersCount;
 
-                            WData.Patron = 0;
+                                _weaponData.Patron = 0;
 
-                            WData.MagCount = ammoInChamber;
+                                _weaponData.MagCount = ammoInChamber;
 
-                            WData.MagMaxCount = maxCount;
+                                _weaponData.MagMaxCount = maxCount;
 
-                            WData.Normalized = (float)count / maxCount - 0.1f;
-                        }
-                        else if (!AllReloadBool)
-                        {
-                            WData.Patron = 0;
+                                _weaponData.Normalized = (float)count / maxCount - 0.1f;
+                                break;
+                            }
+                            case false:
+                                _weaponData.Patron = 0;
 
-                            WData.MagCount = 0;
+                                _weaponData.MagCount = 0;
 
-                            WData.MagMaxCount = chambersCount;
+                                _weaponData.MagMaxCount = chambersCount;
 
-                            WData.Normalized = 0;
+                                _weaponData.Normalized = 0;
+                                break;
                         }
                     }
                 }
@@ -423,53 +387,119 @@ namespace GamePanelHUDMag
 
         public class SettingsData
         {
-            public ConfigEntry<bool> KeyMagHUDSw;
-            public ConfigEntry<bool> KeyFireModeHUDSw;
-            public ConfigEntry<bool> KeyAmmoTypeHUDSw;
-            public ConfigEntry<bool> KeyWeaponNameAlways;
-            public ConfigEntry<bool> KeyWeaponShortName;
-            public ConfigEntry<bool> KeyZeroWarning;
-            public ConfigEntry<bool> KeyLockWeaponName;
-            public ConfigEntry<bool> KeyAutoWeaponName;
-            public ConfigEntry<bool> KeyHideGameAmmoPanel;
+            public readonly ConfigEntry<bool> KeyMagHUDSw;
+            public readonly ConfigEntry<bool> KeyFireModeHUDSw;
+            public readonly ConfigEntry<bool> KeyAmmoTypeHUDSw;
+            public readonly ConfigEntry<bool> KeyWeaponNameAlways;
+            public readonly ConfigEntry<bool> KeyWeaponShortName;
+            public readonly ConfigEntry<bool> KeyZeroWarning;
+            public readonly ConfigEntry<bool> KeyLookWeaponName;
+            public readonly ConfigEntry<bool> KeyAutoWeaponName;
+            public readonly ConfigEntry<bool> KeyHideGameAmmoPanel;
 
-            public ConfigEntry<Vector2> KeyAnchoredPosition;
-            public ConfigEntry<Vector2> KeyLocalScale;
+            public readonly ConfigEntry<Vector2> KeyAnchoredPosition;
+            public readonly ConfigEntry<Vector2> KeyLocalScale;
 
-            public ConfigEntry<int> KeyWarningRate10;
-            public ConfigEntry<int> KeyWarningRate100;
-            public ConfigEntry<float> KeyWeaponNameSpeed;
-            public ConfigEntry<float> KeyZeroWarningSpeed;
+            public readonly ConfigEntry<int> KeyWarningRate10;
+            public readonly ConfigEntry<int> KeyWarningRate100;
+            public readonly ConfigEntry<float> KeyWeaponNameSpeed;
+            public readonly ConfigEntry<float> KeyZeroWarningSpeed;
 
-            public ConfigEntry<Color> KeyCurrentColor;
-            public ConfigEntry<Color> KeyMaxColor;
-            public ConfigEntry<Color> KeyPatronColor;
-            public ConfigEntry<Color> KeyWeaponNameColor;
-            public ConfigEntry<Color> KeyAmmoTypeColor;
-            public ConfigEntry<Color> KeyFireModeColor;
-            public ConfigEntry<Color> KeyAddZerosColor;
-            public ConfigEntry<Color> KeyWarningColor;
+            public readonly ConfigEntry<Color> KeyCurrentColor;
+            public readonly ConfigEntry<Color> KeyMaxColor;
+            public readonly ConfigEntry<Color> KeyPatronColor;
+            public readonly ConfigEntry<Color> KeyWeaponNameColor;
+            public readonly ConfigEntry<Color> KeyAmmoTypeColor;
+            public readonly ConfigEntry<Color> KeyFireModeColor;
+            public readonly ConfigEntry<Color> KeyAddZerosColor;
+            public readonly ConfigEntry<Color> KeyWarningColor;
 
-            public ConfigEntry<FontStyles> KeyCurrentStyles;
-            public ConfigEntry<FontStyles> KeyMaximumStyles;
-            public ConfigEntry<FontStyles> KeyPatronStyles;
-            public ConfigEntry<FontStyles> KeyWeaponNameStyles;
-            public ConfigEntry<FontStyles> KeyAmmoTypeStyles;
-            public ConfigEntry<FontStyles> KeyFireModeStyles;
+            public readonly ConfigEntry<FontStyles> KeyCurrentStyles;
+            public readonly ConfigEntry<FontStyles> KeyMaximumStyles;
+            public readonly ConfigEntry<FontStyles> KeyPatronStyles;
+            public readonly ConfigEntry<FontStyles> KeyWeaponNameStyles;
+            public readonly ConfigEntry<FontStyles> KeyAmmoTypeStyles;
+            public readonly ConfigEntry<FontStyles> KeyFireModeStyles;
+
+            public SettingsData(ConfigFile configFile)
+            {
+                const string mainSettings = "Main Settings";
+                const string positionScaleSettings = "Position Scale Settings";
+                const string colorSettings = "Color Settings";
+                const string fontStylesSettings = "Font Styles Settings";
+                const string warningRateSettings = "Warning Rate Settings";
+                const string speedSettings = "Animation Speed Settings";
+
+                KeyMagHUDSw = configFile.Bind<bool>(mainSettings, "Mag HUD display", true);
+                KeyAmmoTypeHUDSw = configFile.Bind<bool>(mainSettings, "Ammo Type HUD display", true);
+                KeyFireModeHUDSw = configFile.Bind<bool>(mainSettings, "Fire Mode display", true);
+                KeyWeaponNameAlways = configFile.Bind<bool>(mainSettings, "Weapon Name Always display", false);
+                KeyWeaponShortName = configFile.Bind<bool>(mainSettings, "Weapon ShortName", false);
+                KeyZeroWarning = configFile.Bind<bool>(mainSettings, "Zero Warning Animation", true);
+                KeyLookWeaponName = configFile.Bind<bool>(mainSettings, "Weapon Name Inspect display", true);
+                KeyAutoWeaponName = configFile.Bind<bool>(mainSettings, "Weapon Name Auto display", true);
+                KeyHideGameAmmoPanel = configFile.Bind<bool>(mainSettings, "Hide Game Ammo Panel", false);
+
+                KeyAnchoredPosition =
+                    configFile.Bind<Vector2>(positionScaleSettings, "Anchored Position", new Vector2(-100, 40));
+                KeyLocalScale =
+                    configFile.Bind<Vector2>(positionScaleSettings, "Local Scale", new Vector2(1, 1));
+
+                KeyWarningRate10 = configFile.Bind<int>(warningRateSettings, "Max Ammo Within 10", 45,
+                    new ConfigDescription(
+                        "When Max Ammo <= 10 and Current Ammo <= 45%, Current Color change to Warning",
+                        new AcceptableValueRange<int>(0, 100)));
+                KeyWarningRate100 = configFile.Bind<int>(warningRateSettings, "Max Ammo Within 100", 30,
+                    new ConfigDescription("When Max Ammo > 10 and Current Ammo < 30%, Current Color change to Warning",
+                        new AcceptableValueRange<int>(0, 100)));
+
+                KeyWeaponNameSpeed = configFile.Bind<float>(speedSettings,
+                    "Weapon Name Auto display Animation Speed", 1,
+                    new ConfigDescription(string.Empty, new AcceptableValueRange<float>(0, 10)));
+                KeyZeroWarningSpeed = configFile.Bind<float>(speedSettings, "Zero Warning Animation Speed", 1,
+                    new ConfigDescription(string.Empty, new AcceptableValueRange<float>(0, 10)));
+
+                KeyCurrentColor = configFile.Bind<Color>(colorSettings, "Current",
+                    new Color(0.8901961f, 0.8901961f, 0.8392157f)); //#E3E3D6
+                KeyMaxColor = configFile.Bind<Color>(colorSettings, "Maximum",
+                    new Color(0.5882353f, 0.6039216f, 0.6078432f)); //#969A9B
+                KeyPatronColor =
+                    configFile.Bind<Color>(colorSettings, "Patron",
+                        new Color(0.8901961f, 0.8901961f, 0.8392157f)); //#E3E3D6
+                KeyWeaponNameColor = configFile.Bind<Color>(colorSettings, "Weapon Name",
+                    new Color(0.8901961f, 0.8901961f, 0.8392157f)); //#E3E3D6
+                KeyAmmoTypeColor = configFile.Bind<Color>(colorSettings, "Ammo Type",
+                    new Color(0.8901961f, 0.8901961f, 0.8392157f)); //#E3E3D6
+                KeyFireModeColor = configFile.Bind<Color>(colorSettings, "Fire Mode",
+                    new Color(0.8901961f, 0.8901961f, 0.8392157f)); //#E3E3D6
+                KeyAddZerosColor =
+                    configFile.Bind<Color>(colorSettings, "Zeros", new Color(0.6f, 0.6f, 0.6f, 0.5f)); //#9999
+                KeyWarningColor =
+                    configFile.Bind<Color>(colorSettings, "Warning", new Color(0.7294118f, 0f, 0f)); //#BA0000
+
+                KeyCurrentStyles = configFile.Bind<FontStyles>(fontStylesSettings, "Current", FontStyles.Bold);
+                KeyMaximumStyles = configFile.Bind<FontStyles>(fontStylesSettings, "Maximum", FontStyles.Normal);
+                KeyPatronStyles = configFile.Bind<FontStyles>(fontStylesSettings, "Patron", FontStyles.Normal);
+                KeyWeaponNameStyles =
+                    configFile.Bind<FontStyles>(fontStylesSettings, "Weapon Name", FontStyles.Normal);
+                KeyAmmoTypeStyles =
+                    configFile.Bind<FontStyles>(fontStylesSettings, "Ammo Type", FontStyles.Normal);
+                KeyFireModeStyles =
+                    configFile.Bind<FontStyles>(fontStylesSettings, "Fire Mode", FontStyles.Normal);
+            }
         }
 
-        public class ReflectionData
+        private class ReflectionData
         {
-            public RefHelp.FieldRef<Player.FirearmController, Item> RefUnderbarrelWeapon;
-            public RefHelp.FieldRef<object, Slot[]> RefChambers;
-            public RefHelp.FieldRef<BattleUIScreen, AmmoCountPanel> RefAmmoCountPanel;
-            public RefHelp.FieldRef<AmmoCountPanel, CustomTextMeshProUGUI> RefAmmoCount;
+            public readonly RefHelper.FieldRef<BattleUIScreen, AmmoCountPanel> AmmoCountPanel;
+            public readonly RefHelper.FieldRef<AmmoCountPanel, CustomTextMeshProUGUI> AmmoCount;
 
-            public RefHelp.PropertyRef<object, WeaponTemplate> RefWeaponTemplate;
-            public RefHelp.PropertyRef<object, int> RefChamberAmmoCount;
-            public RefHelp.PropertyRef<Player, object> RefIAnimator;
-            public RefHelp.PropertyRef<Player, object> RefLauncherIAnimator;
-            public RefHelp.PropertyRef<object, Animator> RefAnimator;
+            public ReflectionData()
+            {
+                AmmoCountPanel =
+                    RefHelper.FieldRef<BattleUIScreen, AmmoCountPanel>.Create("_ammoCountPanel");
+                AmmoCount = RefHelper.FieldRef<AmmoCountPanel, CustomTextMeshProUGUI>.Create("_ammoCount");
+            }
         }
     }
 }

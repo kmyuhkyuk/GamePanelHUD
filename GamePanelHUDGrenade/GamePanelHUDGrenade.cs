@@ -1,83 +1,88 @@
-﻿using UnityEngine;
-using EFT.UI;
+﻿using GamePanelHUDCore.Utils;
+using UnityEngine;
 #if !UNITY_EDITOR
 using GamePanelHUDCore;
 #endif
-using GamePanelHUDCore.Utils;
 
 namespace GamePanelHUDGrenade
 {
-    public class GamePanelHUDGrenade : UIElement
+    public class GamePanelHUDGrenade : MonoBehaviour
 #if !UNITY_EDITOR
         , IUpdate
 #endif
     {
 #if !UNITY_EDITOR
-        private GamePanelHUDCorePlugin.HUDClass<GamePanelHUDGrenadePlugin.GrenadeAmount, GamePanelHUDGrenadePlugin.SettingsData> HUD => GamePanelHUDGrenadePlugin.HUD;
+        private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
+        private static
+            GamePanelHUDCorePlugin.HUDClass<GamePanelHUDGrenadePlugin.GrenadeAmount,
+                GamePanelHUDGrenadePlugin.SettingsData> HUD => GamePanelHUDGrenadePlugin.HUD;
 #endif
 
-        [SerializeField]
-        private GamePanelHUDGrenadeUI _FragAmount;
+        [SerializeField] private GamePanelHUDGrenadeUI fragAmount;
 
-        [SerializeField]
-        private GamePanelHUDGrenadeUI _StunAmount;
+        [SerializeField] private GamePanelHUDGrenadeUI stunAmount;
 
-        [SerializeField]
-        private GamePanelHUDGrenadeUI _SmokeAmount;
+        [SerializeField] private GamePanelHUDGrenadeUI smokeAmount;
+
+        private RectTransform _rectTransform;
 
 #if !UNITY_EDITOR
-        void Start()
+        private void Start()
         {
-            GamePanelHUDCorePlugin.UpdateManger.Register(this);
+            _rectTransform = GetComponent<RectTransform>();
+
+            HUDCore.UpdateManger.Register(this);
         }
 
-        public void IUpdate()
+        public void CustomUpdate()
         {
             GrenadeHUD();
         }
 
-        void GrenadeHUD()
+        private void GrenadeHUD()
         {
             //Set RectTransform anchoredPosition and localScale
-            RectTransform.anchoredPosition = HUD.SetData.KeyAnchoredPosition.Value;
-            RectTransform.sizeDelta = HUD.SetData.KeySizeDelta.Value;
-            RectTransform.localScale = HUD.SetData.KeyLocalScale.Value;
+            _rectTransform.anchoredPosition = HUD.SetData.KeyAnchoredPosition.Value;
+            _rectTransform.sizeDelta = HUD.SetData.KeySizeDelta.Value;
+            _rectTransform.localScale = HUD.SetData.KeyLocalScale.Value;
 
-            if (_FragAmount != null)
+            if (fragAmount != null)
             {
-                _FragAmount.gameObject.SetActive(HUD.HUDSw);
-                _FragAmount.ZeroWarning = HUD.SetData.KeyZeroWarning.Value;
+                fragAmount.gameObject.SetActive(HUD.HUDSw);
+                fragAmount.zeroWarning = HUD.SetData.KeyZeroWarning.Value;
 
-                _FragAmount.GrenadeAmount = HUD.Info.Frag;
+                fragAmount.grenadeAmount = HUD.Info.Frag;
 
-                _FragAmount.GrenadeColor = HUD.SetData.KeyFragColor.Value;
-                _FragAmount.WarningColor = HUD.SetData.KeyWarningColor.Value;
+                fragAmount.grenadeColor = HUD.SetData.KeyFragColor.Value;
+                fragAmount.warningColor = HUD.SetData.KeyWarningColor.Value;
 
-                _FragAmount.GrenadeStyles = HUD.SetData.KeyFragStyles.Value;
+                fragAmount.grenadeStyles = HUD.SetData.KeyFragStyles.Value;
             }
-            if (_StunAmount != null)
+
+            if (stunAmount != null)
             {
-                _StunAmount.gameObject.SetActive(HUD.HUDSw && !HUD.SetData.KeyMergeGrenade.Value);
-                _StunAmount.ZeroWarning = HUD.SetData.KeyZeroWarning.Value;
+                stunAmount.gameObject.SetActive(HUD.HUDSw && !HUD.SetData.KeyMergeGrenade.Value);
+                stunAmount.zeroWarning = HUD.SetData.KeyZeroWarning.Value;
 
-                _StunAmount.GrenadeAmount = HUD.Info.Stun + HUD.Info.Flash;
+                stunAmount.grenadeAmount = HUD.Info.Stun + HUD.Info.Flash;
 
-                _StunAmount.GrenadeColor = HUD.SetData.KeyStunColor.Value;
-                _StunAmount.WarningColor = HUD.SetData.KeyWarningColor.Value;
+                stunAmount.grenadeColor = HUD.SetData.KeyStunColor.Value;
+                stunAmount.warningColor = HUD.SetData.KeyWarningColor.Value;
 
-                _StunAmount.GrenadeStyles = HUD.SetData.KeyStunStyles.Value;
+                stunAmount.grenadeStyles = HUD.SetData.KeyStunStyles.Value;
             }
-            if (_SmokeAmount != null)
+
+            if (smokeAmount != null)
             {
-                _SmokeAmount.gameObject.SetActive(HUD.HUDSw && !HUD.SetData.KeyMergeGrenade.Value);
-                _SmokeAmount.ZeroWarning = HUD.SetData.KeyZeroWarning.Value;
+                smokeAmount.gameObject.SetActive(HUD.HUDSw && !HUD.SetData.KeyMergeGrenade.Value);
+                smokeAmount.zeroWarning = HUD.SetData.KeyZeroWarning.Value;
 
-                _SmokeAmount.GrenadeAmount = HUD.Info.Smoke;
+                smokeAmount.grenadeAmount = HUD.Info.Smoke;
 
-                _SmokeAmount.GrenadeColor = HUD.SetData.KeySmokeColor.Value;
-                _SmokeAmount.WarningColor = HUD.SetData.KeyWarningColor.Value;
+                smokeAmount.grenadeColor = HUD.SetData.KeySmokeColor.Value;
+                smokeAmount.warningColor = HUD.SetData.KeyWarningColor.Value;
 
-                _SmokeAmount.GrenadeStyles = HUD.SetData.KeySmokeStyles.Value;
+                smokeAmount.grenadeStyles = HUD.SetData.KeySmokeStyles.Value;
             }
         }
 #endif

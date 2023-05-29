@@ -1,147 +1,146 @@
-﻿using UnityEngine;
-using EFT.UI;
+﻿using GamePanelHUDCore.Utils;
+using UnityEngine;
 #if !UNITY_EDITOR
 using GamePanelHUDCore;
 #endif
-using GamePanelHUDCore.Utils;
 
 namespace GamePanelHUDLife
 {
-    public class GamePanelHUDLife : UIElement
+    public class GamePanelHUDLife : MonoBehaviour
 #if !UNITY_EDITOR
         , IUpdate
 #endif
     {
 #if !UNITY_EDITOR
-        private GamePanelHUDCorePlugin.HUDClass<GamePanelHUDLifePlugin.Life, GamePanelHUDLifePlugin.SettingsData> HUD => GamePanelHUDLifePlugin.HUD;
+        private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
+        private static GamePanelHUDCorePlugin.HUDClass<GamePanelHUDLifePlugin.Life, GamePanelHUDLifePlugin.SettingsData>
+            HUD => GamePanelHUDLifePlugin.HUD;
 #endif
 
-        [SerializeField]
-        private GamePanelHUDLifeUI _OverallHealth;
+        [SerializeField] private GamePanelHUDLifeUI overallHealth;
 
-        [SerializeField]
-        private GamePanelHUDLifeUI _Poisoning;
+        [SerializeField] private GamePanelHUDLifeUI poisoning;
 
-        [SerializeField]
-        private GamePanelHUDLifeUI _Radiation;
+        [SerializeField] private GamePanelHUDLifeUI radiation;
 
-        [SerializeField]
-        private GamePanelHUDLifeUI _BloodPressure;
+        [SerializeField] private GamePanelHUDLifeUI bloodPressure;
 
-        [SerializeField]
-        private GamePanelHUDLifeUI _Energy;
+        [SerializeField] private GamePanelHUDLifeUI energy;
 
-        [SerializeField]
-        private GamePanelHUDLifeUI _Hydration;
+        [SerializeField] private GamePanelHUDLifeUI hydration;
 
-        [SerializeField]
-        private GamePanelHUDLifeUI _Temperature;
+        [SerializeField] private GamePanelHUDLifeUI temperature;
 
-        [SerializeField]
-        private GamePanelHUDLifeUI _Weight;
+        [SerializeField] private GamePanelHUDLifeUI weight;
+
+        private RectTransform _rectTransform;
 
 #if !UNITY_EDITOR
-        void Start()
+        private void Start()
         {
-            GamePanelHUDCorePlugin.UpdateManger.Register(this);
+            _rectTransform = GetComponent<RectTransform>();
+
+            HUDCore.UpdateManger.Register(this);
         }
 
-        public void IUpdate()
+        public void CustomUpdate()
         {
             LifeHUD();
         }
 
-        void LifeHUD()
+        private void LifeHUD()
         {
             //Set RectTransform anchoredPosition and sizeDelta and localScale
-            RectTransform.anchoredPosition = HUD.SetData.KeyAnchoredPosition.Value;
-            RectTransform.sizeDelta = HUD.SetData.KeySizeDelta.Value;
-            RectTransform.localScale = HUD.SetData.KeyLocalScale.Value;
+            _rectTransform.anchoredPosition = HUD.SetData.KeyAnchoredPosition.Value;
+            _rectTransform.sizeDelta = HUD.SetData.KeySizeDelta.Value;
+            _rectTransform.localScale = HUD.SetData.KeyLocalScale.Value;
 
             //Set Current and Maximum float
-            if (_OverallHealth != null)
+            if (overallHealth != null)
             {
-                _OverallHealth.gameObject.SetActive(HUD.HUDSw);
-                _OverallHealth.BuffHUDSw = HUD.SetData.KeyBuffSw.Value;
-                _OverallHealth.ArrowAnimation = HUD.SetData.KeyArrowAnimation.Value;
-                _OverallHealth.ArrowAnimationReverse = HUD.SetData.KeyArrowAnimationReverse.Value;
-                _OverallHealth.IsHealth = true;
-                _OverallHealth.AtMaximum = HUD.Info.Healths.Common.AtMaximum;
+                overallHealth.gameObject.SetActive(HUD.HUDSw);
+                overallHealth.buffHUDSw = HUD.SetData.KeyBuffSw.Value;
+                overallHealth.arrowAnimation = HUD.SetData.KeyArrowAnimation.Value;
+                overallHealth.arrowAnimationReverse = HUD.SetData.KeyArrowAnimationReverse.Value;
+                overallHealth.isHealth = true;
+                overallHealth.atMaximum = HUD.Info.Healths.Common.AtMaximum;
 
-                _OverallHealth.Current = HUD.Info.Healths.Common.Current;
-                _OverallHealth.Maximum = HUD.Info.Healths.Common.Maximum;
-                _OverallHealth.BuffRate = HUD.Info.Rates.HealthRate;
-                _OverallHealth.Normalized = HUD.Info.Healths.Common.Current / HUD.Info.Healths.Common.Maximum;
-                _OverallHealth.WarningRate = HUD.SetData.KeyHealthWarningRate.Value / 100f;
-                _OverallHealth.BuffSpeed = HUD.SetData.KeyBuffSpeed.Value;
+                overallHealth.current = HUD.Info.Healths.Common.Current;
+                overallHealth.maximum = HUD.Info.Healths.Common.Maximum;
+                overallHealth.buffRate = HUD.Info.Rates.HealthRate;
+                overallHealth.normalized = HUD.Info.Healths.Common.Current / HUD.Info.Healths.Common.Maximum;
+                overallHealth.warningRate = HUD.SetData.KeyHealthWarningRate.Value / 100f;
+                overallHealth.buffSpeed = HUD.SetData.KeyBuffSpeed.Value;
 
-                _OverallHealth.UpBuffArrowColor = HUD.SetData.KeyUpBuffArrowColor.Value;
-                _OverallHealth.DownBuffArrowColor = HUD.SetData.KeyDownBuffArrowColor.Value;
-                _OverallHealth.CurrentColor = HUD.SetData.KeyHealthColor.Value;
-                _OverallHealth.MaxColor = HUD.SetData.KeyMaxColor.Value;
-                _OverallHealth.AddZerosColor = HUD.SetData.KeyAddZerosColor.Value;
-                _OverallHealth.WarningColor = HUD.SetData.KeyWarningColor.Value;
-                _OverallHealth.UpBuffColor = HUD.SetData.KeyUpBuffColor.Value;
-                _OverallHealth.DownBuffColor = HUD.SetData.KeyDownBuffColor.Value;
+                overallHealth.upBuffArrowColor = HUD.SetData.KeyUpBuffArrowColor.Value;
+                overallHealth.downBuffArrowColor = HUD.SetData.KeyDownBuffArrowColor.Value;
+                overallHealth.currentColor = HUD.SetData.KeyHealthColor.Value;
+                overallHealth.maxColor = HUD.SetData.KeyMaxColor.Value;
+                overallHealth.addZerosColor = HUD.SetData.KeyAddZerosColor.Value;
+                overallHealth.warningColor = HUD.SetData.KeyWarningColor.Value;
+                overallHealth.upBuffColor = HUD.SetData.KeyUpBuffColor.Value;
+                overallHealth.downBuffColor = HUD.SetData.KeyDownBuffColor.Value;
 
-                _OverallHealth.CurrentStyles = HUD.SetData.KeyCurrentStyles.Value;
-                _OverallHealth.MaximumStyles = HUD.SetData.KeyMaximumStyles.Value;
+                overallHealth.currentStyles = HUD.SetData.KeyCurrentStyles.Value;
+                overallHealth.maximumStyles = HUD.SetData.KeyMaximumStyles.Value;
             }
-            if (_Hydration != null)
+
+            if (hydration != null)
             {
-                _Hydration.gameObject.SetActive(HUD.HUDSw);
-                _Hydration.BuffHUDSw = HUD.SetData.KeyBuffSw.Value;
-                _Hydration.ArrowAnimation = HUD.SetData.KeyArrowAnimation.Value;
-                _Hydration.ArrowAnimationReverse = HUD.SetData.KeyArrowAnimationReverse.Value;
-                _Hydration.IsHealth = false;
-                _Hydration.AtMaximum = HUD.Info.Hydrations.AtMaximum;
+                hydration.gameObject.SetActive(HUD.HUDSw);
+                hydration.buffHUDSw = HUD.SetData.KeyBuffSw.Value;
+                hydration.arrowAnimation = HUD.SetData.KeyArrowAnimation.Value;
+                hydration.arrowAnimationReverse = HUD.SetData.KeyArrowAnimationReverse.Value;
+                hydration.isHealth = false;
+                hydration.atMaximum = HUD.Info.Hydrations.AtMaximum;
 
-                _Hydration.Current = HUD.Info.Hydrations.Current;
-                _Hydration.Maximum = HUD.Info.Hydrations.Maximum;
-                _Hydration.BuffRate = HUD.Info.Rates.HydrationRate;
-                _Hydration.Normalized = HUD.Info.Hydrations.Normalized;
-                _Hydration.WarningRate = HUD.SetData.KeyHydrationWarningRate.Value / 100f;
-                _Hydration.BuffSpeed = HUD.SetData.KeyBuffSpeed.Value;
+                hydration.current = HUD.Info.Hydrations.Current;
+                hydration.maximum = HUD.Info.Hydrations.Maximum;
+                hydration.buffRate = HUD.Info.Rates.HydrationRate;
+                hydration.normalized = HUD.Info.Hydrations.Normalized;
+                hydration.warningRate = HUD.SetData.KeyHydrationWarningRate.Value / 100f;
+                hydration.buffSpeed = HUD.SetData.KeyBuffSpeed.Value;
 
-                _Hydration.UpBuffArrowColor = HUD.SetData.KeyUpBuffArrowColor.Value;
-                _Hydration.DownBuffArrowColor = HUD.SetData.KeyDownBuffArrowColor.Value;
-                _Hydration.CurrentColor = HUD.SetData.KeyHydrationColor.Value;
-                _Hydration.MaxColor = HUD.SetData.KeyMaxColor.Value;
-                _Hydration.AddZerosColor = HUD.SetData.KeyAddZerosColor.Value;
-                _Hydration.WarningColor = HUD.SetData.KeyWarningColor.Value;
-                _Hydration.UpBuffColor = HUD.SetData.KeyUpBuffColor.Value;
-                _Hydration.DownBuffColor = HUD.SetData.KeyDownBuffColor.Value;
+                hydration.upBuffArrowColor = HUD.SetData.KeyUpBuffArrowColor.Value;
+                hydration.downBuffArrowColor = HUD.SetData.KeyDownBuffArrowColor.Value;
+                hydration.currentColor = HUD.SetData.KeyHydrationColor.Value;
+                hydration.maxColor = HUD.SetData.KeyMaxColor.Value;
+                hydration.addZerosColor = HUD.SetData.KeyAddZerosColor.Value;
+                hydration.warningColor = HUD.SetData.KeyWarningColor.Value;
+                hydration.upBuffColor = HUD.SetData.KeyUpBuffColor.Value;
+                hydration.downBuffColor = HUD.SetData.KeyDownBuffColor.Value;
 
-                _Hydration.CurrentStyles = HUD.SetData.KeyCurrentStyles.Value;
-                _Hydration.MaximumStyles = HUD.SetData.KeyMaximumStyles.Value;
+                hydration.currentStyles = HUD.SetData.KeyCurrentStyles.Value;
+                hydration.maximumStyles = HUD.SetData.KeyMaximumStyles.Value;
             }
-            if (_Energy != null)
+
+            if (energy != null)
             {
-                _Energy.gameObject.SetActive(HUD.HUDSw);
-                _Energy.BuffHUDSw = HUD.SetData.KeyBuffSw.Value;
-                _Energy.ArrowAnimation = HUD.SetData.KeyArrowAnimation.Value;
-                _Energy.ArrowAnimationReverse = HUD.SetData.KeyArrowAnimationReverse.Value;
-                _Energy.IsHealth = false;
-                _Energy.AtMaximum = HUD.Info.Energys.AtMaximum;
+                energy.gameObject.SetActive(HUD.HUDSw);
+                energy.buffHUDSw = HUD.SetData.KeyBuffSw.Value;
+                energy.arrowAnimation = HUD.SetData.KeyArrowAnimation.Value;
+                energy.arrowAnimationReverse = HUD.SetData.KeyArrowAnimationReverse.Value;
+                energy.isHealth = false;
+                energy.atMaximum = HUD.Info.Energys.AtMaximum;
 
-                _Energy.Current = HUD.Info.Energys.Current;
-                _Energy.Maximum = HUD.Info.Energys.Maximum;
-                _Energy.BuffRate = HUD.Info.Rates.EnergyRate;
-                _Energy.Normalized = HUD.Info.Energys.Normalized;
-                _Energy.WarningRate = HUD.SetData.KeyEnergyWarningRate.Value / 100f;
-                _Energy.BuffSpeed = HUD.SetData.KeyBuffSpeed.Value;
+                energy.current = HUD.Info.Energys.Current;
+                energy.maximum = HUD.Info.Energys.Maximum;
+                energy.buffRate = HUD.Info.Rates.EnergyRate;
+                energy.normalized = HUD.Info.Energys.Normalized;
+                energy.warningRate = HUD.SetData.KeyEnergyWarningRate.Value / 100f;
+                energy.buffSpeed = HUD.SetData.KeyBuffSpeed.Value;
 
-                _Energy.UpBuffArrowColor = HUD.SetData.KeyUpBuffArrowColor.Value;
-                _Energy.DownBuffArrowColor = HUD.SetData.KeyDownBuffArrowColor.Value;
-                _Energy.CurrentColor = HUD.SetData.KeyEnergyColor.Value;
-                _Energy.MaxColor = HUD.SetData.KeyMaxColor.Value;
-                _Energy.AddZerosColor = HUD.SetData.KeyAddZerosColor.Value;
-                _Energy.WarningColor = HUD.SetData.KeyWarningColor.Value;
-                _Energy.UpBuffColor = HUD.SetData.KeyUpBuffColor.Value;
-                _Energy.DownBuffColor = HUD.SetData.KeyDownBuffColor.Value;
+                energy.upBuffArrowColor = HUD.SetData.KeyUpBuffArrowColor.Value;
+                energy.downBuffArrowColor = HUD.SetData.KeyDownBuffArrowColor.Value;
+                energy.currentColor = HUD.SetData.KeyEnergyColor.Value;
+                energy.maxColor = HUD.SetData.KeyMaxColor.Value;
+                energy.addZerosColor = HUD.SetData.KeyAddZerosColor.Value;
+                energy.warningColor = HUD.SetData.KeyWarningColor.Value;
+                energy.upBuffColor = HUD.SetData.KeyUpBuffColor.Value;
+                energy.downBuffColor = HUD.SetData.KeyDownBuffColor.Value;
 
-                _Energy.CurrentStyles = HUD.SetData.KeyCurrentStyles.Value;
-                _Energy.MaximumStyles = HUD.SetData.KeyMaximumStyles.Value;
+                energy.currentStyles = HUD.SetData.KeyCurrentStyles.Value;
+                energy.maximumStyles = HUD.SetData.KeyMaximumStyles.Value;
             }
         }
 #endif

@@ -1,9 +1,9 @@
-﻿using UnityEngine;
+﻿using GamePanelHUDCore.Utils;
 using TMPro;
+using UnityEngine;
 #if !UNITY_EDITOR
 using GamePanelHUDCore;
 #endif
-using GamePanelHUDCore.Utils;
 
 namespace GamePanelHUDHit
 {
@@ -12,101 +12,95 @@ namespace GamePanelHUDHit
         , IUpdate
 #endif
     {
-        public bool Active;
+#if !UNITY_EDITOR
+        private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
+#endif
 
-        public int XP;
+        public bool active;
 
-        public int WaitXP;
+        public int xp;
 
-        public Color XPColor;
+        public int waitXp;
 
-        public float XPWaitSpeed;
+        public Color xpColor;
 
-        public FontStyles XPStyles;
+        public float xpWaitSpeed;
 
-        [SerializeField]
-        private TMP_Text _XpValue;
+        public FontStyles xpStyles;
 
-        private Animator Animator_ExpUI;
+        public bool IsAnim => !IsPassive && !IsClear;
 
-        void Start()
+        public bool IsPassive => _animatorExpUI.GetCurrentAnimatorStateInfo(0).shortNameHash == AnimatorHash.Passive;
+
+        public bool IsClear => _animatorExpUI.GetCurrentAnimatorStateInfo(0).shortNameHash == AnimatorHash.Clear;
+
+        [SerializeField] private TMP_Text xpValue;
+
+        private Animator _animatorExpUI;
+
+        private void Start()
         {
-            Animator_ExpUI = GetComponent<Animator>();
+            _animatorExpUI = GetComponent<Animator>();
 
 #if !UNITY_EDITOR
-            GamePanelHUDCorePlugin.UpdateManger.Register(this);
+            HUDCore.UpdateManger.Register(this);
 #endif
         }
 #if !UNITY_EDITOR
 
-        public void IUpdate()
+        public void CustomUpdate()
         {
             ExpUI();
         }
 
-        void ExpUI()
+        private void ExpUI()
 #endif
 #if UNITY_EDITOR
         void Update()
 #endif
         {
-            Animator_ExpUI.SetFloat(AnimatorHash.Speed, XPWaitSpeed);
+            _animatorExpUI.SetFloat(AnimatorHash.Speed, xpWaitSpeed);
 
-            if (Active && !IsClear())
+            if (active && !IsClear)
             {
-                XP += WaitXP;
+                xp += waitXp;
 
-                WaitXP = 0;
+                waitXp = 0;
 
-                _XpValue.fontStyle = XPStyles;
-                _XpValue.color = XPColor;
-                _XpValue.text = XP.ToString();
+                xpValue.fontStyle = xpStyles;
+                xpValue.color = xpColor;
+                xpValue.text = xp.ToString();
 
-                Animator_ExpUI.SetTrigger(AnimatorHash.Active);
+                _animatorExpUI.SetTrigger(AnimatorHash.Active);
 
-                Active = false;
+                active = false;
             }
         }
 
         public void XpUp(int up, int lastXp)
         {
-            if (!IsClear())
+            if (!IsClear)
             {
-                XP += up + lastXp;
+                xp += up + lastXp;
 
-                Active = true;
+                active = true;
             }
             else
             {
-                WaitXP += up + lastXp;
+                waitXp += up + lastXp;
 
-                Active = true;
+                active = true;
             }
         }
 
         public void XpComplete()
         {
-            Animator_ExpUI.SetTrigger(AnimatorHash.Complete);
+            _animatorExpUI.SetTrigger(AnimatorHash.Complete);
         }
 
-        public bool IsAnim()
+        private void ClearXp()
         {
-            return !IsPassive() && !IsClear();
-        }
-
-        public bool IsPassive()
-        {
-            return Animator_ExpUI.GetCurrentAnimatorStateInfo(0).shortNameHash == AnimatorHash.Passive;
-        }
-
-        public bool IsClear()
-        {
-            return Animator_ExpUI.GetCurrentAnimatorStateInfo(0).shortNameHash == AnimatorHash.Clear;
-        }
-
-        void ClearXp()
-        {
-            XP = 0;
+            xp = 0;
         }
     }
 }

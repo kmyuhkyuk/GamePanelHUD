@@ -1,13 +1,6 @@
 ﻿using GamePanelHUDCore;
 using GamePanelHUDCore.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace GamePanelHUDMap
 {
@@ -16,35 +9,36 @@ namespace GamePanelHUDMap
         , IUpdate
 #endif
     {
-        public Vector3 PlayerPosition;
+        private GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
 
-        public Vector3 PlayerAngles;
+        public Vector3 playerPosition;
+
+        public Vector3 playerAngles;
 
         //public TexData[] TexDatas;
 
-        [SerializeField]
-        private Vector2 Offset;
+        [SerializeField] private Vector2 offset;
 
-        private RectTransform MapRect;
+        private RectTransform _mapRect;
 
 #if !UNITY_EDITOR
-        void Start()
+        private void Start()
         {
-            MapRect = GetComponent<RectTransform>();
+            _mapRect = GetComponent<RectTransform>();
 
-            GamePanelHUDCorePlugin.UpdateManger.Register(this);
+            HUDCore.UpdateManger.Register(this);
         }
 
-        public void IUpdate()
+        public void CustomUpdate()
         {
             MapUI();
         }
 
-        void MapUI()
+        private void MapUI()
         {
-            MapRect.anchoredPosition = new Vector2(PlayerPosition.x, PlayerPosition.y) + Offset;
+            _mapRect.anchoredPosition = new Vector2(playerPosition.x, playerPosition.y) + offset;
 
-            MapRect.eulerAngles = new Vector3(0, 0, PlayerAngles.y);
+            _mapRect.eulerAngles = new Vector3(0, 0, playerAngles.y);
 
             /*foreach (TexData data in TexDatas)
             {

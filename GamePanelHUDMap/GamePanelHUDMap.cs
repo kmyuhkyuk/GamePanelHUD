@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using EFT.UI;
 #if !UNITY_EDITOR
 using GamePanelHUDCore;
 using GamePanelHUDCore.Utils;
@@ -7,50 +6,44 @@ using GamePanelHUDCore.Utils;
 
 namespace GamePanelHUDMap
 {
-    public class GamePanelHUDMap : UIElement
+    public class GamePanelHUDMap : MonoBehaviour
 #if !UNITY_EDITOR
         , IUpdate
 #endif
     {
 #if !UNITY_EDITOR
-        private GamePanelHUDCorePlugin.HUDClass<GamePanelHUDMapPlugin.MapData, GamePanelHUDMapPlugin.SettingsData> HUD
-        {
-            get
-            {
-                return GamePanelHUDMapPlugin.HUD;
-            }
-        }
+        private GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
+        private GamePanelHUDCorePlugin.HUDClass<GamePanelHUDMapPlugin.MapData, GamePanelHUDMapPlugin.SettingsData>
+            HUD => GamePanelHUDMapPlugin.HUD;
 #endif
 
-        private AssetBundle AssetBundle;
+        private AssetBundle _assetBundle;
 
-        private GameObject MapAsset;
+        private GameObject _mapAsset;
 
-        [SerializeField]
-        private Transform _Map;
+        [SerializeField] private Transform map;
 
-        [SerializeField]
-        private GamePanelHUDMapUI _MapUI;
+        [SerializeField] private GamePanelHUDMapUI mapUI;
 
-        #if !UNITY_EDITOR
-        void Start()
+#if !UNITY_EDITOR
+        private void Start()
         {
             GamePanelHUDMapPlugin.LoadMap = LoadMapAsset;
             GamePanelHUDMapPlugin.UnloadMap = UnloadMapAsset;
 
-            GamePanelHUDCorePlugin.UpdateManger.Register(this);
+            HUDCore.UpdateManger.Register(this);
         }
 
-        public void IUpdate()
+        public void CustomUpdate()
         {
             MapHUD();
         }
 
-        void MapHUD()
+        private void MapHUD()
         {
-            if (_Map != null)
+            if (map != null)
             {
-                _Map.gameObject.SetActive(HUD.HUDSw);
+                map.gameObject.SetActive(HUD.HUDSw);
             }
 
             /*if (MapUI != null)
@@ -60,14 +53,14 @@ namespace GamePanelHUDMap
             }*/
         }
 
-        async void LoadMapAsset(string mappath)
+        private async void LoadMapAsset(string mappath)
         {
             HUD.Info.IsLoadMap = true;
 
             HUD.Info.IsLoadMap = false;
         }
 
-        void UnloadMapAsset()
+        private void UnloadMapAsset()
         {
         }
 #endif

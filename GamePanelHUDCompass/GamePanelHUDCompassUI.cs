@@ -1,10 +1,10 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using GamePanelHUDCore.Utils;
 using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 #if !UNITY_EDITOR
 using GamePanelHUDCore;
 #endif
-using GamePanelHUDCore.Utils;
 
 namespace GamePanelHUDCompass
 {
@@ -13,121 +13,122 @@ namespace GamePanelHUDCompass
         , IUpdate
 #endif
     {
-        public bool AngleHUDSw;
+#if !UNITY_EDITOR
+        private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
+#endif
 
-        public float AngleNum;
+        public bool angleHUDSw;
 
-        public float CompassX;
+        public float angleNum;
 
-        public Color AzimuthsColor;
+        public float compassX;
 
-        public Color ArrowColor;
+        public Color azimuthsColor;
 
-        public Color DirectionColor;
+        public Color azimuthAngleColor;
 
-        public Color AngleColor;
+        public Color arrowColor;
 
-        public FontStyles AzimuthsAngleStyles;
+        public Color directionColor;
 
-        public FontStyles DirectionStyles;
+        public Color angleColor;
 
-        public FontStyles AngleStyles;
+        public FontStyles azimuthsAngleStyles;
 
-        [SerializeField]
-        private Image _Arrow;
+        public FontStyles directionStyles;
 
-        [SerializeField]
-        private RectTransform _Azimuths;
+        public FontStyles angleStyles;
 
-        [SerializeField]
-        private Transform _AzimuthsValue;
+        [SerializeField] private Image arrow;
 
-        [SerializeField]
-        private TMP_Text _DirectionValue;
+        [SerializeField] private RectTransform azimuthsRoot;
 
-        [SerializeField]
-        private TMP_Text _AngleValue;
+        [SerializeField] private Transform azimuthsValueRoot;
 
-        private Transform AnglePanel;
+        [SerializeField] private TMP_Text directionValue;
 
-        private Image[] AzimuthsImages;
+        [SerializeField] private TMP_Text angleValue;
 
-        private TMP_Text[] AzimuthsAngles;
+        private Transform _anglePanelTransform;
 
-        void Start()
+        private Image[] _azimuthsImages;
+
+        private TMP_Text[] _azimuthsAngles;
+
+        private void Start()
         {
-            AzimuthsImages = _AzimuthsValue.GetComponentsInChildren<Image>();
-            AzimuthsAngles = _AzimuthsValue.GetComponentsInChildren<TMP_Text>();
-            AnglePanel = _DirectionValue.transform.parent;
+            _azimuthsImages = azimuthsValueRoot.GetComponentsInChildren<Image>();
+            _azimuthsAngles = azimuthsValueRoot.GetComponentsInChildren<TMP_Text>();
+            _anglePanelTransform = directionValue.transform.parent;
 
 #if !UNITY_EDITOR
-            GamePanelHUDCorePlugin.UpdateManger.Register(this);
+            HUDCore.UpdateManger.Register(this);
 #endif
         }
 
 #if !UNITY_EDITOR
-        void OnEnable()
+        private void OnEnable()
         {
-            GamePanelHUDCorePlugin.UpdateManger.Run(this);
+            HUDCore.UpdateManger.Run(this);
         }
 
-        void OnDisable()
+        private void OnDisable()
         {
-            GamePanelHUDCorePlugin.UpdateManger.Stop(this);
+            HUDCore.UpdateManger.Stop(this);
         }
 
-        public void IUpdate()
+        public void CustomUpdate()
         {
             CompassUI();
         }
 
-        void CompassUI()
+        private void CompassUI()
 #endif
 #if UNITY_EDITOR
         void Update()
 #endif
         {
-            _Arrow.color = ArrowColor;
+            arrow.color = arrowColor;
 
-            foreach (Image image in AzimuthsImages)
+            foreach (var image in _azimuthsImages)
             {
-                image.color = AzimuthsColor;
+                image.color = azimuthsColor;
             }
 
-            foreach (var text in AzimuthsAngles)
+            foreach (var text in _azimuthsAngles)
             {
-                text.fontStyle = AzimuthsAngleStyles;
-                text.color = AzimuthsColor;
+                text.fontStyle = azimuthsAngleStyles;
+                text.color = azimuthAngleColor;
             }
 
-            _Azimuths.anchoredPosition = new Vector2(CompassX, 0);
+            azimuthsRoot.anchoredPosition = new Vector2(compassX, 0);
 
             string direction;
-            if (AngleNum >= 45 && AngleNum < 90)
+            if (angleNum >= 45 && angleNum < 90)
             {
                 direction = "NE";
             }
-            else if (AngleNum >= 90 && AngleNum < 135)
+            else if (angleNum >= 90 && angleNum < 135)
             {
                 direction = "E";
             }
-            else if (AngleNum >= 135 && AngleNum < 180)
+            else if (angleNum >= 135 && angleNum < 180)
             {
                 direction = "SE";
             }
-            else if (AngleNum >= 180 && AngleNum < 225)
+            else if (angleNum >= 180 && angleNum < 225)
             {
                 direction = "S";
             }
-            else if (AngleNum >= 225 && AngleNum < 270)
+            else if (angleNum >= 225 && angleNum < 270)
             {
                 direction = "SW";
             }
-            else if (AngleNum >= 270 && AngleNum < 315)
+            else if (angleNum >= 270 && angleNum < 315)
             {
                 direction = "W";
             }
-            else if (AngleNum >= 315 && AngleNum < 360)
+            else if (angleNum >= 315 && angleNum < 360)
             {
                 direction = "NW";
             }
@@ -136,15 +137,15 @@ namespace GamePanelHUDCompass
                 direction = "N";
             }
 
-            AnglePanel.gameObject.SetActive(AngleHUDSw);
+            _anglePanelTransform.gameObject.SetActive(angleHUDSw);
 
-            _DirectionValue.fontStyle = DirectionStyles;
-            _DirectionValue.color = DirectionColor;
-            _DirectionValue.text = direction;
+            directionValue.fontStyle = directionStyles;
+            directionValue.color = directionColor;
+            directionValue.text = direction;
 
-            _AngleValue.fontStyle = AngleStyles;
-            _AngleValue.color = AngleColor;
-            _AngleValue.text = ((int)AngleNum).ToString();
+            angleValue.fontStyle = angleStyles;
+            angleValue.color = angleColor;
+            angleValue.text = ((int)angleNum).ToString();
         }
     }
 }
