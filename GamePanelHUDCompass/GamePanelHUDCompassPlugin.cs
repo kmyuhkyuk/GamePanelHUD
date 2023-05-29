@@ -1,64 +1,61 @@
 ﻿#if !UNITY_EDITOR
-using BepInEx;
-using BepInEx.Configuration;
-using HarmonyLib;
 using System;
-using System.Linq;
-using System.Reflection;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using TMPro;
+using System.Linq;
+using BepInEx;
+using BepInEx.Configuration;
 using EFT;
-using EFT.Quests;
 using EFT.Interactive;
-using EFT.InventoryLogic;
+using EFT.Quests;
+using EFTApi;
 using GamePanelHUDCore;
+using GamePanelHUDCore.Attributes;
 using GamePanelHUDCore.Utils;
-using GamePanelHUDCore.Utils.Zone;
-using GamePanelHUDCompass.Patches;
+using HarmonyLib;
+using TMPro;
+using UnityEngine;
+using static EFTApi.EFTHelpers;
 
 namespace GamePanelHUDCompass
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCompass", "kmyuhkyuk-GamePanelHUDCompass", "2.6.4")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCompass", "kmyuhkyuk-GamePanelHUDCompass", "2.7.0")]
     [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore")]
+    [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", "localized/compass")]
     public class GamePanelHUDCompassPlugin : BaseUnityPlugin, IUpdate
     {
-        private GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
+        private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
 
-        private readonly CompassData CompassInfos = new CompassData();
+        private readonly CompassData _compassData = new CompassData();
 
-        private readonly CompassFireData CFData = new CompassFireData();
+        private readonly CompassFireData _compassFireData = new CompassFireData();
 
-        private readonly CompassStaticData CSData = new CompassStaticData();
+        private readonly CompassStaticData _compassStaticData = new CompassStaticData();
 
-        internal static readonly GamePanelHUDCorePlugin.HUDClass<CompassData, SettingsData> CompassHUD = new GamePanelHUDCorePlugin.HUDClass<CompassData, SettingsData>();
+        internal static readonly GamePanelHUDCorePlugin.HUDClass<CompassData, SettingsData> CompassHUD =
+            new GamePanelHUDCorePlugin.HUDClass<CompassData, SettingsData>();
 
-        internal static readonly GamePanelHUDCorePlugin.HUDClass<CompassFireData, SettingsData> CompassFireHUD = new GamePanelHUDCorePlugin.HUDClass<CompassFireData, SettingsData>();
+        internal static readonly GamePanelHUDCorePlugin.HUDClass<CompassFireData, SettingsData> CompassFireHUD =
+            new GamePanelHUDCorePlugin.HUDClass<CompassFireData, SettingsData>();
 
-        internal static readonly GamePanelHUDCorePlugin.HUDClass<CompassStaticData, SettingsData> CompassStaticHUD = new GamePanelHUDCorePlugin.HUDClass<CompassStaticData, SettingsData>();
+        internal static readonly GamePanelHUDCorePlugin.HUDClass<CompassStaticData, SettingsData> CompassStaticHUD =
+            new GamePanelHUDCorePlugin.HUDClass<CompassStaticData, SettingsData>();
 
-        internal static float NorthDirection;
+        private bool _compassHUDSw;
 
-        internal static Vector3 NorthVector;
+        private bool _compassFireHUDSw;
 
-        private bool CompassHUDSw;
+        private bool _compassStaticHUDSw;
 
-        private bool CompassFireHUDSw;
+        private bool _compassStaticCacheBool;
 
-        private bool CompassStaticHUDSw;
+        private Transform _camTransform;
 
-        private bool CompassStaticCacheBool;
+        private RectTransform _screenRect;
 
-        private Transform Cam;
+        private readonly SettingsData _setData;
 
-        private RectTransform ScreenRect;
-
-        private readonly SettingsData SetData = new SettingsData();
-
-        private readonly ReflectionData RefData = new ReflectionData();
-
-        internal static readonly List<List<string>> Airdrops = new List<List<string>>();
+        private readonly List<List<string>> _airdrops = new List<List<string>>();
 
         internal static GameObject FirePrefab { get; private set; }
 
@@ -72,430 +69,369 @@ namespace GamePanelHUDCompass
 
         internal static Action<string> DestroyStatic;
 
-        private static readonly bool Is350Up = GamePanelHUDCorePlugin.HUDCoreClass.GameVersion > new Version("0.13.0.21734");
+        private static bool Is231Up => EFTVersion.Is231Up;
+
+        public GamePanelHUDCompassPlugin()
+        {
+            _setData = new SettingsData(Config);
+        }
 
         private void Start()
         {
-            Logger.LogInfo("Loaded: KmYuHkYuk-GamePanelHUDCompass");
+            HUDCore.WorldStart += gameWorld => _compassStaticCacheBool = true;
 
-            ModUpdateCheck.DrawCheck(this);
+            _PlayerHelper.FirearmControllerHelper.InitiateShot += ShowShot;
+            _PlayerHelper.OnDead += RemoveShot;
+            _AirdropHelper.AirdropBoxHelper.OnBoxLand += ShowAirdrop;
+            _QuestHelper.OnConditionValueChanged += RemoveQuest;
 
-            const string mainSettings = "主设置 Main Settings";
-            const string questSettings = "任务显示设置 Quest Display Settings";
-            const string positionScaleSettings = "位置大小设置 Position Scale Settings";
-            const string colorSettings = "颜色设置 Color Settings";
-            const string fontStylesSettings = "字体样式设置 Font Styles Settings";
-            const string speedSettings = "动画速度设置 Animation Speed Settings";
-            const string rateSettings = "率设置  Rate Settings";
-            const string otherSettings = "其他设置 Other Settings";
-
-            SetData.KeyCompassHUDSw = Config.Bind<bool>(mainSettings, "罗盘指示栏显示 Compass HUD display", true);
-            SetData.KeyAngleHUDSw = Config.Bind<bool>(mainSettings, "罗盘角度显示 Compass Angle HUD display", true);
-            SetData.KeyCompassFireHUDSw = Config.Bind<bool>(mainSettings, "罗盘开火指示栏显示 Compass Fire HUD display", true);
-            SetData.KeyCompassFireDirectionHUDSw = Config.Bind<bool>(mainSettings, "罗盘开火方向指示栏显示 Compass Fire Direction HUD display", true);
-            SetData.KeyCompassFireSilenced = Config.Bind<bool>(mainSettings, "罗盘开火隐藏消音 Compass Fire Hide Silenced", true);
-            SetData.KeyCompassFireDeadDestroy = Config.Bind<bool>(mainSettings, "罗盘开火死亡销毁 Compass Fire Dead Destroy", true);
-            SetData.KeyCompassStaticHUDSw = Config.Bind<bool>(mainSettings, "罗盘静态指示栏显示 Compass Static HUD display", true);
-            SetData.KeyCompassStaticAirdrop = Config.Bind<bool>(mainSettings, "罗盘静态空投显示 Compass Static Airdrop display", true);
-            SetData.KeyCompassStaticExfiltration = Config.Bind<bool>(mainSettings, "罗盘静态撤离点显示 Compass Static Exfiltration display", true);
-            SetData.KeyCompassStaticQuest = Config.Bind<bool>(mainSettings, "罗盘静态任务显示 Compass Static Quest display", true);
-            SetData.KeyCompassStaticInfoHUDSw = Config.Bind<bool>(mainSettings, "罗盘静态信息显示 Compass Static Info HUD display", true);
-            SetData.KeyCompassStaticDistanceHUDSw = Config.Bind<bool>(mainSettings, "罗盘静态距离显示 Compass Static Distance HUD display", true);
-            SetData.KeyCompassStaticHideRequirements = Config.Bind<bool>(mainSettings, "罗盘静态隐藏需求 Compass Static Hide Requirements", false);
-            SetData.KeyCompassStaticHideOptional = Config.Bind<bool>(mainSettings, "罗盘静态隐藏可选项 Compass Static Hide Optional", false);
-            SetData.KeyCompassStaticHideSearchedAirdrop = Config.Bind<bool>(mainSettings, "罗盘静态隐藏搜索过空投 Compass Static Hide Already Searched Airdrop", true);
-            SetData.KeyAutoSizeDelta = Config.Bind<bool>(mainSettings, "自动高度 Auto Size Delta", true);
-
-            SetData.KeyConditionFindItem = Config.Bind<bool>(questSettings, "FindItem", true);
-            SetData.KeyConditionLeaveItemAtLocation = Config.Bind<bool>(questSettings, "LeaveItemAtLocation", true);
-            SetData.KeyConditionPlaceBeacon = Config.Bind<bool>(questSettings, "PlaceBeacon", true);
-            SetData.KeyConditionVisitPlace = Config.Bind<bool>(questSettings, "VisitPlace", true);
-            SetData.KeyConditionInZone = Config.Bind<bool>(questSettings, "InZone", true);
-
-            SetData.KeyAnchoredPosition = Config.Bind<Vector2>(positionScaleSettings, "指示栏位置 Anchored Position", new Vector2(0, 0));
-            SetData.KeySizeDelta = Config.Bind<Vector2>(positionScaleSettings, "指示栏高度 Size Delta", new Vector2(600, 90));
-            SetData.KeyLocalScale = Config.Bind<Vector2>(positionScaleSettings, "指示栏大小 Local Scale", new Vector2(1, 1));
-            SetData.KeyCompassFireSizeDelta = Config.Bind<Vector2>(positionScaleSettings, "罗盘开火高度 Compass Fire Size Delta", new Vector2(25, 25));
-            SetData.KeyCompassFireOutlineSizeDelta = Config.Bind<Vector2>(positionScaleSettings, "罗盘开火轮廓高度 Compass Fire Outline Size Delta", new Vector2(26, 26));
-            SetData.KeyCompassFireDirectionAnchoredPosition = Config.Bind<Vector2>(positionScaleSettings, "罗盘开火方向位置 Compass Fire Direction Anchored Position", new Vector2(15, -63));
-            SetData.KeyCompassFireDirectionScale = Config.Bind<Vector2>(positionScaleSettings, "罗盘开火方向大小 Compass Fire Direction Local Scale", new Vector2(1, 1));
-            SetData.KeyCompassStaticInfoAnchoredPosition = Config.Bind<Vector2>(positionScaleSettings, "罗盘静态信息位置 Compass Static Info Anchored Position", new Vector2(0, -15));
-            SetData.KeyCompassStaticInfoScale = Config.Bind<Vector2>(positionScaleSettings, "罗盘静态信息大小 Compass Static Info Local Scale", new Vector2(1, 1));
-
-            SetData.KeyCompassFireActiveSpeed = Config.Bind<float>(speedSettings, "罗盘开火激活速度 Compass Fire Active Speed", 1, new ConfigDescription("", new AcceptableValueRange<float>(0, 10)));
-            SetData.KeyCompassFireWaitSpeed = Config.Bind<float>(speedSettings, "罗盘开火等待速度 Compass Fire Wait Speed", 1, new ConfigDescription("", new AcceptableValueRange<float>(0, 10)));
-            SetData.KeyCompassFireToSmallSpeed = Config.Bind<float>(speedSettings, "罗盘开火变小速度 Compass Fire To Small Speed", 1, new ConfigDescription("", new AcceptableValueRange<float>(0, 10)));
-            SetData.KeyCompassFireSmallWaitSpeed = Config.Bind<float>(speedSettings, "罗盘开火变小等待速度 Compass Fire Small Wait Speed", 1, new ConfigDescription("", new AcceptableValueRange<float>(0, 10)));
-
-            SetData.KeyCompassFireHeight = Config.Bind<float>(positionScaleSettings, "罗盘开火高度 Compass Fire Height", 8);
-            SetData.KeyCompassStaticHeight = Config.Bind<float>(positionScaleSettings, "罗盘静态高度 Compass Static Height", 5);
-
-            SetData.KeyCompassFireDistance = Config.Bind<float>(otherSettings, "罗盘开火最大距离 Compass Fire Max Distance", 50, new ConfigDescription("Fire distance <= How many meters display", new AcceptableValueRange<float>(0, 1000)));
-            SetData.KeyCompassStaticCenterPointRange = Config.Bind<int>(otherSettings, "罗盘静态中心点范围 Compass Static Center Point Range", 20);
-
-            SetData.KeyAutoSizeDeltaRate = Config.Bind<int>(rateSettings, "自动高度比率 Auto Size Delta Rate", 30, new ConfigDescription("Screen percentage", new AcceptableValueRange<int>(0, 100)));
-
-            SetData.KeyArrowColor = Config.Bind<Color>(colorSettings, "指针 Arrow", new Color(1f, 1f, 1f));
-            SetData.KeyAzimuthsColor = Config.Bind<Color>(colorSettings, "刻度 Azimuths", new Color(0.8901961f, 0.8901961f, 0.8392157f));
-            SetData.KeyAzimuthsAngleColor = Config.Bind<Color>(colorSettings, "刻度角度 Azimuths Angle", new Color(0.8901961f, 0.8901961f, 0.8392157f));
-            SetData.KeyDirectionColor = Config.Bind<Color>(colorSettings, "方向 Direction", new Color(0.8901961f, 0.8901961f, 0.8392157f));
-            SetData.KeyAngleColor = Config.Bind<Color>(colorSettings, "角度 Angle", new Color(0.8901961f, 0.8901961f, 0.8392157f));
-
-            SetData.KeyCompassFireColor = Config.Bind<Color>(colorSettings, "罗盘开火 Compass Fire", new Color(1f, 0f, 0f));
-            SetData.KeyCompassFireOutlineColor = Config.Bind<Color>(colorSettings, "罗盘开火轮廓 Compass Fire Outline", new Color(0.5f, 0f, 0f));
-            SetData.KeyCompassFireBossColor = Config.Bind<Color>(colorSettings, "罗盘开火 Compass Boss Fire", new Color(1f, 0.5f, 0f));
-            SetData.KeyCompassFireBossOutlineColor = Config.Bind<Color>(colorSettings, "罗盘开火轮廓 Compass Boss Fire Outline", new Color(1f, 0.3f, 0f));
-            SetData.KeyCompassFireFollowerColor = Config.Bind<Color>(colorSettings, "罗盘开火 Compass Follower Fire", new Color(0f, 1f, 1f));
-            SetData.KeyCompassFireFollowerOutlineColor = Config.Bind<Color>(colorSettings, "罗盘开火轮廓 Compass Follower Outline", new Color(0f, 0.7f, 1f));
-            SetData.KeyCompassStaticNameColor = Config.Bind<Color>(colorSettings, "罗盘静态名字 Compass Static Name", new Color(0.8901961f, 0.8901961f, 0.8392157f));
-            SetData.KeyCompassStaticDescriptionColor = Config.Bind<Color>(colorSettings, "罗盘静态说明 Compass Static Description", new Color(0.8901961f, 0.8901961f, 0.8392157f));
-            SetData.KeyCompassStaticNecessaryColor = Config.Bind<Color>(colorSettings, "罗盘静态可选项 Compass Static Optional", new Color(0.8901961f, 0.8901961f, 0.8392157f));
-            SetData.KeyCompassStaticRequirementsColor = Config.Bind<Color>(colorSettings, "罗盘静态需求 Compass Static Requirements", new Color(0.8901961f, 0.8901961f, 0.8392157f));
-            SetData.KeyCompassStaticDistanceColor = Config.Bind<Color>(colorSettings, "罗盘静态距离 Compass Static Distance", new Color(0.8901961f, 0.8901961f, 0.8392157f));
-            SetData.KeyCompassStaticMetersColor = Config.Bind<Color>(colorSettings, "罗盘静态米 Compass Static Meters", new Color(0.8901961f, 0.8901961f, 0.8392157f));
-
-            SetData.KeyAzimuthsAngleStyles = Config.Bind<FontStyles>(fontStylesSettings, "刻度角度 Azimuths Angle", FontStyles.Normal);
-            SetData.KeyDirectionStyles = Config.Bind<FontStyles>(fontStylesSettings, "方向 Direction", FontStyles.Bold);
-            SetData.KeyAngleStyles = Config.Bind<FontStyles>(fontStylesSettings, "角度 Angle", FontStyles.Bold);
-            SetData.KeyCompassFireDirectionStyles = Config.Bind<FontStyles>(fontStylesSettings, "罗盘开火方向 Compass Fire Direction", FontStyles.Normal);
-            SetData.KeyCompassStaticNameStyles = Config.Bind<FontStyles>(fontStylesSettings, "罗盘静态名字 Compass Static Name", FontStyles.Bold);
-            SetData.KeyCompassStaticDescriptionStyles = Config.Bind<FontStyles>(fontStylesSettings, "罗盘静态说明 Compass Static Description", FontStyles.Normal);
-            SetData.KeyCompassStaticDistanceStyles = Config.Bind<FontStyles>(fontStylesSettings, "罗盘静态距离 Compass Static Distance", FontStyles.Bold);
-
-            BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
-
-            RefData.RefEquipment = RefHelp.FieldRef<InventoryClass, object>.Create("Equipment");
-            RefData.RefQuestRaidItems = RefHelp.FieldRef<InventoryClass, object>.Create("QuestRaidItems");
-            RefData.RefSlots = RefHelp.FieldRef<object, Slot[]>.Create(RefData.RefEquipment.FieldType, "Slots");
-            RefData.RefGrids = RefHelp.FieldRef<object, object[]>.Create(RefHelp.GetEftType(x => x.GetMethod("TryGetLastForbiddenItem", BindingFlags.DeclaredOnly | flags) != null), "Grids");
-
-            RefData.RefItems = RefHelp.PropertyRef<object, IEnumerable<Item>>.Create(RefData.RefGrids.FieldType.GetElementType(), "Items");
-
-            new LevelSettingsPatch().Enable();
-            new PlayerShotPatch().Enable();
-            new PlayerDeadPatch().Enable();
-            new OnConditionValueChangedPatch().Enable();
-
-            if (Is350Up)
-            {
-                new AirdropBoxPatch().Enable();
-            }
-
-            GamePanelHUDCorePlugin.HUDCoreClass.WorldStart += (GameWorld) => CompassStaticCacheBool = true;
-
-            GamePanelHUDCorePlugin.UpdateManger.Register(this);
+            HUDCore.UpdateManger.Register(this);
         }
 
         private void Awake()
         {
-            GamePanelHUDCorePlugin.HUDCoreClass.AssetData<GameObject> prefabs = GamePanelHUDCorePlugin.HUDCoreClass.LoadHUD("gamepanelcompasshud.bundle", "GamePanelCompassHUD");
+            var prefabs = HUDCore.LoadHUD("gamepanelcompasshud.bundle", "GamePanelCompassHUD");
 
             FirePrefab = prefabs.Asset["Fire"];
 
             StaticPrefab = prefabs.Asset["Point"];
 
-            ScreenRect = GamePanelHUDCorePlugin.HUDCoreClass.GamePanelHUDPublic.GetComponent<RectTransform>();
+            _screenRect = HUDCore.GamePanelHUDPublic.GetComponent<RectTransform>();
         }
 
-        public void IUpdate()
+        public void CustomUpdate()
         {
             CompassPlugin();
         }
 
-        void CompassPlugin()
+        private void CompassPlugin()
         {
-            CompassHUDSw = HUDCore.AllHUDSw && Cam != null && HUDCore.HasPlayer && SetData.KeyCompassHUDSw.Value;
-            CompassFireHUDSw = CompassHUDSw && SetData.KeyCompassFireHUDSw.Value;
-            CompassStaticHUDSw = CompassHUDSw && SetData.KeyCompassStaticHUDSw.Value;
+            _compassHUDSw = HUDCore.AllHUDSw && _camTransform != null && HUDCore.HasPlayer &&
+                            _setData.KeyCompassHUDSw.Value;
+            _compassFireHUDSw = _compassHUDSw && _setData.KeyCompassFireHUDSw.Value;
+            _compassStaticHUDSw = _compassHUDSw && _setData.KeyCompassStaticHUDSw.Value;
 
-            if (SetData.KeyAutoSizeDelta.Value)
-            {
-                CompassInfos.SizeDelta = new Vector2(ScreenRect.sizeDelta.x * ((float)SetData.KeyAutoSizeDeltaRate.Value / 100), SetData.KeySizeDelta.Value.y);
-            }
-            else
-            {
-                CompassInfos.SizeDelta = SetData.KeySizeDelta.Value;
-            }
+            _compassData.SizeDelta = _setData.KeyAutoSizeDelta.Value
+                ? new Vector2(_screenRect.sizeDelta.x * ((float)_setData.KeyAutoSizeDeltaRate.Value / 100),
+                    _setData.KeySizeDelta.Value.y)
+                : _setData.KeySizeDelta.Value;
 
-            CompassHUD.Set(CompassInfos, SetData, CompassHUDSw);
-            CompassFireHUD.Set(CFData, SetData, CompassFireHUDSw);
-            CompassStaticHUD.Set(CSData, SetData, CompassStaticHUDSw);
+            CompassHUD.Set(_compassData, _setData, _compassHUDSw);
+            CompassFireHUD.Set(_compassFireData, _setData, _compassFireHUDSw);
+            CompassStaticHUD.Set(_compassStaticData, _setData, _compassStaticHUDSw);
 
             if (HUDCore.HasPlayer)
             {
-                Cam = HUDCore.YourPlayer.CameraPosition;
+                _camTransform = HUDCore.YourPlayer.CameraPosition;
 
-                CompassInfos.Angle = GetAngle(Cam.eulerAngles, NorthDirection);
+                var levelSettings = EFTGlobal.LevelSettings;
 
-                CFData.CopyFrom(CompassInfos);
+                _compassData.Angle = GetAngle(_camTransform.eulerAngles, levelSettings.NorthDirection);
 
-                CFData.NorthVector = NorthVector;
+                _compassFireData.CopyFrom(_compassData);
 
-                CFData.PlayerPosition = Cam.position;
+                _compassFireData.NorthVector = levelSettings.NorthVector;
 
-                CFData.PlayerRight = Cam.right;
+                _compassFireData.PlayerPosition = _camTransform.position;
 
-                CSData.CopyFrom(CFData);
+                _compassFireData.PlayerRight = _camTransform.right;
 
-                CSData.YourProfileId = HUDCore.YourPlayer.ProfileId;
+                _compassStaticData.CopyFrom(_compassFireData);
 
-                CSData.Airdrops = Airdrops;
+                _compassStaticData.YourProfileId = HUDCore.YourPlayer.ProfileId;
+
+                _compassStaticData.Airdrops = _airdrops;
 
                 //Performance Optimization
                 if (Time.frameCount % 20 == 0)
                 {
-                    HashSet<string> hashSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                    var hashSet = _PlayerHelper.InventoryHelper.EquipmentHash;
 
-                    Slot[] slots = RefData.RefSlots.GetValue(RefData.RefEquipment.GetValue(HUDCore.YourPlayer.Profile.Inventory));
+                    hashSet.UnionWith(_PlayerHelper.InventoryHelper.QuestRaidItemsHash);
 
-                    foreach (Slot slot in new[] { slots[6], slots[7], slots[8], slots[10] })
-                    {
-                        Item gear = slot.ContainedItem;
-
-                        if (gear == null)
-                            continue;
-
-                        foreach (object grid in RefData.RefGrids.GetValue(gear))
-                        {
-                            foreach (Item item in RefData.RefItems.GetValue(grid))
-                            {
-                                hashSet.Add(item.TemplateId);
-                            }
-                        }
-                    }
-
-                    foreach (object grid in RefData.RefGrids.GetValue(RefData.RefQuestRaidItems.GetValue(HUDCore.YourPlayer.Profile.Inventory)))
-                    {
-                        foreach (Item item in RefData.RefItems.GetValue(grid))
-                        {
-                            hashSet.Add(item.TemplateId);
-                        }
-                    }
-
-                    CSData.EquipmentAndQuestRaidItems = hashSet;
+                    _compassStaticData.EquipmentAndQuestRaidItems = hashSet;
                 }
 
-                if (CompassStaticCacheBool)
+                if (_compassStaticCacheBool)
                 {
-                    ShowQuest(HUDCore.YourPlayer, HUDCore.TheWorld, Is350Up, ShowStatic);
+                    ShowQuest(HUDCore.YourPlayer, HUDCore.TheWorld, Is231Up, ShowStatic);
 
-                    CSData.ExfiltrationPoints = ShowExfiltration(HUDCore.YourPlayer, HUDCore.TheWorld, ShowStatic);
+                    _compassStaticData.ExfiltrationPoints =
+                        ShowExfiltration(HUDCore.YourPlayer, HUDCore.TheWorld, ShowStatic);
 
-                    CompassStaticCacheBool = false;
+                    _compassStaticCacheBool = false;
                 }
             }
             else
             {
-                Airdrops.Clear();
-                CSData.EquipmentAndQuestRaidItems = null;
-                CSData.ExfiltrationPoints = null;
+                _compassStaticData.EquipmentAndQuestRaidItems = null;
+                _compassStaticData.ExfiltrationPoints = null;
+
+                if (_airdrops.Count > 0)
+                {
+                    _airdrops.Clear();
+                }
             }
         }
 
-        void ShowQuest(Player player, GameWorld world, bool is231Up, Action<CompassStaticInfo> showStatic)
+        private static void RemoveShot(Player player, EDamageType damageType)
+        {
+            if (player != GamePanelHUDCorePlugin.HUDCore.YourPlayer)
+            {
+                DestroyFire(player.ProfileId);
+            }
+        }
+
+        private static void ShowShot(Player.FirearmController firearmController, Player player, BulletClass ammo,
+            Vector3 shotPosition, Vector3 shotDirection, Vector3 fireportPosition, int chamberIndex, float overheat)
+        {
+            if (player != HUDCore.YourPlayer)
+            {
+                var fireInfo = new CompassFireInfo
+                {
+                    Who = player.ProfileId,
+                    Where = shotPosition,
+                    Role = _PlayerHelper.RefRole.GetValue(_PlayerHelper.RefSettings.GetValue(player.Profile.Info)),
+                    IsSilenced = firearmController.IsSilenced && !firearmController.IsInLauncherMode(),
+                    Distance = Vector3.Distance(shotPosition, HUDCore.YourPlayer.Position)
+                };
+
+                ShowFire(fireInfo);
+            }
+        }
+
+        private static void ShowQuest(Player player, GameWorld world, bool is231Up,
+            Action<CompassStaticInfo> showStatic)
         {
             if (player is HideoutPlayer)
                 return;
 
-            object questData = Traverse.Create(player).Field("_questController").GetValue<object>();
+            var questData = Traverse.Create(player).Field("_questController").GetValue<object>();
 
-            object quests = Traverse.Create(questData).Field("Quests").GetValue<object>();
+            var quests = Traverse.Create(questData).Field("Quests").GetValue<object>();
 
-            IList questsList = Traverse.Create(quests).Field("list_0").GetValue<IList>();
+            var questsList = Traverse.Create(quests).Field("list_0").GetValue<IList>();
 
-            List<LootItem> lootItemsList = Traverse.Create(Traverse.Create(world).Field("LootItems").GetValue<object>()).Field("list_0").GetValue<List<LootItem>>();
+            var lootItemsList = Traverse.Create(world).Field("LootItems").Field("list_0").GetValue<List<LootItem>>();
 
-            Tuple<string, LootItem>[] questItems = lootItemsList.Where(x => x.Item.QuestItem).Select(x => new Tuple<string, LootItem>(x.TemplateId, x)).ToArray();
+            (string Id, LootItem Item)[] questItems =
+                lootItemsList.Where(x => x.Item.QuestItem).Select(x => (x.TemplateId, x)).ToArray();
 
-            foreach (object item in questsList)
+            foreach (var item in questsList)
             {
                 if (Traverse.Create(item).Property("QuestStatus").GetValue<EQuestStatus>() != EQuestStatus.Started)
                     continue;
 
-                object template = Traverse.Create(item).Property("Template").GetValue<object>();
+                var template = Traverse.Create(item).Property("Template").GetValue<object>();
 
-                if (is231Up && (player.Profile.Side == EPlayerSide.Savage ? 1 : 0) != Traverse.Create(template).Field("PlayerGroup").GetValue<int>() || !is231Up && player.Profile.Side == EPlayerSide.Savage)
-                    continue;
-
-                string nameKey = Traverse.Create(template).Property("NameLocaleKey").GetValue<string>();
-
-                string traderId = Traverse.Create(template).Field("TraderId").GetValue<string>();
-
-                object availableForFinishConditions = Traverse.Create(item).Property("AvailableForFinishConditions").GetValue<object>();
-
-                IList availableForFinishConditionsList = Traverse.Create(availableForFinishConditions).Field("list_0").GetValue<IList>();
-
-                foreach (object condition in availableForFinishConditionsList)
+                switch (is231Up)
                 {
-                    if (condition is ConditionLeaveItemAtLocation location)
+                    case true when (player.Profile.Side == EPlayerSide.Savage ? 1 : 0) !=
+                                   Traverse.Create(template).Field("PlayerGroup").GetValue<int>():
+                    case false when player.Profile.Side == EPlayerSide.Savage:
+                        continue;
+                }
+
+                var nameKey = Traverse.Create(template).Property("NameLocaleKey").GetValue<string>();
+
+                var traderId = Traverse.Create(template).Field("TraderId").GetValue<string>();
+
+                var availableForFinishConditions =
+                    Traverse.Create(item).Property("AvailableForFinishConditions").GetValue<object>();
+
+                var availableForFinishConditionsList =
+                    Traverse.Create(availableForFinishConditions).Field("list_0").GetValue<IList>();
+
+                foreach (var condition in availableForFinishConditionsList)
+                {
+                    switch (condition)
                     {
-                        string zoneId = location.zoneId;
-
-                        if (ZoneHelp.TryGetValues(zoneId, out IEnumerable<PlaceItemTrigger> triggers))
+                        case ConditionLeaveItemAtLocation location:
                         {
-                            foreach (var trigger in triggers)
+                            var zoneId = location.zoneId;
+
+                            if (_GameWorldHelper.ZoneHelper.TryGetValues(zoneId,
+                                    out IEnumerable<PlaceItemTrigger> triggers))
                             {
-                                CompassStaticInfo staticInfo = new CompassStaticInfo()
+                                foreach (var trigger in triggers)
                                 {
-                                    Id = location.id,
-                                    Where = trigger.transform.position,
-                                    ZoneId = zoneId,
-                                    Target = location.target,
-                                    NameKey = nameKey,
-                                    DescriptionKey = location.id,
-                                    TraderId = traderId,
-                                    IsNotNecessary = !location.IsNecessary,
-                                    InfoType = CompassStaticInfo.Type.ConditionLeaveItemAtLocation
-                                };
-
-                                showStatic(staticInfo);
-                            }
-                        }
-                    }
-                    else if (condition is ConditionPlaceBeacon beacon)
-                    {
-                        string zoneId = beacon.zoneId;
-
-                        if (ZoneHelp.TryGetValues(zoneId, out IEnumerable<PlaceItemTrigger> triggers))
-                        {
-                            foreach (var trigger in triggers)
-                            {
-                                CompassStaticInfo staticInfo = new CompassStaticInfo()
-                                {
-                                    Id = beacon.id,
-                                    Where = trigger.transform.position,
-                                    ZoneId = zoneId,
-                                    Target = beacon.target,
-                                    NameKey = nameKey,
-                                    DescriptionKey = beacon.id,
-                                    TraderId = traderId,
-                                    IsNotNecessary = !beacon.IsNecessary,
-                                    InfoType = CompassStaticInfo.Type.ConditionPlaceBeacon
-                                };
-
-                                showStatic(staticInfo);
-                            }
-                        }
-                    }
-                    else if (condition is ConditionFindItem findItem)
-                    {
-                        string[] itemIds = findItem.target;
-
-                        foreach (string itemId in itemIds)
-                        {
-                            foreach (var questItem in questItems)
-                            {
-                                if (questItem.Item1.Equals(itemId, StringComparison.OrdinalIgnoreCase))
-                                {
-                                    CompassStaticInfo staticInfo = new CompassStaticInfo()
+                                    var staticInfo = new CompassStaticInfo
                                     {
-                                        Id = findItem.id,
-                                        Where = questItem.Item2.transform.position,
-                                        Target = new[] { itemId },
+                                        Id = location.id,
+                                        Where = trigger.transform.position,
+                                        ZoneId = zoneId,
+                                        Target = location.target,
                                         NameKey = nameKey,
-                                        DescriptionKey = findItem.id,
+                                        DescriptionKey = location.id,
                                         TraderId = traderId,
-                                        IsNotNecessary = !findItem.IsNecessary,
-                                        InfoType = CompassStaticInfo.Type.ConditionFindItem
+                                        IsNotNecessary = !location.IsNecessary,
+                                        InfoType = CompassStaticInfo.Type.ConditionLeaveItemAtLocation
                                     };
 
                                     showStatic(staticInfo);
                                 }
                             }
+
+                            break;
                         }
-                    }
-                    else if (condition is ConditionCounterCreator counterCreator)
-                    {
-                        object counter = Traverse.Create(counterCreator).Field("counter").GetValue<object>();
-
-                        object conditions = Traverse.Create(counter).Property("conditions").GetValue<object>();
-
-                        IList conditionsList = Traverse.Create(conditions).Field("list_0").GetValue<IList>();
-
-                        foreach (object condition2 in conditionsList)
+                        case ConditionPlaceBeacon beacon:
                         {
-                            if (condition2 is ConditionVisitPlace place)
-                            {
-                                string zoneId = place.target;
+                            var zoneId = beacon.zoneId;
 
-                                if (ZoneHelp.TryGetValues(zoneId, out IEnumerable<ExperienceTrigger> triggers))
+                            if (_GameWorldHelper.ZoneHelper.TryGetValues(zoneId,
+                                    out IEnumerable<PlaceItemTrigger> triggers))
+                            {
+                                foreach (var trigger in triggers)
                                 {
-                                    foreach (var trigger in triggers)
+                                    var staticInfo = new CompassStaticInfo
                                     {
-                                        CompassStaticInfo staticInfo = new CompassStaticInfo()
+                                        Id = beacon.id,
+                                        Where = trigger.transform.position,
+                                        ZoneId = zoneId,
+                                        Target = beacon.target,
+                                        NameKey = nameKey,
+                                        DescriptionKey = beacon.id,
+                                        TraderId = traderId,
+                                        IsNotNecessary = !beacon.IsNecessary,
+                                        InfoType = CompassStaticInfo.Type.ConditionPlaceBeacon
+                                    };
+
+                                    showStatic(staticInfo);
+                                }
+                            }
+
+                            break;
+                        }
+                        case ConditionFindItem findItem:
+                        {
+                            var itemIds = findItem.target;
+
+                            foreach (var itemId in itemIds)
+                            {
+                                foreach (var questItem in questItems)
+                                {
+                                    if (questItem.Id.Equals(itemId, StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        var staticInfo = new CompassStaticInfo
                                         {
-                                            Id = counterCreator.id,
-                                            Where = trigger.transform.position,
-                                            ZoneId = zoneId,
+                                            Id = findItem.id,
+                                            Where = questItem.Item.transform.position,
+                                            Target = new[] { itemId },
                                             NameKey = nameKey,
-                                            DescriptionKey = counterCreator.id,
+                                            DescriptionKey = findItem.id,
                                             TraderId = traderId,
-                                            IsNotNecessary = !counterCreator.IsNecessary,
-                                            InfoType = CompassStaticInfo.Type.ConditionVisitPlace
+                                            IsNotNecessary = !findItem.IsNecessary,
+                                            InfoType = CompassStaticInfo.Type.ConditionFindItem
                                         };
 
                                         showStatic(staticInfo);
                                     }
                                 }
                             }
-                            else if (condition2 is ConditionInZone inZone)
+
+                            break;
+                        }
+                        case ConditionCounterCreator counterCreator:
+                        {
+                            var counter = Traverse.Create(counterCreator).Field("counter").GetValue<object>();
+
+                            var conditions = Traverse.Create(counter).Property("conditions").GetValue<object>();
+
+                            var conditionsList = Traverse.Create(conditions).Field("list_0").GetValue<IList>();
+
+                            foreach (var condition2 in conditionsList)
                             {
-                                string[] zoneIds = inZone.zoneIds;
-
-                                foreach (string zoneId in zoneIds)
+                                switch (condition2)
                                 {
-                                    if (ZoneHelp.TryGetValues(zoneId, out IEnumerable<ExperienceTrigger> triggers))
+                                    case ConditionVisitPlace place:
                                     {
-                                        foreach (var trigger in triggers)
-                                        {
-                                            CompassStaticInfo staticInfo = new CompassStaticInfo()
-                                            {
-                                                Id = counterCreator.id,
-                                                Where = trigger.transform.position,
-                                                ZoneId = zoneId,
-                                                NameKey = nameKey,
-                                                DescriptionKey = counterCreator.id,
-                                                TraderId = traderId,
-                                                IsNotNecessary = !counterCreator.IsNecessary,
-                                                InfoType = CompassStaticInfo.Type.ConditionInZone
-                                            };
+                                        var zoneId = place.target;
 
-                                            showStatic(staticInfo);
+                                        if (_GameWorldHelper.ZoneHelper.TryGetValues(zoneId,
+                                                out IEnumerable<ExperienceTrigger> triggers))
+                                        {
+                                            foreach (var trigger in triggers)
+                                            {
+                                                var staticInfo = new CompassStaticInfo
+                                                {
+                                                    Id = counterCreator.id,
+                                                    Where = trigger.transform.position,
+                                                    ZoneId = zoneId,
+                                                    NameKey = nameKey,
+                                                    DescriptionKey = counterCreator.id,
+                                                    TraderId = traderId,
+                                                    IsNotNecessary = !counterCreator.IsNecessary,
+                                                    InfoType = CompassStaticInfo.Type.ConditionVisitPlace
+                                                };
+
+                                                showStatic(staticInfo);
+                                            }
                                         }
+
+                                        break;
+                                    }
+                                    case ConditionInZone inZone:
+                                    {
+                                        var zoneIds = inZone.zoneIds;
+
+                                        foreach (var zoneId in zoneIds)
+                                        {
+                                            if (_GameWorldHelper.ZoneHelper.TryGetValues(zoneId,
+                                                    out IEnumerable<ExperienceTrigger> triggers))
+                                            {
+                                                foreach (var trigger in triggers)
+                                                {
+                                                    var staticInfo = new CompassStaticInfo
+                                                    {
+                                                        Id = counterCreator.id,
+                                                        Where = trigger.transform.position,
+                                                        ZoneId = zoneId,
+                                                        NameKey = nameKey,
+                                                        DescriptionKey = counterCreator.id,
+                                                        TraderId = traderId,
+                                                        IsNotNecessary = !counterCreator.IsNecessary,
+                                                        InfoType = CompassStaticInfo.Type.ConditionInZone
+                                                    };
+
+                                                    showStatic(staticInfo);
+                                                }
+                                            }
+                                        }
+
+                                        break;
                                     }
                                 }
                             }
+
+                            break;
                         }
                     }
                 }
             }
         }
 
-        ExfiltrationData[] ShowExfiltration(Player player, GameWorld world, Action<CompassStaticInfo> showStatic)
+        private static ExfiltrationData[] ShowExfiltration(Player player, GameWorld world,
+            Action<CompassStaticInfo> showStatic)
         {
             if (player is HideoutPlayer)
                 return null;
-   
-            object exfiltrationController = Traverse.Create(world).Property("ExfiltrationController").GetValue<object>();
 
-            ExfiltrationPoint[] exfiltrationPoints;
-            if (player.Profile.Side != EPlayerSide.Savage)
+            var exfiltrationController = Traverse.Create(world).Property("ExfiltrationController").GetValue<object>();
+
+            var exfiltrationPoints = player.Profile.Side != EPlayerSide.Savage
+                ? Traverse.Create(exfiltrationController).Method("EligiblePoints", new[] { typeof(Profile) })
+                    .GetValue<ExfiltrationPoint[]>(player.Profile)
+                : Traverse.Create(exfiltrationController).Property("ScavExfiltrationPoints")
+                    .GetValue<ScavExfiltrationPoint[]>().Where(x => x.EligibleIds.Contains(player.ProfileId))
+                    .ToArray<ExfiltrationPoint>();
+
+            var exfiltrationList = new List<ExfiltrationData>();
+
+            for (var i = 0; i < exfiltrationPoints.Length; i++)
             {
-                exfiltrationPoints = Traverse.Create(exfiltrationController).Method("EligiblePoints", new[] { typeof(Profile) }).GetValue<ExfiltrationPoint[]>(player.Profile);
-                
-            }
-            else
-            {
-                exfiltrationPoints = Traverse.Create(exfiltrationController).Property("ScavExfiltrationPoints").GetValue<ScavExfiltrationPoint[]>().Where(x => x.EligibleIds.Contains(player.ProfileId)).ToArray<ExfiltrationPoint>();
-            }
+                var point = exfiltrationPoints[i];
 
-            List<ExfiltrationData> exfiltrationList = new List<ExfiltrationData>();
-
-            for (int i = 0; i < exfiltrationPoints.Length; i++)
-            {
-                ExfiltrationPoint point = exfiltrationPoints[i];
-
-                CompassStaticInfo staticInfo = new CompassStaticInfo()
+                var staticInfo = new CompassStaticInfo
                 {
                     Id = string.Concat("EXFIL", i),
                     Where = point.transform.position,
@@ -507,17 +443,17 @@ namespace GamePanelHUDCompass
 
                 showStatic(staticInfo);
 
-                Switch[] switchs = Array.Empty<Switch>();
+                var switchs = Array.Empty<Switch>();
 
                 if (point.Status == EExfiltrationStatus.UncompleteRequirements)
                 {
                     switchs = Traverse.Create(point).Field("list_1").GetValue<List<Switch>>().ToArray();
 
-                    for (int j = 0; j < switchs.Length; j++)
+                    for (var j = 0; j < switchs.Length; j++)
                     {
-                        Switch @switch = switchs[j];
+                        var @switch = switchs[j];
 
-                        CompassStaticInfo staticInfo2 = new CompassStaticInfo()
+                        var staticInfo2 = new CompassStaticInfo
                         {
                             Id = @switch.Id,
                             Where = @switch.transform.position,
@@ -538,9 +474,69 @@ namespace GamePanelHUDCompass
             return exfiltrationList.ToArray();
         }
 
-        float GetAngle(Vector3 eulerAngles, float northDirection)
+        private void ShowAirdrop(MonoBehaviour airdropBox, object boxSync, float clipLength)
         {
-            float num = eulerAngles.y - northDirection;
+            var looTable = airdropBox.GetComponentInChildren<LootableContainer>();
+
+            var controller = _GameWorldHelper.LootableContainerHelper.RefItemOwner.GetValue(looTable);
+
+            var item = _GameWorldHelper.LootableContainerHelper.RefRootItem.GetValue(controller);
+
+            _airdrops.Add(_GameWorldHelper.SearchableItemClassHelper.RefAllSearchersIds.GetValue(item));
+
+            var count = _airdrops.Count;
+
+            string nameKey;
+            string descriptionKey;
+            switch (_AirdropHelper.AirdropSynchronizableObjectHelper.RefAirdropType.GetValue(boxSync))
+            {
+                case 0:
+                    nameKey = "6223349b3136504a544d1608 Name";
+                    descriptionKey = "6223349b3136504a544d1608 Description";
+                    break;
+                case 1:
+                    nameKey = "622334fa3136504a544d160c Name";
+                    descriptionKey = "622334fa3136504a544d160c Description";
+                    break;
+                case 2:
+                    nameKey = "622334c873090231d904a9fc Name";
+                    descriptionKey = "622334c873090231d904a9fc Description";
+                    break;
+                case 3:
+                    nameKey = "6223351bb5d97a7b2c635ca7 Name";
+                    descriptionKey = "6223351bb5d97a7b2c635ca7 Description";
+                    break;
+                default:
+                    nameKey = "Unknown";
+                    descriptionKey = "Unknown";
+                    break;
+            }
+
+            var staticInfo = new CompassStaticInfo
+            {
+                Id = string.Concat("Airdrop", count),
+                Where = airdropBox.transform.position,
+                NameKey = nameKey,
+                DescriptionKey = descriptionKey,
+                ExIndex = count - 1,
+                InfoType = CompassStaticInfo.Type.Airdrop
+            };
+
+            ShowStatic(staticInfo);
+        }
+
+        private static void RemoveQuest(object questController, object quest, EQuestStatus status, Condition condition,
+            bool notify)
+        {
+            if (status != EQuestStatus.Started)
+            {
+                DestroyStatic(condition.id);
+            }
+        }
+
+        private static float GetAngle(Vector3 eulerAngles, float northDirection)
+        {
+            var num = eulerAngles.y - northDirection;
 
             if (num >= 0)
                 return num;
@@ -573,7 +569,7 @@ namespace GamePanelHUDCompass
 
             public float GetToAngle(Vector3 lhs)
             {
-                float num = Vector3.SignedAngle(lhs, NorthVector, Vector3.up);
+                var num = Vector3.SignedAngle(lhs, NorthVector, Vector3.up);
 
                 if (num >= 0)
                     return num;
@@ -606,9 +602,9 @@ namespace GamePanelHUDCompass
 
             public void ExfiltrationGetStatus(int index, out bool notPresent, out bool requirements)
             {
-                ExfiltrationData point = ExfiltrationPoints[index];
+                var point = ExfiltrationPoints[index];
 
-                EExfiltrationStatus status = point.Exfiltration.Status;
+                var status = point.Exfiltration.Status;
 
                 notPresent = status == EExfiltrationStatus.NotPresent;
                 requirements = status == EExfiltrationStatus.UncompleteRequirements;
@@ -634,9 +630,9 @@ namespace GamePanelHUDCompass
 
         public class ExfiltrationData
         {
-            public ExfiltrationPoint Exfiltration;
+            public readonly ExfiltrationPoint Exfiltration;
 
-            public Switch[] Switchs;
+            public readonly Switch[] Switchs;
 
             public ExfiltrationData(ExfiltrationPoint point, Switch[] switchs)
             {
@@ -695,87 +691,216 @@ namespace GamePanelHUDCompass
             }
         }
 
-        public class ReflectionData
-        {
-            public RefHelp.FieldRef<InventoryClass, object> RefEquipment;
-            public RefHelp.FieldRef<InventoryClass, object> RefQuestRaidItems;
-            public RefHelp.FieldRef<object, Slot[]> RefSlots;
-            public RefHelp.FieldRef<object, object[]> RefGrids;
-
-            public RefHelp.PropertyRef<object, IEnumerable<Item>> RefItems;
-        }
-
         public class SettingsData
         {
-            public ConfigEntry<bool> KeyCompassHUDSw;
-            public ConfigEntry<bool> KeyAngleHUDSw;
-            public ConfigEntry<bool> KeyCompassFireHUDSw;
-            public ConfigEntry<bool> KeyCompassFireDirectionHUDSw;
-            public ConfigEntry<bool> KeyCompassFireSilenced;
-            public ConfigEntry<bool> KeyCompassFireDeadDestroy;
-            public ConfigEntry<bool> KeyCompassStaticHUDSw;
-            public ConfigEntry<bool> KeyCompassStaticAirdrop;
-            public ConfigEntry<bool> KeyCompassStaticExfiltration;
-            public ConfigEntry<bool> KeyCompassStaticQuest;
-            public ConfigEntry<bool> KeyCompassStaticInfoHUDSw;
-            public ConfigEntry<bool> KeyCompassStaticDistanceHUDSw;
-            public ConfigEntry<bool> KeyCompassStaticHideRequirements;
-            public ConfigEntry<bool> KeyCompassStaticHideOptional;
-            public ConfigEntry<bool> KeyCompassStaticHideSearchedAirdrop;
-            public ConfigEntry<bool> KeyAutoSizeDelta;
+            public readonly ConfigEntry<bool> KeyCompassHUDSw;
+            public readonly ConfigEntry<bool> KeyAngleHUDSw;
+            public readonly ConfigEntry<bool> KeyCompassFireHUDSw;
+            public readonly ConfigEntry<bool> KeyCompassFireDirectionHUDSw;
+            public readonly ConfigEntry<bool> KeyCompassFireSilenced;
+            public readonly ConfigEntry<bool> KeyCompassFireDeadDestroy;
+            public readonly ConfigEntry<bool> KeyCompassStaticHUDSw;
+            public readonly ConfigEntry<bool> KeyCompassStaticAirdrop;
+            public readonly ConfigEntry<bool> KeyCompassStaticExfiltration;
+            public readonly ConfigEntry<bool> KeyCompassStaticQuest;
+            public readonly ConfigEntry<bool> KeyCompassStaticInfoHUDSw;
+            public readonly ConfigEntry<bool> KeyCompassStaticDistanceHUDSw;
+            public readonly ConfigEntry<bool> KeyCompassStaticHideRequirements;
+            public readonly ConfigEntry<bool> KeyCompassStaticHideOptional;
+            public readonly ConfigEntry<bool> KeyCompassStaticHideSearchedAirdrop;
+            public readonly ConfigEntry<bool> KeyAutoSizeDelta;
 
-            public ConfigEntry<bool> KeyConditionFindItem;
-            public ConfigEntry<bool> KeyConditionLeaveItemAtLocation;
-            public ConfigEntry<bool> KeyConditionPlaceBeacon;
-            public ConfigEntry<bool> KeyConditionVisitPlace;
-            public ConfigEntry<bool> KeyConditionInZone;
+            public readonly ConfigEntry<bool> KeyConditionFindItem;
+            public readonly ConfigEntry<bool> KeyConditionLeaveItemAtLocation;
+            public readonly ConfigEntry<bool> KeyConditionPlaceBeacon;
+            public readonly ConfigEntry<bool> KeyConditionVisitPlace;
+            public readonly ConfigEntry<bool> KeyConditionInZone;
 
-            public ConfigEntry<Vector2> KeyAnchoredPosition;
-            public ConfigEntry<Vector2> KeySizeDelta;
-            public ConfigEntry<Vector2> KeyLocalScale;
-            public ConfigEntry<Vector2> KeyCompassFireSizeDelta;
-            public ConfigEntry<Vector2> KeyCompassFireOutlineSizeDelta;
-            public ConfigEntry<Vector2> KeyCompassFireDirectionAnchoredPosition;
-            public ConfigEntry<Vector2> KeyCompassFireDirectionScale;
-            public ConfigEntry<Vector2> KeyCompassStaticInfoAnchoredPosition;
-            public ConfigEntry<Vector2> KeyCompassStaticInfoScale;
+            public readonly ConfigEntry<Vector2> KeyAnchoredPosition;
+            public readonly ConfigEntry<Vector2> KeySizeDelta;
+            public readonly ConfigEntry<Vector2> KeyLocalScale;
+            public readonly ConfigEntry<Vector2> KeyCompassFireSizeDelta;
+            public readonly ConfigEntry<Vector2> KeyCompassFireOutlineSizeDelta;
+            public readonly ConfigEntry<Vector2> KeyCompassFireDirectionAnchoredPosition;
+            public readonly ConfigEntry<Vector2> KeyCompassFireDirectionScale;
+            public readonly ConfigEntry<Vector2> KeyCompassStaticInfoAnchoredPosition;
+            public readonly ConfigEntry<Vector2> KeyCompassStaticInfoScale;
 
-            public ConfigEntry<float> KeyCompassFireHeight;
-            public ConfigEntry<float> KeyCompassFireDistance;
-            public ConfigEntry<float> KeyCompassFireActiveSpeed;
-            public ConfigEntry<float> KeyCompassFireWaitSpeed;
-            public ConfigEntry<float> KeyCompassFireToSmallSpeed;
-            public ConfigEntry<float> KeyCompassFireSmallWaitSpeed;
-            public ConfigEntry<float> KeyCompassStaticHeight;
+            public readonly ConfigEntry<float> KeyCompassFireHeight;
+            public readonly ConfigEntry<float> KeyCompassFireDistance;
+            public readonly ConfigEntry<float> KeyCompassFireActiveSpeed;
+            public readonly ConfigEntry<float> KeyCompassFireWaitSpeed;
+            public readonly ConfigEntry<float> KeyCompassFireToSmallSpeed;
+            public readonly ConfigEntry<float> KeyCompassFireSmallWaitSpeed;
+            public readonly ConfigEntry<float> KeyCompassStaticHeight;
 
-            public ConfigEntry<int> KeyAutoSizeDeltaRate;
-            public ConfigEntry<int> KeyCompassStaticCenterPointRange;
+            public readonly ConfigEntry<int> KeyAutoSizeDeltaRate;
+            public readonly ConfigEntry<int> KeyCompassStaticCenterPointRange;
 
-            public ConfigEntry<Color> KeyArrowColor;
-            public ConfigEntry<Color> KeyAzimuthsColor;
-            public ConfigEntry<Color> KeyAzimuthsAngleColor;
-            public ConfigEntry<Color> KeyDirectionColor;
-            public ConfigEntry<Color> KeyAngleColor;
-            public ConfigEntry<Color> KeyCompassFireColor;
-            public ConfigEntry<Color> KeyCompassFireOutlineColor;
-            public ConfigEntry<Color> KeyCompassFireBossColor;
-            public ConfigEntry<Color> KeyCompassFireBossOutlineColor;
-            public ConfigEntry<Color> KeyCompassFireFollowerColor;
-            public ConfigEntry<Color> KeyCompassFireFollowerOutlineColor;
-            public ConfigEntry<Color> KeyCompassStaticNameColor;
-            public ConfigEntry<Color> KeyCompassStaticDescriptionColor;
-            public ConfigEntry<Color> KeyCompassStaticNecessaryColor;
-            public ConfigEntry<Color> KeyCompassStaticRequirementsColor;
-            public ConfigEntry<Color> KeyCompassStaticDistanceColor;
-            public ConfigEntry<Color> KeyCompassStaticMetersColor;
+            public readonly ConfigEntry<Color> KeyArrowColor;
+            public readonly ConfigEntry<Color> KeyAzimuthsColor;
+            public readonly ConfigEntry<Color> KeyAzimuthsAngleColor;
+            public readonly ConfigEntry<Color> KeyDirectionColor;
+            public readonly ConfigEntry<Color> KeyAngleColor;
+            public readonly ConfigEntry<Color> KeyCompassFireColor;
+            public readonly ConfigEntry<Color> KeyCompassFireOutlineColor;
+            public readonly ConfigEntry<Color> KeyCompassFireBossColor;
+            public readonly ConfigEntry<Color> KeyCompassFireBossOutlineColor;
+            public readonly ConfigEntry<Color> KeyCompassFireFollowerColor;
+            public readonly ConfigEntry<Color> KeyCompassFireFollowerOutlineColor;
+            public readonly ConfigEntry<Color> KeyCompassStaticNameColor;
+            public readonly ConfigEntry<Color> KeyCompassStaticDescriptionColor;
+            public readonly ConfigEntry<Color> KeyCompassStaticNecessaryColor;
+            public readonly ConfigEntry<Color> KeyCompassStaticRequirementsColor;
+            public readonly ConfigEntry<Color> KeyCompassStaticDistanceColor;
+            public readonly ConfigEntry<Color> KeyCompassStaticMetersColor;
 
-            public ConfigEntry<FontStyles> KeyAzimuthsAngleStyles;
-            public ConfigEntry<FontStyles> KeyDirectionStyles;
-            public ConfigEntry<FontStyles> KeyAngleStyles;
-            public ConfigEntry<FontStyles> KeyCompassFireDirectionStyles;
-            public ConfigEntry<FontStyles> KeyCompassStaticNameStyles;
-            public ConfigEntry<FontStyles> KeyCompassStaticDescriptionStyles;
-            public ConfigEntry<FontStyles> KeyCompassStaticDistanceStyles;
+            public readonly ConfigEntry<FontStyles> KeyAzimuthsAngleStyles;
+            public readonly ConfigEntry<FontStyles> KeyDirectionStyles;
+            public readonly ConfigEntry<FontStyles> KeyAngleStyles;
+            public readonly ConfigEntry<FontStyles> KeyCompassFireDirectionStyles;
+            public readonly ConfigEntry<FontStyles> KeyCompassStaticNameStyles;
+            public readonly ConfigEntry<FontStyles> KeyCompassStaticDescriptionStyles;
+            public readonly ConfigEntry<FontStyles> KeyCompassStaticDistanceStyles;
+
+            public SettingsData(ConfigFile configFile)
+            {
+                const string mainSettings = "Main Settings";
+                const string questSettings = "Quest Display Settings";
+                const string positionScaleSettings = "Position Scale Settings";
+                const string colorSettings = "Color Settings";
+                const string fontStylesSettings = "Font Styles Settings";
+                const string speedSettings = "Animation Speed Settings";
+                const string rateSettings = "Rate Settings";
+                const string otherSettings = "Other Settings";
+
+                KeyCompassHUDSw = configFile.Bind<bool>(mainSettings, "Compass HUD display", true);
+                KeyAngleHUDSw = configFile.Bind<bool>(mainSettings, "Compass Angle HUD display", true);
+                KeyCompassFireHUDSw = configFile.Bind<bool>(mainSettings, "Compass Fire HUD display", true);
+                KeyCompassFireDirectionHUDSw =
+                    configFile.Bind<bool>(mainSettings, "Compass Fire Direction HUD display", true);
+                KeyCompassFireSilenced =
+                    configFile.Bind<bool>(mainSettings, "Compass Fire Hide Silenced", true);
+                KeyCompassFireDeadDestroy =
+                    configFile.Bind<bool>(mainSettings, "Compass Fire Dead Destroy", true);
+                KeyCompassStaticHUDSw =
+                    configFile.Bind<bool>(mainSettings, "Compass Static HUD display", true);
+                KeyCompassStaticAirdrop =
+                    configFile.Bind<bool>(mainSettings, "Compass Static Airdrop display", true);
+                KeyCompassStaticExfiltration =
+                    configFile.Bind<bool>(mainSettings, "Compass Static Exfiltration display", true);
+                KeyCompassStaticQuest =
+                    configFile.Bind<bool>(mainSettings, "Compass Static Quest display", true);
+                KeyCompassStaticInfoHUDSw =
+                    configFile.Bind<bool>(mainSettings, "Compass Static Info HUD display", true);
+                KeyCompassStaticDistanceHUDSw =
+                    configFile.Bind<bool>(mainSettings, "Compass Static Distance HUD display", true);
+                KeyCompassStaticHideRequirements =
+                    configFile.Bind<bool>(mainSettings, "Compass Static Hide Requirements", false);
+                KeyCompassStaticHideOptional =
+                    configFile.Bind<bool>(mainSettings, "Compass Static Hide Optional", false);
+                KeyCompassStaticHideSearchedAirdrop = configFile.Bind<bool>(mainSettings,
+                    "Compass Static Hide Already Searched Airdrop", true);
+                KeyAutoSizeDelta = configFile.Bind<bool>(mainSettings, "Auto Size Delta", true);
+
+                KeyConditionFindItem = configFile.Bind<bool>(questSettings, "FindItem", true);
+                KeyConditionLeaveItemAtLocation = configFile.Bind<bool>(questSettings, "LeaveItemAtLocation", true);
+                KeyConditionPlaceBeacon = configFile.Bind<bool>(questSettings, "PlaceBeacon", true);
+                KeyConditionVisitPlace = configFile.Bind<bool>(questSettings, "VisitPlace", true);
+                KeyConditionInZone = configFile.Bind<bool>(questSettings, "InZone", true);
+
+                KeyAnchoredPosition =
+                    configFile.Bind<Vector2>(positionScaleSettings, "Anchored Position", Vector2.zero);
+                KeySizeDelta =
+                    configFile.Bind<Vector2>(positionScaleSettings, "Size Delta", new Vector2(600, 90));
+                KeyLocalScale =
+                    configFile.Bind<Vector2>(positionScaleSettings, "Local Scale", new Vector2(1, 1));
+                KeyCompassFireSizeDelta = configFile.Bind<Vector2>(positionScaleSettings,
+                    "Compass Fire Size Delta", new Vector2(25, 25));
+                KeyCompassFireOutlineSizeDelta = configFile.Bind<Vector2>(positionScaleSettings,
+                    "Compass Fire Outline Size Delta", new Vector2(26, 26));
+                KeyCompassFireDirectionAnchoredPosition = configFile.Bind<Vector2>(positionScaleSettings,
+                    "Compass Fire Direction Anchored Position", new Vector2(15, -63));
+                KeyCompassFireDirectionScale = configFile.Bind<Vector2>(positionScaleSettings,
+                    "Compass Fire Direction Local Scale", new Vector2(1, 1));
+                KeyCompassStaticInfoAnchoredPosition = configFile.Bind<Vector2>(positionScaleSettings,
+                    "Compass Static Info Anchored Position", new Vector2(0, -15));
+                KeyCompassStaticInfoScale = configFile.Bind<Vector2>(positionScaleSettings,
+                    "Compass Static Info Local Scale", new Vector2(1, 1));
+
+                KeyCompassFireActiveSpeed = configFile.Bind<float>(speedSettings, "Compass Fire Active Speed",
+                    1, new ConfigDescription(string.Empty, new AcceptableValueRange<float>(0, 10)));
+                KeyCompassFireWaitSpeed = configFile.Bind<float>(speedSettings, "Compass Fire Wait Speed", 1,
+                    new ConfigDescription(string.Empty, new AcceptableValueRange<float>(0, 10)));
+                KeyCompassFireToSmallSpeed = configFile.Bind<float>(speedSettings,
+                    "Compass Fire To Small Speed", 1,
+                    new ConfigDescription(string.Empty, new AcceptableValueRange<float>(0, 10)));
+                KeyCompassFireSmallWaitSpeed = configFile.Bind<float>(speedSettings,
+                    "Compass Fire Small Wait Speed", 1,
+                    new ConfigDescription(string.Empty, new AcceptableValueRange<float>(0, 10)));
+
+                KeyCompassFireHeight = configFile.Bind<float>(positionScaleSettings, "Compass Fire Height", 8);
+                KeyCompassStaticHeight =
+                    configFile.Bind<float>(positionScaleSettings, "Compass Static Height", 5);
+
+                KeyCompassFireDistance = configFile.Bind<float>(otherSettings, "Compass Fire Max Distance",
+                    50,
+                    new ConfigDescription("Fire distance <= How many meters display",
+                        new AcceptableValueRange<float>(0, 1000)));
+                KeyCompassStaticCenterPointRange =
+                    configFile.Bind<int>(otherSettings, "Compass Static Center Point Range", 20);
+
+                KeyAutoSizeDeltaRate = configFile.Bind<int>(rateSettings, "Auto Size Delta Rate", 30,
+                    new ConfigDescription("Screen percentage", new AcceptableValueRange<int>(0, 100)));
+
+                KeyArrowColor = configFile.Bind<Color>(colorSettings, "Arrow", new Color(1f, 1f, 1f));
+                KeyAzimuthsColor = configFile.Bind<Color>(colorSettings, "Azimuths",
+                    new Color(0.8901961f, 0.8901961f, 0.8392157f));
+                KeyAzimuthsAngleColor = configFile.Bind<Color>(colorSettings, "Azimuths Angle",
+                    new Color(0.8901961f, 0.8901961f, 0.8392157f));
+                KeyDirectionColor = configFile.Bind<Color>(colorSettings, "Direction",
+                    new Color(0.8901961f, 0.8901961f, 0.8392157f));
+                KeyAngleColor =
+                    configFile.Bind<Color>(colorSettings, "Angle", new Color(0.8901961f, 0.8901961f, 0.8392157f));
+
+                KeyCompassFireColor =
+                    configFile.Bind<Color>(colorSettings, "Compass Fire", new Color(1f, 0f, 0f));
+                KeyCompassFireOutlineColor =
+                    configFile.Bind<Color>(colorSettings, "Compass Fire Outline", new Color(0.5f, 0f, 0f));
+                KeyCompassFireBossColor =
+                    configFile.Bind<Color>(colorSettings, "Compass Boss Fire", new Color(1f, 0.5f, 0f));
+                KeyCompassFireBossOutlineColor = configFile.Bind<Color>(colorSettings,
+                    "Compass Boss Fire Outline", new Color(1f, 0.3f, 0f));
+                KeyCompassFireFollowerColor =
+                    configFile.Bind<Color>(colorSettings, "Compass Follower Fire", new Color(0f, 1f, 1f));
+                KeyCompassFireFollowerOutlineColor = configFile.Bind<Color>(colorSettings,
+                    "Compass Follower Outline", new Color(0f, 0.7f, 1f));
+                KeyCompassStaticNameColor = configFile.Bind<Color>(colorSettings, "Compass Static Name",
+                    new Color(0.8901961f, 0.8901961f, 0.8392157f));
+                KeyCompassStaticDescriptionColor = configFile.Bind<Color>(colorSettings,
+                    "Compass Static Description", new Color(0.8901961f, 0.8901961f, 0.8392157f));
+                KeyCompassStaticNecessaryColor = configFile.Bind<Color>(colorSettings,
+                    "Compass Static Optional", new Color(0.8901961f, 0.8901961f, 0.8392157f));
+                KeyCompassStaticRequirementsColor = configFile.Bind<Color>(colorSettings,
+                    "Compass Static Requirements", new Color(0.8901961f, 0.8901961f, 0.8392157f));
+                KeyCompassStaticDistanceColor = configFile.Bind<Color>(colorSettings, "Compass Static Distance",
+                    new Color(0.8901961f, 0.8901961f, 0.8392157f));
+                KeyCompassStaticMetersColor = configFile.Bind<Color>(colorSettings, "Compass Static Meters",
+                    new Color(0.8901961f, 0.8901961f, 0.8392157f));
+
+                KeyAzimuthsAngleStyles =
+                    configFile.Bind<FontStyles>(fontStylesSettings, "Azimuths Angle", FontStyles.Normal);
+                KeyDirectionStyles = configFile.Bind<FontStyles>(fontStylesSettings, "Direction", FontStyles.Bold);
+                KeyAngleStyles = configFile.Bind<FontStyles>(fontStylesSettings, "Angle", FontStyles.Bold);
+                KeyCompassFireDirectionStyles = configFile.Bind<FontStyles>(fontStylesSettings,
+                    "Compass Fire Direction", FontStyles.Normal);
+                KeyCompassStaticNameStyles =
+                    configFile.Bind<FontStyles>(fontStylesSettings, "Compass Static Name", FontStyles.Bold);
+                KeyCompassStaticDescriptionStyles = configFile.Bind<FontStyles>(fontStylesSettings,
+                    "Compass Static Description", FontStyles.Normal);
+                KeyCompassStaticDistanceStyles = configFile.Bind<FontStyles>(fontStylesSettings,
+                    "Compass Static Distance", FontStyles.Bold);
+            }
         }
     }
 }

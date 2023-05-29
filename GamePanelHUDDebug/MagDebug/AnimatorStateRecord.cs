@@ -1,13 +1,13 @@
 ﻿#if !UNITY_EDITOR
+using System.Collections.Generic;
+using System.Linq;
 using BepInEx;
 using BepInEx.Configuration;
-using HarmonyLib;
-using UnityEngine;
-using System.Linq;
-using System.Collections.Generic;
 using EFT;
 using EFT.InventoryLogic;
 using GamePanelHUDCore;
+using HarmonyLib;
+using UnityEngine;
 
 namespace GamePanelHUDDebug.MagDebug
 {
@@ -17,17 +17,14 @@ namespace GamePanelHUDDebug.MagDebug
     {
         private GamePanelHUDCorePlugin.HUDCoreClass HUDCore
         {
-            get
-            {
-                return GamePanelHUDCorePlugin.HUDCore;
-            }
+            get { return GamePanelHUDCorePlugin.HUDCore; }
         }
 
-        public static Player.FirearmController firearmcontroller;
+        public static Player.FirearmController Firearmcontroller;
 
-        public static Weapon weapon;
+        public static Weapon Weapon;
 
-        public static Animator animator;
+        public static Animator Animator;
 
         public static int CurrentState;
 
@@ -43,29 +40,29 @@ namespace GamePanelHUDDebug.MagDebug
 
         public static ConfigEntry<bool> KeyLauncher;
 
-        public static ConfigEntry<KeyboardShortcut> KBSRecord;
+        public static ConfigEntry<KeyboardShortcut> KbsRecord;
 
-        public static ConfigEntry<KeyboardShortcut> KBSClear;
+        public static ConfigEntry<KeyboardShortcut> KbsClear;
 
-        void Start()
+        private void Start()
         {
-            KeyRecord = Config.Bind<bool>("KeyRecord", "", false);
+            KeyRecord = Config.Bind<bool>("KeyRecord", string.Empty, false);
 
-            KeyLauncher = Config.Bind<bool>("KeyLauncher", "", false);
+            KeyLauncher = Config.Bind<bool>("KeyLauncher", string.Empty, false);
 
-            KBSRecord = Config.Bind<KeyboardShortcut>("Record KeyboardShortcut", "", KeyboardShortcut.Empty);
+            KbsRecord = Config.Bind<KeyboardShortcut>("Record KeyboardShortcut", string.Empty, KeyboardShortcut.Empty);
 
-            KBSClear = Config.Bind<KeyboardShortcut>("All Claer", "", KeyboardShortcut.Empty);
+            KbsClear = Config.Bind<KeyboardShortcut>("All Claer", string.Empty, KeyboardShortcut.Empty);
         }
 
-        void Update()
+        private void Update()
         {
-            if (KBSRecord.Value.IsDown())
+            if (KbsRecord.Value.IsDown())
             {
                 KeyRecord.Value = !KeyRecord.Value;
             }
 
-            if (KBSClear.Value.IsDown())
+            if (KbsClear.Value.IsDown())
             {
                 States.Clear();
                 Cilps.Clear();
@@ -73,28 +70,32 @@ namespace GamePanelHUDDebug.MagDebug
 
             if (HUDCore.YourPlayer != null)
             {
-                firearmcontroller = HUDCore.YourPlayer.HandsController as Player.FirearmController;
+                Firearmcontroller = HUDCore.YourPlayer.HandsController as Player.FirearmController;
 
-                weapon = firearmcontroller != null ? firearmcontroller.Item : null;
+                Weapon = Firearmcontroller != null ? Firearmcontroller.Item : null;
 
                 StatesandCilps = States.Zip(Cilps, (k, v) => new { k, v }).ToDictionary(x => x.k, x => x.v);
 
-                if (weapon != null)
+                if (Weapon != null)
                 {
                     if (!KeyLauncher.Value)
                     {
-                        animator = Traverse.Create(Traverse.Create(HUDCore.YourPlayer).Property("ArmsAnimatorCommon").GetValue<object>()).Property("Animator").GetValue<Animator>();
+                        Animator = Traverse
+                            .Create(Traverse.Create(HUDCore.YourPlayer).Property("ArmsAnimatorCommon")
+                                .GetValue<object>()).Property("Animator").GetValue<Animator>();
                     }
                     else
                     {
-                        animator = Traverse.Create(Traverse.Create(HUDCore.YourPlayer).Property("UnderbarrelWeaponArmsAnimator").GetValue<object>()).Property("Animator").GetValue<Animator>();
+                        Animator = Traverse
+                            .Create(Traverse.Create(HUDCore.YourPlayer).Property("UnderbarrelWeaponArmsAnimator")
+                                .GetValue<object>()).Property("Animator").GetValue<Animator>();
                     }
 
-                    if (animator != null)
+                    if (Animator != null)
                     {
-                        CurrentState = animator.GetCurrentAnimatorStateInfo(1).fullPathHash;
+                        CurrentState = Animator.GetCurrentAnimatorStateInfo(1).fullPathHash;
 
-                        CurrentCilp = animator.GetCurrentAnimatorClipInfo(1)[0].clip.name;
+                        CurrentCilp = Animator.GetCurrentAnimatorClipInfo(1)[0].clip.name;
 
                         if (KeyRecord.Value)
                         {

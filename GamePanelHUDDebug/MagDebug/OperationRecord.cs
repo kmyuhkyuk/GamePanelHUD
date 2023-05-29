@@ -1,10 +1,10 @@
 ﻿#if !UNITY_EDITOR
+using System.Collections.Generic;
 using BepInEx;
 using BepInEx.Configuration;
-using HarmonyLib;
-using System.Collections.Generic;
 using EFT;
 using GamePanelHUDCore;
+using HarmonyLib;
 
 namespace GamePanelHUDDebug.MagDebug
 {
@@ -14,13 +14,10 @@ namespace GamePanelHUDDebug.MagDebug
     {
         private GamePanelHUDCorePlugin.HUDCoreClass HUDCore
         {
-            get
-            {
-                return GamePanelHUDCorePlugin.HUDCore;
-            }
+            get { return GamePanelHUDCorePlugin.HUDCore; }
         }
 
-        public Player.FirearmController FirearmController;
+        public Player.FirearmController firearmController;
 
         public static object CurrentOperation;
 
@@ -28,38 +25,39 @@ namespace GamePanelHUDDebug.MagDebug
 
         public static ConfigEntry<bool> KeyRecord;
 
-        public static ConfigEntry<KeyboardShortcut> KBSRecord;
+        public static ConfigEntry<KeyboardShortcut> KbsRecord;
 
-        public static ConfigEntry<KeyboardShortcut> KBSClear;
+        public static ConfigEntry<KeyboardShortcut> KbsClear;
 
-        void Start()
+        private void Start()
         {
-            KeyRecord = Config.Bind<bool>("KeyRecord", "", false);
+            KeyRecord = Config.Bind<bool>("KeyRecord", string.Empty, false);
 
-            KBSRecord = Config.Bind<KeyboardShortcut>("Record KeyboardShortcut", "", KeyboardShortcut.Empty);
+            KbsRecord = Config.Bind<KeyboardShortcut>("Record KeyboardShortcut", string.Empty, KeyboardShortcut.Empty);
 
-            KBSClear = Config.Bind<KeyboardShortcut>("All Claer", "", KeyboardShortcut.Empty);
+            KbsClear = Config.Bind<KeyboardShortcut>("All Claer", string.Empty, KeyboardShortcut.Empty);
         }
 
-        void Update()
+        private void Update()
         {
-            if (KBSRecord.Value.IsDown())
+            if (KbsRecord.Value.IsDown())
             {
                 KeyRecord.Value = !KeyRecord.Value;
             }
 
-            if (KBSClear.Value.IsDown())
+            if (KbsClear.Value.IsDown())
             {
                 Operations.Clear();
             }
 
             if (HUDCore.YourPlayer != null)
             {
-                FirearmController = HUDCore.YourPlayer.HandsController as Player.FirearmController;
+                firearmController = HUDCore.YourPlayer.HandsController as Player.FirearmController;
 
-                if (FirearmController != null)
+                if (firearmController != null)
                 {
-                    CurrentOperation = Traverse.Create(FirearmController).Property("CurrentOperation").GetValue<object>();
+                    CurrentOperation = Traverse.Create(firearmController).Property("CurrentOperation")
+                        .GetValue<object>();
 
                     if (KeyRecord.Value)
                     {

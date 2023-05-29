@@ -50,18 +50,8 @@
     <Reference Include="BepInEx">
       <HintPath>R:\Battlestate Games\Client.0.12.12.15.17349\BepInEx\core\BepInEx.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>R:\Battlestate Games\Client.0.12.12.15.17349\EscapeFromTarkov_Data\Managed\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
       <HintPath>R:\Battlestate Games\Client.0.12.12.15.17349\EscapeFromTarkov_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
@@ -83,14 +73,6 @@
     <ProjectReference Include="..\GamePanelHUDCore\GamePanelHUDCore.csproj">
       <Project>{55f2fbf1-8cec-4b1e-a920-fa6dd908b751}</Project>
       <Name>GamePanelHUDCore</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GamePanelHUDGrenade\GamePanelHUDGrenade.csproj">
-      <Project>{694937a0-2dcd-48d5-a4f2-d6893d3fdc94}</Project>
-      <Name>GamePanelHUDGrenade</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GamePanelHUDMag\GamePanelHUDMag.csproj">
-      <Project>{808deb9b-1331-4f71-b3a1-dd7a8d699466}</Project>
-      <Name>GamePanelHUDMag</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

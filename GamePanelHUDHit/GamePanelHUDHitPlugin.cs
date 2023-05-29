@@ -1,254 +1,279 @@
 ﻿#if !UNITY_EDITOR
+using System;
+using System.Collections.Generic;
 using BepInEx;
 using BepInEx.Configuration;
-using System;
-using UnityEngine;
-using TMPro;
 using EFT;
 using EFT.InventoryLogic;
 using GamePanelHUDCore;
+using GamePanelHUDCore.Attributes;
 using GamePanelHUDCore.Utils;
-using GamePanelHUDCore.Utils.Session;
-using GamePanelHUDHit.Patches;
+using TMPro;
+using UnityEngine;
+using static EFTApi.EFTHelpers;
 
 namespace GamePanelHUDHit
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDHit", "kmyuhkyuk-GamePanelHUDHit", "2.6.4")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDHit", "kmyuhkyuk-GamePanelHUDHit", "2.7.0")]
     [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore")]
+    [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", "localized/hit")]
     public class GamePanelHUDHitPlugin : BaseUnityPlugin, IUpdate
     {
-        private GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
+        private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
 
-        internal static readonly GamePanelHUDCorePlugin.HUDClass<RectTransform, SettingsData> HitHUD = new GamePanelHUDCorePlugin.HUDClass<RectTransform, SettingsData>();
+        internal static readonly GamePanelHUDCorePlugin.HUDClass<RectTransform, SettingsData> HitHUD =
+            new GamePanelHUDCorePlugin.HUDClass<RectTransform, SettingsData>();
 
-        internal static readonly KillHUDClass<RectTransform, SettingsData> KillHUD = new KillHUDClass<RectTransform, SettingsData>();
+        internal static readonly KillHUDClass<RectTransform, SettingsData> KillHUD =
+            new KillHUDClass<RectTransform, SettingsData>();
 
-        private bool HitHUDSw;
+        private bool _hitHUDSw;
 
-        private bool KillHUDSw;
+        private bool _killHUDSw;
 
-        private bool ExpHUDSw;
+        private bool _expHUDSw;
 
-        private readonly SettingsData SetData = new SettingsData();
+        private readonly SettingsData _setData;
 
-        private RectTransform ScreenRect;
+        private RectTransform _screenRect;
 
-        private static readonly string[] TestName = new[] { "Player", "Me", "My Life", "Water Chip", "Camper", "Profile", "The City", "Escape from Tarkov", "C Disk", "Windows", "Display", "Controller", "Ram", "Cpu", "Wifi", "Phone", "Computer", "Bed", "Air Conditioner", "Discord", "Graphics Card", "Power", "Home", "World", "Sol3", "Moon", "Joker", "Galaxy", "My Heart", "WO_TM_CALL_110", "Kenny", "Abby", "Big Smoke", "Adam Smasher", "Robert Edwin House", "Joseph Seed", "Saburo Arasaka", "Handsome Jack", "Dracula", "Darth Sidious", "Lance Vance", "Dimitri Rascalov", "Mikhail Faustin", "Wei Cheng", "Steve Haines", "Darth Vader", "Devin Weston", "Steven Armstrong", "Aron Keener", "Agent Smith", "Yuri", "Volodymyr Makarov", "Victor Zakhaev", "Tyran", "General Shepherd", "Measurehead", "Cacodemon", "Zombie", "Ghoul", "Cyberpsychosis", "Trauma Team", "Max Tac", "Whirlpool Gang", "Golden Path", "Game Panel HUD", "Game Program", "Aki Server", "Bsg Server", "TypeScript", "NoBody", "AnyOne", "AllText", "TheTestText", "Who?", "Unity", "VSCode", "VisualStudio", "OtherName" };
+        private static readonly string[] TestName =
+        {
+            "Player", "Me", "My Life", "Water Chip", "Camper", "Profile", "The City", "Escape from Tarkov", "C Disk",
+            "Windows", "Display", "Controller", "Ram", "Cpu", "Wifi", "Phone", "Computer", "Bed", "Air Conditioner",
+            "Discord", "Graphics Card", "Power", "Home", "World", "Sol3", "Moon", "Joker", "Galaxy", "My Heart",
+            "WO_TM_CALL_110", "Kenny", "Abby", "Big Smoke", "Adam Smasher", "Robert Edwin House", "Joseph Seed",
+            "Saburo Arasaka", "Handsome Jack", "Dracula", "Darth Sidious", "Lance Vance", "Dimitri Rascalov",
+            "Mikhail Faustin", "Wei Cheng", "Steve Haines", "Darth Vader", "Devin Weston", "Steven Armstrong",
+            "Aron Keener", "Agent Smith", "Yuri", "Volodymyr Makarov", "Victor Zakhaev", "Tyran", "General Shepherd",
+            "Measurehead", "Cacodemon", "Zombie", "Ghoul", "Cyberpsychosis", "Trauma Team", "Max Tac", "Whirlpool Gang",
+            "Golden Path", "Game Panel HUD", "Game Program", "Aki Server", "Bsg Server", "TypeScript", "NoBody",
+            "AnyOne", "AllText", "TheTestText", "Who?", "Unity", "VSCode", "VisualStudio", "OtherName"
+        };
 
-        private static readonly string[] TestWeaponName = new[] { "F-1", "M18", "Zarya", "MPL-50", "C100", "SP-81", "AS-VAL", "MPX", "Vector .45ACP", "M4A1", "HK-416", "AR-15", "AK-104", "SV-98", "ST-AR-15", "MCX", "MDR", "FN40GL", "MSGL", "P90", "ASh-12", "Glock 18C", "USP .45 Expert", "MP5", "M1911", "MK-14", "AK-47", "AS-50", "AR-57", "MAG-7", "Mosin", "M1903", "Gew98", "Ro-635", "UMP 9", "M16", "G11", "UMP 45", "AK-12", "RPG-7V2", "AEK-971", "L115A3", "CS/LR-4", "L96A1", "M200", "R90", "725", "AA-12", "Guts", "BFG-9000", "R8", "AWP", "DesertEagle", "Gravity Gun", "Portal Gun", "Freeze Gun", "Sentry Gun", "Hand", "M42-MIRV", "Martini-Henry", "CAR", "R-101", "R-97", "Alternator", "Charge Rifle", "Alligator", "Disturbia", "B3 Wingman Elite", "Smart Pistol MK5", "GM6", "Kolibri", "Cow Gun", "Shark Gun", "Test Gun", "MailBox", "Mantis Blades", "Mono Wire", "Gorilla Arms", "Malorian Arms 3516", "Sandevistan", "Cyber Skeleton", "Militech Basilisk", "Militech Behemoth", "Floating Car", "Light Rail", "Soulkiller", "Water", "Short Circuit", "Giant Shark", "Velociraptor", "Air", "Fall", "BTR-80", "Rorsch Mk-1", "Rebel", "Hypoxia", "99A", "A-10", "F-35", "AC-130", "Tsar Bomba", "Recycle Bin", "Joy", "Elevator", "Tactical Nuclear", "Task Manager", "Black Hole", "Time", "Space Radiation", "Ender Dragon", "Creeper", "Wooden Sword", "TNT", "Void", "Truncheon", "Recurve Bow", "Burn", "Sun", "Light", "Cybertruck", "Tornado", "Liquid Nitrogen", "KeyBoard", "Unicorn", "Talk", "Anim", "Auto-9", "Mercury Hg", "Formaldehyde", "Gamma Ray", "X-ray", "Snake", "Bug", "Code", "Blaster", "Mouth", "Money", "Work", "Armored Train", "Rainbow Cat", "Butter Cat", "Medkit", "Pacemaker", "Blowtorch", "Ambulance", "Bus", "Game Leak", "Pencil", "Lightning", "Skill Issue", "C4", "M134", "Dance", "GP-30", "M79", "Big Sally", "Neuralyzer", "Noisy Cricket", "Death Star", "Star Destroyer", "Millennium Falcon", "42", "Gatling Laser", "Supernova Explosion", "Bathtub", "Gas Tank", "Game", "Video", "UFO", "Lava", "Other Gun" };
+        private static readonly string[] TestWeaponName =
+        {
+            "F-1", "M18", "Zarya", "MPL-50", "C100", "SP-81", "AS-VAL", "MPX", "Vector .45ACP", "M4A1", "HK-416",
+            "AR-15", "AK-104", "SV-98", "ST-AR-15", "MCX", "MDR", "FN40GL", "MSGL", "P90", "ASh-12", "Glock 18C",
+            "USP .45 Expert", "MP5", "M1911", "MK-14", "AK-47", "AS-50", "AR-57", "MAG-7", "Mosin", "M1903", "Gew98",
+            "Ro-635", "UMP 9", "M16", "G11", "UMP 45", "AK-12", "RPG-7V2", "AEK-971", "L115A3", "CS/LR-4", "L96A1",
+            "M200", "R90", "725", "AA-12", "Guts", "BFG-9000", "R8", "AWP", "DesertEagle", "Gravity Gun", "Portal Gun",
+            "Freeze Gun", "Sentry Gun", "Hand", "M42-MIRV", "Martini-Henry", "CAR", "R-101", "R-97", "Alternator",
+            "Charge Rifle", "Alligator", "Disturbia", "B3 Wingman Elite", "Smart Pistol MK5", "GM6", "Kolibri",
+            "Cow Gun", "Shark Gun", "Test Gun", "MailBox", "Mantis Blades", "Mono Wire", "Gorilla Arms",
+            "Malorian Arms 3516", "Sandevistan", "Cyber Skeleton", "Militech Basilisk", "Militech Behemoth",
+            "Floating Car", "Light Rail", "Soulkiller", "Water", "Short Circuit", "Giant Shark", "Velociraptor", "Air",
+            "Fall", "BTR-80", "Rorsch Mk-1", "Rebel", "Hypoxia", "99A", "A-10", "F-35", "AC-130", "Tsar Bomba",
+            "Recycle Bin", "Joy", "Elevator", "Tactical Nuclear", "Task Manager", "Black Hole", "Time",
+            "Space Radiation", "Ender Dragon", "Creeper", "Wooden Sword", "TNT", "Void", "Truncheon", "Recurve Bow",
+            "Burn", "Sun", "Light", "Cybertruck", "Tornado", "Liquid Nitrogen", "KeyBoard", "Unicorn", "Talk", "Anim",
+            "Auto-9", "Mercury Hg", "Formaldehyde", "Gamma Ray", "X-ray", "Snake", "Bug", "Code", "Blaster", "Mouth",
+            "Money", "Work", "Armored Train", "Rainbow Cat", "Butter Cat", "Medkit", "Pacemaker", "Blowtorch",
+            "Ambulance", "Bus", "Game Leak", "Pencil", "Lightning", "Skill Issue", "C4", "M134", "Dance", "GP-30",
+            "M79", "Big Sally", "Neuralyzer", "Noisy Cricket", "Death Star", "Star Destroyer", "Millennium Falcon",
+            "42", "Gatling Laser", "Supernova Explosion", "Bathtub", "Gas Tank", "Game", "Video", "UFO", "Lava",
+            "Other Gun"
+        };
 
         internal static GameObject KillPrefab { get; private set; }
 
-        internal static readonly ArmorInfo Armor = new ArmorInfo();
+        private readonly ArmorInfo _armorInfo = new ArmorInfo();
 
-        internal static int Kills;
+        private int _kills;
 
         internal static Action<HitInfo> ShowHit;
 
         internal static Action<KillInfo> ShowKill;
 
+        public GamePanelHUDHitPlugin()
+        {
+            _setData = new SettingsData(Config);
+        }
+
         private void Start()
         {
-            Logger.LogInfo("Loaded: kmyuhkyuk-GamePanelHUDHit");
+            _PlayerHelper.ApplyDamageInfo += Hit;
+            _PlayerHelper.OnBeenKilledByAggressor += Kill;
+            _PlayerHelper.ArmorComponentHelper.ApplyDurabilityDamage += _armorInfo.SetArmorDamage;
+            _PlayerHelper.ArmorComponentHelper.ApplyDamage += _armorInfo.SetActivate;
 
-            ModUpdateCheck.DrawCheck(this);
-
-            const string mainSettings = "主设置 Main Settings";
-            const string prsSettings = "位置旋转大小设置 Position Rotation Scale Settings";
-            const string hitColorSettings = "击中颜色设置 Hit Color Settings";
-            const string killColorSettings = "击中颜色设置 Kill Color Settings";
-            const string fontStylesSettings = "字体样式设置 Font Styles Settings";
-            const string speedSettings = "动画速度设置 Animation Speed Settings";
-            const string distanceSettings = "距离设置 Distance Settings";
-            const string directionRateSettings = "方向率设置 Direction Rate Settings";
-
-            Config.Bind(mainSettings, "Test Hit", "", new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 2, HideDefaultButton = true, CustomDrawer = TestHit, HideSettingName = true }));
-
-            Config.Bind(mainSettings, "Test Kill", "", new ConfigDescription("", null, new ConfigurationManagerAttributes { Order = 1, HideDefaultButton = true, CustomDrawer = TestKill, HideSettingName = true }));
-
-            SetData.KeyHitHUDSw = Config.Bind<bool>(mainSettings, "命中显示 Hit HUD display", true);
-            SetData.KeyHitDamageHUDSw = Config.Bind<bool>(mainSettings, "命中伤害显示 Hit Damage HUD display", false);
-            SetData.KeyHitHasHead = Config.Bind<bool>(mainSettings, "命中头部单独颜色 Hit Head Separate Color", false);
-            SetData.KeyHitHasDirection = Config.Bind<bool>(mainSettings, "命中方向 Hit Direction", true);
-            SetData.KeyKillHUDSw = Config.Bind<bool>(mainSettings, "击杀信息显示 Kill HUD display", true);
-            SetData.KeyKillWaitBottom = Config.Bind<bool>(mainSettings, "等待底部击杀销毁 Wait Bottom Kill Destroy", true);
-            SetData.KeyKillHasDistance = Config.Bind<bool>(mainSettings, "击杀距离显示 Kill Distance display", true);
-            SetData.KeyKillHasOther = Config.Bind<bool>(mainSettings, "击杀其他显示 Kill Other display", true);
-            SetData.KeyKillHasStreak = Config.Bind<bool>(mainSettings, "击杀连杀显示 Kill Streak display", true);
-            SetData.KeyKillHasXp = Config.Bind<bool>(mainSettings, "击杀经验显示 Kill Xp display", true);
-            SetData.KeyKillHasLevel = Config.Bind<bool>(mainSettings, "击杀等级显示 Kill Level display", false);
-            SetData.KeyKillHasPart = Config.Bind<bool>(mainSettings, "击杀部位显示 Kill Part display", false);
-            SetData.KeyKillHasSide = Config.Bind<bool>(mainSettings, "击杀派系显示 Kill Faction display", false);
-            SetData.KeyKillHasWeapon = Config.Bind<bool>(mainSettings, "击杀武器显示 Kill Weapon display", true);
-            SetData.KeyKillScavEn = Config.Bind<bool>(mainSettings, "击杀Scav名字转英文 Kill Scav Name To En", true);
-            SetData.KeyExpHUDSw = Config.Bind<bool>(mainSettings, "经验值显示 Exp HUD display", true);
-
-            SetData.KeyHitAnchoredPosition = Config.Bind<Vector2>(prsSettings, "命中位置 Hit Anchored Position", new Vector2(12, 12));
-            SetData.KeyHitSizeDelta = Config.Bind<Vector2>(prsSettings, "命中高度 Hit Size Delta", new Vector2(3, 12));
-            SetData.KeyHitLocalScale = Config.Bind<Vector2>(prsSettings, "命中大小 Hit Local Scale", new Vector2(1, 1));
-            SetData.KeyHitHeadSizeDelta = Config.Bind<Vector2>(prsSettings, "命中头部高度 Hit Head Size Delta", new Vector2(3, 16));
-            SetData.KeyHitDamageAnchoredPosition = Config.Bind<Vector2>(prsSettings, "命中伤害位置 Hit Damage Anchored Position", new Vector2(30, 0));
-            SetData.KeyHitDamageSizeDelta = Config.Bind<Vector2>(prsSettings, "命中伤害高度 Hit Damage Size Delta", new Vector2(60, 34));
-            SetData.KeyHitDamageLocalScale = Config.Bind<Vector2>(prsSettings, "命中伤害大小 Hit Damage Local Scale", new Vector2(1, 1));
-            SetData.KeyKillAnchoredPosition = Config.Bind<Vector2>(prsSettings, "击杀位置 Kill Anchored Position", new Vector2(80, -110));
-            SetData.KeyKillSizeDelta = Config.Bind<Vector2>(prsSettings, "击杀高度 Kill Size Delta", new Vector2(500, 180));
-            SetData.KeyKillLocalScale = Config.Bind<Vector2>(prsSettings, "击杀大小 Kill Local Scale", new Vector2(1, 1));
-            SetData.KeyKillExpAnchoredPosition = Config.Bind<Vector2>(prsSettings, "经验值位置 Exp Anchored Position", new Vector2(100, -105));
-            SetData.KeyKillExpSizeDelta = Config.Bind<Vector2>(prsSettings, "经验值高度 Exp Size Delta", new Vector2(80, 30));
-            SetData.KeyKillExpLocalScale = Config.Bind<Vector2>(prsSettings, "经验值大小 Exp Local Scale", new Vector2(1, 1));
-
-            SetData.KeyHitLocalRotation = Config.Bind<Vector3>(prsSettings, "命中旋转 Hit Rotation", new Vector3(0, 0, 45));
-
-            SetData.KeyHitDirectionLeft = Config.Bind<float>(directionRateSettings, "命中左侧 Hit Left", -0.5f, new ConfigDescription("When Hit Direction < -0.5 Active Hit Left", new AcceptableValueRange<float>(-1, 1)));
-            SetData.KeyHitDirectionRight = Config.Bind<float>(directionRateSettings, "命中右侧 Hit Right", 0.5f, new ConfigDescription("When Hit Direction > 0.5 Active Hit Right", new AcceptableValueRange<float>(-1, 1)));
-
-            SetData.KeyHitActiveSpeed = Config.Bind<float>(speedSettings, "命中激活速度 Hit Active Speed", 1, new ConfigDescription("", new AcceptableValueRange<float>(0, 10)));
-            SetData.KeyHitEndSpeed = Config.Bind<float>(speedSettings, "命中结束等待速度 Hit End Wait Speed", 1, new ConfigDescription("", new AcceptableValueRange<float>(0, 10)));
-            SetData.KeyHitDeadSpeed = Config.Bind<float>(speedSettings, "命中死亡等待速度 Hit Dead Wait Speed", 1, new ConfigDescription("", new AcceptableValueRange<float>(0, 10)));
-            SetData.KeyKillWaitSpeed = Config.Bind<float>(speedSettings, "击杀等待速度 Kill Text Wait Speed", 1, new ConfigDescription("", new AcceptableValueRange<float>(0, 10)));
-            SetData.KeyExpWaitSpeed = Config.Bind<float>(speedSettings, "经验值等待速度 Exp Wait Speed", 1, new ConfigDescription("", new AcceptableValueRange<float>(0, 10)));
-
-            SetData.KeyKillWriteSpeed = Config.Bind<int>(speedSettings, "击杀文本显示速度 Kill Text display Speed", 10, new ConfigDescription("Single character input speed (unit ms)", new AcceptableValueRange<int>(0, 1000)));
-            SetData.KeyKillWrite2Speed = Config.Bind<int>(speedSettings, "击杀文本显示速度 Kill Text 2 display Speed", 10, new ConfigDescription("Single character input speed (unit ms)", new AcceptableValueRange<int>(0, 1000)));
-            SetData.KeyKillWaitTime = Config.Bind<int>(speedSettings, "击杀文本显示速度 Kill Text 2 Wait Time", 500, new ConfigDescription("Play Text to Text2 ago (unit ms)", new AcceptableValueRange<int>(0, 1000)));
-
-            SetData.KeyKillDistance = Config.Bind<float>(distanceSettings, "击杀距离显示 Kill Distance display", 50, new ConfigDescription("Kill distance >= How many meters display", new AcceptableValueRange<float>(0, 1000)));
-
-            SetData.KeyHitDamageStyles = Config.Bind<FontStyles>(fontStylesSettings, "伤害 Damage", FontStyles.Normal);
-            SetData.KeyHitArmorDamageStyles = Config.Bind<FontStyles>(fontStylesSettings, "护甲伤害 Armor Damage", FontStyles.Normal);
-            SetData.KeyKillInfoStyles = Config.Bind<FontStyles>(fontStylesSettings, "击杀信息 Kill Info", FontStyles.Bold);
-            SetData.KeyKillDistanceStyles = Config.Bind<FontStyles>(fontStylesSettings, "击杀距离 Kill Distance", FontStyles.Bold);
-            SetData.KeyKillStreakStyles = Config.Bind<FontStyles>(fontStylesSettings, "击杀连杀 Kill Streak", FontStyles.Normal);
-            SetData.KeyKillOtherStyles = Config.Bind<FontStyles>(fontStylesSettings, "击杀其他 Kill Other", FontStyles.Normal);
-            SetData.KeyKillXpStyles = Config.Bind<FontStyles>(fontStylesSettings, "击杀经验 Kill Xp", FontStyles.Normal);
-            SetData.KeyExpStyles = Config.Bind<FontStyles>(fontStylesSettings, "经验值 Exp", FontStyles.Normal);
-
-            SetData.KeyHitDamageColor = Config.Bind<Color>(hitColorSettings, "伤害 Damage", new Color(1f, 1f, 1f));
-            SetData.KeyHitArmorDamageColor = Config.Bind<Color>(hitColorSettings, "护甲伤害 Armor Damage", new Color(0, 0.5f, 0.8f));
-            SetData.KeyHitDeadColor = Config.Bind<Color>(hitColorSettings, "死亡 Dead", new Color(1f, 0f, 0f));
-            SetData.KeyHitHeadColor = Config.Bind<Color>(hitColorSettings, "头部 Head", new Color(1f, 0.3f, 0f));
-            SetData.KeyHitDamageInfoColor = Config.Bind<Color>(hitColorSettings, "伤害信息 Damage Info", new Color(1f, 0f, 0f));
-            SetData.KeyHitArmorDamageInfoColor = Config.Bind<Color>(hitColorSettings, "护甲伤害信息 Armor Damage Info", new Color(0, 0.5f, 0.8f));
-
-            SetData.KeyKillNameColor = Config.Bind<Color>(killColorSettings, "名字 Name", new Color(1f, 0.2f, 0.2f));
-            SetData.KeyKillWeaponColor = Config.Bind<Color>(killColorSettings, "武器 Weapon", new Color(0.8901961f, 0.8901961f, 0.8392157f));
-            SetData.KeyKillDistanceColor = Config.Bind<Color>(killColorSettings, "距离 Distance", new Color(1f, 1f, 0f));
-            SetData.KeyKillLevelColor = Config.Bind<Color>(killColorSettings, "等级 Level", new Color(0.8901961f, 0.8901961f, 0.8392157f));
-            SetData.KeyKillStreakColor = Config.Bind<Color>(killColorSettings, "连杀 Streak", new Color(1f, 1f, 0f));
-            SetData.KeyKillPartColor = Config.Bind<Color>(killColorSettings, "身体部位 Body Part", new Color(0.6039216f, 0.827451f, 0.1372549f));
-            SetData.KeyKillMetersColor = Config.Bind<Color>(killColorSettings, "米 Meters", new Color(0.8901961f, 0.8901961f, 0.8392157f));
-            SetData.KeyKillLvlColor = Config.Bind<Color>(killColorSettings, "等级 Lvl", new Color(0.8901961f, 0.8901961f, 0.8392157f));
-            SetData.KeyKillXpColor = Config.Bind<Color>(killColorSettings, "经验值 Xp", new Color(0.8901961f, 0.8901961f, 0.8392157f));
-            SetData.KeyKillStatsStreakColor = Config.Bind<Color>(killColorSettings, "连杀奖励 Stats Streak", new Color(0.8901961f, 0.8901961f, 0.8392157f));
-            SetData.KeyKillOtherColor = Config.Bind<Color>(killColorSettings, "其他 Other", new Color(0.8901961f, 0.8901961f, 0.8392157f));
-            SetData.KeyKillEnemyDownColor = Config.Bind<Color>(killColorSettings, "敌人倒下 Enemy Down", new Color(0.8901961f, 0.8901961f, 0.8392157f));
-            SetData.KeyKillUsecColor = Config.Bind<Color>(killColorSettings, "击杀者 Kill Usec", new Color(0f, 0.8f, 1f));
-            SetData.KeyKillBearColor = Config.Bind<Color>(killColorSettings, "击杀者 Kill Bear", new Color(1f, 0.5f, 0f));
-            SetData.KeyKillScavColor = Config.Bind<Color>(killColorSettings, "击杀者 Kill Scav", new Color(1f, 0.8f, 0f));
-            SetData.KeyKillBossColor = Config.Bind<Color>(killColorSettings, "击杀者 Kill Boss", new Color(1f, 0f, 0f));
-            SetData.KeyKillFollowerColor = Config.Bind<Color>(killColorSettings, "击杀者 Kill Follower", new Color(0.8f, 0f, 0f));
-            SetData.KeyKillBracketColor = Config.Bind<Color>(killColorSettings, "括号 Bracket", new Color(0.8901961f, 0.8901961f, 0.8392157f));
-            SetData.KeyExpColor = Config.Bind<Color>(killColorSettings, "经验值 Exp", new Color(0.8901961f, 0.8901961f, 0.8392157f));
-
-            new ApplyDamagePatch().Enable();
-            new ApplyDurabilityDamagePatch().Enable();
-            new PlayerApplyDamageInfoPatch().Enable();
-            new PlayerKillPatch().Enable();
-
-            GamePanelHUDCorePlugin.UpdateManger.Register(this);
+            HUDCore.UpdateManger.Register(this);
         }
 
         private void Awake()
         {
-            GamePanelHUDCorePlugin.HUDCoreClass.AssetData<GameObject> prefabs = GamePanelHUDCorePlugin.HUDCoreClass.LoadHUD("gamepanelhithud.bundle", "GamePanelHitHUD");
+            var prefabs = HUDCore.LoadHUD("gamepanelhithud.bundle", "GamePanelHitHUD");
 
             KillPrefab = prefabs.Asset["Kill"];
 
-            ScreenRect = GamePanelHUDCorePlugin.HUDCoreClass.GamePanelHUDPublic.GetComponent<RectTransform>();
+            _screenRect = HUDCore.GamePanelHUDPublic.GetComponent<RectTransform>();
         }
 
-        public void IUpdate()
+        public void CustomUpdate()
         {
             HitPlugin();
         }
 
-        void HitPlugin()
+        private void HitPlugin()
         {
-            HitHUDSw = HUDCore.AllHUDSw && HUDCore.HasPlayer && SetData.KeyHitHUDSw.Value;
-            KillHUDSw = HUDCore.AllHUDSw && HUDCore.HasPlayer && SetData.KeyKillHUDSw.Value;
-            ExpHUDSw = HUDCore.AllHUDSw && HUDCore.HasPlayer && SetData.KeyExpHUDSw.Value;
+            _hitHUDSw = HUDCore.AllHUDSw && HUDCore.HasPlayer && _setData.KeyHitHUDSw.Value;
+            _killHUDSw = HUDCore.AllHUDSw && HUDCore.HasPlayer && _setData.KeyKillHUDSw.Value;
+            _expHUDSw = HUDCore.AllHUDSw && HUDCore.HasPlayer && _setData.KeyExpHUDSw.Value;
 
-            HitHUD.Set(ScreenRect, SetData, HitHUDSw);
-            KillHUD.Set(ScreenRect, SetData, KillHUDSw, ExpHUDSw, SetData.KeyExpHUDSw.Value);
+            HitHUD.Set(_screenRect, _setData, _hitHUDSw);
+            KillHUD.Set(_screenRect, _setData, _killHUDSw, _expHUDSw, _setData.KeyExpHUDSw.Value);
 
             if (!HUDCore.HasPlayer)
             {
-                Armor.Rest();
-                Kills = 0;
+                _kills = 0;
+
+                _armorInfo.Rest();
             }
         }
 
-        void TestHit(ConfigEntryBase entry)
+        private void Kill(Player player, Player aggressor, DamageInfo damageInfo, EBodyPart bodyPart,
+            EDamageType lethalDamageType)
+        {
+            if (aggressor == GamePanelHUDCorePlugin.HUDCore.YourPlayer)
+            {
+                var settings = _PlayerHelper.RefSettings.GetValue(player.Profile.Info);
+
+                var info = new KillInfo
+                {
+                    PlayerName = player.Profile.Nickname,
+                    WeaponName = damageInfo.Weapon.ShortName,
+                    Part = bodyPart,
+                    Distance = Vector3.Distance(aggressor.Position, player.Position),
+                    Level = player.Profile.Info.Level,
+                    Side = player.Profile.Info.Side,
+                    Exp = _PlayerHelper.RefExperience.GetValue(settings),
+                    Role = _PlayerHelper.RefRole.GetValue(settings),
+                    Kills = _kills++
+                };
+
+                ShowKill(info);
+            }
+        }
+
+        private void Hit(Player player, DamageInfo damageInfo, EBodyPart bodyPartType, float absorbed,
+            EHeadSegment? headSegment)
+        {
+            if (damageInfo.Player == GamePanelHUDCorePlugin.HUDCore.YourPlayer)
+            {
+                float armorDamage;
+
+                bool hasArmorHit;
+
+                if (_armorInfo.Activate)
+                {
+                    armorDamage = _armorInfo.ArmorDamage;
+                    hasArmorHit = true;
+
+                    _armorInfo.Rest();
+                }
+                else
+                {
+                    armorDamage = 0;
+                    hasArmorHit = false;
+                }
+
+                HitInfo.Hit hitType;
+
+                if (player.HealthController.IsAlive)
+                {
+                    hitType = hasArmorHit ? HitInfo.Hit.HasArmorHit : HitInfo.Hit.OnlyHp;
+                }
+                else
+                {
+                    hitType = HitInfo.Hit.Dead;
+                }
+
+                var info = new HitInfo
+                {
+                    Damage = damageInfo.DidBodyDamage,
+                    DamagePart = bodyPartType,
+                    HitPoint = damageInfo.HitPoint,
+                    ArmorDamage = armorDamage,
+                    HasArmorHit = hasArmorHit,
+                    HitType = hitType,
+                    HitDirection = damageInfo.Direction
+                };
+
+                ShowHit(info);
+            }
+        }
+
+        private static void DrawTestHit(ConfigEntryBase entry)
         {
             if (GUILayout.Button("Test Hit", GUILayout.ExpandWidth(true)))
             {
-                var hitType = Enum.GetValues(typeof(HitInfo.Hit));
-
-                var part = Enum.GetValues(typeof(EBodyPart));
-
-                var type = (HitInfo.Hit)hitType.GetValue(UnityEngine.Random.Range(0, hitType.Length));
-
-                var hitInfo = new HitInfo()
-                {
-                    Damage = UnityEngine.Random.Range(0, 101),
-                    ArmorDamage = UnityEngine.Random.Range(0f, 100f),
-                    HasArmorHit = type == HitInfo.Hit.HasArmorHit,
-                    DamagePart = (EBodyPart)part.GetValue(UnityEngine.Random.Range(0, part.Length)),
-                    HitType = type,
-                    HitDirection = new Vector3(UnityEngine.Random.Range(-1f, 1f), 0, 0),
-                    HitPoint = Vector3.zero,
-                    IsTest = true
-                };
-
-                ShowHit(hitInfo);
+                TestHit();
             }
         }
 
-        void TestKill(ConfigEntryBase entry)
+        private static void TestHit()
         {
-            if (GUILayout.Button("Test Kill", GUILayout.ExpandWidth(true)) && ExperienceHelp.CanWork)
+            var hitType = Enum.GetValues(typeof(HitInfo.Hit));
+
+            var part = Enum.GetValues(typeof(EBodyPart));
+
+            var type = (HitInfo.Hit)hitType.GetValue(UnityEngine.Random.Range(0, hitType.Length));
+
+            var hitInfo = new HitInfo
             {
-                var role = Enum.GetValues(typeof(WildSpawnType));
+                Damage = UnityEngine.Random.Range(0, 101),
+                ArmorDamage = UnityEngine.Random.Range(0f, 100f),
+                HasArmorHit = type == HitInfo.Hit.HasArmorHit,
+                DamagePart = (EBodyPart)part.GetValue(UnityEngine.Random.Range(0, part.Length)),
+                HitType = type,
+                HitDirection = new Vector3(UnityEngine.Random.Range(-1f, 1f), 0, 0),
+                HitPoint = Vector3.zero,
+                IsTest = true
+            };
 
-                var side = Enum.GetValues(typeof(EPlayerSide));
+            ShowHit(hitInfo);
+        }
 
-                var part = Enum.GetValues(typeof(EBodyPart));
-
-                var killInfo = new KillInfo()
-                {
-                    WeaponName = TestWeaponName[UnityEngine.Random.Range(0, TestWeaponName.Length)],
-                    PlayerName = TestName[UnityEngine.Random.Range(0, TestName.Length)],
-                    Role = (WildSpawnType)role.GetValue(UnityEngine.Random.Range(0, role.Length)),
-                    Distance = UnityEngine.Random.Range(0f, 100f),
-                    Level = UnityEngine.Random.Range(1, 79),
-                    Exp = UnityEngine.Random.Range(100, 1001),
-                    Kills = UnityEngine.Random.Range(0, 11),
-                    Part = (EBodyPart)part.GetValue(UnityEngine.Random.Range(0, part.Length)),
-                    Side = (EPlayerSide)side.GetValue(UnityEngine.Random.Range(0, side.Length)),
-                    IsTest = true
-                };
-
-                ShowKill(killInfo);
+        private static void DrawTestKill(ConfigEntryBase entry)
+        {
+            if (GUILayout.Button("Test Kill", GUILayout.ExpandWidth(true)))
+            {
+                TestKill();
             }
         }
 
-        public class KillHUDClass<T, V> : GamePanelHUDCorePlugin.HUDClass<T, V>
+        private static void TestKill()
+        {
+            var role = Enum.GetValues(typeof(WildSpawnType));
+
+            var side = Enum.GetValues(typeof(EPlayerSide));
+
+            var part = Enum.GetValues(typeof(EBodyPart));
+
+            var killInfo = new KillInfo
+            {
+                WeaponName = TestWeaponName[UnityEngine.Random.Range(0, TestWeaponName.Length)],
+                PlayerName = TestName[UnityEngine.Random.Range(0, TestName.Length)],
+                Role = (WildSpawnType)role.GetValue(UnityEngine.Random.Range(0, role.Length)),
+                Distance = UnityEngine.Random.Range(0f, 100f),
+                Level = UnityEngine.Random.Range(1, 79),
+                Exp = UnityEngine.Random.Range(100, 1001),
+                Kills = UnityEngine.Random.Range(0, 11),
+                Part = (EBodyPart)part.GetValue(UnityEngine.Random.Range(0, part.Length)),
+                Side = (EPlayerSide)side.GetValue(UnityEngine.Random.Range(0, side.Length)),
+                IsTest = true
+            };
+
+            ShowKill(killInfo);
+        }
+
+        public class KillHUDClass<T, TV> : GamePanelHUDCorePlugin.HUDClass<T, TV>
         {
             public bool HUDSw2;
 
             public bool HUDSw3;
 
-            public void Set(T info, V setData, bool hudSw, bool hudSw2, bool hudSw3)
+            public void Set(T info, TV setData, bool hudSw, bool hudSw2, bool hudSw3)
             {
                 Set(info, setData, hudSw);
 
@@ -316,26 +341,37 @@ namespace GamePanelHUDHit
 
         public class ArmorInfo
         {
-            public ArmorComponent Component;
+            public bool Activate;
 
             public float ArmorDamage;
 
-            public bool Activate;
+            private readonly Dictionary<ArmorComponent, float> _armorDamageDictionary =
+                new Dictionary<ArmorComponent, float>();
 
-            public void SetComponent(ArmorComponent component)
+            public void SetArmorDamage(ArmorComponent armorComponent, float armorDamage)
             {
-                Component = component;
+                if (_armorDamageDictionary.ContainsKey(armorComponent))
+                {
+                    _armorDamageDictionary.Remove(armorComponent);
+                }
+
+                _armorDamageDictionary.Add(armorComponent, armorDamage);
             }
 
-            public void SetActivate(float damage)
+            public void SetActivate(ArmorComponent armorComponent, DamageInfo damageInfo, EBodyPart bodyPartType,
+                bool damageInfoIsLocal, object lightVestsDamageReduction, object heavyVestsDamageReduction)
             {
-                ArmorDamage = damage;
-                Activate = true;
+                if (damageInfo.Player == GamePanelHUDCorePlugin.HUDCore.YourPlayer)
+                {
+                    ArmorDamage = _armorDamageDictionary[armorComponent];
+                    Activate = true;
+                }
+
+                _armorDamageDictionary.Remove(armorComponent);
             }
 
             public void Rest()
             {
-                Component = null;
                 ArmorDamage = 0;
                 Activate = false;
             }
@@ -343,87 +379,252 @@ namespace GamePanelHUDHit
 
         public class SettingsData
         {
-            public ConfigEntry<bool> KeyHitHUDSw;
-            public ConfigEntry<bool> KeyHitDamageHUDSw;
-            public ConfigEntry<bool> KeyHitHasHead;
-            public ConfigEntry<bool> KeyHitHasDirection;
-            public ConfigEntry<bool> KeyKillHUDSw;
-            public ConfigEntry<bool> KeyKillWaitBottom;
-            public ConfigEntry<bool> KeyKillHasDistance;
-            public ConfigEntry<bool> KeyKillHasStreak;
-            public ConfigEntry<bool> KeyKillHasOther;
-            public ConfigEntry<bool> KeyKillHasXp;
-            public ConfigEntry<bool> KeyKillHasLevel;
-            public ConfigEntry<bool> KeyKillHasPart;
-            public ConfigEntry<bool> KeyKillHasWeapon;
-            public ConfigEntry<bool> KeyKillHasSide;
-            public ConfigEntry<bool> KeyKillScavEn;
-            public ConfigEntry<bool> KeyExpHUDSw;
+            public readonly ConfigEntry<bool> KeyHitHUDSw;
+            public readonly ConfigEntry<bool> KeyHitDamageHUDSw;
+            public readonly ConfigEntry<bool> KeyHitHasHead;
+            public readonly ConfigEntry<bool> KeyHitHasDirection;
+            public readonly ConfigEntry<bool> KeyKillHUDSw;
+            public readonly ConfigEntry<bool> KeyKillWaitBottom;
+            public readonly ConfigEntry<bool> KeyKillHasDistance;
+            public readonly ConfigEntry<bool> KeyKillHasStreak;
+            public readonly ConfigEntry<bool> KeyKillHasOther;
+            public readonly ConfigEntry<bool> KeyKillHasXp;
+            public readonly ConfigEntry<bool> KeyKillHasLevel;
+            public readonly ConfigEntry<bool> KeyKillHasPart;
+            public readonly ConfigEntry<bool> KeyKillHasWeapon;
+            public readonly ConfigEntry<bool> KeyKillHasSide;
+            public readonly ConfigEntry<bool> KeyKillScavEn;
+            public readonly ConfigEntry<bool> KeyExpHUDSw;
 
-            public ConfigEntry<Vector2> KeyHitAnchoredPosition;
-            public ConfigEntry<Vector2> KeyHitSizeDelta;
-            public ConfigEntry<Vector2> KeyHitLocalScale;
-            public ConfigEntry<Vector2> KeyHitHeadSizeDelta;
-            public ConfigEntry<Vector2> KeyHitDamageAnchoredPosition;
-            public ConfigEntry<Vector2> KeyHitDamageSizeDelta;
-            public ConfigEntry<Vector2> KeyHitDamageLocalScale;
-            public ConfigEntry<Vector2> KeyKillAnchoredPosition;
-            public ConfigEntry<Vector2> KeyKillSizeDelta;
-            public ConfigEntry<Vector2> KeyKillLocalScale;
-            public ConfigEntry<Vector2> KeyKillExpAnchoredPosition;
-            public ConfigEntry<Vector2> KeyKillExpSizeDelta;
-            public ConfigEntry<Vector2> KeyKillExpLocalScale;
+            public readonly ConfigEntry<Vector2> KeyHitAnchoredPosition;
+            public readonly ConfigEntry<Vector2> KeyHitSizeDelta;
+            public readonly ConfigEntry<Vector2> KeyHitLocalScale;
+            public readonly ConfigEntry<Vector2> KeyHitHeadSizeDelta;
+            public readonly ConfigEntry<Vector2> KeyHitDamageAnchoredPosition;
+            public readonly ConfigEntry<Vector2> KeyHitDamageSizeDelta;
+            public readonly ConfigEntry<Vector2> KeyHitDamageLocalScale;
+            public readonly ConfigEntry<Vector2> KeyKillAnchoredPosition;
+            public readonly ConfigEntry<Vector2> KeyKillSizeDelta;
+            public readonly ConfigEntry<Vector2> KeyKillLocalScale;
+            public readonly ConfigEntry<Vector2> KeyKillExpAnchoredPosition;
+            public readonly ConfigEntry<Vector2> KeyKillExpSizeDelta;
+            public readonly ConfigEntry<Vector2> KeyKillExpLocalScale;
 
-            public ConfigEntry<Vector3> KeyHitLocalRotation;
+            public readonly ConfigEntry<Vector3> KeyHitLocalRotation;
 
-            public ConfigEntry<int> KeyKillWriteSpeed;
-            public ConfigEntry<int> KeyKillWrite2Speed;
-            public ConfigEntry<int> KeyKillWaitTime;
+            public readonly ConfigEntry<int> KeyKillWriteSpeed;
+            public readonly ConfigEntry<int> KeyKillWrite2Speed;
+            public readonly ConfigEntry<int> KeyKillWaitTime;
 
-            public ConfigEntry<float> KeyHitDirectionLeft;
-            public ConfigEntry<float> KeyHitDirectionRight;
+            public readonly ConfigEntry<float> KeyHitDirectionLeft;
+            public readonly ConfigEntry<float> KeyHitDirectionRight;
 
-            public ConfigEntry<float> KeyHitActiveSpeed;
-            public ConfigEntry<float> KeyHitEndSpeed;
-            public ConfigEntry<float> KeyHitDeadSpeed;
-            public ConfigEntry<float> KeyKillDistance;
-            public ConfigEntry<float> KeyKillWaitSpeed;
-            public ConfigEntry<float> KeyExpWaitSpeed;
+            public readonly ConfigEntry<float> KeyHitActiveSpeed;
+            public readonly ConfigEntry<float> KeyHitEndSpeed;
+            public readonly ConfigEntry<float> KeyHitDeadSpeed;
+            public readonly ConfigEntry<float> KeyKillDistance;
+            public readonly ConfigEntry<float> KeyKillWaitSpeed;
+            public readonly ConfigEntry<float> KeyExpWaitSpeed;
 
-            public ConfigEntry<Color> KeyHitDamageColor;
-            public ConfigEntry<Color> KeyHitArmorDamageColor;
-            public ConfigEntry<Color> KeyHitDeadColor;
-            public ConfigEntry<Color> KeyHitHeadColor;
-            public ConfigEntry<Color> KeyHitDamageInfoColor;
-            public ConfigEntry<Color> KeyHitArmorDamageInfoColor;
-            public ConfigEntry<Color> KeyKillNameColor;
-            public ConfigEntry<Color> KeyKillWeaponColor;
-            public ConfigEntry<Color> KeyKillDistanceColor;
-            public ConfigEntry<Color> KeyKillLevelColor;
-            public ConfigEntry<Color> KeyKillXpColor;
-            public ConfigEntry<Color> KeyKillPartColor;
-            public ConfigEntry<Color> KeyKillMetersColor;
-            public ConfigEntry<Color> KeyKillStreakColor;
-            public ConfigEntry<Color> KeyKillLvlColor;
-            public ConfigEntry<Color> KeyKillStatsStreakColor;
-            public ConfigEntry<Color> KeyKillOtherColor;
-            public ConfigEntry<Color> KeyKillEnemyDownColor;
-            public ConfigEntry<Color> KeyKillBearColor;
-            public ConfigEntry<Color> KeyKillUsecColor;
-            public ConfigEntry<Color> KeyKillScavColor;
-            public ConfigEntry<Color> KeyKillBossColor;
-            public ConfigEntry<Color> KeyKillFollowerColor;
-            public ConfigEntry<Color> KeyKillBracketColor;
-            public ConfigEntry<Color> KeyExpColor;
+            public readonly ConfigEntry<Color> KeyHitDamageColor;
+            public readonly ConfigEntry<Color> KeyHitArmorDamageColor;
+            public readonly ConfigEntry<Color> KeyHitDeadColor;
+            public readonly ConfigEntry<Color> KeyHitHeadColor;
+            public readonly ConfigEntry<Color> KeyHitDamageInfoColor;
+            public readonly ConfigEntry<Color> KeyHitArmorDamageInfoColor;
+            public readonly ConfigEntry<Color> KeyKillNameColor;
+            public readonly ConfigEntry<Color> KeyKillWeaponColor;
+            public readonly ConfigEntry<Color> KeyKillDistanceColor;
+            public readonly ConfigEntry<Color> KeyKillLevelColor;
+            public readonly ConfigEntry<Color> KeyKillXpColor;
+            public readonly ConfigEntry<Color> KeyKillPartColor;
+            public readonly ConfigEntry<Color> KeyKillMetersColor;
+            public readonly ConfigEntry<Color> KeyKillStreakColor;
+            public readonly ConfigEntry<Color> KeyKillLvlColor;
+            public readonly ConfigEntry<Color> KeyKillStatsStreakColor;
+            public readonly ConfigEntry<Color> KeyKillOtherColor;
+            public readonly ConfigEntry<Color> KeyKillEnemyDownColor;
+            public readonly ConfigEntry<Color> KeyKillBearColor;
+            public readonly ConfigEntry<Color> KeyKillUsecColor;
+            public readonly ConfigEntry<Color> KeyKillScavColor;
+            public readonly ConfigEntry<Color> KeyKillBossColor;
+            public readonly ConfigEntry<Color> KeyKillFollowerColor;
+            public readonly ConfigEntry<Color> KeyKillBracketColor;
+            public readonly ConfigEntry<Color> KeyExpColor;
 
-            public ConfigEntry<FontStyles> KeyHitDamageStyles;
-            public ConfigEntry<FontStyles> KeyHitArmorDamageStyles;
-            public ConfigEntry<FontStyles> KeyKillInfoStyles;
-            public ConfigEntry<FontStyles> KeyKillDistanceStyles;
-            public ConfigEntry<FontStyles> KeyKillStreakStyles;
-            public ConfigEntry<FontStyles> KeyKillOtherStyles;
-            public ConfigEntry<FontStyles> KeyKillXpStyles;
-            public ConfigEntry<FontStyles> KeyExpStyles;
+            public readonly ConfigEntry<FontStyles> KeyHitDamageStyles;
+            public readonly ConfigEntry<FontStyles> KeyHitArmorDamageStyles;
+            public readonly ConfigEntry<FontStyles> KeyKillInfoStyles;
+            public readonly ConfigEntry<FontStyles> KeyKillDistanceStyles;
+            public readonly ConfigEntry<FontStyles> KeyKillStreakStyles;
+            public readonly ConfigEntry<FontStyles> KeyKillOtherStyles;
+            public readonly ConfigEntry<FontStyles> KeyKillXpStyles;
+            public readonly ConfigEntry<FontStyles> KeyExpStyles;
+
+            public SettingsData(ConfigFile configFile)
+            {
+                const string mainSettings = "Main Settings";
+                const string prsSettings = "Position Rotation Scale Settings";
+                const string hitColorSettings = "Hit Color Settings";
+                const string killColorSettings = "Kill Color Settings";
+                const string fontStylesSettings = "Font Styles Settings";
+                const string speedSettings = "Animation Speed Settings";
+                const string distanceSettings = "Distance Settings";
+                const string directionRateSettings = "Direction Rate Settings";
+
+                configFile.Bind(mainSettings, "Draw Test Hit", string.Empty,
+                    new ConfigDescription(string.Empty, null,
+                        new ConfigurationManagerAttributes
+                            { Order = 2, HideDefaultButton = true, CustomDrawer = DrawTestHit, HideSettingName = true },
+                        new EFTConfigurationAttributes { HideSetting = true }));
+
+                configFile.Bind(mainSettings, "Draw Test Kill", string.Empty,
+                    new ConfigDescription(string.Empty, null,
+                        new ConfigurationManagerAttributes
+                        {
+                            Order = 1, HideDefaultButton = true, CustomDrawer = DrawTestKill, HideSettingName = true
+                        },
+                        new EFTConfigurationAttributes { HideSetting = true }));
+
+                configFile.Bind(mainSettings, "Test Hit", string.Empty,
+                    new ConfigDescription(string.Empty, null, new ConfigurationManagerAttributes { Browsable = false },
+                        new EFTConfigurationAttributes { ButtonAction = TestHit }));
+
+                configFile.Bind(mainSettings, "Test Kill", string.Empty,
+                    new ConfigDescription(string.Empty, null, new ConfigurationManagerAttributes { Browsable = false },
+                        new EFTConfigurationAttributes { ButtonAction = TestKill }));
+
+                KeyHitHUDSw = configFile.Bind<bool>(mainSettings, "Hit HUD display", true);
+                KeyHitDamageHUDSw = configFile.Bind<bool>(mainSettings, "Hit Damage HUD display", false);
+                KeyHitHasHead = configFile.Bind<bool>(mainSettings, "Hit Head Separate Color", false);
+                KeyHitHasDirection = configFile.Bind<bool>(mainSettings, "Hit Direction", true);
+                KeyKillHUDSw = configFile.Bind<bool>(mainSettings, "Kill HUD display", true);
+                KeyKillWaitBottom = configFile.Bind<bool>(mainSettings, "Wait Bottom Kill Destroy", true);
+                KeyKillHasDistance = configFile.Bind<bool>(mainSettings, "Kill Distance display", true);
+                KeyKillHasOther = configFile.Bind<bool>(mainSettings, "Kill Other display", true);
+                KeyKillHasStreak = configFile.Bind<bool>(mainSettings, "Kill Streak display", true);
+                KeyKillHasXp = configFile.Bind<bool>(mainSettings, "Kill Xp display", true);
+                KeyKillHasLevel = configFile.Bind<bool>(mainSettings, "Kill Level display", false);
+                KeyKillHasPart = configFile.Bind<bool>(mainSettings, "Kill Part display", false);
+                KeyKillHasSide = configFile.Bind<bool>(mainSettings, "Kill Faction display", false);
+                KeyKillHasWeapon = configFile.Bind<bool>(mainSettings, "Kill Weapon display", true);
+                KeyKillScavEn = configFile.Bind<bool>(mainSettings, "Kill Scav Name To En", true);
+                KeyExpHUDSw = configFile.Bind<bool>(mainSettings, "Exp HUD display", true);
+
+                KeyHitAnchoredPosition =
+                    configFile.Bind<Vector2>(prsSettings, "Hit Anchored Position", new Vector2(12, 12));
+                KeyHitSizeDelta = configFile.Bind<Vector2>(prsSettings, "Hit Size Delta", new Vector2(3, 12));
+                KeyHitLocalScale = configFile.Bind<Vector2>(prsSettings, "Hit Local Scale", new Vector2(1, 1));
+                KeyHitHeadSizeDelta =
+                    configFile.Bind<Vector2>(prsSettings, "Hit Head Size Delta", new Vector2(3, 16));
+                KeyHitDamageAnchoredPosition = configFile.Bind<Vector2>(prsSettings,
+                    "Hit Damage Anchored Position", new Vector2(30, 0));
+                KeyHitDamageSizeDelta =
+                    configFile.Bind<Vector2>(prsSettings, "Hit Damage Size Delta", new Vector2(60, 34));
+                KeyHitDamageLocalScale =
+                    configFile.Bind<Vector2>(prsSettings, "Hit Damage Local Scale", new Vector2(1, 1));
+                KeyKillAnchoredPosition =
+                    configFile.Bind<Vector2>(prsSettings, "Kill Anchored Position", new Vector2(80, -110));
+                KeyKillSizeDelta =
+                    configFile.Bind<Vector2>(prsSettings, "Kill Size Delta", new Vector2(500, 180));
+                KeyKillLocalScale = configFile.Bind<Vector2>(prsSettings, "Kill Local Scale", new Vector2(1, 1));
+                KeyKillExpAnchoredPosition =
+                    configFile.Bind<Vector2>(prsSettings, "Exp Anchored Position", new Vector2(100, -105));
+                KeyKillExpSizeDelta =
+                    configFile.Bind<Vector2>(prsSettings, "Exp Size Delta", new Vector2(80, 30));
+                KeyKillExpLocalScale =
+                    configFile.Bind<Vector2>(prsSettings, "Exp Local Scale", new Vector2(1, 1));
+
+                KeyHitLocalRotation =
+                    configFile.Bind<Vector3>(prsSettings, "Hit Rotation", new Vector3(0, 0, 45));
+
+                KeyHitDirectionLeft = configFile.Bind<float>(directionRateSettings, "Hit Left", -0.5f,
+                    new ConfigDescription("When Hit Direction < -0.5 Active Hit Left",
+                        new AcceptableValueRange<float>(-1, 1)));
+                KeyHitDirectionRight = configFile.Bind<float>(directionRateSettings, "Hit Right", 0.5f,
+                    new ConfigDescription("When Hit Direction > 0.5 Active Hit Right",
+                        new AcceptableValueRange<float>(-1, 1)));
+
+                KeyHitActiveSpeed = configFile.Bind<float>(speedSettings, "Hit Active Speed", 1,
+                    new ConfigDescription(string.Empty, new AcceptableValueRange<float>(0, 10)));
+                KeyHitEndSpeed = configFile.Bind<float>(speedSettings, "Hit End Wait Speed", 1,
+                    new ConfigDescription(string.Empty, new AcceptableValueRange<float>(0, 10)));
+                KeyHitDeadSpeed = configFile.Bind<float>(speedSettings, "Hit Dead Wait Speed", 1,
+                    new ConfigDescription(string.Empty, new AcceptableValueRange<float>(0, 10)));
+                KeyKillWaitSpeed = configFile.Bind<float>(speedSettings, "Kill Text Wait Speed", 1,
+                    new ConfigDescription(string.Empty, new AcceptableValueRange<float>(0, 10)));
+                KeyExpWaitSpeed = configFile.Bind<float>(speedSettings, "Exp Wait Speed", 1,
+                    new ConfigDescription(string.Empty, new AcceptableValueRange<float>(0, 10)));
+
+                KeyKillWriteSpeed = configFile.Bind<int>(speedSettings, "Kill Text display Speed", 10,
+                    new ConfigDescription("Single character input speed (unit ms)",
+                        new AcceptableValueRange<int>(0, 1000)));
+                KeyKillWrite2Speed = configFile.Bind<int>(speedSettings, "Kill Text 2 display Speed", 10,
+                    new ConfigDescription("Single character input speed (unit ms)",
+                        new AcceptableValueRange<int>(0, 1000)));
+                KeyKillWaitTime = configFile.Bind<int>(speedSettings, "Kill Text 2 Wait Time", 500,
+                    new ConfigDescription("Play Text to Text2 ago Wait Time (unit ms)",
+                        new AcceptableValueRange<int>(0, 1000)));
+
+                KeyKillDistance = configFile.Bind<float>(distanceSettings, "Kill Distance display", 50,
+                    new ConfigDescription("When Kill distance >= How many meters display",
+                        new AcceptableValueRange<float>(0, 1000)));
+
+                KeyHitDamageStyles = configFile.Bind<FontStyles>(fontStylesSettings, "Damage", FontStyles.Normal);
+                KeyHitArmorDamageStyles =
+                    configFile.Bind<FontStyles>(fontStylesSettings, "Armor Damage", FontStyles.Normal);
+                KeyKillInfoStyles = configFile.Bind<FontStyles>(fontStylesSettings, "Kill Info", FontStyles.Bold);
+                KeyKillDistanceStyles =
+                    configFile.Bind<FontStyles>(fontStylesSettings, "Kill Distance", FontStyles.Bold);
+                KeyKillStreakStyles =
+                    configFile.Bind<FontStyles>(fontStylesSettings, "Kill Streak", FontStyles.Normal);
+                KeyKillOtherStyles =
+                    configFile.Bind<FontStyles>(fontStylesSettings, "Kill Other", FontStyles.Normal);
+                KeyKillXpStyles = configFile.Bind<FontStyles>(fontStylesSettings, "Kill Xp", FontStyles.Normal);
+                KeyExpStyles = configFile.Bind<FontStyles>(fontStylesSettings, "Exp", FontStyles.Normal);
+
+                KeyHitDamageColor = configFile.Bind<Color>(hitColorSettings, "Damage", new Color(1f, 1f, 1f));
+                KeyHitArmorDamageColor =
+                    configFile.Bind<Color>(hitColorSettings, "Armor Damage", new Color(0, 0.5f, 0.8f));
+                KeyHitDeadColor = configFile.Bind<Color>(hitColorSettings, "Dead", new Color(1f, 0f, 0f));
+                KeyHitHeadColor = configFile.Bind<Color>(hitColorSettings, "Head", new Color(1f, 0.3f, 0f));
+                KeyHitDamageInfoColor =
+                    configFile.Bind<Color>(hitColorSettings, "Damage Info", new Color(1f, 0f, 0f));
+                KeyHitArmorDamageInfoColor = configFile.Bind<Color>(hitColorSettings, "Armor Damage Info",
+                    new Color(0, 0.5f, 0.8f));
+
+                KeyKillNameColor = configFile.Bind<Color>(killColorSettings, "Name", new Color(1f, 0.2f, 0.2f));
+                KeyKillWeaponColor = configFile.Bind<Color>(killColorSettings, "Weapon",
+                    new Color(0.8901961f, 0.8901961f, 0.8392157f));
+                KeyKillDistanceColor = configFile.Bind<Color>(killColorSettings, "Distance", new Color(1f, 1f, 0f));
+                KeyKillLevelColor = configFile.Bind<Color>(killColorSettings, "Level",
+                    new Color(0.8901961f, 0.8901961f, 0.8392157f));
+                KeyKillStreakColor = configFile.Bind<Color>(killColorSettings, "Streak", new Color(1f, 1f, 0f));
+                KeyKillPartColor = configFile.Bind<Color>(killColorSettings, "Body Part",
+                    new Color(0.6039216f, 0.827451f, 0.1372549f));
+                KeyKillMetersColor = configFile.Bind<Color>(killColorSettings, "Meters",
+                    new Color(0.8901961f, 0.8901961f, 0.8392157f));
+                KeyKillLvlColor =
+                    configFile.Bind<Color>(killColorSettings, "Lvl", new Color(0.8901961f, 0.8901961f, 0.8392157f));
+                KeyKillXpColor =
+                    configFile.Bind<Color>(killColorSettings, "Xp", new Color(0.8901961f, 0.8901961f, 0.8392157f));
+                KeyKillStatsStreakColor = configFile.Bind<Color>(killColorSettings, "Stats Streak",
+                    new Color(0.8901961f, 0.8901961f, 0.8392157f));
+                KeyKillOtherColor = configFile.Bind<Color>(killColorSettings, "Other",
+                    new Color(0.8901961f, 0.8901961f, 0.8392157f));
+                KeyKillEnemyDownColor = configFile.Bind<Color>(killColorSettings, "Enemy Down",
+                    new Color(0.8901961f, 0.8901961f, 0.8392157f));
+                KeyKillUsecColor = configFile.Bind<Color>(killColorSettings, "Kill Usec", new Color(0f, 0.8f, 1f));
+                KeyKillBearColor = configFile.Bind<Color>(killColorSettings, "Kill Bear", new Color(1f, 0.5f, 0f));
+                KeyKillScavColor = configFile.Bind<Color>(killColorSettings, "Kill Scav", new Color(1f, 0.8f, 0f));
+                KeyKillBossColor = configFile.Bind<Color>(killColorSettings, "Kill Boss", new Color(1f, 0f, 0f));
+                KeyKillFollowerColor =
+                    configFile.Bind<Color>(killColorSettings, "Kill Follower", new Color(0.8f, 0f, 0f));
+                KeyKillBracketColor = configFile.Bind<Color>(killColorSettings, "Bracket",
+                    new Color(0.8901961f, 0.8901961f, 0.8392157f));
+                KeyExpColor = configFile.Bind<Color>(killColorSettings, "Exp",
+                    new Color(0.8901961f, 0.8901961f, 0.8392157f));
+            }
         }
     }
 }

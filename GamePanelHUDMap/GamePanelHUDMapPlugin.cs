@@ -1,41 +1,36 @@
 ﻿#if !UNITY_EDITOR
-using BepInEx;
-using BepInEx.Configuration;
 using System;
 using System.IO;
-using UnityEngine;
-using UnityEngine.Networking;
+using BepInEx;
 using GamePanelHUDCore;
 using GamePanelHUDCore.Utils;
-using System.Threading.Tasks;
+using UnityEngine;
 
 namespace GamePanelHUDMap
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDMap", "kmyuhkyuk-GamePanelHUDMap", "2.6.4")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDMap", "kmyuhkyuk-GamePanelHUDMap", "2.7.0")]
     [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore")]
     public class GamePanelHUDMapPlugin : BaseUnityPlugin, IUpdate
     {
         private GamePanelHUDCorePlugin.HUDCoreClass HUDCore
         {
-            get
-            {
-                return GamePanelHUDCorePlugin.HUDCore;
-            }
+            get { return GamePanelHUDCorePlugin.HUDCore; }
         }
 
-        internal static readonly GamePanelHUDCorePlugin.HUDClass<MapData, SettingsData> HUD = new GamePanelHUDCorePlugin.HUDClass<MapData, SettingsData>();
+        internal static readonly GamePanelHUDCorePlugin.HUDClass<MapData, SettingsData> HUD =
+            new GamePanelHUDCorePlugin.HUDClass<MapData, SettingsData>();
 
-        private string MapPath;
+        private string _mapPath;
 
-        private bool MapHUDSW;
+        private bool _mapHudsw;
 
-        private bool HasMap;
+        private bool _hasMap;
 
-        private string Infiltration;
+        private string _infiltration;
 
-        private readonly MapData MapDatas = new MapData();
+        private readonly MapData _mapDatas = new MapData();
 
-        private readonly SettingsData SettingsDatas = new SettingsData();
+        private readonly SettingsData _settingsDatas = new SettingsData();
 
         internal static Action<string> LoadMap;
 
@@ -43,49 +38,47 @@ namespace GamePanelHUDMap
 
         private void Start()
         {
-            Logger.LogInfo("Loaded: kmyuhkyuk-GamePanelHUDMap");
+            _mapPath = Path.Combine(HUDCore.ModPath, "map");
 
-            MapPath = Path.Combine(GamePanelHUDCorePlugin.HUDCoreClass.ModPath, "map");
-
-            GamePanelHUDCorePlugin.UpdateManger.Register(this);
+            HUDCore.UpdateManger.Register(this);
         }
 
         private void Awake()
         {
-            GamePanelHUDCorePlugin.HUDCoreClass.LoadHUD("gamepanelmaphud.bundle", "gamepanelmaphud");
+            HUDCore.LoadHUD("gamepanelmaphud.bundle", "gamepanelmaphud");
         }
 
-        public void IUpdate()
+        public void CustomUpdate()
         {
             MapPlugin();
         }
 
-        void MapPlugin()
+        private void MapPlugin()
         {
-            MapHUDSW = HUDCore.AllHUDSw && HasMap && !MapDatas.IsLoadMap && HUDCore.HasPlayer;
+            _mapHudsw = HUDCore.AllHUDSw && _hasMap && !_mapDatas.IsLoadMap && HUDCore.HasPlayer;
 
-            HUD.Set(MapDatas, SettingsDatas, MapHUDSW);
+            HUD.Set(_mapDatas, _settingsDatas, _mapHudsw);
 
             if (HUDCore.HasPlayer)
             {
-                Infiltration = HUDCore.YourPlayer.Infiltration;
+                _infiltration = HUDCore.YourPlayer.Infiltration;
 
-                if (!HasMap)
+                if (!_hasMap)
                 {
-                    LoadMap(Path.Combine(MapPath, string.Concat(Infiltration, ".json")));
+                    LoadMap(Path.Combine(_mapPath, string.Concat(_infiltration, ".json")));
 
-                    HasMap = true;
+                    _hasMap = true;
                 }
 
-                MapDatas.PlayerPosition = HUDCore.YourPlayer.Position;
+                _mapDatas.PlayerPosition = HUDCore.YourPlayer.Position;
 
-                MapDatas.PlayerRotation = HUDCore.YourPlayer.CameraPosition.eulerAngles;
+                _mapDatas.PlayerRotation = HUDCore.YourPlayer.CameraPosition.eulerAngles;
             }
             else
             {
                 UnloadMap();
 
-                HasMap = false;
+                _hasMap = false;
             }
         }
 
@@ -100,7 +93,6 @@ namespace GamePanelHUDMap
 
         public class SettingsData
         {
-
         }
     }
 }

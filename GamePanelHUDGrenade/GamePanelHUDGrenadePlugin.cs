@@ -1,163 +1,146 @@
 ﻿#if !UNITY_EDITOR
+using System;
 using BepInEx;
 using BepInEx.Configuration;
-using System.Reflection;
-using System.Collections.Generic;
-using UnityEngine;
-using TMPro;
 using EFT.InventoryLogic;
+using EFTReflection;
 using GamePanelHUDCore;
+using GamePanelHUDCore.Attributes;
 using GamePanelHUDCore.Utils;
+using TMPro;
+using UnityEngine;
+using static EFTApi.EFTHelpers;
 
 namespace GamePanelHUDGrenade
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDGrenade", "kmyuhkyuk-GamePanelHUDGrenade", "2.6.4")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDGrenade", "kmyuhkyuk-GamePanelHUDGrenade", "2.7.0")]
     [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore")]
+    [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", "localized/grenade")]
     public class GamePanelHUDGrenadePlugin : BaseUnityPlugin, IUpdate
     {
-        private GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
+        private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
 
-        internal static readonly GamePanelHUDCorePlugin.HUDClass<GrenadeAmount, SettingsData> HUD = new GamePanelHUDCorePlugin.HUDClass<GrenadeAmount, SettingsData>();
+        internal static readonly GamePanelHUDCorePlugin.HUDClass<GrenadeAmount, SettingsData> HUD =
+            new GamePanelHUDCorePlugin.HUDClass<GrenadeAmount, SettingsData>();
 
-        private readonly ReflectionData RefData = new ReflectionData();
+        private readonly ReflectionData _reflectionData = new ReflectionData();
 
-        private bool GrenadeHUDSw;
+        private bool _grenadeHUDSw;
 
-        private Item Rig;
-        private Item Pocket;
+        private Item _rig;
 
-        private readonly GrenadeAmount RigAmount = new GrenadeAmount();
+        private Item _pocket;
 
-        private readonly GrenadeAmount PocketAmount = new GrenadeAmount();
+        private readonly GrenadeAmount _rigAmount = new GrenadeAmount();
 
-        private readonly GrenadeAmount AllAmount = new GrenadeAmount();
+        private readonly GrenadeAmount _pocketAmount = new GrenadeAmount();
 
-        private readonly SettingsData SetData = new SettingsData();
+        private readonly GrenadeAmount _allAmount = new GrenadeAmount();
+
+        private readonly SettingsData _setData;
+
+        private readonly Type _grenadeItemType;
+
+        public GamePanelHUDGrenadePlugin()
+        {
+            _grenadeItemType = RefTool.GetEftType(x =>
+                x.GetMethod("CreateFragment", RefTool.Public) != null &&
+                x.GetProperty("GetExplDelay", RefTool.Public) != null);
+
+            _setData = new SettingsData(Config);
+        }
 
         private void Start()
         {
-            Logger.LogInfo("Loaded: kmyuhkyuk-GamePanelHUDGrenade");
-
-            ModUpdateCheck.DrawCheck(this);
-
-            const string mainSettings = "主设置 Main Settings";
-            const string positionScaleSettings = "位置大小设置 Position Scale Settings";
-            const string colorSettings = "颜色设置 Color Settings";
-            const string fontStylesSettings = "字体样式设置 Font Styles Settings";
-
-            SetData.KeyGrenadeHUDSw = Config.Bind<bool>(mainSettings, "手雷计数器显示 Grenade HUD display", true);
-            SetData.KeyMergeGrenade = Config.Bind<bool>(mainSettings, "合并所有手雷统计 Merge All Grenade Count", false);
-            SetData.KeyZeroWarning = Config.Bind<bool>(mainSettings, "手雷数量为零警告 Grenade Count Zero Warning", false);
-
-            SetData.KeyAnchoredPosition = Config.Bind<Vector2>(positionScaleSettings, "指示栏位置 Anchored Position", new Vector2(-75, 5));
-            SetData.KeySizeDelta = Config.Bind<Vector2>(positionScaleSettings, "指示栏高度 Size Delta", new Vector2(180, 30));
-            SetData.KeyLocalScale = Config.Bind<Vector2>(positionScaleSettings, "指示栏大小 Local Scale", new Vector2(1, 1));
-
-            SetData.KeyFragColor = Config.Bind<Color>(colorSettings, "碎片 Frag", new Color(0.8901961f, 0.8901961f, 0.8392157f)); //#E3E3D6
-            SetData.KeyStunColor = Config.Bind<Color>(colorSettings, "闪光 Stun", new Color(0.8901961f, 0.8901961f, 0.8392157f)); //#E3E3D6
-            SetData.KeySmokeColor = Config.Bind<Color>(colorSettings, "烟雾 Smoke", new Color(0.8901961f, 0.8901961f, 0.8392157f)); //#E3E3D6
-            SetData.KeyWarningColor = Config.Bind<Color>(colorSettings, "警告 Warning", new Color(0.7294118f,0f,0f)); //#BA0000
-
-            SetData.KeyFragStyles = Config.Bind<FontStyles>(fontStylesSettings, "碎片 Frag", FontStyles.Normal);
-            SetData.KeyStunStyles = Config.Bind<FontStyles>(fontStylesSettings, "闪光 Stun", FontStyles.Normal);
-            SetData.KeySmokeStyles = Config.Bind<FontStyles>(fontStylesSettings, "烟雾 Smoke", FontStyles.Normal);
-
-            BindingFlags flags = BindingFlags.Public | BindingFlags.Instance;
-
-            RefData.RefEquipment = RefHelp.FieldRef<InventoryClass, object>.Create("Equipment");
-            RefData.RefSlots = RefHelp.FieldRef<object, Slot[]>.Create(RefData.RefEquipment.FieldType, "Slots");
-            RefData.RefGrids = RefHelp.FieldRef<object, object[]>.Create(RefHelp.GetEftType(x => x.GetMethod("TryGetLastForbiddenItem", BindingFlags.DeclaredOnly | flags) != null), "Grids");
-
-            RefData.RefItems = RefHelp.PropertyRef<object, IEnumerable<Item>>.Create(RefData.RefGrids.FieldType.GetElementType(), "Items");
-            RefData.RefThrowType = RefHelp.PropertyRef<object, ThrowWeapType>.Create(RefHelp.GetEftType(x => x.GetProperty("ThrowType", flags) != null), "ThrowType");
-
-            GamePanelHUDCorePlugin.UpdateManger.Register(this);
+            HUDCore.UpdateManger.Register(this);
         }
 
         private void Awake()
         {
-            GamePanelHUDCorePlugin.HUDCoreClass.LoadHUD("gamepanelgrenadehud.bundle", "GamePanelGrenadeHUD");
+            HUDCore.LoadHUD("gamepanelgrenadehud.bundle", "GamePanelGrenadeHUD");
         }
 
-        public void IUpdate()
+        public void CustomUpdate()
         {
             GrenadePlugin();
         }
 
-        void GrenadePlugin()
+        private void GrenadePlugin()
         {
-            GrenadeHUDSw = HUDCore.AllHUDSw && HUDCore.HasPlayer && SetData.KeyGrenadeHUDSw.Value;
+            _grenadeHUDSw = HUDCore.AllHUDSw && HUDCore.HasPlayer && _setData.KeyGrenadeHUDSw.Value;
 
-            HUD.Set(AllAmount, SetData, GrenadeHUDSw);
+            HUD.Set(_allAmount, _setData, _grenadeHUDSw);
 
             if (HUDCore.HasPlayer)
             {
                 //Performance Optimization
                 if (Time.frameCount % 20 == 0)
                 {
-                    Slot[] slots = RefData.RefSlots.GetValue(RefData.RefEquipment.GetValue(HUDCore.YourPlayer.Profile.Inventory));
+                    var slots = _PlayerHelper.InventoryHelper.EquipmentSlots;
 
                     //Get Rig and Pocket
-                    Rig = slots[6].ContainedItem;
-                    Pocket = slots[10].ContainedItem;
+                    _rig = slots[6].ContainedItem;
+                    _pocket = slots[10].ContainedItem;
 
-                    GetGrenadeAmount(Rig, out RigAmount.Frag, out RigAmount.Stun, out RigAmount.Flash, out RigAmount.Smoke);
-                    GetGrenadeAmount(Pocket, out PocketAmount.Frag, out PocketAmount.Stun, out PocketAmount.Frag, out PocketAmount.Smoke);
+                    GetGrenadeAmount(_rig, out _rigAmount.Frag, out _rigAmount.Stun, out _rigAmount.Flash,
+                        out _rigAmount.Smoke);
+                    GetGrenadeAmount(_pocket, out _pocketAmount.Frag, out _pocketAmount.Stun, out _pocketAmount.Frag,
+                        out _pocketAmount.Smoke);
                 }
 
-                AllAmount.Frag = RigAmount.Frag + PocketAmount.Frag;
-                AllAmount.Stun = RigAmount.Stun + PocketAmount.Stun;
-                AllAmount.Flash = RigAmount.Flash + PocketAmount.Flash;
-                AllAmount.Smoke = RigAmount.Smoke + PocketAmount.Smoke;
+                _allAmount.Frag = _rigAmount.Frag + _pocketAmount.Frag;
+                _allAmount.Stun = _rigAmount.Stun + _pocketAmount.Stun;
+                _allAmount.Flash = _rigAmount.Flash + _pocketAmount.Flash;
+                _allAmount.Smoke = _rigAmount.Smoke + _pocketAmount.Smoke;
             }
         }
 
-        void GetGrenadeAmount(Item gear, out int frag, out int stun, out int flash, out int smoke)
+        private void GetGrenadeAmount(Item gear, out int frag, out int stun, out int flash, out int smoke)
         {
             frag = 0;
             stun = 0;
             flash = 0;
             smoke = 0;
 
-            if (gear != null)
-            {
-                object[] grids = RefData.RefGrids.GetValue(gear);
+            if (gear == null)
+                return;
 
-                if (!SetData.KeyMergeGrenade.Value)
+            var grids = _PlayerHelper.InventoryHelper.RefGrids.GetValue(gear);
+
+            if (!_setData.KeyMergeGrenade.Value)
+            {
+                foreach (var grid in grids)
                 {
-                    foreach (object grid in grids)
+                    foreach (var item in _PlayerHelper.InventoryHelper.RefItems.GetValue(grid))
                     {
-                        foreach (Item item in RefData.RefItems.GetValue(grid))
+                        if (item.GetType() == _grenadeItemType)
                         {
-                            if (item.GetType() == GrenadeType.GrenadeItemType)
+                            switch (_reflectionData.ThrowType.GetValue(item))
                             {
-                                switch (RefData.RefThrowType.GetValue(item))
-                                {
-                                    case ThrowWeapType.frag_grenade:
-                                        frag++;
-                                        break;
-                                    case ThrowWeapType.stun_grenade:
-                                        stun++;
-                                        break;
-                                    case ThrowWeapType.flash_grenade:
-                                        flash++;
-                                        break;
-                                    case ThrowWeapType.smoke_grenade:
-                                        smoke++;
-                                        break;
-                                }
+                                case ThrowWeapType.frag_grenade:
+                                    frag++;
+                                    break;
+                                case ThrowWeapType.stun_grenade:
+                                    stun++;
+                                    break;
+                                case ThrowWeapType.flash_grenade:
+                                    flash++;
+                                    break;
+                                case ThrowWeapType.smoke_grenade:
+                                    smoke++;
+                                    break;
                             }
                         }
                     }
                 }
-                else
+            }
+            else
+            {
+                foreach (var grid in grids)
                 {
-                    foreach (object grid in grids)
+                    foreach (var _ in _PlayerHelper.InventoryHelper.RefItems.GetValue(grid))
                     {
-                        foreach (Item _ in RefData.RefItems.GetValue(grid))
-                        {
-                            frag++;
-                        }
+                        frag++;
                     }
                 }
             }
@@ -173,32 +156,68 @@ namespace GamePanelHUDGrenade
 
         public class SettingsData
         {
-            public ConfigEntry<bool> KeyGrenadeHUDSw;
-            public ConfigEntry<bool> KeyMergeGrenade;
-            public ConfigEntry<bool> KeyZeroWarning;
+            public readonly ConfigEntry<bool> KeyGrenadeHUDSw;
+            public readonly ConfigEntry<bool> KeyMergeGrenade;
+            public readonly ConfigEntry<bool> KeyZeroWarning;
 
-            public ConfigEntry<Vector2> KeyAnchoredPosition;
-            public ConfigEntry<Vector2> KeySizeDelta;
-            public ConfigEntry<Vector2> KeyLocalScale;
+            public readonly ConfigEntry<Vector2> KeyAnchoredPosition;
+            public readonly ConfigEntry<Vector2> KeySizeDelta;
+            public readonly ConfigEntry<Vector2> KeyLocalScale;
 
-            public ConfigEntry<Color> KeyFragColor;
-            public ConfigEntry<Color> KeyStunColor;
-            public ConfigEntry<Color> KeySmokeColor;
-            public ConfigEntry<Color> KeyWarningColor;
+            public readonly ConfigEntry<Color> KeyFragColor;
+            public readonly ConfigEntry<Color> KeyStunColor;
+            public readonly ConfigEntry<Color> KeySmokeColor;
+            public readonly ConfigEntry<Color> KeyWarningColor;
 
-            public ConfigEntry<FontStyles> KeyFragStyles;
-            public ConfigEntry<FontStyles> KeyStunStyles;
-            public ConfigEntry<FontStyles> KeySmokeStyles;
+            public readonly ConfigEntry<FontStyles> KeyFragStyles;
+            public readonly ConfigEntry<FontStyles> KeyStunStyles;
+            public readonly ConfigEntry<FontStyles> KeySmokeStyles;
+
+            public SettingsData(ConfigFile configFile)
+            {
+                const string mainSettings = "Main Settings";
+                const string positionScaleSettings = "Position Scale Settings";
+                const string colorSettings = "Color Settings";
+                const string fontStylesSettings = "Font Styles Settings";
+
+                KeyGrenadeHUDSw = configFile.Bind<bool>(mainSettings, "Grenade HUD display", true);
+                KeyMergeGrenade = configFile.Bind<bool>(mainSettings, "Merge All Grenade Count", false);
+                KeyZeroWarning = configFile.Bind<bool>(mainSettings, "Grenade Count Zero Warning", false);
+
+                KeyAnchoredPosition =
+                    configFile.Bind<Vector2>(positionScaleSettings, "Anchored Position", new Vector2(-75, 5));
+                KeySizeDelta =
+                    configFile.Bind<Vector2>(positionScaleSettings, "Size Delta", new Vector2(180, 30));
+                KeyLocalScale =
+                    configFile.Bind<Vector2>(positionScaleSettings, "Local Scale", new Vector2(1, 1));
+
+                KeyFragColor =
+                    configFile.Bind<Color>(colorSettings, "Frag",
+                        new Color(0.8901961f, 0.8901961f, 0.8392157f)); //#E3E3D6
+                KeyStunColor =
+                    configFile.Bind<Color>(colorSettings, "Stun",
+                        new Color(0.8901961f, 0.8901961f, 0.8392157f)); //#E3E3D6
+                KeySmokeColor =
+                    configFile.Bind<Color>(colorSettings, "Smoke",
+                        new Color(0.8901961f, 0.8901961f, 0.8392157f)); //#E3E3D6
+                KeyWarningColor =
+                    configFile.Bind<Color>(colorSettings, "Warning", new Color(0.7294118f, 0f, 0f)); //#BA0000
+
+                KeyFragStyles = configFile.Bind<FontStyles>(fontStylesSettings, "Frag", FontStyles.Normal);
+                KeyStunStyles = configFile.Bind<FontStyles>(fontStylesSettings, "Stun", FontStyles.Normal);
+                KeySmokeStyles = configFile.Bind<FontStyles>(fontStylesSettings, "Smoke", FontStyles.Normal);
+            }
         }
 
-        public class ReflectionData
+        private class ReflectionData
         {
-            public RefHelp.FieldRef<object, Slot[]> RefSlots;
-            public RefHelp.FieldRef<object, object[]> RefGrids;
-            public RefHelp.FieldRef<InventoryClass, object> RefEquipment;
+            public readonly RefHelper.PropertyRef<object, ThrowWeapType> ThrowType;
 
-            public RefHelp.PropertyRef<object, IEnumerable<Item>> RefItems;
-            public RefHelp.PropertyRef<object, ThrowWeapType> RefThrowType;
+            public ReflectionData()
+            {
+                ThrowType = RefHelper.PropertyRef<object, ThrowWeapType>.Create(
+                    RefTool.GetEftType(x => x.GetProperty("ThrowType", RefTool.Public) != null), "ThrowType");
+            }
         }
     }
 }

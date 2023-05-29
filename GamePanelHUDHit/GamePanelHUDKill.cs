@@ -1,82 +1,82 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
-using UnityEngine;
+using System.Linq;
 using EFT;
-using EFT.UI;
+using EFTUtils;
+using GamePanelHUDCore.Utils;
+using UnityEngine;
 #if !UNITY_EDITOR
 using GamePanelHUDCore;
-using GamePanelHUDCore.Utils.Session;
+using static EFTApi.EFTHelpers;
 #endif
-using GamePanelHUDCore.Utils;
 
 namespace GamePanelHUDHit
 {
-    public class GamePanelHUDKill : UIElement
+    public class GamePanelHUDKill : MonoBehaviour
 #if !UNITY_EDITOR
         , IUpdate
 #endif
     {
 #if !UNITY_EDITOR
-        private GamePanelHUDHitPlugin.KillHUDClass<RectTransform, GamePanelHUDHitPlugin.SettingsData> HUD => GamePanelHUDHitPlugin.KillHUD;
+        private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
+        private static GamePanelHUDHitPlugin.KillHUDClass<RectTransform, GamePanelHUDHitPlugin.SettingsData> HUD =>
+            GamePanelHUDHitPlugin.KillHUD;
 #endif
 
-        private int NowHasInfo;
+        private int _currentHasInfo;
 
-        private int WaitInfo;
+        private int _waitInfo;
 
-        private int LastXp;
+        private int _lastXp;
 
-        private GamePanelHUDKillUI Previous;
+        private GamePanelHUDKillUI _previous;
 
-        [SerializeField]
-        private Transform _Kills;
+        [SerializeField] private Transform killsRoot;
 
-        private Transform _TestKills;
+        private Transform _testKillsTransform;
 
-        [SerializeField]
-        private GamePanelHUDExpUI _Exp;
+        [SerializeField] private GamePanelHUDExpUI exp;
 
-        private GamePanelHUDExpUI _TestExp;
+        private GamePanelHUDExpUI _testExp;
 
-        private RectTransform KillsRect;
+        private RectTransform _killsRect;
 
-        private RectTransform ExpRect;
+        private RectTransform _expRect;
 
-        private RectTransform TestKillsRect;
+        private RectTransform _testKillsRect;
 
-        private RectTransform TestExpRect;
+        private RectTransform _testExpRect;
 
-        private CanvasGroup KillGroup;
+        private CanvasGroup _killGroup;
 
-        private CanvasGroup ExpGroup;
+        private CanvasGroup _expGroup;
 
-        private CanvasGroup TestExpGroup;
+        private CanvasGroup _testExpGroup;
 
         internal static Action HasInfoMinus;
 
         internal static Action HasWaitInfoMinus;
 
 #if !UNITY_EDITOR
-        void Start()
+        private void Start()
         {
-            if (_Kills != null)
+            if (killsRoot != null)
             {
-                _TestKills = Instantiate(_Kills.gameObject, _Kills.transform.parent).transform;
-                TestKillsRect = _TestKills.GetComponent<RectTransform>();
+                _testKillsTransform = Instantiate(killsRoot.gameObject, killsRoot.transform.parent).transform;
+                _testKillsRect = _testKillsTransform.GetComponent<RectTransform>();
 
-                KillGroup = _Kills.GetComponent<CanvasGroup>();
+                _killGroup = killsRoot.GetComponent<CanvasGroup>();
 
-                if (_Exp != null)
+                if (exp != null)
                 {
-                    _TestExp = Instantiate(_Exp.gameObject, _Exp.transform.parent).GetComponent<GamePanelHUDExpUI>();
-                    TestExpRect = _TestExp.GetComponent<RectTransform>();
+                    _testExp = Instantiate(exp.gameObject, exp.transform.parent).GetComponent<GamePanelHUDExpUI>();
+                    _testExpRect = _testExp.GetComponent<RectTransform>();
 
-                    ExpRect = _Exp.GetComponent<RectTransform>();
-                    KillsRect = _Kills.GetComponent<RectTransform>();
+                    _expRect = exp.GetComponent<RectTransform>();
+                    _killsRect = killsRoot.GetComponent<RectTransform>();
 
-                    ExpGroup = _Exp.GetComponent<CanvasGroup>();
-                    TestExpGroup = _TestExp.GetComponent<CanvasGroup>();
+                    _expGroup = exp.GetComponent<CanvasGroup>();
+                    _testExpGroup = _testExp.GetComponent<CanvasGroup>();
                 }
             }
 
@@ -85,78 +85,82 @@ namespace GamePanelHUDHit
 
             GamePanelHUDHitPlugin.ShowKill = ShowKill;
 
-            GamePanelHUDCorePlugin.UpdateManger.Register(this);
+            HUDCore.UpdateManger.Register(this);
         }
 
-        public void IUpdate()
+        public void CustomUpdate()
         {
             KillHUD();
         }
 
-        void KillHUD()
+        private void KillHUD()
         {
-            if (_Kills != null)
+            if (killsRoot != null)
             {
-                KillGroup.alpha = HUD.HUDSw ? 1 : 0;
+                _killGroup.alpha = HUD.HUDSw ? 1 : 0;
 
-                KillsRect.anchoredPosition = HUD.SetData.KeyKillAnchoredPosition.Value;
-                KillsRect.sizeDelta = HUD.SetData.KeyKillSizeDelta.Value;
-                KillsRect.localScale = HUD.SetData.KeyKillLocalScale.Value;
+                _killsRect.anchoredPosition = HUD.SetData.KeyKillAnchoredPosition.Value;
+                _killsRect.sizeDelta = HUD.SetData.KeyKillSizeDelta.Value;
+                _killsRect.localScale = HUD.SetData.KeyKillLocalScale.Value;
 
-                TestKillsRect.anchoredPosition = HUD.SetData.KeyKillAnchoredPosition.Value + new Vector2(HUD.Info.sizeDelta.x / 3.2f, 0);
-                TestKillsRect.sizeDelta = HUD.SetData.KeyKillSizeDelta.Value;
-                TestKillsRect.localScale = HUD.SetData.KeyKillLocalScale.Value;
+                _testKillsRect.anchoredPosition = HUD.SetData.KeyKillAnchoredPosition.Value +
+                                                  new Vector2(HUD.Info.sizeDelta.x / 3.2f, 0);
+                _testKillsRect.sizeDelta = HUD.SetData.KeyKillSizeDelta.Value;
+                _testKillsRect.localScale = HUD.SetData.KeyKillLocalScale.Value;
             }
-            if (_Exp != null)
+
+            if (exp != null)
             {
-                ExpGroup.alpha = HUD.HUDSw2 ? 1 : 0;
+                _expGroup.alpha = HUD.HUDSw2 ? 1 : 0;
 
-                ExpRect.anchoredPosition = HUD.SetData.KeyKillExpAnchoredPosition.Value;
-                ExpRect.sizeDelta = HUD.SetData.KeyKillExpSizeDelta.Value;
-                ExpRect.localScale = HUD.SetData.KeyKillExpLocalScale.Value;
+                _expRect.anchoredPosition = HUD.SetData.KeyKillExpAnchoredPosition.Value;
+                _expRect.sizeDelta = HUD.SetData.KeyKillExpSizeDelta.Value;
+                _expRect.localScale = HUD.SetData.KeyKillExpLocalScale.Value;
 
-                _Exp.XPColor = HUD.SetData.KeyExpColor.Value;
-                _Exp.XPStyles = HUD.SetData.KeyExpStyles.Value;
-                _Exp.XPWaitSpeed = HUD.SetData.KeyExpWaitSpeed.Value;
+                exp.xpColor = HUD.SetData.KeyExpColor.Value;
+                exp.xpStyles = HUD.SetData.KeyExpStyles.Value;
+                exp.xpWaitSpeed = HUD.SetData.KeyExpWaitSpeed.Value;
 
-                TestExpGroup.alpha = HUD.HUDSw3 ? 1 : 0;
+                _testExpGroup.alpha = HUD.HUDSw3 ? 1 : 0;
 
-                TestExpRect.anchoredPosition = HUD.SetData.KeyKillExpAnchoredPosition.Value + new Vector2(HUD.Info.sizeDelta.x / 3.2f, 0);
-                TestExpRect.sizeDelta = HUD.SetData.KeyKillExpSizeDelta.Value;
-                TestExpRect.localScale = HUD.SetData.KeyKillExpLocalScale.Value;
+                _testExpRect.anchoredPosition = HUD.SetData.KeyKillExpAnchoredPosition.Value +
+                                                new Vector2(HUD.Info.sizeDelta.x / 3.2f, 0);
+                _testExpRect.sizeDelta = HUD.SetData.KeyKillExpSizeDelta.Value;
+                _testExpRect.localScale = HUD.SetData.KeyKillExpLocalScale.Value;
 
-                _TestExp.XPColor = HUD.SetData.KeyExpColor.Value;
-                _TestExp.XPStyles = HUD.SetData.KeyExpStyles.Value;
-                _TestExp.XPWaitSpeed = HUD.SetData.KeyExpWaitSpeed.Value;
+                _testExp.xpColor = HUD.SetData.KeyExpColor.Value;
+                _testExp.xpStyles = HUD.SetData.KeyExpStyles.Value;
+                _testExp.xpWaitSpeed = HUD.SetData.KeyExpWaitSpeed.Value;
             }
         }
 
-        void ShowKill(GamePanelHUDHitPlugin.KillInfo killInfo)
+        private void ShowKill(GamePanelHUDHitPlugin.KillInfo killInfo)
         {
-            if (_Kills != null)
+            if (killsRoot != null)
             {
-                Transform kills = killInfo.IsTest ? _TestKills : _Kills;
+                var killRoot = killInfo.IsTest ? _testKillsTransform : killsRoot;
 
-                GamePanelHUDExpUI exp = killInfo.IsTest ? _TestExp : _Exp;
+                var expRoot = killInfo.IsTest ? _testExp : exp;
 
-                int baseExp = ExperienceHelp.GetBaseExp(killInfo.Exp, killInfo.Side);
+                var baseExp = _SessionHelper.ExperienceHelper.GetBaseExp(killInfo.Exp, killInfo.Side);
 
-                int hasExp = baseExp;
+                var hasExp = baseExp;
 
-                int hasInfo = 1;
+                var hasInfo = 1;
 
-                List<GamePanelHUDKillUI> hasKills = new List<GamePanelHUDKillUI>();
+                var hasKills = new List<GamePanelHUDKillUI>();
 
                 if (killInfo.Distance >= HUD.SetData.KeyKillDistance.Value && HUD.SetData.KeyKillHasDistance.Value)
                 {
-                    hasKills.Add(AddDistanceInfo(killInfo, HUD.SetData, kills));
+                    hasKills.Add(AddDistanceInfo(killInfo, HUD.SetData, killRoot));
                 }
 
                 if (killInfo.Kills > 1 && HUD.SetData.KeyKillHasStreak.Value)
                 {
-                    int streakXp = ExperienceHelp.GetStreakExp(killInfo.Exp, killInfo.Side, killInfo.Kills);
+                    var streakXp =
+                        _SessionHelper.ExperienceHelper.GetStreakExp(killInfo.Exp, killInfo.Side, killInfo.Kills);
 
-                    hasKills.Add(AddStreakInfo(killInfo, HUD.SetData, kills, streakXp));
+                    hasKills.Add(AddStreakInfo(killInfo, HUD.SetData, killRoot, streakXp));
 
                     hasExp += streakXp;
 
@@ -165,255 +169,274 @@ namespace GamePanelHUDHit
 
                 if (killInfo.Part == EBodyPart.Head && HUD.SetData.KeyKillHasOther.Value)
                 {
-                    int headXp = ExperienceHelp.GetHeadExp(killInfo.Exp, killInfo.Side);
+                    var headXp = _SessionHelper.ExperienceHelper.GetHeadExp(killInfo.Exp, killInfo.Side);
 
-                    hasKills.Add(AddOtherInfo(HUD.SetData, kills, LocalizedHelp.Localized("StatsHeadshot", EStringCase.None), headXp, true));
+                    hasKills.Add(AddOtherInfo(HUD.SetData, killRoot, _LocalizedHelper.Localized("StatsHeadshot"),
+                        headXp, true));
 
                     hasExp += headXp;
 
                     hasInfo++;
                 }
 
-                hasKills.Add(AddKillInfo(killInfo, HUD.SetData, kills, baseExp));
+                hasKills.Add(AddKillInfo(killInfo, HUD.SetData, killRoot, baseExp));
 
-                int hasKillsCount = hasKills.Count;
+                var hasKillsCount = hasKills.Count;
 
-                NowHasInfo += hasKillsCount;
-                WaitInfo += hasKillsCount;
+                _currentHasInfo += hasKillsCount;
+                _waitInfo += hasKillsCount;
 
-                int count = hasKillsCount - 1;
+                var count = hasKillsCount - 1;
 
                 if (!HUD.SetData.KeyKillWaitBottom.Value)
                 {
-                    if (Previous != null)
+                    if (_previous != null)
                     {
-                        Previous.After = hasKills.Last();
+                        _previous.after = hasKills.Last();
 
                         count -= 1;
                     }
 
-                    hasKills.First().CanDestroy = true;
+                    hasKills.First().canDestroy = true;
                 }
                 else
                 {
-                    if (Previous != null)
+                    if (_previous != null)
                     {
-                        Previous.After = hasKills.First();
+                        _previous.after = hasKills.First();
 
-                        hasKills.Last().After = Previous;
+                        hasKills.Last().after = _previous;
                     }
                     else
                     {
-                        hasKills.First().CanDestroy = true;
+                        hasKills.First().canDestroy = true;
                     }
                 }
 
-                Previous = hasKills.Last();
+                _previous = hasKills.Last();
 
                 if (hasKillsCount > 1)
                 {
-                    for (int i = 0; i < count; i++)
+                    for (var i = 0; i < count; i++)
                     {
-                        hasKills[i].After = hasKills[i + 1];
+                        hasKills[i].after = hasKills[i + 1];
                     }
                 }
 
-                if (NowHasInfo > 0 && !exp.IsAnim())
+                var isAnim = expRoot.IsAnim;
+
+                if (_currentHasInfo > 0 && !isAnim)
                 {
-                    exp.XpUp(hasExp, LastXp);
+                    expRoot.XpUp(hasExp, _lastXp);
                 }
-                else if (exp.IsAnim() || hasInfo > 1)
+                else if (isAnim || hasInfo > 1)
                 {
-                    exp.XpUp(hasExp, 0);
+                    expRoot.XpUp(hasExp, 0);
                 }
                 else
                 {
-                    LastXp = hasExp;
+                    _lastXp = hasExp;
                 }
             }
         }
 
-        GamePanelHUDKillUI AddKillInfo(GamePanelHUDHitPlugin.KillInfo killInfo, GamePanelHUDHitPlugin.SettingsData setData, Transform _kills, int exp)
+        private static GamePanelHUDKillUI AddKillInfo(GamePanelHUDHitPlugin.KillInfo killInfo,
+            GamePanelHUDHitPlugin.SettingsData setData, Transform killsRoot, int exp)
         {
-            GameObject kill = Instantiate(GamePanelHUDHitPlugin.KillPrefab, _kills);
+            var killUI = Instantiate(GamePanelHUDHitPlugin.KillPrefab, killsRoot).GetComponent<GamePanelHUDKillUI>();
 
-            GamePanelHUDKillUI _kill = kill.GetComponent<GamePanelHUDKillUI>();
-
-            bool isScav = killInfo.Side == EPlayerSide.Savage;
+            var isScav = killInfo.Side == EPlayerSide.Savage;
 
             string playerName;
 
             if (isScav && setData.KeyKillScavEn.Value)
             {
-                playerName = RuToEn.Transliterate(killInfo.PlayerName);
+                playerName = _LocalizedHelper.Transliterate(killInfo.PlayerName);
             }
             else
             {
                 playerName = killInfo.PlayerName;
             }
 
-            var weaponName = LocalizedHelp.Localized(killInfo.WeaponName, EStringCase.None);
+            var weaponName = _LocalizedHelper.Localized(killInfo.WeaponName);
 
             string sideKey;
-            if (isScav && RoleHelp.IsBossOrFollower(killInfo.Role))
+            if (isScav && _PlayerHelper.RoleHelper.IsBossOrFollower(killInfo.Role))
             {
-                sideKey = RoleHelp.GetScavRoleKey(killInfo.Role);
+                sideKey = _PlayerHelper.RoleHelper.GetScavRoleKey(killInfo.Role);
             }
             else
             {
                 sideKey = killInfo.Side.ToString();
             }
 
-            var sideName = LocalizedHelp.Localized(sideKey, EStringCase.None);
+            var sideName = _LocalizedHelper.Localized(sideKey);
 
-            string nameColor = setData.KeyKillNameColor.Value.ColorToHtml();
-            string partColor = setData.KeyKillPartColor.Value.ColorToHtml();
-            string weaponColor = setData.KeyKillWeaponColor.Value.ColorToHtml();
-            string lvlColor = setData.KeyKillLvlColor.Value.ColorToHtml();
-            string levelColor = setData.KeyKillLevelColor.Value.ColorToHtml();
-            string bracketColor = setData.KeyKillBracketColor.Value.ColorToHtml();
-            string enemyDownColor = setData.KeyKillEnemyDownColor.Value.ColorToHtml();
+            var nameColor = setData.KeyKillNameColor.Value.ColorToHtml();
+            var partColor = setData.KeyKillPartColor.Value.ColorToHtml();
+            var weaponColor = setData.KeyKillWeaponColor.Value.ColorToHtml();
+            var lvlColor = setData.KeyKillLvlColor.Value.ColorToHtml();
+            var levelColor = setData.KeyKillLevelColor.Value.ColorToHtml();
+            var bracketColor = setData.KeyKillBracketColor.Value.ColorToHtml();
+            var enemyDownColor = setData.KeyKillEnemyDownColor.Value.ColorToHtml();
 
             string sideColor;
-            if (isScav && RoleHelp.IsBoss(killInfo.Role))
+            switch (isScav)
             {
-                sideColor = setData.KeyKillBossColor.Value.ColorToHtml();
+                case true when _PlayerHelper.RoleHelper.IsBoss(killInfo.Role):
+                    sideColor = setData.KeyKillBossColor.Value.ColorToHtml();
+                    break;
+                case true when _PlayerHelper.RoleHelper.IsFollower(killInfo.Role):
+                    sideColor = setData.KeyKillFollowerColor.Value.ColorToHtml();
+                    break;
+                default:
+                    switch (killInfo.Side)
+                    {
+                        case EPlayerSide.Usec:
+                            sideColor = setData.KeyKillUsecColor.Value.ColorToHtml();
+                            break;
+                        case EPlayerSide.Bear:
+                            sideColor = setData.KeyKillBearColor.Value.ColorToHtml();
+                            break;
+                        case EPlayerSide.Savage:
+                            sideColor = setData.KeyKillScavColor.Value.ColorToHtml();
+                            break;
+                        default:
+                            sideColor = Color.black.ColorToHtml();
+                            break;
+                    }
+
+                    break;
             }
-            else if (isScav && RoleHelp.IsFollower(killInfo.Role))
-            {
-                sideColor = setData.KeyKillFollowerColor.Value.ColorToHtml();
-            }
-            else
-            {
-                switch (killInfo.Side)
-                {
-                    case EPlayerSide.Usec:
-                        sideColor = setData.KeyKillUsecColor.Value.ColorToHtml();
-                        break;
-                    case EPlayerSide.Bear:
-                        sideColor = setData.KeyKillBearColor.Value.ColorToHtml();
-                        break;
-                    case EPlayerSide.Savage:
-                        sideColor = setData.KeyKillScavColor.Value.ColorToHtml();
-                        break;
-                    default:
-                        sideColor = Color.black.ColorToHtml();
-                        break;
-                }
-            }
 
-            _kill.Xp = exp;
+            killUI.xp = exp;
 
-            string part = setData.KeyKillHasPart.Value ? string.Concat("<color=", bracketColor, ">", "[", "</color>", "<color=", partColor, ">", LocalizedHelp.Localized(killInfo.Part.ToString(), EStringCase.None), "</color>", "<color=", bracketColor, ">", "]", "</color>") : "";
-            string side = setData.KeyKillHasSide.Value ? string.Concat("<color=", bracketColor, ">", "[", "</color>", "<color=", sideColor, ">", sideName, "</color>", "<color=", bracketColor, ">", "]", "</color>") : "";
-            string weapon = setData.KeyKillHasWeapon.Value ? string.Concat("<color=", bracketColor, ">", "[", "</color>", "<color=", weaponColor, ">", weaponName, "</color>", "<color=", bracketColor, ">", "]", "</color>") : "";
-            string level = !isScav && setData.KeyKillHasLevel.Value ? string.Concat("<color=", bracketColor, ">", "[", "</color>", "<color=", lvlColor, ">", LocalizedHelp.Localized("LVLKILLLIST", EStringCase.None), ".", "</color>", "<color=", levelColor, ">", killInfo.Level, "</color>", "<color=", bracketColor, ">", "]", "</color>") : "";
+            var part = setData.KeyKillHasPart.Value
+                ? string.Concat("<color=", bracketColor, ">", "[", "</color>", "<color=", partColor, ">",
+                    _LocalizedHelper.Localized(killInfo.Part.ToString()), "</color>", "<color=", bracketColor, ">", "]",
+                    "</color>")
+                : string.Empty;
+            var side = setData.KeyKillHasSide.Value
+                ? string.Concat("<color=", bracketColor, ">", "[", "</color>", "<color=", sideColor, ">", sideName,
+                    "</color>", "<color=", bracketColor, ">", "]", "</color>")
+                : string.Empty;
+            var weapon = setData.KeyKillHasWeapon.Value
+                ? string.Concat("<color=", bracketColor, ">", "[", "</color>", "<color=", weaponColor, ">", weaponName,
+                    "</color>", "<color=", bracketColor, ">", "]", "</color>")
+                : string.Empty;
+            var level = !isScav && setData.KeyKillHasLevel.Value
+                ? string.Concat("<color=", bracketColor, ">", "[", "</color>", "<color=", lvlColor, ">",
+                    _LocalizedHelper.Localized("LVLKILLLIST"), ".", "</color>", "<color=", levelColor, ">",
+                    killInfo.Level, "</color>", "<color=", bracketColor, ">", "]", "</color>")
+                : string.Empty;
 
-            _kill.Text = string.Concat("<color=", enemyDownColor, ">", LocalizedHelp.Localized("ENEMYDOWN", EStringCase.None), "</color>");
-            _kill.Text2 = string.Concat(weapon, side, " ", "<color=", nameColor, ">", playerName, "</color>", " ", level, part);
+            killUI.text = string.Concat("<color=", enemyDownColor, ">", _LocalizedHelper.Localized("ENEMYDOWN"),
+                "</color>");
+            killUI.text2 = string.Concat(weapon, side, " ", "<color=", nameColor, ">", playerName, "</color>", " ",
+                level, part);
 
-            _kill.TextFontStyles = setData.KeyKillInfoStyles.Value;
+            killUI.textFontStyles = setData.KeyKillInfoStyles.Value;
 
-            _kill.IsKillInfo = true;
+            killUI.isKillInfo = true;
 
-            _kill.HasXp = setData.KeyKillHasXp.Value;
+            killUI.hasXp = setData.KeyKillHasXp.Value;
 
-            _kill.XpColor = setData.KeyKillXpColor.Value;
+            killUI.xpColor = setData.KeyKillXpColor.Value;
 
-            _kill.transform.SetAsFirstSibling();
+            killUI.transform.SetAsFirstSibling();
 
-            _kill.Active = true;
+            killUI.active = true;
 
-            return _kill;
+            return killUI;
         }
 
-        GamePanelHUDKillUI AddDistanceInfo(GamePanelHUDHitPlugin.KillInfo killInfo, GamePanelHUDHitPlugin.SettingsData setData, Transform _kills)
+        private static GamePanelHUDKillUI AddDistanceInfo(GamePanelHUDHitPlugin.KillInfo killInfo,
+            GamePanelHUDHitPlugin.SettingsData setData, Transform killsRoot)
         {
-            GameObject kill = Instantiate(GamePanelHUDHitPlugin.KillPrefab, _kills);
+            var killUI = Instantiate(GamePanelHUDHitPlugin.KillPrefab, killsRoot).GetComponent<GamePanelHUDKillUI>();
 
-            GamePanelHUDKillUI _kill = kill.GetComponent<GamePanelHUDKillUI>();
+            var meters = _LocalizedHelper.Localized("meters");
 
-            string meters = LocalizedHelp.Localized("meters", EStringCase.None);
+            var metersColor = setData.KeyKillMetersColor.Value.ColorToHtml();
 
-            string metersColor = setData.KeyKillMetersColor.Value.ColorToHtml();
+            var distanceColor = setData.KeyKillDistanceColor.Value.ColorToHtml();
 
-            string distanceColor = setData.KeyKillDistanceColor.Value.ColorToHtml();
+            var distanceText = killInfo.Distance.ToString("F2");
 
-            string distanceText = killInfo.Distance.ToString("F2");
+            killUI.text = string.Concat("<color=", distanceColor, ">", distanceText, "</color>", " ", "<color=",
+                metersColor, ">", meters, "</color>");
+            killUI.textFontStyles = setData.KeyKillDistanceStyles.Value;
 
-            _kill.Text = string.Concat("<color=", distanceColor, ">", distanceText, "</color>", " ", "<color=", metersColor, ">", meters, "</color>");
-            _kill.TextFontStyles = setData.KeyKillDistanceStyles.Value;
+            killUI.transform.SetAsFirstSibling();
 
-            _kill.transform.SetAsFirstSibling();
+            killUI.active = true;
 
-            _kill.Active = true;
-
-            return _kill;
+            return killUI;
         }
 
-        GamePanelHUDKillUI AddStreakInfo(GamePanelHUDHitPlugin.KillInfo killInfo, GamePanelHUDHitPlugin.SettingsData setData, Transform _kills, int exp)
+        private static GamePanelHUDKillUI AddStreakInfo(GamePanelHUDHitPlugin.KillInfo killInfo,
+            GamePanelHUDHitPlugin.SettingsData setData, Transform killsRoot, int exp)
         {
-            GameObject kill = Instantiate(GamePanelHUDHitPlugin.KillPrefab, _kills);
+            var killUI = Instantiate(GamePanelHUDHitPlugin.KillPrefab, killsRoot).GetComponent<GamePanelHUDKillUI>();
 
-            GamePanelHUDKillUI _kill = kill.GetComponent<GamePanelHUDKillUI>();
+            var statsStreakColor = setData.KeyKillStatsStreakColor.Value.ColorToHtml();
+            var streakColor = setData.KeyKillStreakColor.Value.ColorToHtml();
+            var bracketColor = setData.KeyKillBracketColor.Value.ColorToHtml();
 
-            string statsStreakColor = setData.KeyKillStatsStreakColor.Value.ColorToHtml();
-            string streakColor = setData.KeyKillStreakColor.Value.ColorToHtml();
-            string bracketColor = setData.KeyKillBracketColor.Value.ColorToHtml();
+            killUI.text = string.Concat("<color=", statsStreakColor, ">", _LocalizedHelper.Localized("StatsStreak"),
+                "</color>", " ", "<color=", bracketColor, ">", "[", "</color>", "<color=", streakColor, ">",
+                killInfo.Kills, "</color>", "<color=", bracketColor, ">", "]", "</color>");
+            killUI.textFontStyles = setData.KeyKillStreakStyles.Value;
 
-            _kill.Text = string.Concat("<color=", statsStreakColor, ">", LocalizedHelp.Localized("StatsStreak", EStringCase.None), "</color>", " ", "<color=", bracketColor, ">", "[", "</color>", "<color=", streakColor, ">", killInfo.Kills, "</color>", "<color=", bracketColor, ">", "]", "</color>");
-            _kill.TextFontStyles = setData.KeyKillStreakStyles.Value;
+            killUI.xp = exp;
 
-            _kill.Xp = exp;
+            killUI.hasXp = setData.KeyKillHasXp.Value;
 
-            _kill.HasXp = setData.KeyKillHasXp.Value;
+            killUI.xpColor = setData.KeyKillXpColor.Value;
 
-            _kill.XpColor = setData.KeyKillXpColor.Value;
+            killUI.transform.SetAsFirstSibling();
 
-            _kill.transform.SetAsFirstSibling();
+            killUI.active = true;
 
-            _kill.Active = true;
-
-            return _kill;
+            return killUI;
         }
 
-        GamePanelHUDKillUI AddOtherInfo(GamePanelHUDHitPlugin.SettingsData setData, Transform _kills, string text, int exp, bool hasXp)
+        private static GamePanelHUDKillUI AddOtherInfo(GamePanelHUDHitPlugin.SettingsData setData, Transform killsRoot,
+            string text, int exp, bool hasXp)
         {
-            GameObject kill = Instantiate(GamePanelHUDHitPlugin.KillPrefab, _kills);
+            var killUI = Instantiate(GamePanelHUDHitPlugin.KillPrefab, killsRoot).GetComponent<GamePanelHUDKillUI>();
 
-            GamePanelHUDKillUI _kill = kill.GetComponent<GamePanelHUDKillUI>();
+            var otherColor = setData.KeyKillOtherColor.Value.ColorToHtml();
 
-            string otherColor = setData.KeyKillOtherColor.Value.ColorToHtml();
+            killUI.text = string.Concat("<color=", otherColor, ">", text, "</color>");
+            killUI.textFontStyles = setData.KeyKillOtherStyles.Value;
 
-            _kill.Text = string.Concat("<color=", otherColor, ">", text, "</color>");
-            _kill.TextFontStyles = setData.KeyKillOtherStyles.Value;
+            killUI.xp = exp;
 
-            _kill.Xp = exp;
+            killUI.hasXp = hasXp && setData.KeyKillHasXp.Value;
 
-            _kill.HasXp = hasXp && setData.KeyKillHasXp.Value;
+            killUI.xpColor = setData.KeyKillXpColor.Value;
 
-            _kill.XpColor = setData.KeyKillXpColor.Value;
+            killUI.transform.SetAsFirstSibling();
 
-            _kill.transform.SetAsFirstSibling();
+            killUI.active = true;
 
-            _kill.Active = true;
-
-            return _kill;
+            return killUI;
         }
 
         private void InfoMinus()
         {
-            NowHasInfo -= 1;
+            _currentHasInfo -= 1;
         }
 
-        void WaitInfoMinus()
+        private void WaitInfoMinus()
         {
-            WaitInfo -= 1;
+            _waitInfo -= 1;
 
-            if (WaitInfo == 0)
+            if (_waitInfo == 0)
             {
-                _Exp.XpComplete();
-                _TestExp.XpComplete();
+                exp.XpComplete();
+                _testExp.XpComplete();
             }
         }
 #endif

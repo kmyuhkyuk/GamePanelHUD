@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
-using UnityEngine;
+using GamePanelHUDCore.Utils;
 using TMPro;
+using UnityEngine;
 #if !UNITY_EDITOR
 using GamePanelHUDCore;
 #endif
-using GamePanelHUDCore.Utils;
 
 namespace GamePanelHUDHit
 {
@@ -14,112 +14,113 @@ namespace GamePanelHUDHit
 #endif
     {
 #if !UNITY_EDITOR
-        private GamePanelHUDCorePlugin.HUDClass<RectTransform, GamePanelHUDHitPlugin.SettingsData> HUD => GamePanelHUDHitPlugin.KillHUD;
+        private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
+        private static GamePanelHUDCorePlugin.HUDClass<RectTransform, GamePanelHUDHitPlugin.SettingsData> HUD =>
+            GamePanelHUDHitPlugin.KillHUD;
 #endif
 
-        public bool Active;
+        public bool active;
 
-        public bool IsKillInfo;
+        public bool isKillInfo;
 
-        public bool HasXp;
+        public bool hasXp;
 
-        public bool CanDestroy;
+        public bool canDestroy;
 
-        public string Text;
+        public string text;
 
-        public string Text2;
+        public string text2;
 
-        public int Xp;
+        public int xp;
 
-        public Color XpColor;
+        public Color xpColor;
 
-        public FontStyles TextFontStyles;
+        public FontStyles textFontStyles;
 
-        public GamePanelHUDKillUI After;
+        public GamePanelHUDKillUI after;
 
-        [SerializeField]
-        private TMP_Text _TextValue;
+        [SerializeField] private TMP_Text textValue;
 
-        [SerializeField]
-        private TMP_Text _XpValue;
+        [SerializeField] private TMP_Text xpValue;
 
-        private Animator Animator_KillUI;
+        private Animator _animatorKillUI;
 
 #if !UNITY_EDITOR
-        void Start()
+        private void Start()
         {
-            Animator_KillUI = GetComponent<Animator>();
+            _animatorKillUI = GetComponent<Animator>();
 
-            _TextValue.fontStyle = TextFontStyles;
+            textValue.fontStyle = textFontStyles;
 
-            if (HasXp)
+            if (hasXp)
             {
-                _XpValue.fontStyle = HUD.SetData.KeyKillXpStyles.Value;
-                _XpValue.color = XpColor;
-                _XpValue.text = Xp.ToString();
+                xpValue.fontStyle = HUD.SetData.KeyKillXpStyles.Value;
+                xpValue.color = xpColor;
+                xpValue.text = xp.ToString();
             }
 
-            GamePanelHUDCorePlugin.UpdateManger.Register(this);
+            HUDCore.UpdateManger.Register(this);
         }
 
-        public void IUpdate()
+        public void CustomUpdate()
         {
             KillUI();
         }
 
-        void KillUI()
+        private void KillUI()
         {
-            Animator_KillUI.SetFloat(AnimatorHash.Speed, HUD.SetData.KeyKillWaitSpeed.Value);
+            _animatorKillUI.SetFloat(AnimatorHash.Speed, HUD.SetData.KeyKillWaitSpeed.Value);
 
-            if (Active)
+            if (active)
             {
-                Animator_KillUI.SetBool(AnimatorHash.Active, Active);
+                _animatorKillUI.SetBool(AnimatorHash.Active, active);
 
-                TextPlay(HUD.SetData.KeyKillWriteSpeed.Value, HUD.SetData.KeyKillWrite2Speed.Value, HUD.SetData.KeyKillWaitTime.Value);
+                TextPlay(HUD.SetData.KeyKillWriteSpeed.Value, HUD.SetData.KeyKillWrite2Speed.Value,
+                    HUD.SetData.KeyKillWaitTime.Value);
 
-                Active = false;
+                active = false;
             }
 
-            if (CanDestroy)
+            if (canDestroy)
             {
-                Animator_KillUI.SetBool(AnimatorHash.CanDestroy, true);
+                _animatorKillUI.SetBool(AnimatorHash.CanDestroy, true);
 
-                CanDestroy = false;
+                canDestroy = false;
             }
         }
 
-        async void TextPlay(int speed, int speed2, int waitTime)
+        private async void TextPlay(int speed, int speed2, int waitTime)
         {
-            _TextValue.text = Text;
+            textValue.text = text;
 
-            await TextTask(_TextValue, speed, false);
+            await TextTask(textValue, speed, false);
 
-            if (IsKillInfo)
+            if (isKillInfo)
             {
                 await Task.Delay(waitTime);
 
-                _TextValue.text = Text2;
+                textValue.text = text2;
 
-                await TextTask(_TextValue, speed2, true);
+                await TextTask(textValue, speed2, true);
             }
 
-            Animator_KillUI.SetBool(AnimatorHash.Complete, true);
+            _animatorKillUI.SetBool(AnimatorHash.Complete, true);
 
             GamePanelHUDKill.HasWaitInfoMinus();
         }
 
-        async Task TextTask(TMP_Text text, int speed, bool toRight)
+        private async Task TextTask(TMP_Text tmpText, int speed, bool toRight)
         {
-            text.ForceMeshUpdate();
-            TMP_TextInfo textInfo = text.textInfo;
-            int textCount = textInfo.characterCount;
+            tmpText.ForceMeshUpdate();
+            var textInfo = tmpText.textInfo;
+            var textCount = textInfo.characterCount;
 
-            bool complete = false;
+            var complete = false;
             int current;
 
             if (toRight)
             {
-                _TextValue.maxVisibleCharacters = 0;
+                textValue.maxVisibleCharacters = 0;
 
                 current = 0;
 
@@ -132,7 +133,7 @@ namespace GamePanelHUDHit
                         complete = true;
                     }
 
-                    text.maxVisibleCharacters = current;
+                    tmpText.maxVisibleCharacters = current;
                     current++;
 
                     await Task.Delay(speed);
@@ -140,7 +141,7 @@ namespace GamePanelHUDHit
             }
             else
             {
-                _TextValue.firstVisibleCharacter = textCount;
+                textValue.firstVisibleCharacter = textCount;
 
                 current = textCount;
 
@@ -153,7 +154,7 @@ namespace GamePanelHUDHit
                         complete = true;
                     }
 
-                    text.firstVisibleCharacter = current;
+                    tmpText.firstVisibleCharacter = current;
                     current--;
 
                     await Task.Delay(speed);
@@ -162,16 +163,16 @@ namespace GamePanelHUDHit
         }
 #endif
 
-        void Destroy()
+        private void Destroy()
         {
 #if !UNITY_EDITOR
-            if (After != null)
+            if (after != null)
             {
-                After.CanDestroy = true;
+                after.canDestroy = true;
             }
 
             GamePanelHUDKill.HasInfoMinus();
-            GamePanelHUDCorePlugin.UpdateManger.Remove(this);
+            HUDCore.UpdateManger.Remove(this);
             Destroy(gameObject);
 #endif
         }

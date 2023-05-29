@@ -1,11 +1,11 @@
 ﻿using System;
+using GamePanelHUDCore.Utils;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 #if !UNITY_EDITOR
 using GamePanelHUDCore;
 #endif
-using GamePanelHUDCore.Utils;
 
 namespace GamePanelHUDLife
 {
@@ -14,198 +14,194 @@ namespace GamePanelHUDLife
         , IUpdate
 #endif
     {
-        public bool ArrowAnimation;
+#if !UNITY_EDITOR
+        private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
+#endif
 
-        public bool ArrowAnimationReverse;
+        public bool arrowAnimation;
 
-        public bool BuffHUDSw;
+        public bool arrowAnimationReverse;
 
-        public bool IsHealth;
+        public bool buffHUDSw;
 
-        public bool AtMaximum;
+        public bool isHealth;
 
-        public float Current;
+        public bool atMaximum;
 
-        public float Maximum;
+        public float current;
 
-        public float BuffRate;
+        public float maximum;
 
-        public float Normalized;
+        public float buffRate;
 
-        public float WarningRate;
+        public float normalized;
 
-        public float BuffSpeed;
+        public float warningRate;
 
-        public Color UpBuffArrowColor;
+        public float buffSpeed;
 
-        public Color DownBuffArrowColor;
+        public Color upBuffArrowColor;
 
-        public Color CurrentColor;
+        public Color downBuffArrowColor;
 
-        public Color MaxColor;
+        public Color currentColor;
 
-        public Color AddZerosColor;
+        public Color maxColor;
 
-        public Color WarningColor;
+        public Color addZerosColor;
 
-        public Color UpBuffColor;
+        public Color warningColor;
 
-        public Color DownBuffColor;
+        public Color upBuffColor;
 
-        public FontStyles CurrentStyles;
+        public Color downBuffColor;
 
-        public FontStyles MaximumStyles;
+        public FontStyles currentStyles;
 
-        [SerializeField]
-        private TMP_Text _ZerosValue;
+        public FontStyles maximumStyles;
 
-        [SerializeField]
-        private TMP_Text _CurrentValue;
+        [SerializeField] private TMP_Text zerosValue;
 
-        [SerializeField]
-        private TMP_Text _MaxSignValue;
+        [SerializeField] private TMP_Text currentValue;
 
-        [SerializeField]
-        private TMP_Text _MaxValue;
+        [SerializeField] private TMP_Text maxSignValue;
 
-        [SerializeField]
-        private Image _Glow;
+        [SerializeField] private TMP_Text maxValue;
 
-        [SerializeField]
-        private TMP_Text _BuffValue;
+        [SerializeField] private Image glow;
 
-        [SerializeField]
-        private Image _UpBuffArrow;
+        [SerializeField] private TMP_Text buffValue;
 
-        [SerializeField]
-        private Image _DownBuffArrow;
+        [SerializeField] private Image upBuffArrow;
 
-        private Animator Animator_UpBuffArrow;
+        [SerializeField] private Image downBuffArrow;
 
-        private Animator Animator_DownBuffArrow;
+        private Animator _animatorUpBuffArrow;
 
-        void Start()
+        private Animator _animatorDownBuffArrow;
+
+        private void Start()
         {
-            Animator_UpBuffArrow = _UpBuffArrow.GetComponent<Animator>();
-            Animator_DownBuffArrow = _DownBuffArrow.GetComponent<Animator>();
+            _animatorUpBuffArrow = upBuffArrow.GetComponent<Animator>();
+            _animatorDownBuffArrow = downBuffArrow.GetComponent<Animator>();
 
 #if !UNITY_EDITOR
-            GamePanelHUDCorePlugin.UpdateManger.Register(this);
+            HUDCore.UpdateManger.Register(this);
 #endif
         }
 #if !UNITY_EDITOR
 
-        void OnEnable()
+        private void OnEnable()
         {
-            GamePanelHUDCorePlugin.UpdateManger.Run(this);
+            HUDCore.UpdateManger.Run(this);
         }
 
-        void OnDisable()
+        private void OnDisable()
         {
-            GamePanelHUDCorePlugin.UpdateManger.Stop(this);
+            HUDCore.UpdateManger.Stop(this);
         }
 
-        public void IUpdate()
+        public void CustomUpdate()
         {
             LifeUI();
         }
 
-        void LifeUI()
+        private void LifeUI()
 #endif
 #if UNITY_EDITOR
         void Update()
 #endif
         {
             //Set Current float and color and Style to String
-            double current;
-            if (IsHealth)
+            double currentApprox;
+            if (isHealth)
             {
-                current = Math.Round(Current);
+                currentApprox = Math.Round(current);
             }
-            else if (Normalized > 0.5)
+            else if (normalized > 0.5)
             {
-                current = Math.Floor(Current);
+                currentApprox = Math.Floor(current);
             }
             else
             {
-                current = Math.Ceiling(Current);
+                currentApprox = Math.Ceiling(current);
             }
 
             string addZeros;
-            if (current >= 100)
+            if (currentApprox >= 100)
             {
-                addZeros = "";
+                addZeros = string.Empty;
 
-                _ZerosValue.gameObject.SetActive(false);
-                _CurrentValue.alignment = TextAlignmentOptions.Top;
+                zerosValue.gameObject.SetActive(false);
+                currentValue.alignment = TextAlignmentOptions.Top;
             }
-            else if (current < 100 && current >= 10)
+            else if (currentApprox < 100 && currentApprox >= 10)
             {
                 addZeros = "0";
 
-                _ZerosValue.gameObject.SetActive(true);
-                _CurrentValue.alignment = TextAlignmentOptions.TopLeft;
+                zerosValue.gameObject.SetActive(true);
+                currentValue.alignment = TextAlignmentOptions.TopLeft;
             }
             else
             {
                 addZeros = "00";
 
-                _ZerosValue.gameObject.SetActive(true);
-                _CurrentValue.alignment = TextAlignmentOptions.TopLeft;
+                zerosValue.gameObject.SetActive(true);
+                currentValue.alignment = TextAlignmentOptions.TopLeft;
             }
 
-            _ZerosValue.fontStyle = CurrentStyles;
-            _ZerosValue.color = AddZerosColor;
-            _ZerosValue.text = addZeros;
+            zerosValue.fontStyle = currentStyles;
+            zerosValue.color = addZerosColor;
+            zerosValue.text = addZeros;
 
-            Color currentColor = Normalized > WarningRate ? CurrentColor : WarningColor;
+            var currentValueColor = normalized > warningRate ? currentColor : warningColor;
 
-            _CurrentValue.fontStyle = CurrentStyles;
-            _CurrentValue.color = currentColor;
-            _CurrentValue.text = current.ToString("F0");
+            currentValue.fontStyle = currentStyles;
+            currentValue.color = currentValueColor;
+            currentValue.text = currentApprox.ToString("F0");
 
-            _MaxSignValue.fontStyle = MaximumStyles;
-            _MaxSignValue.color = MaxColor;
+            maxSignValue.fontStyle = maximumStyles;
+            maxSignValue.color = maxColor;
 
             //Set Maximum float and color and Style to String
-            _MaxValue.fontStyle = MaximumStyles;
-            _MaxValue.color = MaxColor;
-            _MaxValue.text = Maximum.ToString("F0");
+            maxValue.fontStyle = maximumStyles;
+            maxValue.color = maxColor;
+            maxValue.text = maximum.ToString("F0");
 
             //Buff HUD display
-            _BuffValue.gameObject.SetActive(BuffRate != 0 && BuffHUDSw);
+            buffValue.gameObject.SetActive(buffRate != 0 && buffHUDSw);
 
             //Buff Arrow Up or Down
-            _UpBuffArrow.gameObject.SetActive(BuffRate > 0);
-            _DownBuffArrow.gameObject.SetActive(BuffRate < 0);
+            upBuffArrow.gameObject.SetActive(buffRate > 0);
+            downBuffArrow.gameObject.SetActive(buffRate < 0);
 
             //Buff Arrow Color
-            _UpBuffArrow.color = UpBuffArrowColor;
-            _DownBuffArrow.color = DownBuffArrowColor;
+            upBuffArrow.color = upBuffArrowColor;
+            downBuffArrow.color = downBuffArrowColor;
 
             //Buff Up Down Color 
-            Color buffColor = BuffRate > 0 ? UpBuffColor : DownBuffColor;
+            var buffColor = buffRate > 0 ? upBuffColor : downBuffColor;
 
-            _BuffValue.color = buffColor;
-            _BuffValue.text = BuffRate.ToString("F2");
+            buffValue.color = buffColor;
+            buffValue.text = buffRate.ToString("F2");
 
             //Arrow Animation display
-            bool Arrow = !AtMaximum && ArrowAnimation;
-            Animator_UpBuffArrow.SetBool(AnimatorHash.Active, Arrow);
-            Animator_DownBuffArrow.SetBool(AnimatorHash.Active, Arrow);
+            var arrow = !atMaximum && arrowAnimation;
+            _animatorUpBuffArrow.SetBool(AnimatorHash.Active, arrow);
+            _animatorDownBuffArrow.SetBool(AnimatorHash.Active, arrow);
 
             //Arrow Animation Speed
-            Animator_UpBuffArrow.SetFloat(AnimatorHash.Speed, BuffSpeed);
-            Animator_DownBuffArrow.SetFloat(AnimatorHash.Speed, BuffSpeed);
+            _animatorUpBuffArrow.SetFloat(AnimatorHash.Speed, buffSpeed);
+            _animatorDownBuffArrow.SetFloat(AnimatorHash.Speed, buffSpeed);
 
             //Arrow Animation Reverse
-            Animator_UpBuffArrow.SetBool(AnimatorHash.Reverse, ArrowAnimationReverse);
-            Animator_DownBuffArrow.SetBool(AnimatorHash.Reverse, ArrowAnimationReverse);
+            _animatorUpBuffArrow.SetBool(AnimatorHash.Reverse, arrowAnimationReverse);
+            _animatorDownBuffArrow.SetBool(AnimatorHash.Reverse, arrowAnimationReverse);
 
             //Glow display
-            if (_Glow != null)
+            if (glow != null)
             {
-                _Glow.gameObject.SetActive(Normalized < WarningRate);
+                glow.gameObject.SetActive(normalized < warningRate);
             }
         }
     }
