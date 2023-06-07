@@ -25,10 +25,10 @@ namespace GamePanelHUDCompass
                 GamePanelHUDCompassPlugin.SettingsData> HUD => GamePanelHUDCompassPlugin.CompassStaticHUD;
 #endif
 
-        private readonly Dictionary<string, List<GamePanelHUDCompassStaticUI>> _compassStatics =
+        private static readonly Dictionary<string, List<GamePanelHUDCompassStaticUI>> CompassStatics =
             new Dictionary<string, List<GamePanelHUDCompassStaticUI>>();
 
-        private readonly List<string> _removes = new List<string>();
+        private static readonly List<string> Removes = new List<string>();
 
         [SerializeField] private Transform compassStaticRoot;
 
@@ -107,31 +107,31 @@ namespace GamePanelHUDCompass
 
                 var isCenter = false;
 
-                if (_compassStatics.Count > 0 && _removes.Count > 0)
+                if (CompassStatics.Count > 0 && Removes.Count > 0)
                 {
-                    for (var i = 0; i < _removes.Count; i++)
+                    for (var i = 0; i < Removes.Count; i++)
                     {
-                        var remove = _removes[i];
+                        var remove = Removes[i];
 
-                        foreach (var ui in _compassStatics[remove])
+                        foreach (var ui in CompassStatics[remove])
                         {
                             ui.Destroy();
                         }
 
-                        _compassStatics.Remove(remove);
+                        CompassStatics.Remove(remove);
 
-                        _removes.RemoveAt(i);
+                        Removes.RemoveAt(i);
                     }
                 }
 
-                if (_compassStatics.Count > 0)
+                if (CompassStatics.Count > 0)
                 {
                     var range = HUD.SetData.KeyCompassStaticCenterPointRange.Value;
 
                     List<(float XDiff, GamePanelHUDCompassStaticUI StaticUI)> allDiff =
                         new List<(float, GamePanelHUDCompassStaticUI)>();
 
-                    foreach (var uis in _compassStatics.Values)
+                    foreach (var uis in CompassStatics.Values)
                     {
                         foreach (var ui in uis)
                         {
@@ -298,37 +298,37 @@ namespace GamePanelHUDCompass
             staticUI.exIndex2 = staticInfo.ExIndex2;
             staticUI.infoType = staticInfo.InfoType;
 
-            if (_compassStatics.TryGetValue(staticInfo.Id, out var list))
+            if (CompassStatics.TryGetValue(staticInfo.Id, out var list))
             {
                 list.Add(staticUI);
             }
             else
             {
-                _compassStatics.Add(staticInfo.Id, new List<GamePanelHUDCompassStaticUI> { staticUI });
+                CompassStatics.Add(staticInfo.Id, new List<GamePanelHUDCompassStaticUI> { staticUI });
             }
         }
 
-        private void DestroyAll(GameWorld world)
+        private static void DestroyAll(GameWorld __instance)
         {
-            foreach (var id in _compassStatics.Keys)
+            foreach (var id in CompassStatics.Keys)
             {
                 RemoveStaticUI(id);
             }
         }
 
-        private void DestroyStaticUI(string id)
+        private static void DestroyStaticUI(string id)
         {
-            if (_compassStatics.ContainsKey(id))
+            if (CompassStatics.ContainsKey(id))
             {
                 RemoveStaticUI(id);
             }
         }
 
-        private void RemoveStaticUI(string id)
+        private static void RemoveStaticUI(string id)
         {
-            if (!_removes.Contains(id))
+            if (!Removes.Contains(id))
             {
-                _removes.Add(id);
+                Removes.Add(id);
             }
         }
 #endif

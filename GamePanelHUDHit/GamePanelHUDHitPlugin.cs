@@ -77,9 +77,7 @@ namespace GamePanelHUDHit
 
         internal static GameObject KillPrefab { get; private set; }
 
-        private readonly ArmorInfo _armorInfo = new ArmorInfo();
-
-        private int _kills;
+        private static int _kills;
 
         internal static Action<HitInfo> ShowHit;
 
@@ -94,8 +92,8 @@ namespace GamePanelHUDHit
         {
             _PlayerHelper.ApplyDamageInfo += Hit;
             _PlayerHelper.OnBeenKilledByAggressor += Kill;
-            _PlayerHelper.ArmorComponentHelper.ApplyDurabilityDamage += _armorInfo.SetArmorDamage;
-            _PlayerHelper.ArmorComponentHelper.ApplyDamage += _armorInfo.SetActivate;
+            _PlayerHelper.ArmorComponentHelper.ApplyDurabilityDamage += ArmorInfo.SetArmorDamage;
+            _PlayerHelper.ArmorComponentHelper.ApplyDamage += ArmorInfo.SetActivate;
 
             HUDCore.UpdateManger.Register(this);
         }
@@ -127,25 +125,26 @@ namespace GamePanelHUDHit
             {
                 _kills = 0;
 
-                _armorInfo.Rest();
+                ArmorInfo.Rest();
             }
         }
 
-        private void Kill(Player player, Player aggressor, DamageInfo damageInfo, EBodyPart bodyPart,
+        private static void Kill(Player __instance, Player aggressor, DamageInfo damageInfo,
+            EBodyPart bodyPart,
             EDamageType lethalDamageType)
         {
             if (aggressor == GamePanelHUDCorePlugin.HUDCore.YourPlayer)
             {
-                var settings = _PlayerHelper.RefSettings.GetValue(player.Profile.Info);
+                var settings = _PlayerHelper.RefSettings.GetValue(__instance.Profile.Info);
 
                 var info = new KillInfo
                 {
-                    PlayerName = player.Profile.Nickname,
+                    PlayerName = __instance.Profile.Nickname,
                     WeaponName = damageInfo.Weapon.ShortName,
                     Part = bodyPart,
-                    Distance = Vector3.Distance(aggressor.Position, player.Position),
-                    Level = player.Profile.Info.Level,
-                    Side = player.Profile.Info.Side,
+                    Distance = Vector3.Distance(aggressor.Position, __instance.Position),
+                    Level = __instance.Profile.Info.Level,
+                    Side = __instance.Profile.Info.Side,
                     Exp = _PlayerHelper.RefExperience.GetValue(settings),
                     Role = _PlayerHelper.RefRole.GetValue(settings),
                     Kills = _kills++
@@ -155,8 +154,8 @@ namespace GamePanelHUDHit
             }
         }
 
-        private void Hit(Player player, DamageInfo damageInfo, EBodyPart bodyPartType, float absorbed,
-            EHeadSegment? headSegment)
+        private static void Hit(Player __instance, DamageInfo damageInfo, EBodyPart bodyPartType,
+            float absorbed, EHeadSegment? headSegment)
         {
             if (damageInfo.Player == GamePanelHUDCorePlugin.HUDCore.YourPlayer)
             {
@@ -164,12 +163,12 @@ namespace GamePanelHUDHit
 
                 bool hasArmorHit;
 
-                if (_armorInfo.Activate)
+                if (ArmorInfo.Activate)
                 {
-                    armorDamage = _armorInfo.ArmorDamage;
+                    armorDamage = ArmorInfo.ArmorDamage;
                     hasArmorHit = true;
 
-                    _armorInfo.Rest();
+                    ArmorInfo.Rest();
                 }
                 else
                 {
@@ -179,7 +178,7 @@ namespace GamePanelHUDHit
 
                 HitInfo.Hit hitType;
 
-                if (player.HealthController.IsAlive)
+                if (__instance.HealthController.IsAlive)
                 {
                     hitType = hasArmorHit ? HitInfo.Hit.HasArmorHit : HitInfo.Hit.OnlyHp;
                 }
@@ -339,38 +338,39 @@ namespace GamePanelHUDHit
             public bool IsTest;
         }
 
-        public class ArmorInfo
+        public static class ArmorInfo
         {
-            public bool Activate;
+            public static bool Activate;
 
-            public float ArmorDamage;
+            public static float ArmorDamage;
 
-            private readonly Dictionary<ArmorComponent, float> _armorDamageDictionary =
+            private static readonly Dictionary<ArmorComponent, float> ArmorDamageDictionary =
                 new Dictionary<ArmorComponent, float>();
 
-            public void SetArmorDamage(ArmorComponent armorComponent, float armorDamage)
+            public static void SetArmorDamage(ArmorComponent __instance, float armorDamage)
             {
-                if (_armorDamageDictionary.ContainsKey(armorComponent))
+                if (ArmorDamageDictionary.ContainsKey(__instance))
                 {
-                    _armorDamageDictionary.Remove(armorComponent);
+                    ArmorDamageDictionary.Remove(__instance);
                 }
 
-                _armorDamageDictionary.Add(armorComponent, armorDamage);
+                ArmorDamageDictionary.Add(__instance, armorDamage);
             }
 
-            public void SetActivate(ArmorComponent armorComponent, DamageInfo damageInfo, EBodyPart bodyPartType,
+            public static void SetActivate(ArmorComponent __instance, DamageInfo damageInfo,
+                EBodyPart bodyPartType,
                 bool damageInfoIsLocal, object lightVestsDamageReduction, object heavyVestsDamageReduction)
             {
                 if (damageInfo.Player == GamePanelHUDCorePlugin.HUDCore.YourPlayer)
                 {
-                    ArmorDamage = _armorDamageDictionary[armorComponent];
+                    ArmorDamage = ArmorDamageDictionary[__instance];
                     Activate = true;
                 }
 
-                _armorDamageDictionary.Remove(armorComponent);
+                ArmorDamageDictionary.Remove(__instance);
             }
 
-            public void Rest()
+            public static void Rest()
             {
                 ArmorDamage = 0;
                 Activate = false;

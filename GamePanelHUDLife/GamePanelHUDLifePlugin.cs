@@ -1,5 +1,6 @@
 ﻿#if !UNITY_EDITOR
 using System;
+using System.Threading.Tasks;
 using BepInEx;
 using BepInEx.Configuration;
 using EFT.HealthSystem;
@@ -20,7 +21,7 @@ namespace GamePanelHUDLife
     {
         private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
 
-        private IHealthController _healthController;
+        private static IHealthController _healthController;
 
         internal static readonly GamePanelHUDCorePlugin.HUDClass<Life, SettingsData> HUD =
             new GamePanelHUDCorePlugin.HUDClass<Life, SettingsData>();
@@ -67,14 +68,14 @@ namespace GamePanelHUDLife
 
             if (_healthController != null)
             {
-                _lifeData.Healths.Head = _healthController.GetBodyPartHealth(EBodyPart.Head);
-                _lifeData.Healths.Chest = _healthController.GetBodyPartHealth(EBodyPart.Chest);
-                _lifeData.Healths.Stomach = _healthController.GetBodyPartHealth(EBodyPart.Stomach);
-                _lifeData.Healths.LeftArm = _healthController.GetBodyPartHealth(EBodyPart.LeftArm);
-                _lifeData.Healths.RightArm = _healthController.GetBodyPartHealth(EBodyPart.RightArm);
-                _lifeData.Healths.LeftLeg = _healthController.GetBodyPartHealth(EBodyPart.LeftLeg);
-                _lifeData.Healths.RightLeg = _healthController.GetBodyPartHealth(EBodyPart.RightLeg);
-                _lifeData.Healths.Common = _healthController.GetBodyPartHealth(EBodyPart.Common);
+                _lifeData.Health.Head = _healthController.GetBodyPartHealth(EBodyPart.Head);
+                _lifeData.Health.Chest = _healthController.GetBodyPartHealth(EBodyPart.Chest);
+                _lifeData.Health.Stomach = _healthController.GetBodyPartHealth(EBodyPart.Stomach);
+                _lifeData.Health.LeftArm = _healthController.GetBodyPartHealth(EBodyPart.LeftArm);
+                _lifeData.Health.RightArm = _healthController.GetBodyPartHealth(EBodyPart.RightArm);
+                _lifeData.Health.LeftLeg = _healthController.GetBodyPartHealth(EBodyPart.LeftLeg);
+                _lifeData.Health.RightLeg = _healthController.GetBodyPartHealth(EBodyPart.RightLeg);
+                _lifeData.Health.Common = _healthController.GetBodyPartHealth(EBodyPart.Common);
 
                 _lifeData.Hydrations = _healthController.Hydration;
 
@@ -85,16 +86,16 @@ namespace GamePanelHUDLife
             }
         }
 
-        private void MainMenu(MainMenuController mainMenuController, object backEnd, EnvironmentUI environmentUI,
-            MenuUI menuUI, CommonUI commonUI, PreloaderUI preloaderUI, object raidSettings, object hideoutController,
-            Action onLogoutPressed, Action reconnectAction)
+        private static async void MainMenu(MainMenuController __instance, Task<MainMenuController> __result,
+            object backEnd, EnvironmentUI environmentUI, MenuUI menuUI, CommonUI commonUI, PreloaderUI preloaderUI,
+            object raidSettings, object hideoutController, Action onLogoutPressed, Action reconnectAction)
         {
-            _healthController = mainMenuController.HealthController;
+            _healthController = (await __result).HealthController;
         }
 
         public class Life
         {
-            public Health Healths = new Health();
+            public HealthClass Health = new HealthClass();
 
             public ValueStruct Hydrations;
 
@@ -102,7 +103,7 @@ namespace GamePanelHUDLife
 
             public Rate Rates;
 
-            public class Health
+            public class HealthClass
             {
                 //Health Current float
                 public ValueStruct Head;

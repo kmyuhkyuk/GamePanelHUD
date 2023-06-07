@@ -1,5 +1,4 @@
 ﻿#if !UNITY_EDITOR
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,6 +7,7 @@ using BepInEx.Configuration;
 using EFT;
 using EFT.UI;
 using EFTApi;
+using EFTApi.Helpers;
 using EFTUtils;
 using GamePanelHUDCore.Attributes;
 using GamePanelHUDCore.Utils;
@@ -52,7 +52,7 @@ namespace GamePanelHUDCore
 
             HUDCore.Set(_allHUDSw);
 
-            HUDCore.UpdateManger.NeedMethodTime = _setData.KeyDebugMethodTime.Value;
+            HUDCore.UpdateManger.OutputMethodTime = _setData.KeyDebugMethodTime.Value;
 
             HUDCore.UpdateManger.Update();
         }
@@ -65,13 +65,13 @@ namespace GamePanelHUDCore
 
             public GameWorld TheWorld => EFTGlobal.GameWorld;
 
-            public event Action<GameWorld> WorldStart
+            public event GameWorldHelper.hook_OnGameStarted WorldStart
             {
                 add => _GameWorldHelper.OnGameStarted += value;
                 remove => _GameWorldHelper.OnGameStarted -= value;
             }
 
-            public event Action<GameWorld> WorldDispose
+            public event GameWorldHelper.hook_Dispose WorldDispose
             {
                 add => _GameWorldHelper.Dispose += value;
                 remove => _GameWorldHelper.Dispose -= value;

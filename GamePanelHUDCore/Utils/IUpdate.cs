@@ -21,7 +21,7 @@ namespace GamePanelHUDCore.Utils
 
         private readonly Debug _debugs = new Debug();
 
-        public bool NeedMethodTime;
+        public bool OutputMethodTime;
 
         private static readonly ManualLogSource LogSource = Logger.CreateLogSource(nameof(UpdateManger));
 
@@ -72,7 +72,7 @@ namespace GamePanelHUDCore.Utils
                     }
                     else if (!_stopUpdates.Contains(update))
                     {
-                        if (!NeedMethodTime)
+                        if (!OutputMethodTime)
                         {
                             update.CustomUpdate();
                         }
@@ -80,8 +80,8 @@ namespace GamePanelHUDCore.Utils
                         {
                             if (i == 0)
                             {
-                                LogSource.LogMessage("----------Start----------:CurrentTime:" +
-                                                     DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+                                LogSource.LogMessage(
+                                    $"----------Start----------:CurrentTime:{DateTime.Now:yyyy-MM-dd HH:mm:ss}");
 
                                 _debugs.AllMethodTime.Start();
                             }
@@ -92,7 +92,7 @@ namespace GamePanelHUDCore.Utils
 
                             _debugs.MethodTime.Stop();
 
-                            LogSource.LogMessage(update.GetType().Name + ":NeedTime:" + _debugs.MethodTime.Elapsed);
+                            LogSource.LogMessage($"{update.GetType().Name}:NeedTime:{_debugs.MethodTime.Elapsed}");
 
                             _debugs.MethodTime.Reset();
 
@@ -110,16 +110,15 @@ namespace GamePanelHUDCore.Utils
                                     _debugs.MinTime = _debugs.AllMethodTime.Elapsed;
                                 }
 
-                                LogSource.LogMessage("----------End----------:TotalNeedTime:" +
-                                                     _debugs.AllMethodTime.Elapsed + ":MaxTime:" + _debugs.MaxTime +
-                                                     ":MinTime:" + _debugs.MinTime);
+                                LogSource.LogMessage(
+                                    $"----------End----------:TotalNeedTime:{_debugs.AllMethodTime.Elapsed}:MaxTime:{_debugs.MaxTime}:MinTime:{_debugs.MinTime}");
 
                                 _debugs.AllMethodTime.Reset();
                             }
                         }
                     }
 
-                    if (!NeedMethodTime)
+                    if (!OutputMethodTime)
                     {
                         _debugs.MaxTime = TimeSpan.Zero;
                         _debugs.MinTime = TimeSpan.Zero;

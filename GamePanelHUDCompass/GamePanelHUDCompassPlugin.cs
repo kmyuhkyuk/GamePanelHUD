@@ -47,7 +47,7 @@ namespace GamePanelHUDCompass
 
         private bool _compassStaticHUDSw;
 
-        private bool _compassStaticCacheBool;
+        private static bool _compassStaticCacheBool;
 
         private Transform _camTransform;
 
@@ -55,7 +55,7 @@ namespace GamePanelHUDCompass
 
         private readonly SettingsData _setData;
 
-        private readonly List<List<string>> _airdrops = new List<List<string>>();
+        private static readonly List<List<string>> Airdrops = new List<List<string>>();
 
         internal static GameObject FirePrefab { get; private set; }
 
@@ -78,7 +78,7 @@ namespace GamePanelHUDCompass
 
         private void Start()
         {
-            HUDCore.WorldStart += gameWorld => _compassStaticCacheBool = true;
+            HUDCore.WorldStart += OnHUDCoreOnWorldStart;
 
             _PlayerHelper.FirearmControllerHelper.InitiateShot += ShowShot;
             _PlayerHelper.OnDead += RemoveShot;
@@ -86,6 +86,11 @@ namespace GamePanelHUDCompass
             _QuestHelper.OnConditionValueChanged += RemoveQuest;
 
             HUDCore.UpdateManger.Register(this);
+        }
+
+        private static void OnHUDCoreOnWorldStart(GameWorld __instance)
+        {
+            _compassStaticCacheBool = true;
         }
 
         private void Awake()
@@ -140,7 +145,7 @@ namespace GamePanelHUDCompass
 
                 _compassStaticData.YourProfileId = HUDCore.YourPlayer.ProfileId;
 
-                _compassStaticData.Airdrops = _airdrops;
+                _compassStaticData.Airdrops = Airdrops;
 
                 //Performance Optimization
                 if (Time.frameCount % 20 == 0)
@@ -167,32 +172,34 @@ namespace GamePanelHUDCompass
                 _compassStaticData.EquipmentAndQuestRaidItems = null;
                 _compassStaticData.ExfiltrationPoints = null;
 
-                if (_airdrops.Count > 0)
+                if (Airdrops.Count > 0)
                 {
-                    _airdrops.Clear();
+                    Airdrops.Clear();
                 }
             }
         }
 
-        private static void RemoveShot(Player player, EDamageType damageType)
+        private static void RemoveShot(Player __instance, EDamageType damageType)
         {
-            if (player != GamePanelHUDCorePlugin.HUDCore.YourPlayer)
+            if (__instance != GamePanelHUDCorePlugin.HUDCore.YourPlayer)
             {
-                DestroyFire(player.ProfileId);
+                DestroyFire(__instance.ProfileId);
             }
         }
 
-        private static void ShowShot(Player.FirearmController firearmController, Player player, BulletClass ammo,
-            Vector3 shotPosition, Vector3 shotDirection, Vector3 fireportPosition, int chamberIndex, float overheat)
+        private static void ShowShot(Player.FirearmController __instance, Player ____player,
+            BulletClass ammo,
+            Vector3 shotPosition, Vector3 shotDirection, Vector3 fireportPosition, int chamberIndex,
+            float overheat)
         {
-            if (player != HUDCore.YourPlayer)
+            if (____player != HUDCore.YourPlayer)
             {
                 var fireInfo = new CompassFireInfo
                 {
-                    Who = player.ProfileId,
+                    Who = ____player.ProfileId,
                     Where = shotPosition,
-                    Role = _PlayerHelper.RefRole.GetValue(_PlayerHelper.RefSettings.GetValue(player.Profile.Info)),
-                    IsSilenced = firearmController.IsSilenced && !firearmController.IsInLauncherMode(),
+                    Role = _PlayerHelper.RefRole.GetValue(_PlayerHelper.RefSettings.GetValue(____player.Profile.Info)),
+                    IsSilenced = __instance.IsSilenced && !__instance.IsInLauncherMode(),
                     Distance = Vector3.Distance(shotPosition, HUDCore.YourPlayer.Position)
                 };
 
@@ -474,21 +481,21 @@ namespace GamePanelHUDCompass
             return exfiltrationList.ToArray();
         }
 
-        private void ShowAirdrop(MonoBehaviour airdropBox, object boxSync, float clipLength)
+        private static void ShowAirdrop(MonoBehaviour __instance, object ___boxSync, float clipLength)
         {
-            var looTable = airdropBox.GetComponentInChildren<LootableContainer>();
+            var looTable = __instance.GetComponentInChildren<LootableContainer>();
 
             var controller = _GameWorldHelper.LootableContainerHelper.RefItemOwner.GetValue(looTable);
 
             var item = _GameWorldHelper.LootableContainerHelper.RefRootItem.GetValue(controller);
 
-            _airdrops.Add(_GameWorldHelper.SearchableItemClassHelper.RefAllSearchersIds.GetValue(item));
+            Airdrops.Add(_GameWorldHelper.SearchableItemClassHelper.RefAllSearchersIds.GetValue(item));
 
-            var count = _airdrops.Count;
+            var count = Airdrops.Count;
 
             string nameKey;
             string descriptionKey;
-            switch (_AirdropHelper.AirdropSynchronizableObjectHelper.RefAirdropType.GetValue(boxSync))
+            switch (_AirdropHelper.AirdropSynchronizableObjectHelper.RefAirdropType.GetValue(___boxSync))
             {
                 case 0:
                     nameKey = "6223349b3136504a544d1608 Name";
@@ -515,7 +522,7 @@ namespace GamePanelHUDCompass
             var staticInfo = new CompassStaticInfo
             {
                 Id = string.Concat("Airdrop", count),
-                Where = airdropBox.transform.position,
+                Where = __instance.transform.position,
                 NameKey = nameKey,
                 DescriptionKey = descriptionKey,
                 ExIndex = count - 1,
@@ -525,7 +532,8 @@ namespace GamePanelHUDCompass
             ShowStatic(staticInfo);
         }
 
-        private static void RemoveQuest(object questController, object quest, EQuestStatus status, Condition condition,
+        private static void RemoveQuest(object __instance, object quest, EQuestStatus status,
+            Condition condition,
             bool notify)
         {
             if (status != EQuestStatus.Started)
