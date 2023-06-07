@@ -1,6 +1,5 @@
 ﻿#if !UNITY_EDITOR
 using System;
-using System.Collections.Generic;
 using BepInEx;
 using BepInEx.Configuration;
 using EFT;
@@ -8,6 +7,9 @@ using EFT.InventoryLogic;
 using GamePanelHUDCore;
 using GamePanelHUDCore.Attributes;
 using GamePanelHUDCore.Utils;
+using HarmonyLib;
+using MonoMod.Cil;
+using MonoMod.Utils;
 using TMPro;
 using UnityEngine;
 using static EFTApi.EFTHelpers;
@@ -34,6 +36,8 @@ namespace GamePanelHUDHit
         private bool _expHUDSw;
 
         private readonly SettingsData _setData;
+
+        private static readonly ArmorInfo Armor = new ArmorInfo();
 
         private RectTransform _screenRect;
 
@@ -92,8 +96,7 @@ namespace GamePanelHUDHit
         {
             _PlayerHelper.ApplyDamageInfo += Hit;
             _PlayerHelper.OnBeenKilledByAggressor += Kill;
-            _PlayerHelper.ArmorComponentHelper.ApplyDurabilityDamage += ArmorInfo.SetArmorDamage;
-            _PlayerHelper.ArmorComponentHelper.ApplyDamage += ArmorInfo.SetActivate;
+            _PlayerHelper.ArmorComponentHelper.ILApplyDamage += ArmorDamage;
 
             HUDCore.UpdateManger.Register(this);
         }
@@ -125,7 +128,7 @@ namespace GamePanelHUDHit
             {
                 _kills = 0;
 
-                ArmorInfo.Rest();
+                Armor.Rest();
             }
         }
 
@@ -163,12 +166,12 @@ namespace GamePanelHUDHit
 
                 bool hasArmorHit;
 
-                if (ArmorInfo.Activate)
+                if (Armor.Activate)
                 {
-                    armorDamage = ArmorInfo.ArmorDamage;
+                    armorDamage = Armor.Damage;
                     hasArmorHit = true;
 
-                    ArmorInfo.Rest();
+                    Armor.Rest();
                 }
                 else
                 {
@@ -200,6 +203,27 @@ namespace GamePanelHUDHit
 
                 ShowHit(info);
             }
+        }
+
+        private static void ArmorDamage(ILContext il)
+        {
+            var codes = il.Instrs;
+
+            var cursor = new ILCursor(il);
+
+            var processor = il.IL;
+
+            var callApplyDurabilityDamage = cursor.GotoNext(x =>
+                x.MatchCall(AccessTools.Method(typeof(ArmorComponent), "ApplyDurabilityDamage")));
+
+            codes.InsertRange(callApplyDurabilityDamage.Index + 1, new[]
+            {
+                processor.Create(Mono.Cecil.Cil.OpCodes.Ldsfld,
+                    AccessTools.Field(typeof(GamePanelHUDHitPlugin), nameof(Armor))),
+                callApplyDurabilityDamage.Prev,
+                processor.Create(Mono.Cecil.Cil.OpCodes.Call,
+                    AccessTools.Method(typeof(ArmorInfo), nameof(ArmorInfo.Set)))
+            });
         }
 
         private static void DrawTestHit(ConfigEntryBase entry)
@@ -338,41 +362,21 @@ namespace GamePanelHUDHit
             public bool IsTest;
         }
 
-        public static class ArmorInfo
+        public class ArmorInfo
         {
-            public static bool Activate;
+            public bool Activate;
 
-            public static float ArmorDamage;
+            public float Damage;
 
-            private static readonly Dictionary<ArmorComponent, float> ArmorDamageDictionary =
-                new Dictionary<ArmorComponent, float>();
-
-            public static void SetArmorDamage(ArmorComponent __instance, float armorDamage)
+            public void Set(float armorDamage)
             {
-                if (ArmorDamageDictionary.ContainsKey(__instance))
-                {
-                    ArmorDamageDictionary.Remove(__instance);
-                }
-
-                ArmorDamageDictionary.Add(__instance, armorDamage);
+                Damage = armorDamage;
+                Activate = true;
             }
 
-            public static void SetActivate(ArmorComponent __instance, DamageInfo damageInfo,
-                EBodyPart bodyPartType,
-                bool damageInfoIsLocal, object lightVestsDamageReduction, object heavyVestsDamageReduction)
+            public void Rest()
             {
-                if (damageInfo.Player == GamePanelHUDCorePlugin.HUDCore.YourPlayer)
-                {
-                    ArmorDamage = ArmorDamageDictionary[__instance];
-                    Activate = true;
-                }
-
-                ArmorDamageDictionary.Remove(__instance);
-            }
-
-            public static void Rest()
-            {
-                ArmorDamage = 0;
+                Damage = 0;
                 Activate = false;
             }
         }
