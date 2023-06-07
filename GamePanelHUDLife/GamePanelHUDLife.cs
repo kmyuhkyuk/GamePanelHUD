@@ -63,12 +63,12 @@ namespace GamePanelHUDLife
                 overallHealth.arrowAnimation = HUD.SetData.KeyArrowAnimation.Value;
                 overallHealth.arrowAnimationReverse = HUD.SetData.KeyArrowAnimationReverse.Value;
                 overallHealth.isHealth = true;
-                overallHealth.atMaximum = HUD.Info.Healths.Common.AtMaximum;
+                overallHealth.atMaximum = HUD.Info.Health.Common.AtMaximum;
 
-                overallHealth.current = HUD.Info.Healths.Common.Current;
-                overallHealth.maximum = HUD.Info.Healths.Common.Maximum;
+                overallHealth.current = HUD.Info.Health.Common.Current;
+                overallHealth.maximum = HUD.Info.Health.Common.Maximum;
                 overallHealth.buffRate = HUD.Info.Rates.HealthRate;
-                overallHealth.normalized = HUD.Info.Healths.Common.Current / HUD.Info.Healths.Common.Maximum;
+                overallHealth.normalized = HUD.Info.Health.Common.Current / HUD.Info.Health.Common.Maximum;
                 overallHealth.warningRate = HUD.SetData.KeyHealthWarningRate.Value / 100f;
                 overallHealth.buffSpeed = HUD.SetData.KeyBuffSpeed.Value;
 
