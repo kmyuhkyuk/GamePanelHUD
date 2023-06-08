@@ -20,7 +20,7 @@ using static EFTApi.EFTHelpers;
 namespace GamePanelHUDCompass
 {
     [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCompass", "kmyuhkyuk-GamePanelHUDCompass", "2.7.1")]
-    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore")]
+    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "2.7.1")]
     [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", "localized/compass")]
     public class GamePanelHUDCompassPlugin : BaseUnityPlugin, IUpdate
     {

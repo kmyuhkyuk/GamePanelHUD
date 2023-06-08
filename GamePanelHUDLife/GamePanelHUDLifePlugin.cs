@@ -15,7 +15,7 @@ using static EFTApi.EFTHelpers;
 namespace GamePanelHUDLife
 {
     [BepInPlugin("com.kmyuhkyuk.GamePanelHUDLife", "kmyuhkyuk-GamePanelHUDLife", "2.7.1")]
-    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore")]
+    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "2.7.1")]
     [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", "localized/life")]
     public class GamePanelHUDLifePlugin : BaseUnityPlugin, IUpdate
     {
