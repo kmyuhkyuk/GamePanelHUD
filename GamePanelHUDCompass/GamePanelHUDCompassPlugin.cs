@@ -181,7 +181,7 @@ namespace GamePanelHUDCompass
 
         private static void RemoveShot(Player __instance, EDamageType damageType)
         {
-            if (__instance != GamePanelHUDCorePlugin.HUDCore.YourPlayer)
+            if (__instance != HUDCore.YourPlayer)
             {
                 DestroyFire(__instance.ProfileId);
             }
