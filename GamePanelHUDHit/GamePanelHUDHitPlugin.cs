@@ -136,7 +136,7 @@ namespace GamePanelHUDHit
             EBodyPart bodyPart,
             EDamageType lethalDamageType)
         {
-            if (aggressor == GamePanelHUDCorePlugin.HUDCore.YourPlayer)
+            if (aggressor == HUDCore.YourPlayer)
             {
                 var settings = _PlayerHelper.RefSettings.GetValue(__instance.Profile.Info);
 
@@ -160,7 +160,7 @@ namespace GamePanelHUDHit
         private static void Hit(Player __instance, DamageInfo damageInfo, EBodyPart bodyPartType,
             float absorbed, EHeadSegment? headSegment)
         {
-            if (damageInfo.Player == GamePanelHUDCorePlugin.HUDCore.YourPlayer)
+            if (damageInfo.Player == HUDCore.YourPlayer)
             {
                 float armorDamage;
 
@@ -220,6 +220,8 @@ namespace GamePanelHUDHit
             {
                 processor.Create(Mono.Cecil.Cil.OpCodes.Ldsfld,
                     AccessTools.Field(typeof(GamePanelHUDHitPlugin), nameof(Armor))),
+                processor.Create(Mono.Cecil.Cil.OpCodes.Ldarg_1),
+                processor.Create(Mono.Cecil.Cil.OpCodes.Ldobj, typeof(DamageInfo)),
                 callApplyDurabilityDamage.Prev,
                 processor.Create(Mono.Cecil.Cil.OpCodes.Call,
                     AccessTools.Method(typeof(ArmorInfo), nameof(ArmorInfo.Set)))
@@ -368,10 +370,13 @@ namespace GamePanelHUDHit
 
             public float Damage;
 
-            public void Set(float armorDamage)
+            public void Set(DamageInfo damageInfo, float armorDamage)
             {
-                Damage = armorDamage;
-                Activate = true;
+                if (damageInfo.Player == HUDCore.YourPlayer)
+                {
+                    Damage = armorDamage;
+                    Activate = true;
+                }
             }
 
             public void Rest()
