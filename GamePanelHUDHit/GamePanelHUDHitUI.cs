@@ -1,4 +1,5 @@
-﻿using GamePanelHUDCore.Utils;
+﻿using System;
+using GamePanelHUDCore.Utils;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -235,8 +236,7 @@ namespace GamePanelHUDHit
                     hitColor = headColor;
                     break;
                 default:
-                    hitColor = Color.black;
-                    break;
+                    throw new ArgumentOutOfRangeException(nameof(hitInfo.HitType), hitInfo.HitType, null);
             }
 
             HitColor(hitColor);
@@ -254,6 +254,8 @@ namespace GamePanelHUDHit
                 case GamePanelHUDHitPlugin.HitInfo.Direction.Right:
                     _animatorHitUI.SetTrigger(AnimatorHash.ActiveRight);
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(direction), direction, null);
             }
         }
 

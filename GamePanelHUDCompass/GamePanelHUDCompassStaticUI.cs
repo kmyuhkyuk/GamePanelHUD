@@ -1,4 +1,5 @@
-﻿using GamePanelHUDCore.Utils;
+﻿using System;
+using GamePanelHUDCore.Utils;
 using UnityEngine;
 using UnityEngine.UI;
 #if !UNITY_EDITOR
@@ -97,6 +98,8 @@ namespace GamePanelHUDCompass
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionInZone:
                     SetSizeDelta(new Vector2(32, 32));
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(infoType), infoType, null);
             }
 
             HUDCore.UpdateManger.Register(this);
@@ -211,6 +214,8 @@ namespace GamePanelHUDCompass
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.Airdrop:
                     Airdrop();
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(infoType), infoType, null);
             }
 #endif
         }

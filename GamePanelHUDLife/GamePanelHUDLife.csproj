@@ -41,6 +41,10 @@
     <DefineConstants>TRACE;DEBUG;UNITY_EDITOR</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="0Harmony, Version=2.9.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>R:\Battlestate Games\Client.0.12.12.15.17349\BepInEx\core\0Harmony.dll</HintPath>
+    </Reference>
     <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>R:\Battlestate Games\Client.0.12.12.15.17349\EscapeFromTarkov_Data\Managed\Assembly-CSharp.dll</HintPath>
@@ -52,6 +56,10 @@
     <Reference Include="EFTApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=13a2b05844723184, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\EFTApi\Build\bin\Release\EFTApi.dll</HintPath>
+    </Reference>
+    <Reference Include="EFTReflection, Version=1.1.2.0, Culture=neutral, PublicKeyToken=13a2b05844723184, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\EFTApi\Build\bin\Release\EFTReflection.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

@@ -4,6 +4,7 @@ using BepInEx;
 using BepInEx.Configuration;
 using EFT;
 using EFT.InventoryLogic;
+using EFTApi;
 using GamePanelHUDCore;
 using GamePanelHUDCore.Attributes;
 using GamePanelHUDCore.Utils;
@@ -16,8 +17,8 @@ using static EFTApi.EFTHelpers;
 
 namespace GamePanelHUDHit
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDHit", "kmyuhkyuk-GamePanelHUDHit", "2.7.1")]
-    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "2.7.1")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDHit", "kmyuhkyuk-GamePanelHUDHit", "2.7.2")]
+    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "2.7.2")]
     [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", "localized/hit")]
     public class GamePanelHUDHitPlugin : BaseUnityPlugin, IUpdate
     {
@@ -94,9 +95,9 @@ namespace GamePanelHUDHit
 
         private void Start()
         {
-            _PlayerHelper.ApplyDamageInfo += Hit;
-            _PlayerHelper.OnBeenKilledByAggressor += Kill;
-            _PlayerHelper.ArmorComponentHelper.ILApplyDamage += ArmorDamage;
+            _PlayerHelper.ApplyDamageInfo.Add(this, nameof(Hit));
+            _PlayerHelper.OnBeenKilledByAggressor.Add(this, nameof(Kill));
+            _PlayerHelper.ArmorComponentHelper.ApplyDamage.Add(this, nameof(ArmorDamage), HarmonyPatchType.ILManipulator);
 
             HUDCore.UpdateManger.Register(this);
         }
@@ -133,8 +134,7 @@ namespace GamePanelHUDHit
         }
 
         private static void Kill(Player __instance, Player aggressor, DamageInfo damageInfo,
-            EBodyPart bodyPart,
-            EDamageType lethalDamageType)
+            EBodyPart bodyPart)
         {
             if (aggressor == HUDCore.YourPlayer)
             {
@@ -157,8 +157,7 @@ namespace GamePanelHUDHit
             }
         }
 
-        private static void Hit(Player __instance, DamageInfo damageInfo, EBodyPart bodyPartType,
-            float absorbed, EHeadSegment? headSegment)
+        private static void Hit(Player __instance, DamageInfo damageInfo, EBodyPart bodyPartType)
         {
             if (damageInfo.Player == HUDCore.YourPlayer)
             {
@@ -222,7 +221,10 @@ namespace GamePanelHUDHit
                     AccessTools.Field(typeof(GamePanelHUDHitPlugin), nameof(Armor))),
                 processor.Create(Mono.Cecil.Cil.OpCodes.Ldarg_1),
                 processor.Create(Mono.Cecil.Cil.OpCodes.Ldobj, typeof(DamageInfo)),
-                callApplyDurabilityDamage.Prev,
+                EFTVersion.Is341Up ? callApplyDurabilityDamage.Prev : processor.Create(Mono.Cecil.Cil.OpCodes.Ldarg_3),
+                EFTVersion.Is341Up
+                    ? processor.Create(Mono.Cecil.Cil.OpCodes.Nop)
+                    : processor.Create(Mono.Cecil.Cil.OpCodes.Ldind_R4),
                 processor.Create(Mono.Cecil.Cil.OpCodes.Call,
                     AccessTools.Method(typeof(ArmorInfo), nameof(ArmorInfo.Set)))
             });
