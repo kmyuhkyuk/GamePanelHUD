@@ -1,10 +1,8 @@
 ﻿#if !UNITY_EDITOR
-using System;
 using System.Threading.Tasks;
 using BepInEx;
 using BepInEx.Configuration;
 using EFT.HealthSystem;
-using EFT.UI;
 using GamePanelHUDCore;
 using GamePanelHUDCore.Attributes;
 using GamePanelHUDCore.Utils;
