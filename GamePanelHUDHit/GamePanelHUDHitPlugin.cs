@@ -97,7 +97,8 @@ namespace GamePanelHUDHit
         {
             _PlayerHelper.ApplyDamageInfo.Add(this, nameof(Hit));
             _PlayerHelper.OnBeenKilledByAggressor.Add(this, nameof(Kill));
-            _PlayerHelper.ArmorComponentHelper.ApplyDamage.Add(this, nameof(ArmorDamage), HarmonyPatchType.ILManipulator);
+            _PlayerHelper.ArmorComponentHelper.ApplyDamage.Add(this, nameof(ArmorDamage),
+                HarmonyPatchType.ILManipulator);
 
             HUDCore.UpdateManger.Register(this);
         }
@@ -215,7 +216,7 @@ namespace GamePanelHUDHit
             var callApplyDurabilityDamage = cursor.GotoNext(x =>
                 x.MatchCall(AccessTools.Method(typeof(ArmorComponent), "ApplyDurabilityDamage")));
 
-            codes.InsertRange(callApplyDurabilityDamage.Index + 1, new[]
+            codes.InsertRange(callApplyDurabilityDamage.Index - 1, new[]
             {
                 processor.Create(Mono.Cecil.Cil.OpCodes.Ldsfld,
                     AccessTools.Field(typeof(GamePanelHUDHitPlugin), nameof(Armor))),
