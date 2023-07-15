@@ -14,8 +14,8 @@ using static EFTApi.EFTHelpers;
 
 namespace GamePanelHUDLife
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDLife", "kmyuhkyuk-GamePanelHUDLife", "2.7.1")]
-    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "2.7.1")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDLife", "kmyuhkyuk-GamePanelHUDLife", "2.7.2")]
+    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "2.7.2")]
     [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", "localized/life")]
     public class GamePanelHUDLifePlugin : BaseUnityPlugin, IUpdate
     {
@@ -39,7 +39,7 @@ namespace GamePanelHUDLife
 
         private void Start()
         {
-            _MainMenuControllerHelper.Execute += MainMenu;
+            _MainMenuControllerHelper.Execute.Add(this, nameof(MainMenu));
 
             HUDCore.UpdateManger.Register(this);
         }
@@ -86,9 +86,7 @@ namespace GamePanelHUDLife
             }
         }
 
-        private static async void MainMenu(MainMenuController __instance, Task<MainMenuController> __result,
-            object backEnd, EnvironmentUI environmentUI, MenuUI menuUI, CommonUI commonUI, PreloaderUI preloaderUI,
-            object raidSettings, object hideoutController, Action onLogoutPressed, Action reconnectAction)
+        private static async void MainMenu(MainMenuController __instance, Task<MainMenuController> __result)
         {
             _healthController = (await __result).HealthController;
         }

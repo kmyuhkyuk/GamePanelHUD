@@ -1,4 +1,5 @@
 ﻿#if !UNITY_EDITOR
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,7 +8,6 @@ using BepInEx.Configuration;
 using EFT;
 using EFT.UI;
 using EFTApi;
-using EFTApi.Helpers;
 using EFTUtils;
 using GamePanelHUDCore.Attributes;
 using GamePanelHUDCore.Utils;
@@ -17,8 +17,8 @@ using static EFTApi.EFTHelpers;
 
 namespace GamePanelHUDCore
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCore", "kmyuhkyuk-GamePanelHUDCore", "2.7.1")]
-    [BepInDependency("com.kmyuhkyuk.EFTApi", "1.1.2")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCore", "kmyuhkyuk-GamePanelHUDCore", "2.7.2")]
+    [BepInDependency("com.kmyuhkyuk.EFTApi", "1.1.3")]
     [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", "../localized/core")]
     public class GamePanelHUDCorePlugin : BaseUnityPlugin
     {
@@ -65,16 +65,16 @@ namespace GamePanelHUDCore
 
             public GameWorld TheWorld => EFTGlobal.GameWorld;
 
-            public event GameWorldHelper.hook_OnGameStarted WorldStart
+            public event Action<GameWorld> WorldStart
             {
-                add => _GameWorldHelper.OnGameStarted += value;
-                remove => _GameWorldHelper.OnGameStarted -= value;
+                add => _GameWorldHelper.OnGameStarted.Add(value);
+                remove => _GameWorldHelper.OnGameStarted.Remove(value);
             }
 
-            public event GameWorldHelper.hook_Dispose WorldDispose
+            public event Action<GameWorld> WorldDispose
             {
-                add => _GameWorldHelper.Dispose += value;
-                remove => _GameWorldHelper.Dispose -= value;
+                add => _GameWorldHelper.Dispose.Add(value);
+                remove => _GameWorldHelper.Dispose.Remove(value);
             }
 
             public bool HasPlayer => YourPlayer != null;

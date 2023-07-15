@@ -19,8 +19,8 @@ using static EFTApi.EFTHelpers;
 
 namespace GamePanelHUDCompass
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCompass", "kmyuhkyuk-GamePanelHUDCompass", "2.7.1")]
-    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "2.7.1")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCompass", "kmyuhkyuk-GamePanelHUDCompass", "2.7.2")]
+    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "2.7.2")]
     [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", "localized/compass")]
     public class GamePanelHUDCompassPlugin : BaseUnityPlugin, IUpdate
     {
@@ -80,10 +80,10 @@ namespace GamePanelHUDCompass
         {
             HUDCore.WorldStart += OnHUDCoreOnWorldStart;
 
-            _PlayerHelper.FirearmControllerHelper.InitiateShot += ShowShot;
-            _PlayerHelper.OnDead += RemoveShot;
-            _AirdropHelper.AirdropBoxHelper.OnBoxLand += ShowAirdrop;
-            _QuestHelper.OnConditionValueChanged += RemoveQuest;
+            _PlayerHelper.FirearmControllerHelper.InitiateShot.Add(this, nameof(ShowShot));
+            _PlayerHelper.OnDead.Add(this, nameof(RemoveShot));
+            _AirdropHelper.AirdropBoxHelper.OnBoxLand.Add(this, nameof(ShowAirdrop));
+            _QuestHelper.OnConditionValueChanged.Add(this, nameof(RemoveQuest));
 
             HUDCore.UpdateManger.Register(this);
         }
@@ -179,7 +179,7 @@ namespace GamePanelHUDCompass
             }
         }
 
-        private static void RemoveShot(Player __instance, EDamageType damageType)
+        private static void RemoveShot(Player __instance)
         {
             if (__instance != HUDCore.YourPlayer)
             {
@@ -187,10 +187,7 @@ namespace GamePanelHUDCompass
             }
         }
 
-        private static void ShowShot(Player.FirearmController __instance, Player ____player,
-            BulletClass ammo,
-            Vector3 shotPosition, Vector3 shotDirection, Vector3 fireportPosition, int chamberIndex,
-            float overheat)
+        private static void ShowShot(Player.FirearmController __instance, Player ____player, Vector3 shotPosition)
         {
             if (____player != HUDCore.YourPlayer)
             {
@@ -481,7 +478,7 @@ namespace GamePanelHUDCompass
             return exfiltrationList.ToArray();
         }
 
-        private static void ShowAirdrop(MonoBehaviour __instance, object ___boxSync, float clipLength)
+        private static void ShowAirdrop(MonoBehaviour __instance, object ___boxSync)
         {
             var looTable = __instance.GetComponentInChildren<LootableContainer>();
 
@@ -532,9 +529,8 @@ namespace GamePanelHUDCompass
             ShowStatic(staticInfo);
         }
 
-        private static void RemoveQuest(object __instance, object quest, EQuestStatus status,
-            Condition condition,
-            bool notify)
+        private static void RemoveQuest(object __instance, EQuestStatus status,
+            Condition condition)
         {
             if (status != EQuestStatus.Started)
             {

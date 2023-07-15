@@ -181,6 +181,8 @@ namespace GamePanelHUDCompass
                                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionInZone:
                                     questsRoot.SetAsLastSibling();
                                     break;
+                                default:
+                                    throw new ArgumentOutOfRangeException(nameof(minUI.infoType), minUI.infoType, null);
                             }
 
                             minUI.transform.SetAsLastSibling();
@@ -263,7 +265,7 @@ namespace GamePanelHUDCompass
                     root = questsRoot;
                     break;
                 default:
-                    return;
+                    throw new ArgumentOutOfRangeException(nameof(staticInfo.InfoType), staticInfo.InfoType, null);
             }
 
             var staticUI = Instantiate(GamePanelHUDCompassPlugin.StaticPrefab, root)
@@ -285,6 +287,8 @@ namespace GamePanelHUDCompass
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionInZone:
                     _SessionHelper.TradersHelper.TradersAvatarData.GetAvatar(staticInfo.TraderId, staticUI.BindIcon);
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(staticInfo.InfoType), staticInfo.InfoType, null);
             }
 
             staticUI.where = staticInfo.Where;

@@ -16,8 +16,8 @@ using static EFTApi.EFTHelpers;
 
 namespace GamePanelHUDMag
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDMag", "kmyuhkyuk-GamePanelHUDMag", "2.7.1")]
-    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "2.7.1")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDMag", "kmyuhkyuk-GamePanelHUDMag", "2.7.2")]
+    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "2.7.2")]
     [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", "localized/mag")]
     public class GamePanelHUDMagPlugin : BaseUnityPlugin, IUpdate
     {
