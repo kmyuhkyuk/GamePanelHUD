@@ -89,6 +89,10 @@
     <Compile Include="GamePanelHUDCompassStatic.cs" />
     <Compile Include="GamePanelHUDCompassStaticUI.cs" />
     <Compile Include="GamePanelHUDCompassUI.cs" />
+    <Compile Include="Patches\InitiateShot.cs" />
+    <Compile Include="Patches\OnBoxLand.cs" />
+    <Compile Include="Patches\OnConditionValueChanged.cs" />
+    <Compile Include="Patches\OnDead.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -100,5 +104,6 @@
       <Name>GamePanelHUDCore</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -88,6 +88,7 @@
     <Compile Include="GamePanelHUDLife.cs" />
     <Compile Include="GamePanelHUDLifePlugin.cs" />
     <Compile Include="GamePanelHUDLifeUI.cs" />
+    <Compile Include="Patches\Execute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -99,5 +100,6 @@
       <Name>GamePanelHUDCore</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,5 +1,4 @@
-﻿#if !UNITY_EDITOR
-namespace GamePanelHUDCore.Attributes
+﻿namespace GamePanelHUDCore.Attributes
 {
     // ReSharper disable UnassignedField.Global
     // ReSharper disable IdentifierTypo
@@ -105,4 +104,3 @@ namespace GamePanelHUDCore.Attributes
         public System.Func<string, object> StrToObj;
     }
 }
-#endif

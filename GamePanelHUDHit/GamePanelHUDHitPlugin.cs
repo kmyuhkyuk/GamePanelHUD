@@ -3,14 +3,10 @@ using System;
 using BepInEx;
 using BepInEx.Configuration;
 using EFT;
-using EFT.InventoryLogic;
-using EFTApi;
 using GamePanelHUDCore;
 using GamePanelHUDCore.Attributes;
 using GamePanelHUDCore.Utils;
 using HarmonyLib;
-using MonoMod.Cil;
-using MonoMod.Utils;
 using TMPro;
 using UnityEngine;
 using static EFTApi.EFTHelpers;
@@ -20,7 +16,7 @@ namespace GamePanelHUDHit
     [BepInPlugin("com.kmyuhkyuk.GamePanelHUDHit", "kmyuhkyuk-GamePanelHUDHit", "2.7.3")]
     [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "2.7.3")]
     [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", "localized/hit")]
-    public class GamePanelHUDHitPlugin : BaseUnityPlugin, IUpdate
+    public partial class GamePanelHUDHitPlugin : BaseUnityPlugin, IUpdate
     {
         private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
 
@@ -95,9 +91,9 @@ namespace GamePanelHUDHit
 
         private void Start()
         {
-            _PlayerHelper.ApplyDamageInfo.Add(this, nameof(Hit));
-            _PlayerHelper.OnBeenKilledByAggressor.Add(this, nameof(Kill));
-            _PlayerHelper.ArmorComponentHelper.ApplyDamage.Add(this, nameof(ArmorDamage),
+            _PlayerHelper.ApplyDamageInfo.Add(this, nameof(ApplyDamageInfo));
+            _PlayerHelper.OnBeenKilledByAggressor.Add(this, nameof(OnBeenKilledByAggressor));
+            _PlayerHelper.ArmorComponentHelper.ApplyDamage.Add(this, nameof(ApplyDamage),
                 HarmonyPatchType.ILManipulator);
 
             HUDCore.UpdateManger.Register(this);
@@ -132,103 +128,6 @@ namespace GamePanelHUDHit
 
                 Armor.Rest();
             }
-        }
-
-        private static void Kill(Player __instance, Player aggressor, DamageInfo damageInfo,
-            EBodyPart bodyPart)
-        {
-            if (aggressor == HUDCore.YourPlayer)
-            {
-                var settings = _PlayerHelper.RefSettings.GetValue(__instance.Profile.Info);
-
-                var info = new KillInfo
-                {
-                    PlayerName = __instance.Profile.Nickname,
-                    WeaponName = damageInfo.Weapon.ShortName,
-                    Part = bodyPart,
-                    Distance = Vector3.Distance(aggressor.Position, __instance.Position),
-                    Level = __instance.Profile.Info.Level,
-                    Side = __instance.Profile.Info.Side,
-                    Exp = _PlayerHelper.RefExperience.GetValue(settings),
-                    Role = _PlayerHelper.RefRole.GetValue(settings),
-                    Kills = _kills++
-                };
-
-                ShowKill(info);
-            }
-        }
-
-        private static void Hit(Player __instance, DamageInfo damageInfo, EBodyPart bodyPartType)
-        {
-            if (damageInfo.Player == HUDCore.YourPlayer)
-            {
-                float armorDamage;
-
-                bool hasArmorHit;
-
-                if (Armor.Activate)
-                {
-                    armorDamage = Armor.Damage;
-                    hasArmorHit = true;
-
-                    Armor.Rest();
-                }
-                else
-                {
-                    armorDamage = 0;
-                    hasArmorHit = false;
-                }
-
-                HitInfo.Hit hitType;
-
-                if (__instance.HealthController.IsAlive)
-                {
-                    hitType = hasArmorHit ? HitInfo.Hit.HasArmorHit : HitInfo.Hit.OnlyHp;
-                }
-                else
-                {
-                    hitType = HitInfo.Hit.Dead;
-                }
-
-                var info = new HitInfo
-                {
-                    Damage = damageInfo.DidBodyDamage,
-                    DamagePart = bodyPartType,
-                    HitPoint = damageInfo.HitPoint,
-                    ArmorDamage = armorDamage,
-                    HasArmorHit = hasArmorHit,
-                    HitType = hitType,
-                    HitDirection = damageInfo.Direction
-                };
-
-                ShowHit(info);
-            }
-        }
-
-        private static void ArmorDamage(ILContext il)
-        {
-            var codes = il.Instrs;
-
-            var cursor = new ILCursor(il);
-
-            var processor = il.IL;
-
-            var callApplyDurabilityDamage = cursor.GotoNext(x =>
-                x.MatchCall(AccessTools.Method(typeof(ArmorComponent), "ApplyDurabilityDamage")));
-
-            codes.InsertRange(callApplyDurabilityDamage.Index - 1, new[]
-            {
-                processor.Create(Mono.Cecil.Cil.OpCodes.Ldsfld,
-                    AccessTools.Field(typeof(GamePanelHUDHitPlugin), nameof(Armor))),
-                processor.Create(Mono.Cecil.Cil.OpCodes.Ldarg_1),
-                processor.Create(Mono.Cecil.Cil.OpCodes.Ldobj, typeof(DamageInfo)),
-                EFTVersion.Is341Up ? callApplyDurabilityDamage.Prev : processor.Create(Mono.Cecil.Cil.OpCodes.Ldarg_3),
-                EFTVersion.Is341Up
-                    ? processor.Create(Mono.Cecil.Cil.OpCodes.Nop)
-                    : processor.Create(Mono.Cecil.Cil.OpCodes.Ldind_R4),
-                processor.Create(Mono.Cecil.Cil.OpCodes.Call,
-                    AccessTools.Method(typeof(ArmorInfo), nameof(ArmorInfo.Set)))
-            });
         }
 
         private static void DrawTestHit(ConfigEntryBase entry)
@@ -291,6 +190,15 @@ namespace GamePanelHUDHit
                 Side = (EPlayerSide)side.GetValue(UnityEngine.Random.Range(0, side.Length)),
                 IsTest = true
             };
+
+            try
+            {
+                _PlayerHelper.RoleHelper.IsBossOrFollower(killInfo.Role);
+            }
+            catch
+            {
+                return;
+            }
 
             ShowKill(killInfo);
         }

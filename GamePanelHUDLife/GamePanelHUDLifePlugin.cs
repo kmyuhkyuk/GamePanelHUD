@@ -1,5 +1,4 @@
 ﻿#if !UNITY_EDITOR
-using System.Threading.Tasks;
 using BepInEx;
 using BepInEx.Configuration;
 using EFT.HealthSystem;
@@ -15,7 +14,7 @@ namespace GamePanelHUDLife
     [BepInPlugin("com.kmyuhkyuk.GamePanelHUDLife", "kmyuhkyuk-GamePanelHUDLife", "2.7.3")]
     [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "2.7.3")]
     [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", "localized/life")]
-    public class GamePanelHUDLifePlugin : BaseUnityPlugin, IUpdate
+    public partial class GamePanelHUDLifePlugin : BaseUnityPlugin, IUpdate
     {
         private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
 
@@ -37,7 +36,7 @@ namespace GamePanelHUDLife
 
         private void Start()
         {
-            _MainMenuControllerHelper.Execute.Add(this, nameof(MainMenu));
+            _MainMenuControllerHelper.Execute.Add(this, nameof(Execute));
 
             HUDCore.UpdateManger.Register(this);
         }
@@ -82,11 +81,6 @@ namespace GamePanelHUDLife
                 _lifeData.Rates = new Life.Rate(_healthController.HealthRate, _healthController.HydrationRate,
                     _healthController.EnergyRate);
             }
-        }
-
-        private static async void MainMenu(MainMenuController __instance, Task<MainMenuController> __result)
-        {
-            _healthController = (await __result).HealthController;
         }
 
         public class Life

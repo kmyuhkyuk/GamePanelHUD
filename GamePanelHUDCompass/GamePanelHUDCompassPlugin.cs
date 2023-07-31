@@ -22,7 +22,7 @@ namespace GamePanelHUDCompass
     [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCompass", "kmyuhkyuk-GamePanelHUDCompass", "2.7.3")]
     [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "2.7.3")]
     [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", "localized/compass")]
-    public class GamePanelHUDCompassPlugin : BaseUnityPlugin, IUpdate
+    public partial class GamePanelHUDCompassPlugin : BaseUnityPlugin, IUpdate
     {
         private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
 
@@ -80,10 +80,10 @@ namespace GamePanelHUDCompass
         {
             HUDCore.WorldStart += OnHUDCoreOnWorldStart;
 
-            _PlayerHelper.FirearmControllerHelper.InitiateShot.Add(this, nameof(ShowShot));
-            _PlayerHelper.OnDead.Add(this, nameof(RemoveShot));
-            _AirdropHelper.AirdropBoxHelper.OnBoxLand.Add(this, nameof(ShowAirdrop));
-            _QuestHelper.OnConditionValueChanged.Add(this, nameof(RemoveQuest));
+            _PlayerHelper.FirearmControllerHelper.InitiateShot.Add(this, nameof(InitiateShot));
+            _PlayerHelper.OnDead.Add(this, nameof(OnDead));
+            _AirdropHelper.AirdropBoxHelper.OnBoxLand.Add(this, nameof(OnBoxLand));
+            _QuestHelper.OnConditionValueChanged.Add(this, nameof(OnConditionValueChanged));
 
             HUDCore.UpdateManger.Register(this);
         }
@@ -176,31 +176,6 @@ namespace GamePanelHUDCompass
                 {
                     Airdrops.Clear();
                 }
-            }
-        }
-
-        private static void RemoveShot(Player __instance)
-        {
-            if (__instance != HUDCore.YourPlayer)
-            {
-                DestroyFire(__instance.ProfileId);
-            }
-        }
-
-        private static void ShowShot(Player.FirearmController __instance, Player ____player, Vector3 shotPosition)
-        {
-            if (____player != HUDCore.YourPlayer)
-            {
-                var fireInfo = new CompassFireInfo
-                {
-                    Who = ____player.ProfileId,
-                    Where = shotPosition,
-                    Role = _PlayerHelper.RefRole.GetValue(_PlayerHelper.RefSettings.GetValue(____player.Profile.Info)),
-                    IsSilenced = __instance.IsSilenced && !__instance.IsInLauncherMode(),
-                    Distance = Vector3.Distance(shotPosition, HUDCore.YourPlayer.Position)
-                };
-
-                ShowFire(fireInfo);
             }
         }
 
@@ -476,66 +451,6 @@ namespace GamePanelHUDCompass
             }
 
             return exfiltrationList.ToArray();
-        }
-
-        private static void ShowAirdrop(MonoBehaviour __instance, object ___boxSync)
-        {
-            var looTable = __instance.GetComponentInChildren<LootableContainer>();
-
-            var controller = _GameWorldHelper.LootableContainerHelper.RefItemOwner.GetValue(looTable);
-
-            var item = _GameWorldHelper.LootableContainerHelper.RefRootItem.GetValue(controller);
-
-            Airdrops.Add(_GameWorldHelper.SearchableItemClassHelper.RefAllSearchersIds.GetValue(item));
-
-            var count = Airdrops.Count;
-
-            string nameKey;
-            string descriptionKey;
-            switch (_AirdropHelper.AirdropSynchronizableObjectHelper.RefAirdropType.GetValue(___boxSync))
-            {
-                case 0:
-                    nameKey = "6223349b3136504a544d1608 Name";
-                    descriptionKey = "6223349b3136504a544d1608 Description";
-                    break;
-                case 1:
-                    nameKey = "622334fa3136504a544d160c Name";
-                    descriptionKey = "622334fa3136504a544d160c Description";
-                    break;
-                case 2:
-                    nameKey = "622334c873090231d904a9fc Name";
-                    descriptionKey = "622334c873090231d904a9fc Description";
-                    break;
-                case 3:
-                    nameKey = "6223351bb5d97a7b2c635ca7 Name";
-                    descriptionKey = "6223351bb5d97a7b2c635ca7 Description";
-                    break;
-                default:
-                    nameKey = "Unknown";
-                    descriptionKey = "Unknown";
-                    break;
-            }
-
-            var staticInfo = new CompassStaticInfo
-            {
-                Id = string.Concat("Airdrop", count),
-                Where = __instance.transform.position,
-                NameKey = nameKey,
-                DescriptionKey = descriptionKey,
-                ExIndex = count - 1,
-                InfoType = CompassStaticInfo.Type.Airdrop
-            };
-
-            ShowStatic(staticInfo);
-        }
-
-        private static void RemoveQuest(object __instance, EQuestStatus status,
-            Condition condition)
-        {
-            if (status != EQuestStatus.Started)
-            {
-                DestroyStatic(condition.id);
-            }
         }
 
         private static float GetAngle(Vector3 eulerAngles, float northDirection)

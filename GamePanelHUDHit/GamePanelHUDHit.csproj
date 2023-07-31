@@ -106,6 +106,9 @@
     <Compile Include="GamePanelHUDKillUI.cs" />
     <Compile Include="GamePanelHUDExpUI.cs" />
     <Compile Include="GamePanelHUDKill.cs" />
+    <Compile Include="Patches\ApplyDamage.cs" />
+    <Compile Include="Patches\ApplyDamageInfo.cs" />
+    <Compile Include="Patches\OnBeenKilledByAggressor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -117,5 +120,6 @@
       <Name>GamePanelHUDCore</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
