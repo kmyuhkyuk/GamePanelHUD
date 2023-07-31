@@ -9,7 +9,7 @@ namespace GamePanelHUDHit
         private static void OnBeenKilledByAggressor(Player __instance, IAIDetails aggressor, DamageInfo damageInfo,
             EBodyPart bodyPart)
         {
-            if (aggressor == HUDCore.YourPlayer)
+            if (aggressor.GetPlayer == HUDCore.YourPlayer)
             {
                 var settings = _PlayerHelper.RefSettings.GetValue(__instance.Profile.Info);
 
