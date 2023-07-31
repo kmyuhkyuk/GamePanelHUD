@@ -6,7 +6,7 @@ namespace GamePanelHUDHit
 {
     public partial class GamePanelHUDHitPlugin
     {
-        private static void OnBeenKilledByAggressor(Player __instance, Player aggressor, DamageInfo damageInfo,
+        private static void OnBeenKilledByAggressor(Player __instance, IAIDetails aggressor, DamageInfo damageInfo,
             EBodyPart bodyPart)
         {
             if (aggressor == HUDCore.YourPlayer)
