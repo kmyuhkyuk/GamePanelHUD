@@ -1,4 +1,5 @@
-﻿using EFT.InventoryLogic;
+﻿using System;
+using EFT.InventoryLogic;
 using EFTApi;
 using HarmonyLib;
 using MonoMod.Cil;
@@ -25,8 +26,8 @@ namespace GamePanelHUDHit
                     AccessTools.Field(typeof(GamePanelHUDHitPlugin), nameof(Armor))),
                 processor.Create(Mono.Cecil.Cil.OpCodes.Ldarg_1),
                 processor.Create(Mono.Cecil.Cil.OpCodes.Ldobj, typeof(DamageInfo)),
-                EFTVersion.Is341Up ? callApplyDurabilityDamage.Prev : processor.Create(Mono.Cecil.Cil.OpCodes.Ldarg_3),
-                EFTVersion.Is341Up
+                EFTVersion.AkiVersion > new Version("3.4.1") ? callApplyDurabilityDamage.Prev : processor.Create(Mono.Cecil.Cil.OpCodes.Ldarg_3),
+                EFTVersion.AkiVersion > new Version("3.4.1")
                     ? processor.Create(Mono.Cecil.Cil.OpCodes.Nop)
                     : processor.Create(Mono.Cecil.Cil.OpCodes.Ldind_R4),
                 processor.Create(Mono.Cecil.Cil.OpCodes.Call,

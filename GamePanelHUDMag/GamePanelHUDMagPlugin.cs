@@ -58,8 +58,6 @@ namespace GamePanelHUDMag
 
         private bool _launcherCacheBool;
 
-        private static bool Is341Up => EFTVersion.Is341Up; //3.5.0 Add Launcher
-
         internal static Action WeaponTrigger;
 
         public GamePanelHUDMagPlugin()
@@ -101,7 +99,7 @@ namespace GamePanelHUDMag
                 _currentWeapon = EFTGlobal.Weapon;
                 _animatorWeapon = _PlayerHelper.WeaponHelper.WeaponAnimator;
 
-                if (Is341Up)
+                if (EFTVersion.AkiVersion > new Version("3.4.1"))
                 {
                     _currentLauncher = EFTGlobal.UnderbarrelWeapon;
                     _animatorLauncher = _PlayerHelper.WeaponHelper.LauncherIAnimator;

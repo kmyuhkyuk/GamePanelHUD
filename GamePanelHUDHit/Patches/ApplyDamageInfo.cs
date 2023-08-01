@@ -1,4 +1,5 @@
 ﻿using EFT;
+using static EFTApi.EFTHelpers;
 
 namespace GamePanelHUDHit
 {
@@ -6,7 +7,7 @@ namespace GamePanelHUDHit
     {
         private static void ApplyDamageInfo(Player __instance, DamageInfo damageInfo, EBodyPart bodyPartType)
         {
-            if (damageInfo.Player == HUDCore.YourPlayer)
+            if (_PlayerHelper.DamageInfoHelper.GetPlayer(damageInfo) == HUDCore.YourPlayer)
             {
                 float armorDamage;
                 bool hasArmorHit;
