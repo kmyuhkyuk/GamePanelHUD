@@ -304,7 +304,10 @@ namespace GamePanelHUDCompass
 
             if (CompassStatics.TryGetValue(staticInfo.Id, out var list))
             {
-                list.Add(staticUI);
+                lock (list)
+                {
+                    list.Add(staticUI);
+                }
             }
             else
             {

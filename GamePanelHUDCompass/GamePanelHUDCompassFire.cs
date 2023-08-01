@@ -169,9 +169,12 @@ namespace GamePanelHUDCompass
                 {
                     if (_compassFires.TryGetValue(fireInfo.Who, out var fireUI))
                     {
-                        fireUI.where = fireInfo.Where;
+                        lock (fireUI)
+                        {
+                            fireUI.where = fireInfo.Where;
 
-                        fireUI.Fire();
+                            fireUI.Fire();
+                        }
                     }
                     else
                     {

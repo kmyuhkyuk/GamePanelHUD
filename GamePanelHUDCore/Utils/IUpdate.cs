@@ -62,60 +62,69 @@ namespace GamePanelHUDCore.Utils
                 {
                     var update = _updates[i];
 
-                    if (_removeUpdates.Contains(update))
+                    try
                     {
-                        var num = _removeUpdates.IndexOf(update);
+                        if (_removeUpdates.Contains(update))
+                        {
+                            var num = _removeUpdates.IndexOf(update);
 
+                            _updates.RemoveAt(i);
+
+                            _removeUpdates.RemoveAt(num);
+                        }
+                        else if (!_stopUpdates.Contains(update))
+                        {
+                            if (!OutputMethodTime)
+                            {
+                                update.CustomUpdate();
+                            }
+                            else
+                            {
+                                if (i == 0)
+                                {
+                                    LogSource.LogMessage(
+                                        $"----------Start----------:CurrentTime:{DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+
+                                    _debugs.AllMethodTime.Start();
+                                }
+
+                                _debugs.MethodTime.Start();
+
+                                update.CustomUpdate();
+
+                                _debugs.MethodTime.Stop();
+
+                                LogSource.LogMessage($"{update.GetType().Name}:NeedTime:{_debugs.MethodTime.Elapsed}");
+
+                                _debugs.MethodTime.Reset();
+
+                                if (i == _updates.Count - 1)
+                                {
+                                    _debugs.AllMethodTime.Stop();
+
+                                    if (_debugs.AllMethodTime.Elapsed > _debugs.MaxTime)
+                                    {
+                                        _debugs.MaxTime = _debugs.AllMethodTime.Elapsed;
+                                    }
+                                    else if (_debugs.AllMethodTime.Elapsed < _debugs.MinTime ||
+                                             _debugs.MinTime == TimeSpan.Zero)
+                                    {
+                                        _debugs.MinTime = _debugs.AllMethodTime.Elapsed;
+                                    }
+
+                                    LogSource.LogMessage(
+                                        $"----------End----------:TotalNeedTime:{_debugs.AllMethodTime.Elapsed}:MaxTime:{_debugs.MaxTime}:MinTime:{_debugs.MinTime}");
+
+                                    _debugs.AllMethodTime.Reset();
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
                         _updates.RemoveAt(i);
 
-                        _removeUpdates.RemoveAt(num);
-                    }
-                    else if (!_stopUpdates.Contains(update))
-                    {
-                        if (!OutputMethodTime)
-                        {
-                            update.CustomUpdate();
-                        }
-                        else
-                        {
-                            if (i == 0)
-                            {
-                                LogSource.LogMessage(
-                                    $"----------Start----------:CurrentTime:{DateTime.Now:yyyy-MM-dd HH:mm:ss}");
-
-                                _debugs.AllMethodTime.Start();
-                            }
-
-                            _debugs.MethodTime.Start();
-
-                            update.CustomUpdate();
-
-                            _debugs.MethodTime.Stop();
-
-                            LogSource.LogMessage($"{update.GetType().Name}:NeedTime:{_debugs.MethodTime.Elapsed}");
-
-                            _debugs.MethodTime.Reset();
-
-                            if (i == _updates.Count - 1)
-                            {
-                                _debugs.AllMethodTime.Stop();
-
-                                if (_debugs.AllMethodTime.Elapsed > _debugs.MaxTime)
-                                {
-                                    _debugs.MaxTime = _debugs.AllMethodTime.Elapsed;
-                                }
-                                else if (_debugs.AllMethodTime.Elapsed < _debugs.MinTime ||
-                                         _debugs.MinTime == TimeSpan.Zero)
-                                {
-                                    _debugs.MinTime = _debugs.AllMethodTime.Elapsed;
-                                }
-
-                                LogSource.LogMessage(
-                                    $"----------End----------:TotalNeedTime:{_debugs.AllMethodTime.Elapsed}:MaxTime:{_debugs.MaxTime}:MinTime:{_debugs.MinTime}");
-
-                                _debugs.AllMethodTime.Reset();
-                            }
-                        }
+                        LogSource.LogError(e);
                     }
 
                     if (!OutputMethodTime)

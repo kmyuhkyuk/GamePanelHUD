@@ -283,7 +283,7 @@ namespace GamePanelHUDHit
 
             public void Set(DamageInfo damageInfo, float armorDamage)
             {
-                if (damageInfo.Player == HUDCore.YourPlayer)
+                if (_PlayerHelper.DamageInfoHelper.GetPlayer(damageInfo) == HUDCore.YourPlayer)
                 {
                     Damage = armorDamage;
                     Activate = true;

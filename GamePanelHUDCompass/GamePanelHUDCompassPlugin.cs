@@ -69,8 +69,6 @@ namespace GamePanelHUDCompass
 
         internal static Action<string> DestroyStatic;
 
-        private static bool Is231Up => EFTVersion.Is231Up;
-
         public GamePanelHUDCompassPlugin()
         {
             _setData = new SettingsData(Config);
@@ -159,7 +157,7 @@ namespace GamePanelHUDCompass
 
                 if (_compassStaticCacheBool)
                 {
-                    ShowQuest(HUDCore.YourPlayer, HUDCore.TheWorld, Is231Up, ShowStatic);
+                    ShowQuest(HUDCore.YourPlayer, HUDCore.TheWorld, EFTVersion.AkiVersion > new Version("2.3.1"), ShowStatic);
 
                     _compassStaticData.ExfiltrationPoints =
                         ShowExfiltration(HUDCore.YourPlayer, HUDCore.TheWorld, ShowStatic);
