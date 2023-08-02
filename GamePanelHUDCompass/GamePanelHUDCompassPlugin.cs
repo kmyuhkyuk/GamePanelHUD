@@ -19,8 +19,8 @@ using static EFTApi.EFTHelpers;
 
 namespace GamePanelHUDCompass
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCompass", "kmyuhkyuk-GamePanelHUDCompass", "2.7.3")]
-    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "2.7.3")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCompass", "kmyuhkyuk-GamePanelHUDCompass", "2.7.4")]
+    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "2.7.4")]
     [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", "localized/compass")]
     public partial class GamePanelHUDCompassPlugin : BaseUnityPlugin, IUpdate
     {
