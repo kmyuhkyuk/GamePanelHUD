@@ -80,7 +80,7 @@ namespace GamePanelHUDCompass
 
             _PlayerHelper.FirearmControllerHelper.InitiateShot.Add(this, nameof(InitiateShot));
             _PlayerHelper.OnDead.Add(this, nameof(OnDead));
-            _AirdropHelper.AirdropBoxHelper.OnBoxLand.Add(this, nameof(OnBoxLand));
+            _AirdropHelper.AirdropBoxHelper.OnBoxLand?.Add(this, nameof(OnBoxLand));
             _QuestHelper.OnConditionValueChanged.Add(this, nameof(OnConditionValueChanged));
 
             HUDCore.UpdateManger.Register(this);
