@@ -177,11 +177,21 @@ namespace GamePanelHUDHit
 
             var part = Enum.GetValues(typeof(EBodyPart));
 
+            var allowRole = (WildSpawnType)role.GetValue(UnityEngine.Random.Range(0, role.Length));
+            try
+            {
+                _PlayerHelper.RoleHelper.IsBossOrFollower(allowRole);
+            }
+            catch
+            {
+                allowRole = (WildSpawnType)role.GetValue(0);
+            }
+
             var killInfo = new KillInfo
             {
                 WeaponName = TestWeaponName[UnityEngine.Random.Range(0, TestWeaponName.Length)],
                 PlayerName = TestName[UnityEngine.Random.Range(0, TestName.Length)],
-                Role = (WildSpawnType)role.GetValue(UnityEngine.Random.Range(0, role.Length)),
+                Role = allowRole,
                 Distance = UnityEngine.Random.Range(0f, 100f),
                 Level = UnityEngine.Random.Range(1, 79),
                 Exp = UnityEngine.Random.Range(100, 1001),
@@ -190,15 +200,6 @@ namespace GamePanelHUDHit
                 Side = (EPlayerSide)side.GetValue(UnityEngine.Random.Range(0, side.Length)),
                 IsTest = true
             };
-
-            try
-            {
-                _PlayerHelper.RoleHelper.IsBossOrFollower(killInfo.Role);
-            }
-            catch
-            {
-                return;
-            }
 
             ShowKill(killInfo);
         }
