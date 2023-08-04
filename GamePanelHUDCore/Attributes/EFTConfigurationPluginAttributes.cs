@@ -13,9 +13,9 @@
     public sealed class EFTConfigurationPluginAttributes : System.Attribute
     {
         /// <summary>
-        ///     Your Mod Url From Aki Hub Mod page
+        ///     Your Mod URL From Aki Hub Mod page
         /// </summary>
-        public string ModUrl;
+        public string ModURL;
 
         /// <summary>
         ///     Never displayed Plugin
@@ -38,10 +38,10 @@
         /// </summary>
         public string LocalizedPath;
 
-        public EFTConfigurationPluginAttributes(string modUrl, string localizedPath = "localized",
+        public EFTConfigurationPluginAttributes(string modURL, string localizedPath = "localized",
             bool hidePlugin = false, bool alwaysDisplay = false)
         {
-            ModUrl = modUrl;
+            ModURL = modURL;
             LocalizedPath = localizedPath;
             HidePlugin = hidePlugin;
             AlwaysDisplay = alwaysDisplay;
