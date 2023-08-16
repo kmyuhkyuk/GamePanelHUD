@@ -13,8 +13,8 @@ using static EFTApi.EFTHelpers;
 
 namespace GamePanelHUDHit
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDHit", "kmyuhkyuk-GamePanelHUDHit", "2.7.4")]
-    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "2.7.4")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDHit", "kmyuhkyuk-GamePanelHUDHit", "2.7.5")]
+    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "2.7.5")]
     [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", "localized/hit")]
     public partial class GamePanelHUDHitPlugin : BaseUnityPlugin, IUpdate
     {
