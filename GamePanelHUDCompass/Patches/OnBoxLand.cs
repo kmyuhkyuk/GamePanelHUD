@@ -46,7 +46,7 @@ namespace GamePanelHUDCompass
 
             var staticInfo = new CompassStaticInfo
             {
-                Id = string.Concat("Airdrop", count),
+                Id = $"Airdrop{count}",
                 Where = __instance.transform.position,
                 NameKey = nameKey,
                 DescriptionKey = descriptionKey,

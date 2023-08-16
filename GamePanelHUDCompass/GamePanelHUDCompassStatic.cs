@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using EFT;
@@ -25,8 +26,8 @@ namespace GamePanelHUDCompass
                 GamePanelHUDCompassPlugin.SettingsData> HUD => GamePanelHUDCompassPlugin.CompassStaticHUD;
 #endif
 
-        private static readonly Dictionary<string, List<GamePanelHUDCompassStaticUI>> CompassStatics =
-            new Dictionary<string, List<GamePanelHUDCompassStaticUI>>();
+        private static readonly ConcurrentDictionary<string, List<GamePanelHUDCompassStaticUI>> CompassStatics =
+            new ConcurrentDictionary<string, List<GamePanelHUDCompassStaticUI>>();
 
         private static readonly List<string> Removes = new List<string>();
 
@@ -113,14 +114,15 @@ namespace GamePanelHUDCompass
                     {
                         var remove = Removes[i];
 
-                        foreach (var ui in CompassStatics[remove])
+                        if (CompassStatics.TryRemove(remove, out var list))
                         {
-                            ui.Destroy();
+                            foreach (var ui in list)
+                            {
+                                ui.Destroy();
+                            }
+
+                            Removes.RemoveAt(i);
                         }
-
-                        CompassStatics.Remove(remove);
-
-                        Removes.RemoveAt(i);
                     }
                 }
 
@@ -302,17 +304,13 @@ namespace GamePanelHUDCompass
             staticUI.exIndex2 = staticInfo.ExIndex2;
             staticUI.infoType = staticInfo.InfoType;
 
-            if (CompassStatics.TryGetValue(staticInfo.Id, out var list))
-            {
-                lock (list)
+            CompassStatics.AddOrUpdate(staticInfo.Id, key => new List<GamePanelHUDCompassStaticUI> { staticUI },
+                (key, value) =>
                 {
-                    list.Add(staticUI);
-                }
-            }
-            else
-            {
-                CompassStatics.Add(staticInfo.Id, new List<GamePanelHUDCompassStaticUI> { staticUI });
-            }
+                    value.Add(staticUI);
+
+                    return value;
+                });
         }
 
         private static void DestroyAll(GameWorld __instance)
