@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("kmyuhkyuk-GamePanelHUDCompass")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("https://hub.sp-tarkov.com/files/file/581-game-panel-hud")]
+[assembly: AssemblyCompany("https://hub.sp-tarkov.com/files/file/652-game-panel-hud")]
 [assembly: AssemblyProduct("GamePanelHUDCompass")]
 [assembly: AssemblyCopyright("Copyright ©  2022")]
 [assembly: AssemblyTrademark("")]

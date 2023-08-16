@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using GamePanelHUDCore.Utils;
 using TMPro;
@@ -21,8 +22,8 @@ namespace GamePanelHUDCompass
             GamePanelHUDCorePlugin.HUDClass<GamePanelHUDCompassPlugin.CompassFireData,
                 GamePanelHUDCompassPlugin.SettingsData> HUD => GamePanelHUDCompassPlugin.CompassFireHUD;
 #endif
-        private readonly Dictionary<string, GamePanelHUDCompassFireUI> _compassFires =
-            new Dictionary<string, GamePanelHUDCompassFireUI>();
+        private readonly ConcurrentDictionary<string, GamePanelHUDCompassFireUI> _compassFires =
+            new ConcurrentDictionary<string, GamePanelHUDCompassFireUI>();
 
         private readonly List<string> _removes = new List<string>();
 
@@ -99,11 +100,12 @@ namespace GamePanelHUDCompass
                     {
                         var remove = _removes[i];
 
-                        _compassFires[remove].Destroy();
+                        if (_compassFires.TryRemove(remove, out var ui))
+                        {
+                            ui.Destroy();
 
-                        _compassFires.Remove(remove);
-
-                        _removes.RemoveAt(i);
+                            _removes.RemoveAt(i);
+                        }
                     }
                 }
 
@@ -167,18 +169,9 @@ namespace GamePanelHUDCompass
                 if ((!fireInfo.IsSilenced || !HUD.SetData.KeyCompassFireSilenced.Value) &&
                     fireInfo.Distance <= HUD.SetData.KeyCompassFireDistance.Value)
                 {
-                    if (_compassFires.TryGetValue(fireInfo.Who, out var fireUI))
+                    _compassFires.AddOrUpdate(fireInfo.Who, key =>
                     {
-                        lock (fireUI)
-                        {
-                            fireUI.where = fireInfo.Where;
-
-                            fireUI.Fire();
-                        }
-                    }
-                    else
-                    {
-                        fireUI = Instantiate(GamePanelHUDCompassPlugin.FirePrefab, firesRoot)
+                        var fireUI = Instantiate(GamePanelHUDCompassPlugin.FirePrefab, firesRoot)
                             .GetComponent<GamePanelHUDCompassFireUI>();
 
                         fireUI.who = fireInfo.Who;
@@ -214,8 +207,14 @@ namespace GamePanelHUDCompass
 
                         fireUI.active = true;
 
-                        _compassFires.Add(fireInfo.Who, fireUI);
-                    }
+                        return fireUI;
+                    }, (key, value) =>
+                    {
+                        value.where = fireInfo.Where;
+                        value.Fire();
+
+                        return value;
+                    });
                 }
             }
         }

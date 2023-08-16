@@ -26,7 +26,9 @@ namespace GamePanelHUDHit
                     AccessTools.Field(typeof(GamePanelHUDHitPlugin), nameof(Armor))),
                 processor.Create(Mono.Cecil.Cil.OpCodes.Ldarg_1),
                 processor.Create(Mono.Cecil.Cil.OpCodes.Ldobj, typeof(DamageInfo)),
-                EFTVersion.AkiVersion > new Version("3.4.1") ? callApplyDurabilityDamage.Prev : processor.Create(Mono.Cecil.Cil.OpCodes.Ldarg_3),
+                EFTVersion.AkiVersion > new Version("3.4.1")
+                    ? callApplyDurabilityDamage.Prev
+                    : processor.Create(Mono.Cecil.Cil.OpCodes.Ldarg_3),
                 EFTVersion.AkiVersion > new Version("3.4.1")
                     ? processor.Create(Mono.Cecil.Cil.OpCodes.Nop)
                     : processor.Create(Mono.Cecil.Cil.OpCodes.Ldind_R4),

@@ -312,28 +312,20 @@ namespace GamePanelHUDHit
             killUI.xp = exp;
 
             var part = setData.KeyKillHasPart.Value
-                ? string.Concat("<color=", bracketColor, ">", "[", "</color>", "<color=", partColor, ">",
-                    _LocalizedHelper.Localized(killInfo.Part.ToString()), "</color>", "<color=", bracketColor, ">", "]",
-                    "</color>")
+                ? $"<color={bracketColor}>[</color><color={partColor}>{_LocalizedHelper.Localized(killInfo.Part.ToString())}</color><color={bracketColor}>]</color>"
                 : string.Empty;
             var side = setData.KeyKillHasSide.Value
-                ? string.Concat("<color=", bracketColor, ">", "[", "</color>", "<color=", sideColor, ">", sideName,
-                    "</color>", "<color=", bracketColor, ">", "]", "</color>")
+                ? $"<color={bracketColor}>[</color><color={sideColor}>{sideName}</color><color={bracketColor}>]</color>"
                 : string.Empty;
             var weapon = setData.KeyKillHasWeapon.Value
-                ? string.Concat("<color=", bracketColor, ">", "[", "</color>", "<color=", weaponColor, ">", weaponName,
-                    "</color>", "<color=", bracketColor, ">", "]", "</color>")
+                ? $"<color={bracketColor}>[</color><color={weaponColor}>{weaponName}</color><color={bracketColor}>]</color>"
                 : string.Empty;
             var level = !isScav && setData.KeyKillHasLevel.Value
-                ? string.Concat("<color=", bracketColor, ">", "[", "</color>", "<color=", lvlColor, ">",
-                    _LocalizedHelper.Localized("LVLKILLLIST"), ".", "</color>", "<color=", levelColor, ">",
-                    killInfo.Level, "</color>", "<color=", bracketColor, ">", "]", "</color>")
+                ? $"<color={bracketColor}>[</color><color={lvlColor}>{_LocalizedHelper.Localized("LVLKILLLIST")}.</color><color={levelColor}>{killInfo.Level}</color><color={bracketColor}>]</color>"
                 : string.Empty;
 
-            killUI.text = string.Concat("<color=", enemyDownColor, ">", _LocalizedHelper.Localized("ENEMYDOWN"),
-                "</color>");
-            killUI.text2 = string.Concat(weapon, side, " ", "<color=", nameColor, ">", playerName, "</color>", " ",
-                level, part);
+            killUI.text = $"<color={enemyDownColor}>{_LocalizedHelper.Localized("ENEMYDOWN")}</color>";
+            killUI.text2 = $"{weapon}{side} <color={nameColor}>{playerName}</color> {level}{part}";
 
             killUI.textFontStyles = setData.KeyKillInfoStyles.Value;
 
@@ -363,8 +355,7 @@ namespace GamePanelHUDHit
 
             var distanceText = killInfo.Distance.ToString("F2");
 
-            killUI.text = string.Concat("<color=", distanceColor, ">", distanceText, "</color>", " ", "<color=",
-                metersColor, ">", meters, "</color>");
+            killUI.text = $"<color={distanceColor}>{distanceText}</color> <color={metersColor}>{meters}</color>";
             killUI.textFontStyles = setData.KeyKillDistanceStyles.Value;
 
             killUI.transform.SetAsFirstSibling();
@@ -383,9 +374,8 @@ namespace GamePanelHUDHit
             var streakColor = setData.KeyKillStreakColor.Value.ColorToHtml();
             var bracketColor = setData.KeyKillBracketColor.Value.ColorToHtml();
 
-            killUI.text = string.Concat("<color=", statsStreakColor, ">", _LocalizedHelper.Localized("StatsStreak"),
-                "</color>", " ", "<color=", bracketColor, ">", "[", "</color>", "<color=", streakColor, ">",
-                killInfo.Kills, "</color>", "<color=", bracketColor, ">", "]", "</color>");
+            killUI.text =
+                $"<color={statsStreakColor}>{_LocalizedHelper.Localized("StatsStreak")}</color> <color={bracketColor}>[</color><color={streakColor}>{killInfo.Kills}</color><color={bracketColor}>]</color>";
             killUI.textFontStyles = setData.KeyKillStreakStyles.Value;
 
             killUI.xp = exp;
@@ -408,7 +398,7 @@ namespace GamePanelHUDHit
 
             var otherColor = setData.KeyKillOtherColor.Value.ColorToHtml();
 
-            killUI.text = string.Concat("<color=", otherColor, ">", text, "</color>");
+            killUI.text = $"<color={otherColor}>{text}</color>";
             killUI.textFontStyles = setData.KeyKillOtherStyles.Value;
 
             killUI.xp = exp;
