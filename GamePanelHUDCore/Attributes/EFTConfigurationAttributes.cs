@@ -21,12 +21,12 @@
         public bool HideSetting;
 
         /// <summary>
-        ///     Never displayed Rest Button
+        ///     Never displayed Reset Button
         /// </summary>
         /// <remarks>
         ///     Copy <see cref="ConfigurationManagerAttributes.HideDefaultButton" />
         /// </remarks>
-        public bool HideRest;
+        public bool HideReset;
 
         /// <summary>
         ///     Never displayed Slider

@@ -17,7 +17,7 @@ namespace GamePanelHUDHit
                     armorDamage = Armor.Damage;
                     hasArmorHit = true;
 
-                    Armor.Rest();
+                    Armor.Reset();
                 }
                 else
                 {
