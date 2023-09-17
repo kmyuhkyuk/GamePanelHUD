@@ -55,10 +55,10 @@ namespace GamePanelHUDCore.Utils
             {
                 for (var i = 0; i < _updates.Count; i++)
                 {
-                    var update = _updates[i];
-
                     try
                     {
+                        var update = _updates[i];
+
                         if (_removeUpdates.Contains(update))
                         {
                             var num = _removeUpdates.IndexOf(update);
