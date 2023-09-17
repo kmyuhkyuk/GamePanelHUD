@@ -126,7 +126,7 @@ namespace GamePanelHUDHit
             {
                 _kills = 0;
 
-                Armor.Rest();
+                Armor.Reset();
             }
         }
 
@@ -291,7 +291,7 @@ namespace GamePanelHUDHit
                 }
             }
 
-            public void Rest()
+            public void Reset()
             {
                 Damage = 0;
                 Activate = false;
