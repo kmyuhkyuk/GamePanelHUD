@@ -1,7 +1,6 @@
 ﻿#if !UNITY_EDITOR
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using BepInEx.Logging;
 
 namespace GamePanelHUDCore.Utils
@@ -18,10 +17,6 @@ namespace GamePanelHUDCore.Utils
         private readonly List<IUpdate> _stopUpdates = new List<IUpdate>();
 
         private readonly List<IUpdate> _removeUpdates = new List<IUpdate>();
-
-        private readonly Debug _debugs = new Debug();
-
-        public bool OutputMethodTime;
 
         private static readonly ManualLogSource LogSource = Logger.CreateLogSource(nameof(UpdateManger));
 
@@ -74,50 +69,7 @@ namespace GamePanelHUDCore.Utils
                         }
                         else if (!_stopUpdates.Contains(update))
                         {
-                            if (!OutputMethodTime)
-                            {
-                                update.CustomUpdate();
-                            }
-                            else
-                            {
-                                if (i == 0)
-                                {
-                                    LogSource.LogMessage(
-                                        $"----------Start----------:CurrentTime:{DateTime.Now:yyyy-MM-dd HH:mm:ss}");
-
-                                    _debugs.AllMethodTime.Start();
-                                }
-
-                                _debugs.MethodTime.Start();
-
-                                update.CustomUpdate();
-
-                                _debugs.MethodTime.Stop();
-
-                                LogSource.LogMessage($"{update.GetType().Name}:NeedTime:{_debugs.MethodTime.Elapsed}");
-
-                                _debugs.MethodTime.Reset();
-
-                                if (i == _updates.Count - 1)
-                                {
-                                    _debugs.AllMethodTime.Stop();
-
-                                    if (_debugs.AllMethodTime.Elapsed > _debugs.MaxTime)
-                                    {
-                                        _debugs.MaxTime = _debugs.AllMethodTime.Elapsed;
-                                    }
-                                    else if (_debugs.AllMethodTime.Elapsed < _debugs.MinTime ||
-                                             _debugs.MinTime == TimeSpan.Zero)
-                                    {
-                                        _debugs.MinTime = _debugs.AllMethodTime.Elapsed;
-                                    }
-
-                                    LogSource.LogMessage(
-                                        $"----------End----------:TotalNeedTime:{_debugs.AllMethodTime.Elapsed}:MaxTime:{_debugs.MaxTime}:MinTime:{_debugs.MinTime}");
-
-                                    _debugs.AllMethodTime.Reset();
-                                }
-                            }
+                            update.CustomUpdate();
                         }
                     }
                     catch (Exception e)
@@ -126,25 +78,8 @@ namespace GamePanelHUDCore.Utils
 
                         LogSource.LogError(e);
                     }
-
-                    if (!OutputMethodTime)
-                    {
-                        _debugs.MaxTime = TimeSpan.Zero;
-                        _debugs.MinTime = TimeSpan.Zero;
-                    }
                 }
             }
-        }
-
-        public class Debug
-        {
-            public Stopwatch AllMethodTime = new Stopwatch();
-
-            public Stopwatch MethodTime = new Stopwatch();
-
-            public TimeSpan MaxTime;
-
-            public TimeSpan MinTime;
         }
     }
 }
