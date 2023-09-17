@@ -171,17 +171,12 @@ namespace GamePanelHUDCore
         public class SettingsData
         {
             public readonly ConfigEntry<bool> KeyAllHUDAlways;
-            public readonly ConfigEntry<bool> KeyDebugMethodTime;
 
             public SettingsData(ConfigFile configFile)
             {
                 const string mainSettings = "Main Settings";
 
                 KeyAllHUDAlways = configFile.Bind<bool>(mainSettings, "All HUD Always display", false);
-                KeyDebugMethodTime = configFile.Bind<bool>(mainSettings,
-                    "Debug All HUD Method Invoke Time", false,
-                    new ConfigDescription(string.Empty, null,
-                        new ConfigurationManagerAttributes { IsAdvanced = true }));
             }
         }
     }
