@@ -52,8 +52,6 @@ namespace GamePanelHUDCore
 
             HUDCore.Set(_allHUDSw);
 
-            HUDCore.UpdateManger.OutputMethodTime = _setData.KeyDebugMethodTime.Value;
-
             HUDCore.UpdateManger.Update();
         }
 
