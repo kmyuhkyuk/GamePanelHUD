@@ -22,7 +22,7 @@ namespace GamePanelHUDCore
     [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", "../localized/core")]
     public class GamePanelHUDCorePlugin : BaseUnityPlugin
     {
-        public static readonly HUDCoreClass HUDCore = new HUDCoreClass();
+        public static readonly HUDCoreClass HUDCore = HUDCoreClass.Instance;
 
         private bool _allHUDSw;
 
@@ -57,6 +57,10 @@ namespace GamePanelHUDCore
 
         public class HUDCoreClass
         {
+            public static HUDCoreClass Instance => _instance ?? (_instance = new HUDCoreClass());
+
+            private static HUDCoreClass _instance;
+
             public Player YourPlayer => EFTGlobal.Player;
 
             public GameUI YourGameUI => EFTGlobal.GameUI;
@@ -86,7 +90,7 @@ namespace GamePanelHUDCore
 
             public readonly string ModPath = Path.Combine(BepInEx.Paths.PluginPath, "kmyuhkyuk-GamePanelHUD");
 
-            public HUDCoreClass()
+            private HUDCoreClass()
             {
                 var canvas = GamePanelHUDPublic.GetComponent<Canvas>();
 
