@@ -57,9 +57,7 @@ namespace GamePanelHUDCore
 
         public class HUDCoreClass
         {
-            public static HUDCoreClass Instance => _instance ?? (_instance = new HUDCoreClass());
-
-            private static HUDCoreClass _instance;
+            public static readonly HUDCoreClass Instance = new HUDCoreClass();
 
             public Player YourPlayer => EFTGlobal.Player;
 
