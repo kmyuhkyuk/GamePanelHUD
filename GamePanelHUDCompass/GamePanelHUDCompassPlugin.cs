@@ -157,7 +157,7 @@ namespace GamePanelHUDCompass
 
                 if (_compassStaticCacheBool)
                 {
-                    ShowQuest(HUDCore.YourPlayer, HUDCore.TheWorld, EFTVersion.AkiVersion > new Version("2.3.1"),
+                    ShowQuest(HUDCore.YourPlayer, HUDCore.TheWorld, EFTVersion.AkiVersion > Version.Parse("2.3.1"),
                         ShowStatic);
 
                     _compassStaticData.ExfiltrationPoints =

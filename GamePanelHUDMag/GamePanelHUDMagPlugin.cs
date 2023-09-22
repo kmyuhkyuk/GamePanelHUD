@@ -99,7 +99,7 @@ namespace GamePanelHUDMag
                 _currentWeapon = EFTGlobal.Weapon;
                 _animatorWeapon = _PlayerHelper.WeaponHelper.WeaponAnimator;
 
-                if (EFTVersion.AkiVersion > new Version("3.4.1"))
+                if (EFTVersion.AkiVersion > Version.Parse("3.4.1"))
                 {
                     _currentLauncher = EFTGlobal.UnderbarrelWeapon;
                     _animatorLauncher = _PlayerHelper.WeaponHelper.LauncherIAnimator;
