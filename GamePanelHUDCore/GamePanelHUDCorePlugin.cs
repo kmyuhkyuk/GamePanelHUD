@@ -10,7 +10,6 @@ using EFT.UI;
 using EFTApi;
 using EFTUtils;
 using GamePanelHUDCore.Attributes;
-using GamePanelHUDCore.Utils;
 using UnityEngine;
 using UnityEngine.UI;
 using static EFTApi.EFTHelpers;
@@ -22,7 +21,7 @@ namespace GamePanelHUDCore
     [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", "../localized/core")]
     public class GamePanelHUDCorePlugin : BaseUnityPlugin
     {
-        public static readonly HUDCoreClass HUDCore = HUDCoreClass.Instance;
+        public static HUDCoreClass HUDCore => HUDCoreClass.Instance;
 
         private bool _allHUDSw;
 

@@ -7,6 +7,7 @@ using EFT.InventoryLogic;
 using EFT.UI;
 using EFTApi;
 using EFTReflection;
+using EFTUtils;
 using GamePanelHUDCore;
 using GamePanelHUDCore.Attributes;
 using GamePanelHUDCore.Utils;

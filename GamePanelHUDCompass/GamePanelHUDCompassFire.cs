@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using GamePanelHUDCore.Utils;
 using TMPro;
 using UnityEngine;
 #if !UNITY_EDITOR
+using EFTUtils;
 using GamePanelHUDCore;
 using static EFTApi.EFTHelpers;
 #endif

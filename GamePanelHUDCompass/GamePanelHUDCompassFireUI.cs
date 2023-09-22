@@ -2,6 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 #if !UNITY_EDITOR
+using EFTUtils;
 using GamePanelHUDCore;
 #endif
 

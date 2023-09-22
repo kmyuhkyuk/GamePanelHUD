@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using EFT;
 using EFTUtils;
-using GamePanelHUDCore.Utils;
 using UnityEngine;
 #if !UNITY_EDITOR
 using GamePanelHUDCore;
