@@ -3,6 +3,7 @@ using GamePanelHUDCore.Utils;
 using TMPro;
 using UnityEngine;
 #if !UNITY_EDITOR
+using EFTUtils;
 using GamePanelHUDCore;
 #endif
 

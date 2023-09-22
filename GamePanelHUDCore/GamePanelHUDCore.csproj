@@ -93,7 +93,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\AnimatorHash.cs" />
     <Compile Include="Attributes\EFTConfigurationPluginAttributes.cs" />
-    <Compile Include="Utils\IUpdate.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="kmyuhkyuk.pfx" />

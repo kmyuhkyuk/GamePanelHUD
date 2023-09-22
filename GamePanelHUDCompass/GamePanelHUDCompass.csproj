@@ -56,6 +56,9 @@
     <Reference Include="EFTReflection">
       <HintPath>..\..\EFTApi\Build\bin\Release\EFTReflection.dll</HintPath>
     </Reference>
+    <Reference Include="EFTUtils">
+      <HintPath>..\..\EFTApi\Build\bin\Release\EFTUtils.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Unity.TextMeshPro, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">

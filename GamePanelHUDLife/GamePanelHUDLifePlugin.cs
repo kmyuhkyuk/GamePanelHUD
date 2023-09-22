@@ -2,9 +2,9 @@
 using BepInEx;
 using BepInEx.Configuration;
 using EFT.HealthSystem;
+using EFTUtils;
 using GamePanelHUDCore;
 using GamePanelHUDCore.Attributes;
-using GamePanelHUDCore.Utils;
 using TMPro;
 using UnityEngine;
 using static EFTApi.EFTHelpers;
