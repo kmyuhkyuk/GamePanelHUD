@@ -397,7 +397,7 @@ namespace GamePanelHUDCompass
             var exfiltrationController = Traverse.Create(world).Property("ExfiltrationController").GetValue<object>();
 
             var exfiltrationPoints = player.Profile.Side != EPlayerSide.Savage
-                ? Traverse.Create(exfiltrationController).Method("EligiblePoints", typeof(Profile))
+                ? Traverse.Create(exfiltrationController).Method("EligiblePoints", new[] { typeof(Profile) })
                     .GetValue<ExfiltrationPoint[]>(player.Profile)
                 : Traverse.Create(exfiltrationController).Property("ScavExfiltrationPoints")
                     .GetValue<ScavExfiltrationPoint[]>().Where(x => x.EligibleIds.Contains(player.ProfileId))
