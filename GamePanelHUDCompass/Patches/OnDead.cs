@@ -1,4 +1,5 @@
-﻿using EFT;
+﻿#if !UNITY_EDITOR
+using EFT;
 
 namespace GamePanelHUDCompass
 {
@@ -13,3 +14,4 @@ namespace GamePanelHUDCompass
         }
     }
 }
+#endif

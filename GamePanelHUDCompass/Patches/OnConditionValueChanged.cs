@@ -1,4 +1,5 @@
-﻿using EFT.Quests;
+﻿#if !UNITY_EDITOR
+using EFT.Quests;
 
 namespace GamePanelHUDCompass
 {
@@ -14,3 +15,4 @@ namespace GamePanelHUDCompass
         }
     }
 }
+#endif
