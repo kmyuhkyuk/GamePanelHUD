@@ -28,7 +28,7 @@ namespace GamePanelHUDGrenade
 
         [SerializeField]
 #pragma warning disable CS0649
-        private TMP_Text grenadeValue;
+        private TMP_Text countValue;
 #pragma warning restore CS0649
 
 #if !UNITY_EDITOR
@@ -69,9 +69,9 @@ namespace GamePanelHUDGrenade
                 grenadeValueColor = warningColor;
             }
 
-            grenadeValue.fontStyle = grenadeStyles;
-            grenadeValue.color = grenadeValueColor;
-            grenadeValue.text = grenadeAmount.ToString();
+            countValue.fontStyle = grenadeStyles;
+            countValue.color = grenadeValueColor;
+            countValue.text = grenadeAmount.ToString();
         }
     }
 }
