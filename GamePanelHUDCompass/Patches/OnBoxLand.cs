@@ -15,13 +15,13 @@ namespace GamePanelHUDCompass
 
             var item = _GameWorldHelper.LootableContainerHelper.RefRootItem.GetValue(controller);
 
-            Airdrops.Add(_GameWorldHelper.SearchableItemClassHelper.RefAllSearchersIds.GetValue(item));
+            Airdrops.Add(_GameWorldHelper.SearchableItemClassHelper.RefAllSearchersIds?.GetValue(item));
 
             var count = Airdrops.Count;
 
             string nameKey;
             string descriptionKey;
-            switch (_AirdropHelper.AirdropSynchronizableObjectHelper.RefAirdropType.GetValue(___boxSync))
+            switch (_AirdropHelper.AirdropSynchronizableObjectHelper.RefAirdropType?.GetValue(___boxSync))
             {
                 case 0:
                     nameKey = "6223349b3136504a544d1608 Name";
