@@ -1,4 +1,5 @@
-﻿namespace GamePanelHUDCore.Attributes
+﻿#if !UNITY_EDITOR
+namespace GamePanelHUDCore.Attributes
 {
     // ReSharper disable InvalidXmlDocComment
     // ReSharper disable FieldCanBeMadeReadOnly.Global
@@ -77,3 +78,4 @@
         public System.Func<string, object> CustomToObject;
     }
 }
+#endif
