@@ -255,7 +255,6 @@ namespace GamePanelHUDHit
             var isScav = killInfo.Side == EPlayerSide.Savage;
 
             string playerName;
-
             if (isScav && setData.KeyKillScavEn.Value)
             {
                 playerName = _LocalizedHelper.Transliterate(killInfo.PlayerName);
