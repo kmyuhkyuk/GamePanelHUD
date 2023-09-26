@@ -34,6 +34,9 @@
     <OutputPath>bin\UNITY_EDITOR\</OutputPath>
     <DefineConstants>TRACE;DEBUG;UNITY_EDITOR</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -69,4 +72,19 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy "$(ProjectDir)\bin\Release\GamePanelHUDCompass.dll" "R:\Battlestate Games\Client.0.13.1.3.25206\BepInEx\plugins\kmyuhkyuk-GamePanelHUD" /Y
+xcopy "$(ProjectDir)\bin\Release\GamePanelHUDGrenade.dll" "R:\Battlestate Games\Client.0.13.1.3.25206\BepInEx\plugins\kmyuhkyuk-GamePanelHUD" /Y
+xcopy "$(ProjectDir)\bin\Release\GamePanelHUDLife.dll" "R:\Battlestate Games\Client.0.13.1.3.25206\BepInEx\plugins\kmyuhkyuk-GamePanelHUD" /Y
+xcopy "$(ProjectDir)\bin\Release\GamePanelHUDMag.dll" "R:\Battlestate Games\Client.0.13.1.3.25206\BepInEx\plugins\kmyuhkyuk-GamePanelHUD" /Y
+xcopy "$(ProjectDir)\bin\Release\GamePanelHUDHit.dll" "R:\Battlestate Games\Client.0.13.1.3.25206\BepInEx\plugins\kmyuhkyuk-GamePanelHUD" /Y
+xcopy "$(ProjectDir)\bin\Release\GamePanelHUDCore.dll" "R:\Battlestate Games\Client.0.13.1.3.25206\BepInEx\plugins\kmyuhkyuk-GamePanelHUD\core" /Y
+
+xcopy "$(ProjectDir)\bin\UNITY_EDITOR\GamePanelHUDCompass.dll" "C:\Users\24516\Documents\GamePanelHUD\Assets\Managed" /Y
+xcopy "$(ProjectDir)\bin\UNITY_EDITOR\GamePanelHUDGrenade.dll" "C:\Users\24516\Documents\GamePanelHUD\Assets\Managed" /Y
+xcopy "$(ProjectDir)\bin\UNITY_EDITOR\GamePanelHUDLife.dll" "C:\Users\24516\Documents\GamePanelHUD\Assets\Managed" /Y
+xcopy "$(ProjectDir)\bin\UNITY_EDITOR\GamePanelHUDMag.dll" "C:\Users\24516\Documents\GamePanelHUD\Assets\Managed" /Y
+xcopy "$(ProjectDir)\bin\UNITY_EDITOR\GamePanelHUDHit.dll" "C:\Users\24516\Documents\GamePanelHUD\Assets\Managed" /Y
+xcopy "$(ProjectDir)\bin\UNITY_EDITOR\GamePanelHUDCore.dll" "C:\Users\24516\Documents\GamePanelHUD\Assets\Managed" /Y</PostBuildEvent>
+  </PropertyGroup>
 </Project>
