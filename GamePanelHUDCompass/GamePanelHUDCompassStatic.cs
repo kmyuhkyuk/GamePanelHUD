@@ -291,10 +291,8 @@ namespace GamePanelHUDCompass
             }
 
             staticUI.where = staticInfo.Where;
-            staticUI.zoneId = staticInfo.ZoneId;
             staticUI.target = staticInfo.Target;
             staticUI.nameKey = staticInfo.NameKey;
-            staticUI.traderId = staticInfo.TraderId;
             staticUI.isNotNecessary = staticInfo.IsNotNecessary;
             staticUI.descriptionKey = staticInfo.DescriptionKey;
             staticUI.infoType = staticInfo.InfoType;
