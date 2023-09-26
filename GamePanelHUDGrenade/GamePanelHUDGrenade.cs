@@ -46,44 +46,47 @@ namespace GamePanelHUDGrenade
             _rectTransform.sizeDelta = HUD.SetData.KeySizeDelta.Value;
             _rectTransform.localScale = HUD.SetData.KeyLocalScale.Value;
 
-            if (fragAmount != null)
-            {
-                fragAmount.gameObject.SetActive(HUD.HUDSw);
-                fragAmount.zeroWarning = HUD.SetData.KeyZeroWarning.Value;
+            #region fragAmount
 
-                fragAmount.grenadeAmount = HUD.Info.Frag;
+            fragAmount.gameObject.SetActive(HUD.HUDSw);
+            fragAmount.zeroWarning = HUD.SetData.KeyZeroWarning.Value;
 
-                fragAmount.grenadeColor = HUD.SetData.KeyFragColor.Value;
-                fragAmount.warningColor = HUD.SetData.KeyWarningColor.Value;
+            fragAmount.grenadeAmount = HUD.Info.Frag;
 
-                fragAmount.grenadeStyles = HUD.SetData.KeyFragStyles.Value;
-            }
+            fragAmount.grenadeColor = HUD.SetData.KeyFragColor.Value;
+            fragAmount.warningColor = HUD.SetData.KeyWarningColor.Value;
 
-            if (stunAmount != null)
-            {
-                stunAmount.gameObject.SetActive(HUD.HUDSw && !HUD.SetData.KeyMergeGrenade.Value);
-                stunAmount.zeroWarning = HUD.SetData.KeyZeroWarning.Value;
+            fragAmount.grenadeStyles = HUD.SetData.KeyFragStyles.Value;
 
-                stunAmount.grenadeAmount = HUD.Info.Stun + HUD.Info.Flash;
+            #endregion
 
-                stunAmount.grenadeColor = HUD.SetData.KeyStunColor.Value;
-                stunAmount.warningColor = HUD.SetData.KeyWarningColor.Value;
+            #region stunAmount
 
-                stunAmount.grenadeStyles = HUD.SetData.KeyStunStyles.Value;
-            }
+            stunAmount.gameObject.SetActive(HUD.HUDSw && !HUD.SetData.KeyMergeGrenade.Value);
+            stunAmount.zeroWarning = HUD.SetData.KeyZeroWarning.Value;
 
-            if (smokeAmount != null)
-            {
-                smokeAmount.gameObject.SetActive(HUD.HUDSw && !HUD.SetData.KeyMergeGrenade.Value);
-                smokeAmount.zeroWarning = HUD.SetData.KeyZeroWarning.Value;
+            stunAmount.grenadeAmount = HUD.Info.Stun + HUD.Info.Flash;
 
-                smokeAmount.grenadeAmount = HUD.Info.Smoke;
+            stunAmount.grenadeColor = HUD.SetData.KeyStunColor.Value;
+            stunAmount.warningColor = HUD.SetData.KeyWarningColor.Value;
 
-                smokeAmount.grenadeColor = HUD.SetData.KeySmokeColor.Value;
-                smokeAmount.warningColor = HUD.SetData.KeyWarningColor.Value;
+            stunAmount.grenadeStyles = HUD.SetData.KeyStunStyles.Value;
 
-                smokeAmount.grenadeStyles = HUD.SetData.KeySmokeStyles.Value;
-            }
+            #endregion
+
+            #region smokeAmount
+
+            smokeAmount.gameObject.SetActive(HUD.HUDSw && !HUD.SetData.KeyMergeGrenade.Value);
+            smokeAmount.zeroWarning = HUD.SetData.KeyZeroWarning.Value;
+
+            smokeAmount.grenadeAmount = HUD.Info.Smoke;
+
+            smokeAmount.grenadeColor = HUD.SetData.KeySmokeColor.Value;
+            smokeAmount.warningColor = HUD.SetData.KeyWarningColor.Value;
+
+            smokeAmount.grenadeStyles = HUD.SetData.KeySmokeStyles.Value;
+
+            #endregion
         }
 #endif
     }

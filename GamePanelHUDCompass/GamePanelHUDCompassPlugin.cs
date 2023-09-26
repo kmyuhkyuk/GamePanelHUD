@@ -135,7 +135,7 @@ namespace GamePanelHUDCompass
 
                 _compassFireData.NorthVector = levelSettings.NorthVector;
 
-                _compassFireData.PlayerPosition = _camTransform.position;
+                _compassFireData.CameraPosition = _camTransform.position;
 
                 _compassFireData.PlayerRight = _camTransform.right;
 
@@ -481,7 +481,7 @@ namespace GamePanelHUDCompass
         {
             public Vector3 NorthVector;
 
-            public Vector3 PlayerPosition;
+            public Vector3 CameraPosition;
 
             public Vector3 PlayerRight;
 
@@ -501,7 +501,7 @@ namespace GamePanelHUDCompass
                 SizeDelta = data.SizeDelta;
 
                 NorthVector = data.NorthVector;
-                PlayerPosition = data.PlayerPosition;
+                CameraPosition = data.CameraPosition;
                 PlayerRight = data.PlayerRight;
             }
         }
@@ -539,7 +539,7 @@ namespace GamePanelHUDCompass
                 SizeDelta = data.SizeDelta;
 
                 NorthVector = data.NorthVector;
-                PlayerPosition = data.PlayerPosition;
+                CameraPosition = data.CameraPosition;
                 PlayerRight = data.PlayerRight;
 
                 ExfiltrationPoints = data.ExfiltrationPoints;

@@ -32,7 +32,7 @@ namespace GamePanelHUDHit
 
         [SerializeField] private Transform killsRoot;
 
-        private Transform _testKillsTransform;
+        private Transform _testKillsRoot;
 
         [SerializeField] private GamePanelHUDExpUI exp;
 
@@ -59,25 +59,19 @@ namespace GamePanelHUDHit
 #if !UNITY_EDITOR
         private void Start()
         {
-            if (killsRoot != null)
-            {
-                _testKillsTransform = Instantiate(killsRoot.gameObject, killsRoot.transform.parent).transform;
-                _testKillsRect = _testKillsTransform.GetComponent<RectTransform>();
+            _testKillsRoot = Instantiate(killsRoot.gameObject, killsRoot.transform.parent).transform;
+            _testKillsRect = _testKillsRoot.GetComponent<RectTransform>();
 
-                _killGroup = killsRoot.GetComponent<CanvasGroup>();
+            _killGroup = killsRoot.GetComponent<CanvasGroup>();
 
-                if (exp != null)
-                {
-                    _testExp = Instantiate(exp.gameObject, exp.transform.parent).GetComponent<GamePanelHUDExpUI>();
-                    _testExpRect = _testExp.GetComponent<RectTransform>();
+            _testExp = Instantiate(exp.gameObject, exp.transform.parent).GetComponent<GamePanelHUDExpUI>();
+            _testExpRect = _testExp.GetComponent<RectTransform>();
 
-                    _expRect = exp.GetComponent<RectTransform>();
-                    _killsRect = killsRoot.GetComponent<RectTransform>();
+            _expRect = exp.GetComponent<RectTransform>();
+            _killsRect = killsRoot.GetComponent<RectTransform>();
 
-                    _expGroup = exp.GetComponent<CanvasGroup>();
-                    _testExpGroup = _testExp.GetComponent<CanvasGroup>();
-                }
-            }
+            _expGroup = exp.GetComponent<CanvasGroup>();
+            _testExpGroup = _testExp.GetComponent<CanvasGroup>();
 
             HasInfoMinus = InfoMinus;
             HasWaitInfoMinus = WaitInfoMinus;
@@ -94,148 +88,155 @@ namespace GamePanelHUDHit
 
         private void KillHUD()
         {
-            if (killsRoot != null)
-            {
-                _killGroup.alpha = HUD.HUDSw ? 1 : 0;
+            #region _kill
 
-                _killsRect.anchoredPosition = HUD.SetData.KeyKillAnchoredPosition.Value;
-                _killsRect.sizeDelta = HUD.SetData.KeyKillSizeDelta.Value;
-                _killsRect.localScale = HUD.SetData.KeyKillLocalScale.Value;
+            _killGroup.alpha = HUD.HUDSw ? 1 : 0;
 
-                _testKillsRect.anchoredPosition = HUD.SetData.KeyKillAnchoredPosition.Value +
-                                                  new Vector2(HUD.Info.sizeDelta.x / 3.2f, 0);
-                _testKillsRect.sizeDelta = HUD.SetData.KeyKillSizeDelta.Value;
-                _testKillsRect.localScale = HUD.SetData.KeyKillLocalScale.Value;
-            }
+            _killsRect.anchoredPosition = HUD.SetData.KeyKillAnchoredPosition.Value;
+            _killsRect.sizeDelta = HUD.SetData.KeyKillSizeDelta.Value;
+            _killsRect.localScale = HUD.SetData.KeyKillLocalScale.Value;
 
-            if (exp != null)
-            {
-                _expGroup.alpha = HUD.HUDSw2 ? 1 : 0;
+            #endregion
 
-                _expRect.anchoredPosition = HUD.SetData.KeyKillExpAnchoredPosition.Value;
-                _expRect.sizeDelta = HUD.SetData.KeyKillExpSizeDelta.Value;
-                _expRect.localScale = HUD.SetData.KeyKillExpLocalScale.Value;
+            #region _testKills
 
-                exp.xpColor = HUD.SetData.KeyExpColor.Value;
-                exp.xpStyles = HUD.SetData.KeyExpStyles.Value;
-                exp.xpWaitSpeed = HUD.SetData.KeyExpWaitSpeed.Value;
+            _testKillsRect.anchoredPosition = HUD.SetData.KeyKillAnchoredPosition.Value +
+                                              new Vector2(HUD.Info.sizeDelta.x / 3.2f, 0);
+            _testKillsRect.sizeDelta = HUD.SetData.KeyKillSizeDelta.Value;
+            _testKillsRect.localScale = HUD.SetData.KeyKillLocalScale.Value;
 
-                _testExpGroup.alpha = HUD.HUDSw3 ? 1 : 0;
+            #endregion
 
-                _testExpRect.anchoredPosition = HUD.SetData.KeyKillExpAnchoredPosition.Value +
-                                                new Vector2(HUD.Info.sizeDelta.x / 3.2f, 0);
-                _testExpRect.sizeDelta = HUD.SetData.KeyKillExpSizeDelta.Value;
-                _testExpRect.localScale = HUD.SetData.KeyKillExpLocalScale.Value;
+            #region exp
 
-                _testExp.xpColor = HUD.SetData.KeyExpColor.Value;
-                _testExp.xpStyles = HUD.SetData.KeyExpStyles.Value;
-                _testExp.xpWaitSpeed = HUD.SetData.KeyExpWaitSpeed.Value;
-            }
+            _expGroup.alpha = HUD.HUDSw2 ? 1 : 0;
+
+            _expRect.anchoredPosition = HUD.SetData.KeyKillExpAnchoredPosition.Value;
+            _expRect.sizeDelta = HUD.SetData.KeyKillExpSizeDelta.Value;
+            _expRect.localScale = HUD.SetData.KeyKillExpLocalScale.Value;
+
+            exp.xpColor = HUD.SetData.KeyExpColor.Value;
+            exp.xpStyles = HUD.SetData.KeyExpStyles.Value;
+            exp.xpWaitSpeed = HUD.SetData.KeyExpWaitSpeed.Value;
+
+            #endregion
+
+            #region _testExp
+
+            _testExpGroup.alpha = HUD.HUDSw3 ? 1 : 0;
+
+            _testExpRect.anchoredPosition = HUD.SetData.KeyKillExpAnchoredPosition.Value +
+                                            new Vector2(HUD.Info.sizeDelta.x / 3.2f, 0);
+            _testExpRect.sizeDelta = HUD.SetData.KeyKillExpSizeDelta.Value;
+            _testExpRect.localScale = HUD.SetData.KeyKillExpLocalScale.Value;
+
+            _testExp.xpColor = HUD.SetData.KeyExpColor.Value;
+            _testExp.xpStyles = HUD.SetData.KeyExpStyles.Value;
+            _testExp.xpWaitSpeed = HUD.SetData.KeyExpWaitSpeed.Value;
+
+            #endregion
         }
 
         private void ShowKill(GamePanelHUDHitPlugin.KillInfo killInfo)
         {
-            if (killsRoot != null)
+            var killRoot = killInfo.IsTest ? _testKillsRoot : killsRoot;
+
+            var expRoot = killInfo.IsTest ? _testExp : exp;
+
+            var baseExp = _SessionHelper.ExperienceHelper.GetBaseExp(killInfo.Exp, killInfo.Side);
+
+            var hasExp = baseExp;
+
+            var hasInfo = 1;
+
+            var hasKills = new List<GamePanelHUDKillUI>();
+
+            if (killInfo.Distance >= HUD.SetData.KeyKillDistance.Value && HUD.SetData.KeyKillHasDistance.Value)
             {
-                var killRoot = killInfo.IsTest ? _testKillsTransform : killsRoot;
+                hasKills.Add(AddDistanceInfo(killInfo, HUD.SetData, killRoot));
+            }
 
-                var expRoot = killInfo.IsTest ? _testExp : exp;
+            if (killInfo.Kills > 1 && HUD.SetData.KeyKillHasStreak.Value)
+            {
+                var streakXp =
+                    _SessionHelper.ExperienceHelper.GetStreakExp(killInfo.Exp, killInfo.Side, killInfo.Kills);
 
-                var baseExp = _SessionHelper.ExperienceHelper.GetBaseExp(killInfo.Exp, killInfo.Side);
+                hasKills.Add(AddStreakInfo(killInfo, HUD.SetData, killRoot, streakXp));
 
-                var hasExp = baseExp;
+                hasExp += streakXp;
 
-                var hasInfo = 1;
+                hasInfo++;
+            }
 
-                var hasKills = new List<GamePanelHUDKillUI>();
+            if (killInfo.Part == EBodyPart.Head && HUD.SetData.KeyKillHasOther.Value)
+            {
+                var headXp = _SessionHelper.ExperienceHelper.GetHeadExp(killInfo.Exp, killInfo.Side);
 
-                if (killInfo.Distance >= HUD.SetData.KeyKillDistance.Value && HUD.SetData.KeyKillHasDistance.Value)
+                hasKills.Add(AddOtherInfo(HUD.SetData, killRoot, _LocalizedHelper.Localized("StatsHeadshot"),
+                    headXp, true));
+
+                hasExp += headXp;
+
+                hasInfo++;
+            }
+
+            hasKills.Add(AddKillInfo(killInfo, HUD.SetData, killRoot, baseExp));
+
+            var hasKillsCount = hasKills.Count;
+
+            _currentHasInfo += hasKillsCount;
+            _waitInfo += hasKillsCount;
+
+            var count = hasKillsCount - 1;
+
+            if (!HUD.SetData.KeyKillWaitBottom.Value)
+            {
+                if (_previous != null)
                 {
-                    hasKills.Add(AddDistanceInfo(killInfo, HUD.SetData, killRoot));
+                    _previous.after = hasKills.Last();
+
+                    count -= 1;
                 }
 
-                if (killInfo.Kills > 1 && HUD.SetData.KeyKillHasStreak.Value)
+                hasKills.First().canDestroy = true;
+            }
+            else
+            {
+                if (_previous != null)
                 {
-                    var streakXp =
-                        _SessionHelper.ExperienceHelper.GetStreakExp(killInfo.Exp, killInfo.Side, killInfo.Kills);
+                    _previous.after = hasKills.First();
 
-                    hasKills.Add(AddStreakInfo(killInfo, HUD.SetData, killRoot, streakXp));
-
-                    hasExp += streakXp;
-
-                    hasInfo++;
+                    hasKills.Last().after = _previous;
                 }
-
-                if (killInfo.Part == EBodyPart.Head && HUD.SetData.KeyKillHasOther.Value)
+                else
                 {
-                    var headXp = _SessionHelper.ExperienceHelper.GetHeadExp(killInfo.Exp, killInfo.Side);
-
-                    hasKills.Add(AddOtherInfo(HUD.SetData, killRoot, _LocalizedHelper.Localized("StatsHeadshot"),
-                        headXp, true));
-
-                    hasExp += headXp;
-
-                    hasInfo++;
-                }
-
-                hasKills.Add(AddKillInfo(killInfo, HUD.SetData, killRoot, baseExp));
-
-                var hasKillsCount = hasKills.Count;
-
-                _currentHasInfo += hasKillsCount;
-                _waitInfo += hasKillsCount;
-
-                var count = hasKillsCount - 1;
-
-                if (!HUD.SetData.KeyKillWaitBottom.Value)
-                {
-                    if (_previous != null)
-                    {
-                        _previous.after = hasKills.Last();
-
-                        count -= 1;
-                    }
-
                     hasKills.First().canDestroy = true;
                 }
-                else
-                {
-                    if (_previous != null)
-                    {
-                        _previous.after = hasKills.First();
+            }
 
-                        hasKills.Last().after = _previous;
-                    }
-                    else
-                    {
-                        hasKills.First().canDestroy = true;
-                    }
-                }
+            _previous = hasKills.Last();
 
-                _previous = hasKills.Last();
+            if (hasKillsCount > 1)
+            {
+                for (var i = 0; i < count; i++)
+                {
+                    hasKills[i].after = hasKills[i + 1];
+                }
+            }
 
-                if (hasKillsCount > 1)
-                {
-                    for (var i = 0; i < count; i++)
-                    {
-                        hasKills[i].after = hasKills[i + 1];
-                    }
-                }
+            var isAnim = expRoot.IsAnim;
 
-                var isAnim = expRoot.IsAnim;
-
-                if (_currentHasInfo > 0 && !isAnim)
-                {
-                    expRoot.XpUp(hasExp, _lastXp);
-                }
-                else if (isAnim || hasInfo > 1)
-                {
-                    expRoot.XpUp(hasExp, 0);
-                }
-                else
-                {
-                    _lastXp = hasExp;
-                }
+            if (_currentHasInfo > 0 && !isAnim)
+            {
+                expRoot.XpUp(hasExp, _lastXp);
+            }
+            else if (isAnim || hasInfo > 1)
+            {
+                expRoot.XpUp(hasExp, 0);
+            }
+            else
+            {
+                _lastXp = hasExp;
             }
         }
 

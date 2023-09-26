@@ -27,12 +27,9 @@ namespace GamePanelHUDHit
 #if !UNITY_EDITOR
         private void Start()
         {
-            if (hit != null)
-            {
-                _testHit = Instantiate(hit, transform);
+            _testHit = Instantiate(hit, transform);
 
-                _hitGroup = hit.GetComponent<CanvasGroup>();
-            }
+            _hitGroup = hit.GetComponent<CanvasGroup>();
 
             GamePanelHUDHitPlugin.ShowHit = ShowHit;
 
@@ -46,13 +43,10 @@ namespace GamePanelHUDHit
 
         private void HitHUD()
         {
-            if (hit != null)
-            {
-                _hitGroup.alpha = HUD.HUDSw ? 1 : 0;
+            _hitGroup.alpha = HUD.HUDSw ? 1 : 0;
 
-                HitSet(hit);
-                HitSet(_testHit);
-            }
+            HitSet(hit);
+            HitSet(_testHit);
         }
 
         private static void HitSet(GamePanelHUDHitUI hit)
@@ -86,45 +80,42 @@ namespace GamePanelHUDHit
 
         private void ShowHit(GamePanelHUDHitPlugin.HitInfo hitInfo)
         {
-            if (hit != null)
+            GamePanelHUDHitPlugin.HitInfo.Direction direction;
+
+            if (hitInfo.HitDirection.x < HUD.SetData.KeyHitDirectionLeft.Value)
             {
-                GamePanelHUDHitPlugin.HitInfo.Direction direction;
+                direction = GamePanelHUDHitPlugin.HitInfo.Direction.Left;
+            }
+            else if (hitInfo.HitDirection.x > HUD.SetData.KeyHitDirectionRight.Value)
+            {
+                direction = GamePanelHUDHitPlugin.HitInfo.Direction.Right;
+            }
+            else
+            {
+                direction = GamePanelHUDHitPlugin.HitInfo.Direction.Center;
+            }
 
-                if (hitInfo.HitDirection.x < HUD.SetData.KeyHitDirectionLeft.Value)
+            if (!hitInfo.IsTest)
+            {
+                var cam = Camera.main;
+
+                if (cam != null)
                 {
-                    direction = GamePanelHUDHitPlugin.HitInfo.Direction.Left;
-                }
-                else if (hitInfo.HitDirection.x > HUD.SetData.KeyHitDirectionRight.Value)
-                {
-                    direction = GamePanelHUDHitPlugin.HitInfo.Direction.Right;
-                }
-                else
-                {
-                    direction = GamePanelHUDHitPlugin.HitInfo.Direction.Center;
+                    var pos = cam.WorldToScreenPoint(hitInfo.HitPoint);
+
+                    var screenPos = new Vector2(pos.x - cam.pixelWidth * 0.5f, pos.y - cam.pixelHeight * 0.5f);
+
+                    hit.transform.localPosition =
+                        new Vector2((int)Math.Round(screenPos.x), (int)Math.Round(screenPos.y));
                 }
 
-                if (!hitInfo.IsTest)
-                {
-                    var cam = Camera.main;
+                Hit(hitInfo, direction, HUD.SetData, hit);
+            }
+            else
+            {
+                _testHit.transform.localPosition = new Vector2(HUD.Info.sizeDelta.x / 3.2f, 0);
 
-                    if (cam != null)
-                    {
-                        var pos = cam.WorldToScreenPoint(hitInfo.HitPoint);
-
-                        var screenPos = new Vector2(pos.x - cam.pixelWidth * 0.5f, pos.y - cam.pixelHeight * 0.5f);
-
-                        hit.transform.localPosition =
-                            new Vector2((int)Math.Round(screenPos.x), (int)Math.Round(screenPos.y));
-                    }
-
-                    Hit(hitInfo, direction, HUD.SetData, hit);
-                }
-                else
-                {
-                    _testHit.transform.localPosition = new Vector2(HUD.Info.sizeDelta.x / 3.2f, 0);
-
-                    Hit(hitInfo, direction, HUD.SetData, _testHit);
-                }
+                Hit(hitInfo, direction, HUD.SetData, _testHit);
             }
         }
 
