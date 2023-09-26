@@ -1,4 +1,5 @@
 ﻿#if !UNITY_EDITOR
+using System;
 using EFT.Interactive;
 using UnityEngine;
 using static EFTApi.EFTHelpers;
@@ -14,10 +15,6 @@ namespace GamePanelHUDCompass
             var controller = _GameWorldHelper.LootableContainerHelper.RefItemOwner.GetValue(looTable);
 
             var item = _GameWorldHelper.LootableContainerHelper.RefRootItem.GetValue(controller);
-
-            Airdrops.Add(_GameWorldHelper.SearchableItemClassHelper.RefAllSearchersIds?.GetValue(item));
-
-            var count = Airdrops.Count;
 
             string nameKey;
             string descriptionKey;
@@ -47,13 +44,19 @@ namespace GamePanelHUDCompass
 
             var staticInfo = new CompassStaticInfo
             {
-                Id = $"Airdrop{count}",
+                Id = $"Airdrop{_airdropCount}",
                 Where = __instance.transform.position,
                 NameKey = nameKey,
                 DescriptionKey = descriptionKey,
-                ExIndex = count - 1,
-                InfoType = CompassStaticInfo.Type.Airdrop
+                InfoType = CompassStaticInfo.Type.Airdrop,
+                Requirements = new Func<bool>[]
+                {
+                    () => _GameWorldHelper.SearchableItemClassHelper.RefAllSearchersIds?.GetValue(item)
+                        .Contains(CompassStaticHUD.Info.YourProfileId) ?? false
+                }
             };
+
+            _airdropCount++;
 
             ShowStatic(staticInfo);
         }

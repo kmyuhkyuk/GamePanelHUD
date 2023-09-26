@@ -297,9 +297,8 @@ namespace GamePanelHUDCompass
             staticUI.traderId = staticInfo.TraderId;
             staticUI.isNotNecessary = staticInfo.IsNotNecessary;
             staticUI.descriptionKey = staticInfo.DescriptionKey;
-            staticUI.exIndex = staticInfo.ExIndex;
-            staticUI.exIndex2 = staticInfo.ExIndex2;
             staticUI.infoType = staticInfo.InfoType;
+            staticUI.Requirements = staticInfo.Requirements;
 
             CompassStatics.AddOrUpdate(staticInfo.Id, key => new List<GamePanelHUDCompassStaticUI> { staticUI },
                 (key, value) =>

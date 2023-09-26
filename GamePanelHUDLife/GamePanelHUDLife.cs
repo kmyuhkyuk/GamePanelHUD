@@ -56,6 +56,7 @@ namespace GamePanelHUDLife
             _rectTransform.localScale = HUD.SetData.KeyLocalScale.Value;
 
             //Set Current and Maximum float
+
             #region overallHealth
 
             overallHealth.gameObject.SetActive(HUD.HUDSw);
