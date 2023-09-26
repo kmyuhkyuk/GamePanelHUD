@@ -23,7 +23,9 @@ namespace GamePanelHUDCompass
         public GamePanelHUDCompassPlugin.CompassStaticInfo.Type infoType;
 #endif
         public bool Work { get; private set; }
+
         public float XDiff { get; private set; }
+
         public bool HasRequirements { get; private set; }
 
         public Vector3 where;
@@ -40,9 +42,7 @@ namespace GamePanelHUDCompass
 
         public bool isNotNecessary;
 
-        public int exIndex;
-
-        public int exIndex2;
+        public Func<bool>[] Requirements;
 
         [SerializeField] private Image real;
 
@@ -223,7 +223,8 @@ namespace GamePanelHUDCompass
 #if !UNITY_EDITOR
         private void Exfiltration()
         {
-            HUD.Info.ExfiltrationGetStatus(exIndex, out var notPresent, out var hasRequirements);
+            var notPresent = Requirements[0]();
+            var hasRequirements = Requirements[1]();
 
             HasRequirements = hasRequirements;
 
@@ -239,8 +240,9 @@ namespace GamePanelHUDCompass
 
         private void Switch()
         {
-            HUD.Info.ExfiltrationGetStatus(exIndex, out _, out var hasRequirements);
-            HUD.Info.ExfiltrationGetSwitch(exIndex, exIndex2, out var open);
+            var notPresent = Requirements[0]();
+            var hasRequirements = Requirements[1]();
+            var open = Requirements[2]();
 
             if (HUD.SetData.KeyCompassStaticHideRequirements.Value)
             {
@@ -322,7 +324,7 @@ namespace GamePanelHUDCompass
         {
             if (HUD.SetData.KeyCompassStaticHideSearchedAirdrop.Value)
             {
-                Enabled(!HUD.Info.Airdrops[exIndex].Contains(HUD.Info.YourProfileId));
+                Enabled(!Requirements[0]());
             }
             else
             {

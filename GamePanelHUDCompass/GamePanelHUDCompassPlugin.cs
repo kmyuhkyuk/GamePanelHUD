@@ -53,9 +53,9 @@ namespace GamePanelHUDCompass
 
         private RectTransform _screenRect;
 
-        private readonly SettingsData _setData;
+        private static int _airdropCount;
 
-        private static readonly List<List<string>> Airdrops = new List<List<string>>();
+        private readonly SettingsData _setData;
 
         internal static GameObject FirePrefab { get; private set; }
 
@@ -143,8 +143,6 @@ namespace GamePanelHUDCompass
 
                 _compassStaticData.YourProfileId = HUDCore.YourPlayer.ProfileId;
 
-                _compassStaticData.Airdrops = Airdrops;
-
                 //Performance Optimization
                 if (Time.frameCount % 20 == 0)
                 {
@@ -160,8 +158,7 @@ namespace GamePanelHUDCompass
                     ShowQuest(HUDCore.YourPlayer, HUDCore.TheWorld, EFTVersion.AkiVersion > Version.Parse("2.3.1"),
                         ShowStatic);
 
-                    _compassStaticData.ExfiltrationPoints =
-                        ShowExfiltration(HUDCore.YourPlayer, HUDCore.TheWorld, ShowStatic);
+                    ShowExfiltration(HUDCore.YourPlayer, HUDCore.TheWorld, ShowStatic);
 
                     _compassStaticCacheBool = false;
                 }
@@ -169,12 +166,7 @@ namespace GamePanelHUDCompass
             else
             {
                 _compassStaticData.EquipmentAndQuestRaidItems = null;
-                _compassStaticData.ExfiltrationPoints = null;
-
-                if (Airdrops.Count > 0)
-                {
-                    Airdrops.Clear();
-                }
+                _airdropCount = 0;
             }
         }
 
@@ -388,11 +380,11 @@ namespace GamePanelHUDCompass
             }
         }
 
-        private static ExfiltrationData[] ShowExfiltration(Player player, GameWorld world,
+        private static void ShowExfiltration(Player player, GameWorld world,
             Action<CompassStaticInfo> showStatic)
         {
             if (player is HideoutPlayer)
-                return null;
+                return;
 
             var exfiltrationController = Traverse.Create(world).Property("ExfiltrationController").GetValue<object>();
 
@@ -403,53 +395,51 @@ namespace GamePanelHUDCompass
                     .GetValue<ScavExfiltrationPoint[]>().Where(x => x.EligibleIds.Contains(player.ProfileId))
                     .ToArray<ExfiltrationPoint>();
 
-            var exfiltrationList = new List<ExfiltrationData>();
-
             for (var i = 0; i < exfiltrationPoints.Length; i++)
             {
                 var point = exfiltrationPoints[i];
+
+                var exfiltrationRequirements = new Func<bool>[]
+                {
+                    () => point.Status == EExfiltrationStatus.NotPresent,
+                    () => point.Status == EExfiltrationStatus.UncompleteRequirements,
+                };
 
                 var staticInfo = new CompassStaticInfo
                 {
                     Id = $"EXFIL{i}",
                     Where = point.transform.position,
-                    ExIndex = i,
                     NameKey = point.Settings.Name,
                     DescriptionKey = "EXFIL",
-                    InfoType = CompassStaticInfo.Type.Exfiltration
+                    InfoType = CompassStaticInfo.Type.Exfiltration,
+                    Requirements = exfiltrationRequirements
                 };
 
                 showStatic(staticInfo);
 
-                var switchs = Array.Empty<Switch>();
-
                 if (point.Status == EExfiltrationStatus.UncompleteRequirements)
                 {
-                    switchs = Traverse.Create(point).Field("list_1").GetValue<List<Switch>>().ToArray();
+                    var switchs = Traverse.Create(point).Field("list_1").GetValue<List<Switch>>().ToArray();
 
-                    for (var j = 0; j < switchs.Length; j++)
+                    foreach (var @switch in switchs)
                     {
-                        var @switch = switchs[j];
-
                         var staticInfo2 = new CompassStaticInfo
                         {
                             Id = @switch.Id,
                             Where = @switch.transform.position,
-                            ExIndex = i,
-                            ExIndex2 = j,
                             NameKey = point.Settings.Name,
                             DescriptionKey = @switch.ExtractionZoneTip,
-                            InfoType = CompassStaticInfo.Type.Switch
+                            InfoType = CompassStaticInfo.Type.Switch,
+                            Requirements = exfiltrationRequirements.Concat(new Func<bool>[]
+                            {
+                                () => @switch.DoorState == EDoorState.Open
+                            }).ToArray()
                         };
 
                         showStatic(staticInfo2);
                     }
                 }
-
-                exfiltrationList.Add(new ExfiltrationData(point, switchs));
             }
-
-            return exfiltrationList.ToArray();
         }
 
         private static float GetAngle(Vector3 eulerAngles, float northDirection)
@@ -508,30 +498,11 @@ namespace GamePanelHUDCompass
 
         public class CompassStaticData : CompassFireData
         {
-            public ExfiltrationData[] ExfiltrationPoints;
-
             public HashSet<string> EquipmentAndQuestRaidItems;
-
-            public List<List<string>> Airdrops;
 
             public string YourProfileId;
 
             public bool HasEquipmentAndQuestRaidItems => EquipmentAndQuestRaidItems != null;
-
-            public void ExfiltrationGetStatus(int index, out bool notPresent, out bool requirements)
-            {
-                var point = ExfiltrationPoints[index];
-
-                var status = point.Exfiltration.Status;
-
-                notPresent = status == EExfiltrationStatus.NotPresent;
-                requirements = status == EExfiltrationStatus.UncompleteRequirements;
-            }
-
-            public void ExfiltrationGetSwitch(int index, int index2, out bool open)
-            {
-                open = ExfiltrationPoints[index].Switchs[index2].DoorState == EDoorState.Open;
-            }
 
             public void CopyFrom(CompassStaticData data)
             {
@@ -541,21 +512,6 @@ namespace GamePanelHUDCompass
                 NorthVector = data.NorthVector;
                 CameraPosition = data.CameraPosition;
                 PlayerRight = data.PlayerRight;
-
-                ExfiltrationPoints = data.ExfiltrationPoints;
-            }
-        }
-
-        public class ExfiltrationData
-        {
-            public readonly ExfiltrationPoint Exfiltration;
-
-            public readonly Switch[] Switchs;
-
-            public ExfiltrationData(ExfiltrationPoint point, Switch[] switchs)
-            {
-                Exfiltration = point;
-                Switchs = switchs;
             }
         }
 
@@ -588,13 +544,11 @@ namespace GamePanelHUDCompass
 
             public string TraderId;
 
-            public int ExIndex;
-
-            public int ExIndex2;
-
             public bool IsNotNecessary;
 
             public Type InfoType;
+
+            public Func<bool>[] Requirements;
 
             public enum Type
             {
