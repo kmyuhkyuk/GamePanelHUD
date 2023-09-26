@@ -1,21 +1,27 @@
 ﻿using System;
 using UnityEngine;
 #if !UNITY_EDITOR
+
 using EFTUtils;
 using GamePanelHUDCore;
+
 #endif
 
 namespace GamePanelHUDHit
 {
     public class GamePanelHUDHit : MonoBehaviour
 #if !UNITY_EDITOR
+
         , IUpdate
+
 #endif
     {
 #if !UNITY_EDITOR
+
         private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
         private static GamePanelHUDCorePlugin.HUDClass<RectTransform, GamePanelHUDHitPlugin.SettingsData> HUD =>
             GamePanelHUDHitPlugin.HitHUD;
+
 #endif
 
         [SerializeField] private GamePanelHUDHitUI hit;
@@ -25,6 +31,7 @@ namespace GamePanelHUDHit
         private CanvasGroup _hitGroup;
 
 #if !UNITY_EDITOR
+
         private void Start()
         {
             _testHit = Instantiate(hit, transform);
@@ -149,6 +156,7 @@ namespace GamePanelHUDHit
 
             hit.HitTrigger(isHead, hitInfo, direction);
         }
+
 #endif
     }
 }

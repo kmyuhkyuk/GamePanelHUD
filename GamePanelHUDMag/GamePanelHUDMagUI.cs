@@ -2,19 +2,25 @@
 using TMPro;
 using UnityEngine;
 #if !UNITY_EDITOR
+
 using EFTUtils;
 using GamePanelHUDCore;
+
 #endif
 
 namespace GamePanelHUDMag
 {
     public class GamePanelHUDMagUI : MonoBehaviour
 #if !UNITY_EDITOR
+
         , IUpdate
+
 #endif
     {
 #if !UNITY_EDITOR
+
         private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
+
 #endif
         public bool weaponNameAlways;
 
@@ -111,10 +117,13 @@ namespace GamePanelHUDMag
             _fireModePanelTransform = fireModeValue.transform.parent;
 
 #if !UNITY_EDITOR
+
             HUDCore.UpdateManger.Register(this);
+
 #endif
         }
 #if !UNITY_EDITOR
+
 
         private void OnEnable()
         {
@@ -132,9 +141,11 @@ namespace GamePanelHUDMag
         }
 
         private void MagUI()
+
 #endif
 #if UNITY_EDITOR
         void Update()
+
 #endif
         {
             //Set Current float and color and Style to String

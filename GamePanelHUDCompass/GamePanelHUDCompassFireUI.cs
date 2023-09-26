@@ -2,22 +2,28 @@
 using UnityEngine;
 using UnityEngine.UI;
 #if !UNITY_EDITOR
+
 using EFTUtils;
 using GamePanelHUDCore;
+
 #endif
 
 namespace GamePanelHUDCompass
 {
     public class GamePanelHUDCompassFireUI : MonoBehaviour
 #if !UNITY_EDITOR
+
         , IUpdate
+
 #endif
     {
 #if !UNITY_EDITOR
+
         private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
         private static
             GamePanelHUDCorePlugin.HUDClass<GamePanelHUDCompassPlugin.CompassFireData,
                 GamePanelHUDCompassPlugin.SettingsData> HUD => GamePanelHUDCompassPlugin.CompassFireHUD;
+
 #endif
         public bool active;
 
@@ -90,6 +96,7 @@ namespace GamePanelHUDCompass
         private float FireXRightRight => _fireX + 5760; //2880 * 2
 
 #if !UNITY_EDITOR
+
         private void Start()
         {
             _animatorFire = GetComponent<Animator>();
@@ -133,9 +140,11 @@ namespace GamePanelHUDCompass
         }
 
         public void CustomUpdate()
+
 #endif
 #if UNITY_EDITOR
         void Update()
+
 #endif
         {
             CompassFireUI();
@@ -144,6 +153,7 @@ namespace GamePanelHUDCompass
         private void CompassFireUI()
         {
 #if !UNITY_EDITOR
+
             var lhs = where - HUD.Info.CameraPosition;
 
             var angle = HUD.Info.GetToAngle(lhs);
@@ -174,10 +184,12 @@ namespace GamePanelHUDCompass
 
                 active = false;
             }
+
 #endif
         }
 
 #if !UNITY_EDITOR
+
         public void Fire()
         {
             _animatorFire.SetTrigger(AnimatorHash.Fire);
@@ -212,20 +224,25 @@ namespace GamePanelHUDCompass
         {
             return Vector3.Dot(lhs, right) < 0;
         }
+
 #endif
 
         private void ToDestroy()
         {
 #if !UNITY_EDITOR
+
             GamePanelHUDCompassFire.Remove(who);
+
 #endif
         }
 
         public void Destroy()
         {
 #if !UNITY_EDITOR
+
             HUDCore.UpdateManger.Remove(this);
             Destroy(gameObject);
+
 #endif
         }
     }

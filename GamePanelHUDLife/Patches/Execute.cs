@@ -1,4 +1,5 @@
 ﻿#if !UNITY_EDITOR
+
 using System.Threading.Tasks;
 
 namespace GamePanelHUDLife
@@ -11,4 +12,5 @@ namespace GamePanelHUDLife
         }
     }
 }
+
 #endif

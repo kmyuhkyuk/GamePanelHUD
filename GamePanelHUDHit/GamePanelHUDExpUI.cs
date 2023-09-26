@@ -2,19 +2,25 @@
 using TMPro;
 using UnityEngine;
 #if !UNITY_EDITOR
+
 using EFTUtils;
 using GamePanelHUDCore;
+
 #endif
 
 namespace GamePanelHUDHit
 {
     public class GamePanelHUDExpUI : MonoBehaviour
 #if !UNITY_EDITOR
+
         , IUpdate
+
 #endif
     {
 #if !UNITY_EDITOR
+
         private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
+
 #endif
 
         public bool active;
@@ -44,10 +50,13 @@ namespace GamePanelHUDHit
             _animatorExpUI = GetComponent<Animator>();
 
 #if !UNITY_EDITOR
+
             HUDCore.UpdateManger.Register(this);
+
 #endif
         }
 #if !UNITY_EDITOR
+
 
         public void CustomUpdate()
         {
@@ -55,9 +64,11 @@ namespace GamePanelHUDHit
         }
 
         private void ExpUI()
+
 #endif
 #if UNITY_EDITOR
         void Update()
+
 #endif
         {
             _animatorExpUI.SetFloat(AnimatorHash.Speed, xpWaitSpeed);

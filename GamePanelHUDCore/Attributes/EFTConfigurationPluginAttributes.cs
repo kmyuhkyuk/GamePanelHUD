@@ -1,4 +1,5 @@
 ﻿#if !UNITY_EDITOR
+
 namespace GamePanelHUDCore.Attributes
 {
     // ReSharper disable InvalidXmlDocComment
@@ -49,4 +50,5 @@ namespace GamePanelHUDCore.Attributes
         }
     }
 }
+
 #endif

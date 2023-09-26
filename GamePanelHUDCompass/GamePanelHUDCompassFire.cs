@@ -4,23 +4,29 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 #if !UNITY_EDITOR
+
 using EFTUtils;
 using GamePanelHUDCore;
 using static EFTApi.EFTHelpers;
+
 #endif
 
 namespace GamePanelHUDCompass
 {
     public class GamePanelHUDCompassFire : MonoBehaviour
 #if !UNITY_EDITOR
+
         , IUpdate
+
 #endif
     {
 #if !UNITY_EDITOR
+
         private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
         private static
             GamePanelHUDCorePlugin.HUDClass<GamePanelHUDCompassPlugin.CompassFireData,
                 GamePanelHUDCompassPlugin.SettingsData> HUD => GamePanelHUDCompassPlugin.CompassFireHUD;
+
 #endif
         private readonly ConcurrentDictionary<string, GamePanelHUDCompassFireUI> _compassFires =
             new ConcurrentDictionary<string, GamePanelHUDCompassFireUI>();
@@ -48,6 +54,7 @@ namespace GamePanelHUDCompass
         internal static Action<string> Remove;
 
 #if !UNITY_EDITOR
+
         private void Start()
         {
             _rectTransform = GetComponent<RectTransform>();
@@ -228,6 +235,7 @@ namespace GamePanelHUDCompass
                 _removes.Add(id);
             }
         }
+
 #endif
     }
 }

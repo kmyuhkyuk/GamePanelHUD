@@ -6,24 +6,30 @@ using EFT;
 using TMPro;
 using UnityEngine;
 #if !UNITY_EDITOR
+
 using EFTUtils;
 using GamePanelHUDCore;
 using static EFTApi.EFTHelpers;
+
 #endif
 
 namespace GamePanelHUDCompass
 {
     public class GamePanelHUDCompassStatic : MonoBehaviour
 #if !UNITY_EDITOR
+
         , IUpdate
+
 #endif
     {
 #if !UNITY_EDITOR
+
         private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
 
         private static
             GamePanelHUDCorePlugin.HUDClass<GamePanelHUDCompassPlugin.CompassStaticData,
                 GamePanelHUDCompassPlugin.SettingsData> HUD => GamePanelHUDCompassPlugin.CompassStaticHUD;
+
 #endif
 
         private static readonly ConcurrentDictionary<string, List<GamePanelHUDCompassStaticUI>> CompassStatics =
@@ -66,6 +72,7 @@ namespace GamePanelHUDCompass
         private RectTransform _infoPanelRect;
 
 #if !UNITY_EDITOR
+
         private void Start()
         {
             _rectTransform = GetComponent<RectTransform>();
@@ -330,6 +337,7 @@ namespace GamePanelHUDCompass
                 Removes.Add(id);
             }
         }
+
 #endif
     }
 }

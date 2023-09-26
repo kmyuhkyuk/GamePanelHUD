@@ -5,21 +5,27 @@ using EFT;
 using EFTUtils;
 using UnityEngine;
 #if !UNITY_EDITOR
+
 using GamePanelHUDCore;
 using static EFTApi.EFTHelpers;
+
 #endif
 
 namespace GamePanelHUDHit
 {
     public class GamePanelHUDKill : MonoBehaviour
 #if !UNITY_EDITOR
+
         , IUpdate
+
 #endif
     {
 #if !UNITY_EDITOR
+
         private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
         private static GamePanelHUDHitPlugin.KillHUDClass<RectTransform, GamePanelHUDHitPlugin.SettingsData> HUD =>
             GamePanelHUDHitPlugin.KillHUD;
+
 #endif
 
         private int _currentHasInfo;
@@ -57,6 +63,7 @@ namespace GamePanelHUDHit
         internal static Action HasWaitInfoMinus;
 
 #if !UNITY_EDITOR
+
         private void Start()
         {
             _testKillsRoot = Instantiate(killsRoot.gameObject, killsRoot.transform.parent).transform;
@@ -429,6 +436,7 @@ namespace GamePanelHUDHit
                 _testExp.XpComplete();
             }
         }
+
 #endif
     }
 }

@@ -4,19 +4,25 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 #if !UNITY_EDITOR
+
 using EFTUtils;
 using GamePanelHUDCore;
+
 #endif
 
 namespace GamePanelHUDHit
 {
     public class GamePanelHUDHitUI : MonoBehaviour
 #if !UNITY_EDITOR
+
         , IUpdate
+
 #endif
     {
 #if !UNITY_EDITOR
+
         private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
+
 #endif
 
         public bool damageHUDSw;
@@ -130,10 +136,13 @@ namespace GamePanelHUDHit
             _damageValueRect = parent.parent.GetComponent<RectTransform>();
 
 #if !UNITY_EDITOR
+
             HUDCore.UpdateManger.Register(this);
+
 #endif
         }
 #if !UNITY_EDITOR
+
 
         public void CustomUpdate()
         {
@@ -141,9 +150,11 @@ namespace GamePanelHUDHit
         }
 
         private void HitUI()
+
 #endif
 #if UNITY_EDITOR
         void Update()
+
 #endif
         {
             var leftUpPos = new Vector2(-hitAnchoredPosition.x, hitAnchoredPosition.y);
@@ -218,6 +229,7 @@ namespace GamePanelHUDHit
         }
 #if !UNITY_EDITOR
 
+
         public void HitTrigger(bool isHead, GamePanelHUDHitPlugin.HitInfo hitInfo,
             GamePanelHUDHitPlugin.HitInfo.Direction direction)
         {
@@ -286,6 +298,7 @@ namespace GamePanelHUDHit
         {
             _animatorHitUI.SetTrigger(AnimatorHash.ActiveDead);
         }
+
 #endif
     }
 }

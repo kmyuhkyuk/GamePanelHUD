@@ -1,20 +1,26 @@
 ﻿using UnityEngine;
 #if !UNITY_EDITOR
+
 using EFTUtils;
 using GamePanelHUDCore;
+
 #endif
 
 namespace GamePanelHUDLife
 {
     public class GamePanelHUDLife : MonoBehaviour
 #if !UNITY_EDITOR
+
         , IUpdate
+
 #endif
     {
 #if !UNITY_EDITOR
+
         private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
         private static GamePanelHUDCorePlugin.HUDClass<GamePanelHUDLifePlugin.Life, GamePanelHUDLifePlugin.SettingsData>
             HUD => GamePanelHUDLifePlugin.HUD;
+
 #endif
 
         [SerializeField] private GamePanelHUDLifeUI overallHealth;
@@ -36,6 +42,7 @@ namespace GamePanelHUDLife
         private RectTransform _rectTransform;
 
 #if !UNITY_EDITOR
+
         private void Start()
         {
             _rectTransform = GetComponent<RectTransform>();
@@ -147,6 +154,7 @@ namespace GamePanelHUDLife
 
             #endregion
         }
+
 #endif
     }
 }

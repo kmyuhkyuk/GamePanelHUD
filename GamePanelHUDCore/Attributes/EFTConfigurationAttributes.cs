@@ -1,4 +1,5 @@
 ﻿#if !UNITY_EDITOR
+
 namespace GamePanelHUDCore.Attributes
 {
     // ReSharper disable InvalidXmlDocComment
@@ -78,4 +79,5 @@ namespace GamePanelHUDCore.Attributes
         public System.Func<string, object> CustomToObject;
     }
 }
+
 #endif

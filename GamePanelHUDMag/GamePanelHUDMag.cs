@@ -1,21 +1,27 @@
 ﻿using UnityEngine;
 #if !UNITY_EDITOR
+
 using EFTUtils;
 using GamePanelHUDCore;
+
 #endif
 
 namespace GamePanelHUDMag
 {
     public class GamePanelHUDMag : MonoBehaviour
 #if !UNITY_EDITOR
+
         , IUpdate
+
 #endif
     {
 #if !UNITY_EDITOR
+
         private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
         private static
             GamePanelHUDCorePlugin.HUDClass<GamePanelHUDMagPlugin.WeaponData, GamePanelHUDMagPlugin.SettingsData> HUD =>
             GamePanelHUDMagPlugin.HUD;
+
 #endif
 
         [SerializeField] private GamePanelHUDMagUI mag;
@@ -23,6 +29,7 @@ namespace GamePanelHUDMag
         private RectTransform _rectTransform;
 
 #if !UNITY_EDITOR
+
         private void Start()
         {
             _rectTransform = GetComponent<RectTransform>();
@@ -84,6 +91,7 @@ namespace GamePanelHUDMag
         {
             mag.weaponTrigger = true;
         }
+
 #endif
     }
 }

@@ -1,21 +1,27 @@
 ﻿using UnityEngine;
 #if !UNITY_EDITOR
+
 using EFTUtils;
 using GamePanelHUDCore;
+
 #endif
 
 namespace GamePanelHUDGrenade
 {
     public class GamePanelHUDGrenade : MonoBehaviour
 #if !UNITY_EDITOR
+
         , IUpdate
+
 #endif
     {
 #if !UNITY_EDITOR
+
         private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
         private static
             GamePanelHUDCorePlugin.HUDClass<GamePanelHUDGrenadePlugin.GrenadeAmount,
                 GamePanelHUDGrenadePlugin.SettingsData> HUD => GamePanelHUDGrenadePlugin.HUD;
+
 #endif
 
         [SerializeField] private GamePanelHUDGrenadeUI fragAmount;
@@ -27,6 +33,7 @@ namespace GamePanelHUDGrenade
         private RectTransform _rectTransform;
 
 #if !UNITY_EDITOR
+
         private void Start()
         {
             _rectTransform = GetComponent<RectTransform>();
@@ -88,6 +95,7 @@ namespace GamePanelHUDGrenade
 
             #endregion
         }
+
 #endif
     }
 }

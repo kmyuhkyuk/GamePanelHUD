@@ -1,4 +1,5 @@
 ﻿#if !UNITY_EDITOR
+
 using BepInEx;
 using BepInEx.Configuration;
 using EFT.HealthSystem;
@@ -216,4 +217,5 @@ namespace GamePanelHUDLife
         }
     }
 }
+
 #endif
