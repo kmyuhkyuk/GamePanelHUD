@@ -30,15 +30,11 @@ namespace GamePanelHUDCompass
 
         public Vector3 where;
 
-        public string zoneId;
-
         public string[] target;
 
         public string nameKey;
 
         public string descriptionKey;
-
-        public string traderId;
 
         public bool isNotNecessary;
 
