@@ -6,7 +6,9 @@ namespace GamePanelHUDMap
 {
     public class GamePanelHUDMapUI : MonoBehaviour
 #if !UNITY_EDITOR
+
         , IUpdate
+
 #endif
     {
         private GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
@@ -22,6 +24,7 @@ namespace GamePanelHUDMap
         private RectTransform _mapRect;
 
 #if !UNITY_EDITOR
+
         private void Start()
         {
             _mapRect = GetComponent<RectTransform>();
@@ -45,6 +48,7 @@ namespace GamePanelHUDMap
                 data.Image.gameObject.SetActive(PlayerPosition.y > data.MinhHigher);
             }*/
         }
+
 #endif
     }
 }

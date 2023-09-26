@@ -1,19 +1,25 @@
 ﻿using TMPro;
 using UnityEngine;
 #if !UNITY_EDITOR
+
 using EFTUtils;
 using GamePanelHUDCore;
+
 #endif
 
 namespace GamePanelHUDGrenade
 {
     public class GamePanelHUDGrenadeUI : MonoBehaviour
 #if !UNITY_EDITOR
+
         , IUpdate
+
 #endif
     {
 #if !UNITY_EDITOR
+
         private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
+
 #endif
 
         public bool zeroWarning;
@@ -32,6 +38,7 @@ namespace GamePanelHUDGrenade
 #pragma warning restore CS0649
 
 #if !UNITY_EDITOR
+
         private void Start()
         {
             HUDCore.UpdateManger.Register(this);
@@ -53,9 +60,11 @@ namespace GamePanelHUDGrenade
         }
 
         private void GrenadeUI()
+
 #endif
 #if UNITY_EDITOR
         void Update()
+
 #endif
         {
             //Set GrenadeAmount int and color and Style to String

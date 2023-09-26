@@ -3,21 +3,27 @@ using GamePanelHUDCore.Utils;
 using TMPro;
 using UnityEngine;
 #if !UNITY_EDITOR
+
 using EFTUtils;
 using GamePanelHUDCore;
+
 #endif
 
 namespace GamePanelHUDHit
 {
     public class GamePanelHUDKillUI : MonoBehaviour
 #if !UNITY_EDITOR
+
         , IUpdate
+
 #endif
     {
 #if !UNITY_EDITOR
+
         private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
         private static GamePanelHUDCorePlugin.HUDClass<RectTransform, GamePanelHUDHitPlugin.SettingsData> HUD =>
             GamePanelHUDHitPlugin.KillHUD;
+
 #endif
 
         public bool active;
@@ -47,6 +53,7 @@ namespace GamePanelHUDHit
         private Animator _animatorKillUI;
 
 #if !UNITY_EDITOR
+
         private void Start()
         {
             _animatorKillUI = GetComponent<Animator>();
@@ -162,11 +169,13 @@ namespace GamePanelHUDHit
                 }
             }
         }
+
 #endif
 
         private void Destroy()
         {
 #if !UNITY_EDITOR
+
             if (after != null)
             {
                 after.canDestroy = true;
@@ -175,6 +184,7 @@ namespace GamePanelHUDHit
             GamePanelHUDKill.HasInfoMinus();
             HUDCore.UpdateManger.Remove(this);
             Destroy(gameObject);
+
 #endif
         }
     }

@@ -1,4 +1,5 @@
 ﻿#if !UNITY_EDITOR
+
 using System;
 using EFT.InventoryLogic;
 using EFTApi;
@@ -39,4 +40,5 @@ namespace GamePanelHUDHit
         }
     }
 }
+
 #endif

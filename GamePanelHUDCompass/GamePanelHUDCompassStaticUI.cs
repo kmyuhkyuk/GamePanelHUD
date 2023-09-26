@@ -2,18 +2,23 @@
 using UnityEngine;
 using UnityEngine.UI;
 #if !UNITY_EDITOR
+
 using EFTUtils;
 using GamePanelHUDCore;
+
 #endif
 
 namespace GamePanelHUDCompass
 {
     public class GamePanelHUDCompassStaticUI : MonoBehaviour
 #if !UNITY_EDITOR
+
         , IUpdate
+
 #endif
     {
 #if !UNITY_EDITOR
+
         private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
 
         private static
@@ -21,6 +26,7 @@ namespace GamePanelHUDCompass
                 GamePanelHUDCompassPlugin.SettingsData> HUD => GamePanelHUDCompassPlugin.CompassStaticHUD;
 
         public GamePanelHUDCompassPlugin.CompassStaticInfo.Type infoType;
+
 #endif
         public bool Work { get; private set; }
 
@@ -69,6 +75,7 @@ namespace GamePanelHUDCompass
         private float IconXRightRight => _iconX + 5760; //2880 * 2
 
 #if !UNITY_EDITOR
+
         private void Start()
         {
             _canvasGroup = GetComponent<CanvasGroup>();
@@ -114,9 +121,11 @@ namespace GamePanelHUDCompass
         }
 
         public void CustomUpdate()
+
 #endif
 #if UNITY_EDITOR
         void Update()
+
 #endif
         {
             CompassStaticUI();
@@ -125,6 +134,7 @@ namespace GamePanelHUDCompass
         private void CompassStaticUI()
         {
 #if !UNITY_EDITOR
+
             var lhs = where - HUD.Info.CameraPosition;
 
             var angle = HUD.Info.GetToAngle(lhs);
@@ -213,10 +223,12 @@ namespace GamePanelHUDCompass
                 default:
                     throw new ArgumentOutOfRangeException(nameof(infoType), infoType, null);
             }
+
 #endif
         }
 
 #if !UNITY_EDITOR
+
         private void Exfiltration()
         {
             var notPresent = Requirements[0]();
@@ -326,6 +338,7 @@ namespace GamePanelHUDCompass
                 Enabled(true);
             }
         }
+
 #endif
 
         public void BindIcon(Sprite sprite)
@@ -363,8 +376,10 @@ namespace GamePanelHUDCompass
         public void Destroy()
         {
 #if !UNITY_EDITOR
+
             HUDCore.UpdateManger.Remove(this);
             Destroy(gameObject);
+
 #endif
         }
     }

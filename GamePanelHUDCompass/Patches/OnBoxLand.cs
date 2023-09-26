@@ -1,4 +1,5 @@
 ﻿#if !UNITY_EDITOR
+
 using System;
 using EFT.Interactive;
 using UnityEngine;
@@ -62,4 +63,5 @@ namespace GamePanelHUDCompass
         }
     }
 }
+
 #endif

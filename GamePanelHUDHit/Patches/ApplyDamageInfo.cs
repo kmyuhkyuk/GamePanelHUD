@@ -1,4 +1,5 @@
 ﻿#if !UNITY_EDITOR
+
 using EFT;
 using static EFTApi.EFTHelpers;
 
@@ -53,4 +54,5 @@ namespace GamePanelHUDHit
         }
     }
 }
+
 #endif

@@ -1,4 +1,5 @@
 ﻿#if !UNITY_EDITOR
+
 using System.Collections.Generic;
 using System.Linq;
 using BepInEx;
@@ -108,4 +109,5 @@ namespace GamePanelHUDDebug.MagDebug
         }
     }
 }
+
 #endif

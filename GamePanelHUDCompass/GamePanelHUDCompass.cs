@@ -1,21 +1,27 @@
 ﻿using UnityEngine;
 #if !UNITY_EDITOR
+
 using EFTUtils;
 using GamePanelHUDCore;
+
 #endif
 
 namespace GamePanelHUDCompass
 {
     public class GamePanelHUDCompass : MonoBehaviour
 #if !UNITY_EDITOR
+
         , IUpdate
+
 #endif
     {
 #if !UNITY_EDITOR
+
         private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
         private static
             GamePanelHUDCorePlugin.HUDClass<GamePanelHUDCompassPlugin.CompassData,
                 GamePanelHUDCompassPlugin.SettingsData> HUD => GamePanelHUDCompassPlugin.CompassHUD;
+
 #endif
 
         [SerializeField] private GamePanelHUDCompassUI compass;
@@ -23,6 +29,7 @@ namespace GamePanelHUDCompass
         private RectTransform _rectTransform;
 
 #if !UNITY_EDITOR
+
         private void Start()
         {
             _rectTransform = GetComponent<RectTransform>();
@@ -57,6 +64,7 @@ namespace GamePanelHUDCompass
             compass.directionStyles = HUD.SetData.KeyDirectionStyles.Value;
             compass.angleStyles = HUD.SetData.KeyAngleStyles.Value;
         }
+
 #endif
     }
 }

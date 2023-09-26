@@ -4,19 +4,25 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 #if !UNITY_EDITOR
+
 using EFTUtils;
 using GamePanelHUDCore;
+
 #endif
 
 namespace GamePanelHUDLife
 {
     public class GamePanelHUDLifeUI : MonoBehaviour
 #if !UNITY_EDITOR
+
         , IUpdate
+
 #endif
     {
 #if !UNITY_EDITOR
+
         private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
+
 #endif
 
         public bool arrowAnimation;
@@ -87,10 +93,13 @@ namespace GamePanelHUDLife
             _animatorDownBuffArrow = downBuffArrow.GetComponent<Animator>();
 
 #if !UNITY_EDITOR
+
             HUDCore.UpdateManger.Register(this);
+
 #endif
         }
 #if !UNITY_EDITOR
+
 
         private void OnEnable()
         {
@@ -108,9 +117,11 @@ namespace GamePanelHUDLife
         }
 
         private void LifeUI()
+
 #endif
 #if UNITY_EDITOR
         void Update()
+
 #endif
         {
             //Set Current float and color and Style to String

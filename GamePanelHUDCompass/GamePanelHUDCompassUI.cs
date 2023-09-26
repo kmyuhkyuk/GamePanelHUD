@@ -2,19 +2,25 @@
 using UnityEngine;
 using UnityEngine.UI;
 #if !UNITY_EDITOR
+
 using EFTUtils;
 using GamePanelHUDCore;
+
 #endif
 
 namespace GamePanelHUDCompass
 {
     public class GamePanelHUDCompassUI : MonoBehaviour
 #if !UNITY_EDITOR
+
         , IUpdate
+
 #endif
     {
 #if !UNITY_EDITOR
+
         private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
+
 #endif
 
         public bool angleHUDSw;
@@ -62,11 +68,14 @@ namespace GamePanelHUDCompass
             _anglePanelTransform = directionValue.transform.parent;
 
 #if !UNITY_EDITOR
+
             HUDCore.UpdateManger.Register(this);
+
 #endif
         }
 
 #if !UNITY_EDITOR
+
         private void OnEnable()
         {
             HUDCore.UpdateManger.Run(this);
@@ -83,9 +92,11 @@ namespace GamePanelHUDCompass
         }
 
         private void CompassUI()
+
 #endif
 #if UNITY_EDITOR
         void Update()
+
 #endif
         {
             arrow.color = arrowColor;

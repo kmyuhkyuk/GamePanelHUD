@@ -1,20 +1,26 @@
 ﻿using UnityEngine;
 #if !UNITY_EDITOR
+
 using GamePanelHUDCore;
 using GamePanelHUDCore.Utils;
+
 #endif
 
 namespace GamePanelHUDMap
 {
     public class GamePanelHUDMap : MonoBehaviour
 #if !UNITY_EDITOR
+
         , IUpdate
+
 #endif
     {
 #if !UNITY_EDITOR
+
         private GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
         private GamePanelHUDCorePlugin.HUDClass<GamePanelHUDMapPlugin.MapData, GamePanelHUDMapPlugin.SettingsData>
             HUD => GamePanelHUDMapPlugin.HUD;
+
 #endif
 
         private AssetBundle _assetBundle;
@@ -26,6 +32,7 @@ namespace GamePanelHUDMap
         [SerializeField] private GamePanelHUDMapUI mapUI;
 
 #if !UNITY_EDITOR
+
         private void Start()
         {
             GamePanelHUDMapPlugin.LoadMap = LoadMapAsset;
@@ -63,6 +70,7 @@ namespace GamePanelHUDMap
         private void UnloadMapAsset()
         {
         }
+
 #endif
     }
 }

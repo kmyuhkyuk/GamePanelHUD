@@ -1,4 +1,5 @@
 ﻿#if !UNITY_EDITOR
+
 using System;
 using BepInEx;
 using BepInEx.Configuration;
@@ -502,4 +503,5 @@ namespace GamePanelHUDMag
         }
     }
 }
+
 #endif
