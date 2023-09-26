@@ -240,7 +240,6 @@ namespace GamePanelHUDCompass
 
         private void Switch()
         {
-            var notPresent = Requirements[0]();
             var hasRequirements = Requirements[1]();
             var open = Requirements[2]();
 
