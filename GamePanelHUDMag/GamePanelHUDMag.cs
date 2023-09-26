@@ -44,51 +44,45 @@ namespace GamePanelHUDMag
             _rectTransform.localScale = HUD.SetData.KeyLocalScale.Value;
 
             //Set Current Maximum Patron float
-            if (mag != null)
-            {
-                mag.gameObject.SetActive(HUD.HUDSw);
-                mag.weaponNameAlways = HUD.Info.WeaponNameAlways;
-                mag.ammoTypeHUDSw = HUD.SetData.KeyAmmoTypeHUDSw.Value;
-                mag.fireModeHUDSw = HUD.SetData.KeyFireModeHUDSw.Value;
-                mag.zeroWarning = HUD.SetData.KeyZeroWarning.Value;
+            mag.gameObject.SetActive(HUD.HUDSw);
+            mag.weaponNameAlways = HUD.Info.WeaponNameAlways;
+            mag.ammoTypeHUDSw = HUD.SetData.KeyAmmoTypeHUDSw.Value;
+            mag.fireModeHUDSw = HUD.SetData.KeyFireModeHUDSw.Value;
+            mag.zeroWarning = HUD.SetData.KeyZeroWarning.Value;
 
-                mag.current = HUD.Info.MagCount;
-                mag.maximum = HUD.Info.MagMaxCount;
-                mag.patron = HUD.Info.Patron;
-                mag.normalized = HUD.Info.Normalized;
-                mag.weaponName = HUD.SetData.KeyWeaponShortName.Value ? HUD.Info.WeaponShortName : HUD.Info.WeaponName;
-                mag.ammoType = HUD.Info.AmmoType;
-                mag.fireMode = HUD.Info.FireMode;
+            mag.current = HUD.Info.MagCount;
+            mag.maximum = HUD.Info.MagMaxCount;
+            mag.patron = HUD.Info.Patron;
+            mag.normalized = HUD.Info.Normalized;
+            mag.weaponName = HUD.SetData.KeyWeaponShortName.Value ? HUD.Info.WeaponShortName : HUD.Info.WeaponName;
+            mag.ammoType = HUD.Info.AmmoType;
+            mag.fireMode = HUD.Info.FireMode;
 
-                mag.warningRate10 = HUD.SetData.KeyWarningRate10.Value / 100f;
-                mag.warningRate100 = HUD.SetData.KeyWarningRate100.Value / 100f;
-                mag.weaponNameSpeed = HUD.SetData.KeyWeaponNameSpeed.Value;
-                mag.zeroWarningSpeed = HUD.SetData.KeyZeroWarningSpeed.Value;
+            mag.warningRate10 = HUD.SetData.KeyWarningRate10.Value / 100f;
+            mag.warningRate100 = HUD.SetData.KeyWarningRate100.Value / 100f;
+            mag.weaponNameSpeed = HUD.SetData.KeyWeaponNameSpeed.Value;
+            mag.zeroWarningSpeed = HUD.SetData.KeyZeroWarningSpeed.Value;
 
-                mag.currentColor = HUD.SetData.KeyCurrentColor.Value;
-                mag.maxColor = HUD.SetData.KeyMaxColor.Value;
-                mag.patronColor = HUD.SetData.KeyPatronColor.Value;
-                mag.weaponNameColor = HUD.SetData.KeyWeaponNameColor.Value;
-                mag.ammoTypeColor = HUD.SetData.KeyAmmoTypeColor.Value;
-                mag.fireModeColor = HUD.SetData.KeyFireModeColor.Value;
-                mag.addZerosColor = HUD.SetData.KeyAddZerosColor.Value;
-                mag.warningColor = HUD.SetData.KeyWarningColor.Value;
+            mag.currentColor = HUD.SetData.KeyCurrentColor.Value;
+            mag.maxColor = HUD.SetData.KeyMaxColor.Value;
+            mag.patronColor = HUD.SetData.KeyPatronColor.Value;
+            mag.weaponNameColor = HUD.SetData.KeyWeaponNameColor.Value;
+            mag.ammoTypeColor = HUD.SetData.KeyAmmoTypeColor.Value;
+            mag.fireModeColor = HUD.SetData.KeyFireModeColor.Value;
+            mag.addZerosColor = HUD.SetData.KeyAddZerosColor.Value;
+            mag.warningColor = HUD.SetData.KeyWarningColor.Value;
 
-                mag.currentStyles = HUD.SetData.KeyCurrentStyles.Value;
-                mag.maximumStyles = HUD.SetData.KeyMaximumStyles.Value;
-                mag.patronStyles = HUD.SetData.KeyPatronStyles.Value;
-                mag.weaponNameStyles = HUD.SetData.KeyWeaponNameStyles.Value;
-                mag.ammoTypeStyles = HUD.SetData.KeyAmmoTypeStyles.Value;
-                mag.fireModeStyles = HUD.SetData.KeyFireModeStyles.Value;
-            }
+            mag.currentStyles = HUD.SetData.KeyCurrentStyles.Value;
+            mag.maximumStyles = HUD.SetData.KeyMaximumStyles.Value;
+            mag.patronStyles = HUD.SetData.KeyPatronStyles.Value;
+            mag.weaponNameStyles = HUD.SetData.KeyWeaponNameStyles.Value;
+            mag.ammoTypeStyles = HUD.SetData.KeyAmmoTypeStyles.Value;
+            mag.fireModeStyles = HUD.SetData.KeyFireModeStyles.Value;
         }
 
         private void WeaponTrigger()
         {
-            if (mag != null)
-            {
-                mag.weaponTrigger = true;
-            }
+            mag.weaponTrigger = true;
         }
 #endif
     }

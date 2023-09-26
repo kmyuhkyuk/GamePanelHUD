@@ -144,7 +144,7 @@ namespace GamePanelHUDCompass
         private void CompassFireUI()
         {
 #if !UNITY_EDITOR
-            var lhs = where - HUD.Info.PlayerPosition;
+            var lhs = where - HUD.Info.CameraPosition;
 
             var angle = HUD.Info.GetToAngle(lhs);
 
