@@ -2,7 +2,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 #if !UNITY_EDITOR
-
 using EFTUtils;
 using GamePanelHUDCore;
 
@@ -12,9 +11,7 @@ namespace GamePanelHUDCompass
 {
     public class GamePanelHUDCompassStaticUI : MonoBehaviour
 #if !UNITY_EDITOR
-
         , IUpdate
-
 #endif
     {
 #if !UNITY_EDITOR
@@ -121,11 +118,9 @@ namespace GamePanelHUDCompass
         }
 
         public void CustomUpdate()
-
 #endif
 #if UNITY_EDITOR
         void Update()
-
 #endif
         {
             CompassStaticUI();

@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 #if !UNITY_EDITOR
-
 using EFTUtils;
 using GamePanelHUDCore;
 
@@ -10,14 +9,13 @@ namespace GamePanelHUDGrenade
 {
     public class GamePanelHUDGrenade : MonoBehaviour
 #if !UNITY_EDITOR
-
         , IUpdate
-
 #endif
     {
 #if !UNITY_EDITOR
 
         private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
+
         private static
             GamePanelHUDCorePlugin.HUDClass<GamePanelHUDGrenadePlugin.GrenadeAmount,
                 GamePanelHUDGrenadePlugin.SettingsData> HUD => GamePanelHUDGrenadePlugin.HUD;

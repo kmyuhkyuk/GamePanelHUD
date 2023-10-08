@@ -2,7 +2,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 #if !UNITY_EDITOR
-
 using EFTUtils;
 using GamePanelHUDCore;
 
@@ -12,9 +11,7 @@ namespace GamePanelHUDCompass
 {
     public class GamePanelHUDCompassUI : MonoBehaviour
 #if !UNITY_EDITOR
-
         , IUpdate
-
 #endif
     {
 #if !UNITY_EDITOR
@@ -92,11 +89,9 @@ namespace GamePanelHUDCompass
         }
 
         private void CompassUI()
-
 #endif
 #if UNITY_EDITOR
         void Update()
-
 #endif
         {
             arrow.color = arrowColor;

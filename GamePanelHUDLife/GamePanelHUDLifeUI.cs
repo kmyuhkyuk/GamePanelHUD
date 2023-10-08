@@ -4,7 +4,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 #if !UNITY_EDITOR
-
 using EFTUtils;
 using GamePanelHUDCore;
 
@@ -14,9 +13,7 @@ namespace GamePanelHUDLife
 {
     public class GamePanelHUDLifeUI : MonoBehaviour
 #if !UNITY_EDITOR
-
         , IUpdate
-
 #endif
     {
 #if !UNITY_EDITOR
@@ -100,7 +97,6 @@ namespace GamePanelHUDLife
         }
 #if !UNITY_EDITOR
 
-
         private void OnEnable()
         {
             HUDCore.UpdateManger.Run(this);
@@ -117,11 +113,9 @@ namespace GamePanelHUDLife
         }
 
         private void LifeUI()
-
 #endif
 #if UNITY_EDITOR
         void Update()
-
 #endif
         {
             //Set Current float and color and Style to String

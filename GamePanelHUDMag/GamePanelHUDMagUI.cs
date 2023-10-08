@@ -2,7 +2,6 @@
 using TMPro;
 using UnityEngine;
 #if !UNITY_EDITOR
-
 using EFTUtils;
 using GamePanelHUDCore;
 
@@ -12,9 +11,7 @@ namespace GamePanelHUDMag
 {
     public class GamePanelHUDMagUI : MonoBehaviour
 #if !UNITY_EDITOR
-
         , IUpdate
-
 #endif
     {
 #if !UNITY_EDITOR
@@ -124,7 +121,6 @@ namespace GamePanelHUDMag
         }
 #if !UNITY_EDITOR
 
-
         private void OnEnable()
         {
             HUDCore.UpdateManger.Run(this);
@@ -141,11 +137,9 @@ namespace GamePanelHUDMag
         }
 
         private void MagUI()
-
 #endif
 #if UNITY_EDITOR
         void Update()
-
 #endif
         {
             //Set Current float and color and Style to String
