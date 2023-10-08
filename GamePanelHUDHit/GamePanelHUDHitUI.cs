@@ -4,7 +4,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 #if !UNITY_EDITOR
-
 using EFTUtils;
 using GamePanelHUDCore;
 
@@ -14,9 +13,7 @@ namespace GamePanelHUDHit
 {
     public class GamePanelHUDHitUI : MonoBehaviour
 #if !UNITY_EDITOR
-
         , IUpdate
-
 #endif
     {
 #if !UNITY_EDITOR
@@ -143,18 +140,15 @@ namespace GamePanelHUDHit
         }
 #if !UNITY_EDITOR
 
-
         public void CustomUpdate()
         {
             HitUI();
         }
 
         private void HitUI()
-
 #endif
 #if UNITY_EDITOR
         void Update()
-
 #endif
         {
             var leftUpPos = new Vector2(-hitAnchoredPosition.x, hitAnchoredPosition.y);
@@ -228,7 +222,6 @@ namespace GamePanelHUDHit
             _animatorHitUI.SetFloat(AnimatorHash.DeadSpeed, deadSpeed);
         }
 #if !UNITY_EDITOR
-
 
         public void HitTrigger(bool isHead, GamePanelHUDHitPlugin.HitInfo hitInfo,
             GamePanelHUDHitPlugin.HitInfo.Direction direction)

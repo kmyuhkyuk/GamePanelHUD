@@ -2,7 +2,6 @@
 using TMPro;
 using UnityEngine;
 #if !UNITY_EDITOR
-
 using EFTUtils;
 using GamePanelHUDCore;
 
@@ -12,9 +11,7 @@ namespace GamePanelHUDHit
 {
     public class GamePanelHUDExpUI : MonoBehaviour
 #if !UNITY_EDITOR
-
         , IUpdate
-
 #endif
     {
 #if !UNITY_EDITOR
@@ -57,18 +54,15 @@ namespace GamePanelHUDHit
         }
 #if !UNITY_EDITOR
 
-
         public void CustomUpdate()
         {
             ExpUI();
         }
 
         private void ExpUI()
-
 #endif
 #if UNITY_EDITOR
         void Update()
-
 #endif
         {
             _animatorExpUI.SetFloat(AnimatorHash.Speed, xpWaitSpeed);

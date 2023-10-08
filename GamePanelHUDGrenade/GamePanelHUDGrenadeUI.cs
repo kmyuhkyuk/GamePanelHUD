@@ -1,7 +1,6 @@
 ﻿using TMPro;
 using UnityEngine;
 #if !UNITY_EDITOR
-
 using EFTUtils;
 using GamePanelHUDCore;
 
@@ -11,9 +10,7 @@ namespace GamePanelHUDGrenade
 {
     public class GamePanelHUDGrenadeUI : MonoBehaviour
 #if !UNITY_EDITOR
-
         , IUpdate
-
 #endif
     {
 #if !UNITY_EDITOR
@@ -60,11 +57,9 @@ namespace GamePanelHUDGrenade
         }
 
         private void GrenadeUI()
-
 #endif
 #if UNITY_EDITOR
         void Update()
-
 #endif
         {
             //Set GrenadeAmount int and color and Style to String

@@ -6,7 +6,6 @@ using EFT;
 using TMPro;
 using UnityEngine;
 #if !UNITY_EDITOR
-
 using EFTUtils;
 using GamePanelHUDCore;
 using static EFTApi.EFTHelpers;
@@ -17,9 +16,7 @@ namespace GamePanelHUDCompass
 {
     public class GamePanelHUDCompassStatic : MonoBehaviour
 #if !UNITY_EDITOR
-
         , IUpdate
-
 #endif
     {
 #if !UNITY_EDITOR
