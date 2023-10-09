@@ -422,7 +422,9 @@ namespace GamePanelHUDCompass
 
                 if (point.Status == EExfiltrationStatus.UncompleteRequirements)
                 {
-                    var switchs = Traverse.Create(point).Field("list_1").GetValue<List<Switch>>().ToArray();
+                    var switchs = EFTVersion.AkiVersion > Version.Parse("3.6.1")
+                        ? Traverse.Create(point).Field("_switches").GetValue<List<Switch>>().ToArray()
+                        : Traverse.Create(point).Field("list_1").GetValue<List<Switch>>().ToArray();
 
                     foreach (var @switch in switchs)
                     {
