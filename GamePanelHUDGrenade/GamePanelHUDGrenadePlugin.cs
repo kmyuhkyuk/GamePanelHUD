@@ -14,8 +14,8 @@ using static EFTApi.EFTHelpers;
 
 namespace GamePanelHUDGrenade
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDGrenade", "kmyuhkyuk-GamePanelHUDGrenade", "2.7.6")]
-    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "2.7.6")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDGrenade", "kmyuhkyuk-GamePanelHUDGrenade", "2.7.7")]
+    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "2.7.7")]
     [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", "localized/grenade")]
     public class GamePanelHUDGrenadePlugin : BaseUnityPlugin, IUpdate
     {
