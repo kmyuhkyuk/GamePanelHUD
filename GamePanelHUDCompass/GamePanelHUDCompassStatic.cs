@@ -5,6 +5,7 @@ using System.Globalization;
 using EFT;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 #if !UNITY_EDITOR
 using EFTUtils;
 using GamePanelHUDCore;
@@ -59,6 +60,8 @@ namespace GamePanelHUDCompass
         [SerializeField] private TMP_Text distanceValue;
 
         [SerializeField] private TMP_Text distanceSignValue;
+
+        [SerializeField] private Image inZone;
 
         private Transform _infoPanelTransform;
 
@@ -232,6 +235,10 @@ namespace GamePanelHUDCompass
 
                         distanceSignValue.fontStyle = distanceStyles;
                         distanceSignValue.color = HUD.SetData.KeyCompassStaticMetersColor.Value;
+
+                        inZone.gameObject.SetActive(minUI.InZone);
+
+                        inZone.color = HUD.SetData.KeyCompassStaticInZoneColor.Value;
                     }
                 }
             }
@@ -301,6 +308,7 @@ namespace GamePanelHUDCompass
             staticUI.descriptionKey = staticInfo.DescriptionKey;
             staticUI.infoType = staticInfo.InfoType;
             staticUI.Requirements = staticInfo.Requirements;
+            staticUI.zoneId = staticInfo.ZoneId;
 
             CompassStatics.AddOrUpdate(staticInfo.Id, key => new List<GamePanelHUDCompassStaticUI> { staticUI },
                 (key, value) =>

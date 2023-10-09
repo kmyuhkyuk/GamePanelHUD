@@ -1,6 +1,7 @@
 ﻿#if !UNITY_EDITOR
 
 using System.Threading.Tasks;
+using HarmonyLib;
 
 namespace GamePanelHUDLife
 {
@@ -8,7 +9,7 @@ namespace GamePanelHUDLife
     {
         private static async void Execute(Task<MainMenuController> __result)
         {
-            _healthController = (await __result).HealthController;
+            _healthController = Traverse.Create(await __result).Property("HealthController").GetValue<object>();
         }
     }
 }

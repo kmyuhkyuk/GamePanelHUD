@@ -73,12 +73,12 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy "$(ProjectDir)\bin\Release\GamePanelHUDCompass.dll" "R:\Battlestate Games\Client.0.13.1.3.25206\BepInEx\plugins\kmyuhkyuk-GamePanelHUD" /Y
-xcopy "$(ProjectDir)\bin\Release\GamePanelHUDGrenade.dll" "R:\Battlestate Games\Client.0.13.1.3.25206\BepInEx\plugins\kmyuhkyuk-GamePanelHUD" /Y
-xcopy "$(ProjectDir)\bin\Release\GamePanelHUDLife.dll" "R:\Battlestate Games\Client.0.13.1.3.25206\BepInEx\plugins\kmyuhkyuk-GamePanelHUD" /Y
-xcopy "$(ProjectDir)\bin\Release\GamePanelHUDMag.dll" "R:\Battlestate Games\Client.0.13.1.3.25206\BepInEx\plugins\kmyuhkyuk-GamePanelHUD" /Y
-xcopy "$(ProjectDir)\bin\Release\GamePanelHUDHit.dll" "R:\Battlestate Games\Client.0.13.1.3.25206\BepInEx\plugins\kmyuhkyuk-GamePanelHUD" /Y
-xcopy "$(ProjectDir)\bin\Release\GamePanelHUDCore.dll" "R:\Battlestate Games\Client.0.13.1.3.25206\BepInEx\plugins\kmyuhkyuk-GamePanelHUD\core" /Y
+    <PostBuildEvent>xcopy "$(ProjectDir)\bin\Release\GamePanelHUDCompass.dll" "R:\Battlestate Games\Client.0.13.5.2.26282\BepInEx\plugins\kmyuhkyuk-GamePanelHUD" /Y
+xcopy "$(ProjectDir)\bin\Release\GamePanelHUDGrenade.dll" "R:\Battlestate Games\Client.0.13.5.2.26282\BepInEx\plugins\kmyuhkyuk-GamePanelHUD" /Y
+xcopy "$(ProjectDir)\bin\Release\GamePanelHUDLife.dll" "R:\Battlestate Games\Client.0.13.5.2.26282\BepInEx\plugins\kmyuhkyuk-GamePanelHUD" /Y
+xcopy "$(ProjectDir)\bin\Release\GamePanelHUDMag.dll" "R:\Battlestate Games\Client.0.13.5.2.26282\BepInEx\plugins\kmyuhkyuk-GamePanelHUD" /Y
+xcopy "$(ProjectDir)\bin\Release\GamePanelHUDHit.dll" "R:\Battlestate Games\Client.0.13.5.2.26282\BepInEx\plugins\kmyuhkyuk-GamePanelHUD" /Y
+xcopy "$(ProjectDir)\bin\Release\GamePanelHUDCore.dll" "R:\Battlestate Games\Client.0.13.5.2.26282\BepInEx\plugins\kmyuhkyuk-GamePanelHUD\core" /Y
 
 xcopy "$(ProjectDir)\bin\UNITY_EDITOR\GamePanelHUDCompass.dll" "C:\Users\24516\Documents\GamePanelHUD\Assets\Managed" /Y
 xcopy "$(ProjectDir)\bin\UNITY_EDITOR\GamePanelHUDGrenade.dll" "C:\Users\24516\Documents\GamePanelHUD\Assets\Managed" /Y

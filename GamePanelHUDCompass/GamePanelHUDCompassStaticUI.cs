@@ -31,6 +31,8 @@ namespace GamePanelHUDCompass
 
         public bool HasRequirements { get; private set; }
 
+        public bool InZone { get; private set; }
+
         public Vector3 where;
 
         public string[] target;
@@ -38,6 +40,8 @@ namespace GamePanelHUDCompass
         public string nameKey;
 
         public string descriptionKey;
+
+        public string zoneId;
 
         public bool isNotNecessary;
 
@@ -204,6 +208,8 @@ namespace GamePanelHUDCompass
                 case GamePanelHUDCompassPlugin.CompassStaticInfo.Type.ConditionInZone:
                     if (HUD.SetData.KeyConditionInZone.Value)
                     {
+                        InZone = HUD.Info.TriggerZones.Contains(zoneId);
+
                         Other();
                     }
                     else
@@ -272,13 +278,13 @@ namespace GamePanelHUDCompass
 
             HasRequirements = !hasItems;
 
-            if (HUD.SetData.KeyCompassStaticHideRequirements.Value)
+            var needHideRequirements = HUD.SetData.KeyCompassStaticHideRequirements.Value && HasRequirements;
+
+            var needHideOptional = HUD.SetData.KeyCompassStaticHideOptional.Value && isNotNecessary;
+
+            if (needHideRequirements || needHideOptional)
             {
-                Enabled(!HasRequirements);
-            }
-            else if (HUD.SetData.KeyCompassStaticHideOptional.Value)
-            {
-                Enabled(!isNotNecessary);
+                Enabled(false);
             }
             else
             {
@@ -302,7 +308,7 @@ namespace GamePanelHUDCompass
 
             if (HUD.SetData.KeyCompassStaticHideOptional.Value)
             {
-                Enabled(!isNotNecessary);
+                Enabled(!isNotNecessary && !hasItems);
             }
             else
             {

@@ -18,8 +18,8 @@ using static EFTApi.EFTHelpers;
 
 namespace GamePanelHUDMag
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDMag", "kmyuhkyuk-GamePanelHUDMag", "2.7.5")]
-    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "2.7.5")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDMag", "kmyuhkyuk-GamePanelHUDMag", "2.7.6")]
+    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "2.7.6")]
     [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", "localized/mag")]
     public class GamePanelHUDMagPlugin : BaseUnityPlugin, IUpdate
     {
@@ -256,7 +256,7 @@ namespace GamePanelHUDMag
                         else
                         {
                             var ammoInChamber = (int)_animatorWeapon.GetFloat(AnimatorHash.AmmoInChamber);
-                            var chambersCount = _currentWeapon.Chambers.Length;
+                            var chambersCount = _PlayerHelper.WeaponHelper.Chambers.Length;
 
                             switch (_allReloadBool)
                             {

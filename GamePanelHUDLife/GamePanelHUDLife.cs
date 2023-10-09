@@ -99,12 +99,12 @@ namespace GamePanelHUDLife
             hydration.arrowAnimation = HUD.SetData.KeyArrowAnimation.Value;
             hydration.arrowAnimationReverse = HUD.SetData.KeyArrowAnimationReverse.Value;
             hydration.isHealth = false;
-            hydration.atMaximum = HUD.Info.Hydrations.AtMaximum;
+            hydration.atMaximum = HUD.Info.Hydration.AtMaximum;
 
-            hydration.current = HUD.Info.Hydrations.Current;
-            hydration.maximum = HUD.Info.Hydrations.Maximum;
+            hydration.current = HUD.Info.Hydration.Current;
+            hydration.maximum = HUD.Info.Hydration.Maximum;
             hydration.buffRate = HUD.Info.Rates.HydrationRate;
-            hydration.normalized = HUD.Info.Hydrations.Normalized;
+            hydration.normalized = HUD.Info.Hydration.Normalized;
             hydration.warningRate = HUD.SetData.KeyHydrationWarningRate.Value / 100f;
             hydration.buffSpeed = HUD.SetData.KeyBuffSpeed.Value;
 
@@ -129,12 +129,12 @@ namespace GamePanelHUDLife
             energy.arrowAnimation = HUD.SetData.KeyArrowAnimation.Value;
             energy.arrowAnimationReverse = HUD.SetData.KeyArrowAnimationReverse.Value;
             energy.isHealth = false;
-            energy.atMaximum = HUD.Info.Energys.AtMaximum;
+            energy.atMaximum = HUD.Info.Energy.AtMaximum;
 
-            energy.current = HUD.Info.Energys.Current;
-            energy.maximum = HUD.Info.Energys.Maximum;
+            energy.current = HUD.Info.Energy.Current;
+            energy.maximum = HUD.Info.Energy.Maximum;
             energy.buffRate = HUD.Info.Rates.EnergyRate;
-            energy.normalized = HUD.Info.Energys.Normalized;
+            energy.normalized = HUD.Info.Energy.Normalized;
             energy.warningRate = HUD.SetData.KeyEnergyWarningRate.Value / 100f;
             energy.buffSpeed = HUD.SetData.KeyBuffSpeed.Value;
 
