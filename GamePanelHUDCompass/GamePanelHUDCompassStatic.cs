@@ -237,7 +237,6 @@ namespace GamePanelHUDCompass
                         distanceSignValue.color = HUD.SetData.KeyCompassStaticMetersColor.Value;
 
                         inZone.gameObject.SetActive(HUD.SetData.KeyCompassStaticInZoneHUDSw.Value && minUI.InZone);
-
                         inZone.color = HUD.SetData.KeyCompassStaticInZoneColor.Value;
                     }
                 }
