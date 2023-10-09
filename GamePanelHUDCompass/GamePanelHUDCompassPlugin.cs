@@ -582,6 +582,7 @@ namespace GamePanelHUDCompass
             public readonly ConfigEntry<bool> KeyCompassStaticQuest;
             public readonly ConfigEntry<bool> KeyCompassStaticInfoHUDSw;
             public readonly ConfigEntry<bool> KeyCompassStaticDistanceHUDSw;
+            public readonly ConfigEntry<bool> KeyCompassStaticInZoneHUDSw;
             public readonly ConfigEntry<bool> KeyCompassStaticHideRequirements;
             public readonly ConfigEntry<bool> KeyCompassStaticHideOptional;
             public readonly ConfigEntry<bool> KeyCompassStaticHideSearchedAirdrop;
@@ -672,6 +673,8 @@ namespace GamePanelHUDCompass
                 KeyCompassStaticInfoHUDSw =
                     configFile.Bind<bool>(mainSettings, "Compass Static Info HUD display", true);
                 KeyCompassStaticDistanceHUDSw =
+                    configFile.Bind<bool>(mainSettings, "Compass Static InZone HUD display", true);
+                KeyCompassStaticInZoneHUDSw =
                     configFile.Bind<bool>(mainSettings, "Compass Static Distance HUD display", true);
                 KeyCompassStaticHideRequirements =
                     configFile.Bind<bool>(mainSettings, "Compass Static Hide Requirements", false);
