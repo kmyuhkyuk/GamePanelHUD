@@ -210,6 +210,9 @@ namespace GamePanelHUDCompass
                     return fireUI;
                 }, (key, value) =>
                 {
+                    if (value == null)
+                        return null;
+
                     value.where = fireInfo.Where;
                     value.Fire();
 

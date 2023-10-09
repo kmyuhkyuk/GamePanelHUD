@@ -313,6 +313,9 @@ namespace GamePanelHUDCompass
             CompassStatics.AddOrUpdate(staticInfo.Id, key => new List<GamePanelHUDCompassStaticUI> { staticUI },
                 (key, value) =>
                 {
+                    if (value == null)
+                        return null;
+
                     value.Add(staticUI);
 
                     return value;
