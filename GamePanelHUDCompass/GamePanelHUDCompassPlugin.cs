@@ -673,9 +673,9 @@ namespace GamePanelHUDCompass
                 KeyCompassStaticInfoHUDSw =
                     configFile.Bind<bool>(mainSettings, "Compass Static Info HUD display", true);
                 KeyCompassStaticDistanceHUDSw =
-                    configFile.Bind<bool>(mainSettings, "Compass Static InZone HUD display", true);
-                KeyCompassStaticInZoneHUDSw =
                     configFile.Bind<bool>(mainSettings, "Compass Static Distance HUD display", true);
+                KeyCompassStaticInZoneHUDSw =
+                    configFile.Bind<bool>(mainSettings, "Compass Static InZone HUD display", true);
                 KeyCompassStaticHideRequirements =
                     configFile.Bind<bool>(mainSettings, "Compass Static Hide Requirements", false);
                 KeyCompassStaticHideOptional =
