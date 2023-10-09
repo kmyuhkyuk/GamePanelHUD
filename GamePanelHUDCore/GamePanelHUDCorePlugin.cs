@@ -17,8 +17,8 @@ using static EFTApi.EFTHelpers;
 
 namespace GamePanelHUDCore
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCore", "kmyuhkyuk-GamePanelHUDCore", "2.7.5")]
-    [BepInDependency("com.kmyuhkyuk.EFTApi", "1.1.6")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCore", "kmyuhkyuk-GamePanelHUDCore", "2.7.6")]
+    [BepInDependency("com.kmyuhkyuk.EFTApi", "1.1.7")]
     [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", "../localized/core")]
     public class GamePanelHUDCorePlugin : BaseUnityPlugin
     {
@@ -41,7 +41,7 @@ namespace GamePanelHUDCore
                 _allHUDSw = true;
             }
             //All HUD display 
-            else if (HUDCore.YourGameUI != null && HUDCore.YourGameUI.BattleUiScreen != null)
+            else if (HUDCore.YourGameUI != null)
             {
                 _allHUDSw = HUDCore.YourGameUI.BattleUiScreen.gameObject.activeSelf;
             }

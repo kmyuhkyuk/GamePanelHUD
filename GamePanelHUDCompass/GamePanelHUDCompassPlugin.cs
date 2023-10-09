@@ -20,8 +20,8 @@ using static EFTApi.EFTHelpers;
 
 namespace GamePanelHUDCompass
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCompass", "kmyuhkyuk-GamePanelHUDCompass", "2.7.5")]
-    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "2.7.5")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCompass", "kmyuhkyuk-GamePanelHUDCompass", "2.7.6")]
+    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "2.7.6")]
     [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", "localized/compass")]
     public partial class GamePanelHUDCompassPlugin : BaseUnityPlugin, IUpdate
     {
@@ -143,6 +143,8 @@ namespace GamePanelHUDCompass
                 _compassStaticData.CopyFrom(_compassFireData);
 
                 _compassStaticData.YourProfileId = HUDCore.YourPlayer.ProfileId;
+
+                _compassStaticData.TriggerZones = HUDCore.YourPlayer.TriggerZones;
 
                 //Performance Optimization
                 if (Time.frameCount % 20 == 0)
@@ -503,6 +505,8 @@ namespace GamePanelHUDCompass
 
             public string YourProfileId;
 
+            public List<string> TriggerZones;
+
             public bool HasEquipmentAndQuestRaidItems => EquipmentAndQuestRaidItems != null;
 
             public void CopyFrom(CompassStaticData data)
@@ -627,6 +631,7 @@ namespace GamePanelHUDCompass
             public readonly ConfigEntry<Color> KeyCompassStaticRequirementsColor;
             public readonly ConfigEntry<Color> KeyCompassStaticDistanceColor;
             public readonly ConfigEntry<Color> KeyCompassStaticMetersColor;
+            public readonly ConfigEntry<Color> KeyCompassStaticInZoneColor;
 
             public readonly ConfigEntry<FontStyles> KeyAzimuthsAngleStyles;
             public readonly ConfigEntry<FontStyles> KeyDirectionStyles;
@@ -760,6 +765,8 @@ namespace GamePanelHUDCompass
                     new Color(0.8901961f, 0.8901961f, 0.8392157f));
                 KeyCompassStaticMetersColor = configFile.Bind<Color>(colorSettings, "Compass Static Meters",
                     new Color(0.8901961f, 0.8901961f, 0.8392157f));
+                KeyCompassStaticInZoneColor = configFile.Bind<Color>(colorSettings, "Compass Static InZone",
+                    new Color(1f, 0.5f, 0f));
 
                 KeyAzimuthsAngleStyles =
                     configFile.Bind<FontStyles>(fontStylesSettings, "Azimuths Angle", FontStyles.Normal);

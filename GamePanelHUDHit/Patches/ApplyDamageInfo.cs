@@ -28,8 +28,8 @@ namespace GamePanelHUDHit
                 }
 
                 HitInfo.Hit hitType;
-
-                if (__instance.HealthController.IsAlive)
+                if (_PlayerHelper.HealthControllerHelper.RefIsAlive.GetValue(
+                        _PlayerHelper.HealthControllerHelper.RefHealthController.GetValue(__instance)))
                 {
                     hitType = hasArmorHit ? HitInfo.Hit.HasArmorHit : HitInfo.Hit.OnlyHp;
                 }

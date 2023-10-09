@@ -45,7 +45,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>R:\Battlestate Games\Client.0.12.12.15.17349\BepInEx\core\0Harmony.dll</HintPath>
     </Reference>
-    <Reference Include="Assembly-CSharp">
+    <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>R:\Battlestate Games\Client.0.12.12.15.17349\EscapeFromTarkov_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="BepInEx">

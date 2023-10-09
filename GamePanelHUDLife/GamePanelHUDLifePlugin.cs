@@ -12,14 +12,14 @@ using static EFTApi.EFTHelpers;
 
 namespace GamePanelHUDLife
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDLife", "kmyuhkyuk-GamePanelHUDLife", "2.7.5")]
-    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "2.7.5")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDLife", "kmyuhkyuk-GamePanelHUDLife", "2.7.6")]
+    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "2.7.6")]
     [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", "localized/life")]
     public partial class GamePanelHUDLifePlugin : BaseUnityPlugin, IUpdate
     {
         private static GamePanelHUDCorePlugin.HUDCoreClass HUDCore => GamePanelHUDCorePlugin.HUDCore;
 
-        private static IHealthController _healthController;
+        private static object _healthController;
 
         internal static readonly GamePanelHUDCorePlugin.HUDClass<Life, SettingsData> HUD =
             new GamePanelHUDCorePlugin.HUDClass<Life, SettingsData>();
@@ -61,26 +61,36 @@ namespace GamePanelHUDLife
 
             if (HUDCore.HasPlayer)
             {
-                _healthController = HUDCore.YourPlayer.HealthController;
+                _healthController = _PlayerHelper.HealthControllerHelper.HealthController;
             }
 
             if (_healthController != null)
             {
-                _lifeData.Health.Head = _healthController.GetBodyPartHealth(EBodyPart.Head);
-                _lifeData.Health.Chest = _healthController.GetBodyPartHealth(EBodyPart.Chest);
-                _lifeData.Health.Stomach = _healthController.GetBodyPartHealth(EBodyPart.Stomach);
-                _lifeData.Health.LeftArm = _healthController.GetBodyPartHealth(EBodyPart.LeftArm);
-                _lifeData.Health.RightArm = _healthController.GetBodyPartHealth(EBodyPart.RightArm);
-                _lifeData.Health.LeftLeg = _healthController.GetBodyPartHealth(EBodyPart.LeftLeg);
-                _lifeData.Health.RightLeg = _healthController.GetBodyPartHealth(EBodyPart.RightLeg);
-                _lifeData.Health.Common = _healthController.GetBodyPartHealth(EBodyPart.Common);
+                _lifeData.Health.Head =
+                    _PlayerHelper.HealthControllerHelper.GetBodyPartHealth(_healthController, EBodyPart.Head);
+                _lifeData.Health.Chest =
+                    _PlayerHelper.HealthControllerHelper.GetBodyPartHealth(_healthController, EBodyPart.Chest);
+                _lifeData.Health.Stomach =
+                    _PlayerHelper.HealthControllerHelper.GetBodyPartHealth(_healthController, EBodyPart.Stomach);
+                _lifeData.Health.LeftArm =
+                    _PlayerHelper.HealthControllerHelper.GetBodyPartHealth(_healthController, EBodyPart.LeftArm);
+                _lifeData.Health.RightArm =
+                    _PlayerHelper.HealthControllerHelper.GetBodyPartHealth(_healthController, EBodyPart.RightArm);
+                _lifeData.Health.LeftLeg =
+                    _PlayerHelper.HealthControllerHelper.GetBodyPartHealth(_healthController, EBodyPart.LeftLeg);
+                _lifeData.Health.RightLeg =
+                    _PlayerHelper.HealthControllerHelper.GetBodyPartHealth(_healthController, EBodyPart.RightLeg);
+                _lifeData.Health.Common =
+                    _PlayerHelper.HealthControllerHelper.GetBodyPartHealth(_healthController, EBodyPart.Common);
 
-                _lifeData.Hydrations = _healthController.Hydration;
+                _lifeData.Hydration = _PlayerHelper.HealthControllerHelper.RefHydration.GetValue(_healthController);
 
-                _lifeData.Energys = _healthController.Energy;
+                _lifeData.Energy = _PlayerHelper.HealthControllerHelper.RefEnergy.GetValue(_healthController);
 
-                _lifeData.Rates = new Life.Rate(_healthController.HealthRate, _healthController.HydrationRate,
-                    _healthController.EnergyRate);
+                _lifeData.Rates = new Life.Rate(
+                    _PlayerHelper.HealthControllerHelper.RefHealthRate.GetValue(_healthController),
+                    _PlayerHelper.HealthControllerHelper.RefHydrationRate.GetValue(_healthController),
+                    _PlayerHelper.HealthControllerHelper.RefEnergyRate.GetValue(_healthController));
             }
         }
 
@@ -88,9 +98,9 @@ namespace GamePanelHUDLife
         {
             public HealthClass Health = new HealthClass();
 
-            public ValueStruct Hydrations;
+            public ValueStruct Hydration;
 
-            public ValueStruct Energys;
+            public ValueStruct Energy;
 
             public Rate Rates;
 
