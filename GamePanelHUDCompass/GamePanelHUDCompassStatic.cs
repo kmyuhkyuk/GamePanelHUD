@@ -257,6 +257,20 @@ namespace GamePanelHUDCompass
 
         private void ShowStatic(GamePanelHUDCompassPlugin.CompassStaticInfo staticInfo)
         {
+            CompassStatics.AddOrUpdate(staticInfo.Id, key => new List<GamePanelHUDCompassStaticUI> { CreateStatic(staticInfo) },
+                (key, value) =>
+                {
+                    if (value == null)
+                        return null;
+
+                    value.Add(CreateStatic(staticInfo));
+
+                    return value;
+                });
+        }
+
+        private GamePanelHUDCompassStaticUI CreateStatic(GamePanelHUDCompassPlugin.CompassStaticInfo staticInfo)
+        {
             Transform root;
             switch (staticInfo.InfoType)
             {
@@ -310,16 +324,7 @@ namespace GamePanelHUDCompass
             staticUI.Requirements = staticInfo.Requirements;
             staticUI.zoneId = staticInfo.ZoneId;
 
-            CompassStatics.AddOrUpdate(staticInfo.Id, key => new List<GamePanelHUDCompassStaticUI> { staticUI },
-                (key, value) =>
-                {
-                    if (value == null)
-                        return null;
-
-                    value.Add(staticUI);
-
-                    return value;
-                });
+            return staticUI;
         }
 
         private static void DestroyAll(GameWorld __instance)
