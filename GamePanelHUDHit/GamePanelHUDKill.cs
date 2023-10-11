@@ -150,15 +150,15 @@ namespace GamePanelHUDHit
 
             var baseExp = _SessionHelper.ExperienceHelper.GetBaseExp(killInfo.Exp, killInfo.Side);
 
-            var hasExp = baseExp;
+            var allExp = baseExp;
 
-            var hasInfo = 1;
+            var allInfo = 1;
 
-            var hasKills = new List<GamePanelHUDKillUI>();
+            var allKillList = new List<GamePanelHUDKillUI>();
 
             if (killInfo.Distance >= HUD.SetData.KeyKillDistance.Value && HUD.SetData.KeyKillHasDistance.Value)
             {
-                hasKills.Add(AddDistanceInfo(killInfo, HUD.SetData, killRoot));
+                allKillList.Add(AddDistanceInfo(killInfo, HUD.SetData, killRoot));
             }
 
             if (killInfo.Kills > 1 && HUD.SetData.KeyKillHasStreak.Value)
@@ -166,28 +166,28 @@ namespace GamePanelHUDHit
                 var streakXp =
                     _SessionHelper.ExperienceHelper.GetStreakExp(killInfo.Exp, killInfo.Side, killInfo.Kills);
 
-                hasKills.Add(AddStreakInfo(killInfo, HUD.SetData, killRoot, streakXp));
+                allKillList.Add(AddStreakInfo(killInfo, HUD.SetData, killRoot, streakXp));
 
-                hasExp += streakXp;
+                allExp += streakXp;
 
-                hasInfo++;
+                allInfo++;
             }
 
             if (killInfo.Part == EBodyPart.Head && HUD.SetData.KeyKillHasOther.Value)
             {
                 var headXp = _SessionHelper.ExperienceHelper.GetHeadExp(killInfo.Exp, killInfo.Side);
 
-                hasKills.Add(AddOtherInfo(HUD.SetData, killRoot, _LocalizedHelper.Localized("StatsHeadshot"),
+                allKillList.Add(AddOtherInfo(HUD.SetData, killRoot, _LocalizedHelper.Localized("StatsHeadshot"),
                     headXp, true));
 
-                hasExp += headXp;
+                allExp += headXp;
 
-                hasInfo++;
+                allInfo++;
             }
 
-            hasKills.Add(AddKillInfo(killInfo, HUD.SetData, killRoot, baseExp));
+            allKillList.Add(AddKillInfo(killInfo, HUD.SetData, killRoot, baseExp));
 
-            var hasKillsCount = hasKills.Count;
+            var hasKillsCount = allKillList.Count;
 
             _currentHasInfo += hasKillsCount;
             _waitInfo += hasKillsCount;
@@ -198,34 +198,34 @@ namespace GamePanelHUDHit
             {
                 if (_previous != null)
                 {
-                    _previous.after = hasKills.Last();
+                    _previous.after = allKillList.Last();
 
                     count -= 1;
                 }
 
-                hasKills.First().canDestroy = true;
+                allKillList.First().canDestroy = true;
             }
             else
             {
                 if (_previous != null)
                 {
-                    _previous.after = hasKills.First();
+                    _previous.after = allKillList.First();
 
-                    hasKills.Last().after = _previous;
+                    allKillList.Last().after = _previous;
                 }
                 else
                 {
-                    hasKills.First().canDestroy = true;
+                    allKillList.First().canDestroy = true;
                 }
             }
 
-            _previous = hasKills.Last();
+            _previous = allKillList.Last();
 
             if (hasKillsCount > 1)
             {
                 for (var i = 0; i < count; i++)
                 {
-                    hasKills[i].after = hasKills[i + 1];
+                    allKillList[i].after = allKillList[i + 1];
                 }
             }
 
@@ -233,15 +233,15 @@ namespace GamePanelHUDHit
 
             if (_currentHasInfo > 0 && !isAnim)
             {
-                expRoot.XpUp(hasExp, _lastXp);
+                expRoot.XpUp(allExp, _lastXp);
             }
-            else if (isAnim || hasInfo > 1)
+            else if (isAnim || allInfo > 1)
             {
-                expRoot.XpUp(hasExp, 0);
+                expRoot.XpUp(allExp, 0);
             }
             else
             {
-                _lastXp = hasExp;
+                _lastXp = allExp;
             }
         }
 
