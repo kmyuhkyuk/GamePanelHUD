@@ -85,25 +85,27 @@ namespace Build
             var filesDictionary = new Dictionary<string, string>();
             foreach (var file in directory.GetFiles("*", SearchOption.AllDirectories))
             {
-                if (file.Directory != null)
+                if (file.Directory == null)
                 {
-                    var fileDirectoryName = file.Directory.FullName.Replace(directoryFullName, string.Empty);
+                    throw new ArgumentNullException(nameof(file.Directory));
+                }
 
-                    if (!string.IsNullOrEmpty(fileDirectoryName))
+                var fileDirectoryName = file.Directory.FullName.Replace(directoryFullName, string.Empty);
+
+                if (!string.IsNullOrEmpty(fileDirectoryName))
+                {
+                    if (excludeDirectoryNames.Contains(fileDirectoryName))
                     {
-                        if (excludeDirectoryNames.Contains(fileDirectoryName))
-                        {
-                            Console.WriteLine($"Exclude {fileDirectoryName} Directory\nSkip {file.FullName}");
-                            continue;
-                        }
+                        Console.WriteLine($"Exclude {fileDirectoryName} Directory\nSkip {file.FullName}");
+                        continue;
+                    }
 
-                        var fileName = file.FullName.Replace(directoryFullName, string.Empty);
+                    var fileName = file.FullName.Replace(directoryFullName, string.Empty);
 
-                        if (excludeFileNames.Contains(fileName))
-                        {
-                            Console.WriteLine($"Exclude {fileName} File\nSkip {file.FullName}");
-                            continue;
-                        }
+                    if (excludeFileNames.Contains(fileName))
+                    {
+                        Console.WriteLine($"Exclude {fileName} File\nSkip {file.FullName}");
+                        continue;
                     }
                 }
 
