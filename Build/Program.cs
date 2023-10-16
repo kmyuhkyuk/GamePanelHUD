@@ -89,7 +89,7 @@ namespace Build
 
                 if (excludeDirectoryNames.Contains(fileDirectoryName))
                 {
-                    Console.WriteLine($"Exclude {fileDirectoryName}\nSkip {file.FullName}");
+                    Console.WriteLine($"Exclude {fileDirectoryName} Directory\nSkip {file.FullName}");
                     continue;
                 }
 
@@ -97,7 +97,7 @@ namespace Build
 
                 if (excludeFileNames.Contains(fileName))
                 {
-                    Console.WriteLine($"Exclude {fileName}\nSkip {file.FullName}");
+                    Console.WriteLine($"Exclude {fileName} File\nSkip {file.FullName}");
                     continue;
                 }
 
