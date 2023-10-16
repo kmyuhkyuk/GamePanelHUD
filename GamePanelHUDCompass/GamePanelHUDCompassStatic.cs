@@ -256,7 +256,8 @@ namespace GamePanelHUDCompass
 
         private void ShowStatic(GamePanelHUDCompassPlugin.CompassStaticInfo staticInfo)
         {
-            CompassStatics.AddOrUpdate(staticInfo.Id, key => new List<GamePanelHUDCompassStaticUI> { CreateStatic(staticInfo) },
+            CompassStatics.AddOrUpdate(staticInfo.Id,
+                key => new List<GamePanelHUDCompassStaticUI> { CreateStatic(staticInfo) },
                 (key, value) =>
                 {
                     if (value == null)
