@@ -75,11 +75,11 @@ namespace Build
             var compressor = new SevenZipCompressor();
 
             var filesDictionary = new Dictionary<string, string>();
-            foreach (var fileInfo in directory.GetFiles("*", SearchOption.AllDirectories))
+            foreach (var file in directory.GetFiles("*", SearchOption.AllDirectories))
             {
                 filesDictionary.Add(
-                    fileInfo.FullName.Replace(directory.Parent.FullName, "BepInEx\\plugins"),
-                    fileInfo.FullName);
+                    file.FullName.Replace(directory.Parent.FullName, "BepInEx\\plugins"),
+                    file.FullName);
             }
 
             compressor.CompressFileDictionary(filesDictionary,
