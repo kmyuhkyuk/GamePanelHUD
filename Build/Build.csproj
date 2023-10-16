@@ -4,16 +4,19 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{0CF4BFD1-E89B-4C60-A202-D0544E030AF5}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GamePanelHUDBuild</RootNamespace>
-    <AssemblyName>GamePanelHUDBuild</AssemblyName>
+    <ProjectGuid>{A86680EF-DD21-4DDA-AD2A-132D83B61263}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Build</RootNamespace>
+    <AssemblyName>Build</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -23,6 +26,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -30,20 +34,27 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'UNITY_EDITOR|AnyCPU'">
-    <OutputPath>bin\UNITY_EDITOR\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;UNITY_EDITOR</DefineConstants>
-  </PropertyGroup>
   <PropertyGroup>
     <RunPostBuildEvent>OnOutputUpdated</RunPostBuildEvent>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'UNITY_EDITOR|AnyCPU'">
+    <OutputPath>bin\UNITY_EDITOR\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="SevenZipSharp, Version=1.6.1.23, Culture=neutral, PublicKeyToken=c8ff6ba0184838bb, processorArchitecture=MSIL">
+      <HintPath>..\packages\Squid-Box.SevenZipSharp.Lite.1.6.1.23\lib\net472\SevenZipSharp.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Build.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GamePanelHUDCompass\GamePanelHUDCompass.csproj">
@@ -72,19 +83,14 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\7z.Libs.21.7.0\build\net\7z.Libs.targets" Condition="Exists('..\packages\7z.Libs.21.7.0\build\net\7z.Libs.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>这台计算机上缺少此项目引用的 NuGet 程序包。使用“NuGet 程序包还原”可下载这些程序包。有关更多信息，请参见 http://go.microsoft.com/fwlink/?LinkID=322105。缺少的文件是 {0}。</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\7z.Libs.21.7.0\build\net\7z.Libs.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\7z.Libs.21.7.0\build\net\7z.Libs.targets'))" />
+  </Target>
   <PropertyGroup>
-    <PostBuildEvent>xcopy "$(ProjectDir)\bin\Release\GamePanelHUDCompass.dll" "R:\Battlestate Games\Client.0.13.5.2.26282\BepInEx\plugins\kmyuhkyuk-GamePanelHUD" /Y
-xcopy "$(ProjectDir)\bin\Release\GamePanelHUDGrenade.dll" "R:\Battlestate Games\Client.0.13.5.2.26282\BepInEx\plugins\kmyuhkyuk-GamePanelHUD" /Y
-xcopy "$(ProjectDir)\bin\Release\GamePanelHUDLife.dll" "R:\Battlestate Games\Client.0.13.5.2.26282\BepInEx\plugins\kmyuhkyuk-GamePanelHUD" /Y
-xcopy "$(ProjectDir)\bin\Release\GamePanelHUDMag.dll" "R:\Battlestate Games\Client.0.13.5.2.26282\BepInEx\plugins\kmyuhkyuk-GamePanelHUD" /Y
-xcopy "$(ProjectDir)\bin\Release\GamePanelHUDHit.dll" "R:\Battlestate Games\Client.0.13.5.2.26282\BepInEx\plugins\kmyuhkyuk-GamePanelHUD" /Y
-xcopy "$(ProjectDir)\bin\Release\GamePanelHUDCore.dll" "R:\Battlestate Games\Client.0.13.5.2.26282\BepInEx\plugins\kmyuhkyuk-GamePanelHUD\core" /Y
-
-xcopy "$(ProjectDir)\bin\UNITY_EDITOR\GamePanelHUDCompass.dll" "C:\Users\24516\Documents\GamePanelHUD\Assets\Managed" /Y
-xcopy "$(ProjectDir)\bin\UNITY_EDITOR\GamePanelHUDGrenade.dll" "C:\Users\24516\Documents\GamePanelHUD\Assets\Managed" /Y
-xcopy "$(ProjectDir)\bin\UNITY_EDITOR\GamePanelHUDLife.dll" "C:\Users\24516\Documents\GamePanelHUD\Assets\Managed" /Y
-xcopy "$(ProjectDir)\bin\UNITY_EDITOR\GamePanelHUDMag.dll" "C:\Users\24516\Documents\GamePanelHUD\Assets\Managed" /Y
-xcopy "$(ProjectDir)\bin\UNITY_EDITOR\GamePanelHUDHit.dll" "C:\Users\24516\Documents\GamePanelHUD\Assets\Managed" /Y
-xcopy "$(ProjectDir)\bin\UNITY_EDITOR\GamePanelHUDCore.dll" "C:\Users\24516\Documents\GamePanelHUD\Assets\Managed" /Y</PostBuildEvent>
+    <PostBuildEvent>start $(TargetPath) $(ConfigurationName)</PostBuildEvent>
   </PropertyGroup>
 </Project>
