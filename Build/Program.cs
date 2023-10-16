@@ -62,11 +62,11 @@ namespace Build
 
         private static void SevenZip(string path)
         {
-            var directoryInfo = new DirectoryInfo(path);
+            var directory = new DirectoryInfo(path);
 
-            if (directoryInfo.Parent == null)
+            if (directory.Parent == null)
             {
-                throw new ArgumentNullException(nameof(directoryInfo.Parent));
+                throw new ArgumentNullException(nameof(directory.Parent));
             }
 
             SevenZipBase.SetLibraryPath(
@@ -75,15 +75,15 @@ namespace Build
             var compressor = new SevenZipCompressor();
 
             var filesDictionary = new Dictionary<string, string>();
-            foreach (var fileInfo in directoryInfo.GetFiles("*", SearchOption.AllDirectories))
+            foreach (var fileInfo in directory.GetFiles("*", SearchOption.AllDirectories))
             {
                 filesDictionary.Add(
-                    fileInfo.FullName.Replace(directoryInfo.Parent.FullName, "BepInEx\\plugins"),
+                    fileInfo.FullName.Replace(directory.Parent.FullName, "BepInEx\\plugins"),
                     fileInfo.FullName);
             }
 
             compressor.CompressFileDictionary(filesDictionary,
-                File.Create(Path.Combine(directoryInfo.Parent.FullName, $"{directoryInfo.Name}.7z")));
+                File.Create(Path.Combine(directory.Parent.FullName, $"{directory.Name}.7z")));
         }
 
         private static void Copy(string toPath, string[] dllNames)
