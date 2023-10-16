@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using SevenZip;
 
 namespace Build
@@ -62,12 +63,19 @@ namespace Build
 
         private static void SevenZip(string path)
         {
+            SevenZip(path, Array.Empty<string>(), Array.Empty<string>());
+        }
+
+        private static void SevenZip(string path, string[] excludeDirectoryNames, string[] excludeFileNames)
+        {
             var directory = new DirectoryInfo(path);
 
             if (directory.Parent == null)
             {
                 throw new ArgumentNullException(nameof(directory.Parent));
             }
+
+            var directoryFullName = $"{directory.FullName}\\";
 
             SevenZipBase.SetLibraryPath(
                 $@"{Environment.CurrentDirectory}\{(IntPtr.Size == 4 ? "x86" : "x64")}\7z.dll");
@@ -77,6 +85,22 @@ namespace Build
             var filesDictionary = new Dictionary<string, string>();
             foreach (var file in directory.GetFiles("*", SearchOption.AllDirectories))
             {
+                var fileDirectoryName = file.Directory?.FullName.Replace(directoryFullName, string.Empty);
+
+                if (excludeDirectoryNames.Contains(fileDirectoryName))
+                {
+                    Console.WriteLine($"Exclude {fileDirectoryName}\nSkip {file.FullName}");
+                    continue;
+                }
+
+                var fileName = file.FullName.Replace(directoryFullName, string.Empty);
+
+                if (excludeFileNames.Contains(fileName))
+                {
+                    Console.WriteLine($"Exclude {fileName}\nSkip {file.FullName}");
+                    continue;
+                }
+
                 filesDictionary.Add(
                     file.FullName.Replace(directory.Parent.FullName, "BepInEx\\plugins"),
                     file.FullName);
