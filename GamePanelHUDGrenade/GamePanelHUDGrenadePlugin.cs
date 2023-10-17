@@ -85,7 +85,7 @@ namespace GamePanelHUDGrenade
 
                     GetGrenadeAmount(_rig, out _rigAmount.Frag, out _rigAmount.Stun, out _rigAmount.Flash,
                         out _rigAmount.Smoke);
-                    GetGrenadeAmount(_pocket, out _pocketAmount.Frag, out _pocketAmount.Stun, out _pocketAmount.Frag,
+                    GetGrenadeAmount(_pocket, out _pocketAmount.Frag, out _pocketAmount.Stun, out _pocketAmount.Flash,
                         out _pocketAmount.Smoke);
                 }
 
@@ -116,7 +116,9 @@ namespace GamePanelHUDGrenade
                     {
                         if (item.GetType() == _grenadeItemType)
                         {
-                            switch (_reflectionData.ThrowType.GetValue(item))
+                            var throwType = _reflectionData.ThrowType.GetValue(item);
+
+                            switch (throwType)
                             {
                                 case ThrowWeapType.frag_grenade:
                                     frag++;
@@ -130,6 +132,13 @@ namespace GamePanelHUDGrenade
                                 case ThrowWeapType.smoke_grenade:
                                     smoke++;
                                     break;
+                                case ThrowWeapType.gas_grenade:
+                                    break;
+                                case ThrowWeapType.incendiary_grenade:
+                                case ThrowWeapType.sonar:
+                                    break;
+                                default:
+                                    throw new ArgumentOutOfRangeException(nameof(throwType), throwType, null);
                             }
                         }
                     }
@@ -139,9 +148,12 @@ namespace GamePanelHUDGrenade
             {
                 foreach (var grid in grids)
                 {
-                    foreach (var _ in _PlayerHelper.InventoryHelper.RefItems.GetValue(grid))
+                    foreach (var item in _PlayerHelper.InventoryHelper.RefItems.GetValue(grid))
                     {
-                        frag++;
+                        if (item.GetType() == _grenadeItemType)
+                        {
+                            frag++;
+                        }
                     }
                 }
             }
