@@ -133,7 +133,6 @@ namespace GamePanelHUDGrenade
                                     smoke++;
                                     break;
                                 case ThrowWeapType.gas_grenade:
-                                    break;
                                 case ThrowWeapType.incendiary_grenade:
                                 case ThrowWeapType.sonar:
                                     break;
