@@ -37,7 +37,9 @@ namespace Build
                         "GamePanelHUDMag"
                     });
 
-                    SevenZip(releasePath);
+                    SevenZip(releasePath,
+                        new Dictionary<string, string> { { "ReadMe.txt", Path.Combine(BaseDirectory, "ReadMe.txt") } },
+                        Array.Empty<string>(), Array.Empty<string>());
                     break;
                 case "UNITY_EDITOR":
                     const string unityEditorPath = "C:\\Users\\24516\\Documents\\GamePanelHUD\\Assets\\Managed";
@@ -63,10 +65,11 @@ namespace Build
 
         private static void SevenZip(string path)
         {
-            SevenZip(path, Array.Empty<string>(), Array.Empty<string>());
+            SevenZip(path, null, Array.Empty<string>(), Array.Empty<string>());
         }
 
-        private static void SevenZip(string path, string[] excludeDirectoryNames, string[] excludeFileNames)
+        private static void SevenZip(string path, Dictionary<string, string> addFileDictionary,
+            string[] excludeDirectoryNames, string[] excludeFileNames)
         {
             var directory = new DirectoryInfo(path);
 
@@ -82,7 +85,7 @@ namespace Build
 
             var compressor = new SevenZipCompressor();
 
-            var filesDictionary = new Dictionary<string, string>();
+            var filesDictionary = addFileDictionary ?? new Dictionary<string, string>();
             foreach (var file in directory.GetFiles("*", SearchOption.AllDirectories))
             {
                 if (file.Directory == null)
