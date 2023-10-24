@@ -158,7 +158,7 @@ namespace GamePanelHUDCompass
 
                 if (_compassStaticCacheBool)
                 {
-                    ShowQuest(HUDCore.YourPlayer, HUDCore.TheWorld, EFTVersion.AkiVersion > Version.Parse("2.3.1"),
+                    ShowQuest(HUDCore.YourPlayer, HUDCore.TheWorld, HUDCore.TheGame,
                         ShowStatic);
 
                     ShowExfiltration(HUDCore.YourPlayer, HUDCore.TheWorld, ShowStatic);
@@ -173,7 +173,7 @@ namespace GamePanelHUDCompass
             }
         }
 
-        private static void ShowQuest(Player player, GameWorld world, bool is231Up,
+        private static void ShowQuest(Player player, GameWorld world, AbstractGame game,
             Action<CompassStaticInfo> showStatic)
         {
             if (player is HideoutPlayer)
@@ -190,12 +190,19 @@ namespace GamePanelHUDCompass
             (string Id, LootItem Item)[] questItems =
                 lootItemsList.Where(x => x.Item.QuestItem).Select(x => (x.TemplateId, x)).ToArray();
 
+            var is231Up = EFTVersion.AkiVersion > Version.Parse("2.3.1");
+
             foreach (var item in questsList)
             {
                 if (Traverse.Create(item).Property("QuestStatus").GetValue<EQuestStatus>() != EQuestStatus.Started)
                     continue;
 
                 var template = Traverse.Create(item).Property("Template").GetValue<object>();
+
+                var locationId = Traverse.Create(template).Field("LocationId").GetValue<string>();
+
+                if (locationId != game.LocationObjectId && locationId != "any")
+                    continue;
 
                 switch (is231Up)
                 {
