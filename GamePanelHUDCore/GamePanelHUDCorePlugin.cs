@@ -65,6 +65,8 @@ namespace GamePanelHUDCore
 
             public GameWorld TheWorld => EFTGlobal.GameWorld;
 
+            public AbstractGame TheGame => EFTGlobal.AbstractGame;
+
             public event Action<GameWorld> WorldStart
             {
                 add => _GameWorldHelper.OnGameStarted.Add(value);
