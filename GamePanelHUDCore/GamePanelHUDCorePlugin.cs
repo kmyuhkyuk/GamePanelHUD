@@ -17,8 +17,8 @@ using static EFTApi.EFTHelpers;
 
 namespace GamePanelHUDCore
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCore", "kmyuhkyuk-GamePanelHUDCore", "2.7.7")]
-    [BepInDependency("com.kmyuhkyuk.EFTApi", "1.1.7")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCore", "kmyuhkyuk-GamePanelHUDCore", "2.7.8")]
+    [BepInDependency("com.kmyuhkyuk.EFTApi", "1.1.8")]
     [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", "../localized/core")]
     public class GamePanelHUDCorePlugin : BaseUnityPlugin
     {
