@@ -76,13 +76,17 @@
       <Project>{798133e6-f502-4d73-bb3a-4c4d56d14ff5}</Project>
       <Name>GamePanelHUDHit</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GamePanelHUDLife\GamePanelHUDLife.csproj">
+    <ProjectReference Include="..\GamePanelHUDHealth\GamePanelHUDHealth.csproj">
       <Project>{d0b0c60c-0a9c-4e93-8cb3-73c4becdea8d}</Project>
-      <Name>GamePanelHUDLife</Name>
+      <Name>GamePanelHUDHealth</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GamePanelHUDMag\GamePanelHUDMag.csproj">
+    <ProjectReference Include="..\GamePanelHUDKill\GamePanelHUDKill.csproj">
+      <Project>{d067f025-d2b8-44e8-869e-747e1c9a7b78}</Project>
+      <Name>GamePanelHUDKill</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GamePanelHUDWeapon\GamePanelHUDWeapon.csproj">
       <Project>{808deb9b-1331-4f71-b3a1-dd7a8d699466}</Project>
-      <Name>GamePanelHUDMag</Name>
+      <Name>GamePanelHUDWeapon</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

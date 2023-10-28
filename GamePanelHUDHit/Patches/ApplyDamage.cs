@@ -3,6 +3,7 @@
 using System;
 using EFT.InventoryLogic;
 using EFTApi;
+using GamePanelHUDHit.Models;
 using HarmonyLib;
 using MonoMod.Cil;
 using MonoMod.Utils;
@@ -24,8 +25,8 @@ namespace GamePanelHUDHit
 
             codes.InsertRange(callApplyDurabilityDamage.Index - 1, new[]
             {
-                processor.Create(Mono.Cecil.Cil.OpCodes.Ldsfld,
-                    AccessTools.Field(typeof(GamePanelHUDHitPlugin), nameof(Armor))),
+                processor.Create(Mono.Cecil.Cil.OpCodes.Call,
+                    AccessTools.PropertyGetter(typeof(ArmorModel), nameof(ArmorModel.Instance))),
                 processor.Create(Mono.Cecil.Cil.OpCodes.Ldarg_1),
                 processor.Create(Mono.Cecil.Cil.OpCodes.Ldobj, typeof(DamageInfo)),
                 EFTVersion.AkiVersion > Version.Parse("3.4.1")
@@ -35,7 +36,7 @@ namespace GamePanelHUDHit
                     ? processor.Create(Mono.Cecil.Cil.OpCodes.Nop)
                     : processor.Create(Mono.Cecil.Cil.OpCodes.Ldind_R4),
                 processor.Create(Mono.Cecil.Cil.OpCodes.Call,
-                    AccessTools.Method(typeof(ArmorInfo), nameof(ArmorInfo.Set)))
+                    AccessTools.Method(typeof(ArmorModel), nameof(ArmorModel.Set)))
             });
         }
     }

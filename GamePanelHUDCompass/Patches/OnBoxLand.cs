@@ -2,6 +2,7 @@
 
 using System;
 using EFT.Interactive;
+using GamePanelHUDCompass.Models;
 using UnityEngine;
 using static EFTApi.EFTHelpers;
 
@@ -11,6 +12,8 @@ namespace GamePanelHUDCompass
     {
         private static void OnBoxLand(MonoBehaviour __instance, object ___boxSync)
         {
+            var compassStaticHUDModel = CompassStaticHUDModel.Instance;
+
             var looTable = __instance.GetComponentInChildren<LootableContainer>();
 
             var controller = _GameWorldHelper.LootableContainerHelper.RefItemOwner.GetValue(looTable);
@@ -43,23 +46,23 @@ namespace GamePanelHUDCompass
                     break;
             }
 
-            var staticInfo = new CompassStaticInfo
+            var staticModel = new StaticModel
             {
-                Id = $"Airdrop{_airdropCount}",
+                Id = $"Airdrop{compassStaticHUDModel.AirdropCount}",
                 Where = __instance.transform.position,
                 NameKey = nameKey,
                 DescriptionKey = descriptionKey,
-                InfoType = CompassStaticInfo.Type.Airdrop,
+                InfoType = StaticModel.Type.Airdrop,
                 Requirements = new Func<bool>[]
                 {
                     () => _GameWorldHelper.SearchableItemClassHelper.RefAllSearchersIds?.GetValue(item)
-                        .Contains(CompassStaticHUD.Info.YourProfileId) ?? false
+                        .Contains(compassStaticHUDModel.CompassStatic.YourProfileId) ?? false
                 }
             };
 
-            _airdropCount++;
+            compassStaticHUDModel.AirdropCount++;
 
-            ShowStatic(staticInfo);
+            compassStaticHUDModel.ShowStatic(staticModel);
         }
     }
 }

@@ -85,18 +85,31 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GamePanelHUDCompass.cs" />
-    <Compile Include="GamePanelHUDCompassFire.cs" />
-    <Compile Include="GamePanelHUDCompassFireUI.cs" />
+    <Compile Include="Controllers\CompassFireHUDController.cs" />
+    <Compile Include="Controllers\CompassHUDController.cs" />
+    <Compile Include="Controllers\CompassStaticHUDController.cs" />
     <Compile Include="GamePanelHUDCompassPlugin.cs" />
-    <Compile Include="GamePanelHUDCompassStatic.cs" />
-    <Compile Include="GamePanelHUDCompassStaticUI.cs" />
-    <Compile Include="GamePanelHUDCompassUI.cs" />
+    <Compile Include="Models\CompassFireHUDModel.cs" />
+    <Compile Include="Models\CompassFireModel.cs" />
+    <Compile Include="Models\CompassHUDModel.cs" />
+    <Compile Include="Models\CompassModel.cs" />
+    <Compile Include="Models\CompassStaticHUDModel.cs" />
+    <Compile Include="Models\CompassStaticModel.cs" />
+    <Compile Include="Models\FireModel.cs" />
+    <Compile Include="Models\SettingsModel.cs" />
+    <Compile Include="Models\StaticModel.cs" />
     <Compile Include="Patches\InitiateShot.cs" />
     <Compile Include="Patches\OnBoxLand.cs" />
     <Compile Include="Patches\OnConditionValueChanged.cs" />
     <Compile Include="Patches\OnDead.cs" />
+    <Compile Include="Patches\OnWorldStart.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Views\CompassFireHUDView.cs" />
+    <Compile Include="Views\CompassFireUIView.cs" />
+    <Compile Include="Views\CompassHUDView.cs" />
+    <Compile Include="Views\CompassStaticHUDView.cs" />
+    <Compile Include="Views\CompassStaticUIView.cs" />
+    <Compile Include="Views\CompassUIView.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="kmyuhkyuk.pfx" />

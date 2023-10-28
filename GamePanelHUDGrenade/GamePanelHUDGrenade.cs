@@ -31,11 +31,15 @@ namespace GamePanelHUDGrenade
         private RectTransform _rectTransform;
 
 #if !UNITY_EDITOR
+private void Awake()
+{
+                _rectTransform = GetComponent<RectTransform>();
+
+}
+
 
         private void Start()
         {
-            _rectTransform = GetComponent<RectTransform>();
-
             HUDCore.UpdateManger.Register(this);
         }
 

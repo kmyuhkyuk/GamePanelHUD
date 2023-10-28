@@ -33,8 +33,9 @@ namespace Build
                         "GamePanelHUDCompass",
                         "GamePanelHUDGrenade",
                         "GamePanelHUDHit",
-                        "GamePanelHUDLife",
-                        "GamePanelHUDMag"
+                        "GamePanelHUDKill",
+                        "GamePanelHUDHealth",
+                        "GamePanelHUDWeapon"
                     });
 
                     SevenZip(releasePath,
@@ -50,8 +51,9 @@ namespace Build
                         "GamePanelHUDCompass",
                         "GamePanelHUDGrenade",
                         "GamePanelHUDHit",
-                        "GamePanelHUDLife",
-                        "GamePanelHUDMag"
+                        "GamePanelHUDKill",
+                        "GamePanelHUDHealth",
+                        "GamePanelHUDWeapon"
                     });
                     break;
             }

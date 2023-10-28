@@ -37,16 +37,16 @@ namespace GamePanelHUDMap
 
         internal static Action UnloadMap;
 
+        private void Awake()
+        {
+            HUDCore.LoadHUD("gamepanelmaphud.bundle", "gamepanelmaphud");
+        }
+
         private void Start()
         {
             _mapPath = Path.Combine(HUDCore.ModPath, "map");
 
             HUDCore.UpdateManger.Register(this);
-        }
-
-        private void Awake()
-        {
-            HUDCore.LoadHUD("gamepanelmaphud.bundle", "gamepanelmaphud");
         }
 
         public void CustomUpdate()
