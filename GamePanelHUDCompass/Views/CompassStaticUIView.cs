@@ -81,7 +81,10 @@ namespace GamePanelHUDCompass.Views
             _virtualRect = @virtual.GetComponent<RectTransform>();
             _virtual2Rect = virtual2.GetComponent<RectTransform>();
             _virtual3Rect = virtual3.GetComponent<RectTransform>();
+        }
 
+        private void Start()
+        {
             switch (InfoType)
             {
                 case StaticModel.Type.Airdrop:
@@ -101,10 +104,7 @@ namespace GamePanelHUDCompass.Views
                 default:
                     throw new ArgumentOutOfRangeException(nameof(InfoType), InfoType, null);
             }
-        }
 
-        private void Start()
-        {
             HUDCoreModel.Instance.UpdateManger.Register(this);
         }
 
