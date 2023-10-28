@@ -101,16 +101,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GamePanelHUDHit.cs" />
+    <Compile Include="Controllers\HitHUDController.cs" />
     <Compile Include="GamePanelHUDHitPlugin.cs" />
-    <Compile Include="GamePanelHUDHitUI.cs" />
-    <Compile Include="GamePanelHUDKillUI.cs" />
-    <Compile Include="GamePanelHUDExpUI.cs" />
-    <Compile Include="GamePanelHUDKill.cs" />
+    <Compile Include="Models\ArmorModel.cs" />
+    <Compile Include="Models\HitHUDModel.cs" />
+    <Compile Include="Models\HitModel.cs" />
+    <Compile Include="Models\SettingsModel.cs" />
     <Compile Include="Patches\ApplyDamage.cs" />
     <Compile Include="Patches\ApplyDamageInfo.cs" />
-    <Compile Include="Patches\OnBeenKilledByAggressor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Views\HitHUDView.cs" />
+    <Compile Include="Views\HitUIView.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="kmyuhkyuk.pfx" />

@@ -1,6 +1,7 @@
 ﻿#if !UNITY_EDITOR
 
 using EFT.Quests;
+using GamePanelHUDCompass.Models;
 
 namespace GamePanelHUDCompass
 {
@@ -11,7 +12,7 @@ namespace GamePanelHUDCompass
         {
             if (status != EQuestStatus.Started)
             {
-                DestroyStatic(condition.id);
+                CompassStaticHUDModel.Instance.DestroyStatic(condition.id);
             }
         }
     }

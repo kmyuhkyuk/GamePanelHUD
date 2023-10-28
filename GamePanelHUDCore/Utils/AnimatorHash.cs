@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿#if !UNITY_EDITOR
+
+using UnityEngine;
 
 namespace GamePanelHUDCore.Utils
 {
@@ -47,3 +49,5 @@ namespace GamePanelHUDCore.Utils
         public static readonly int SmallSpeed = Animator.StringToHash("SmallSpeed");
     }
 }
+
+#endif

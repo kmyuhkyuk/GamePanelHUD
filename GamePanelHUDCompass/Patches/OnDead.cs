@@ -1,6 +1,8 @@
 ﻿#if !UNITY_EDITOR
 
 using EFT;
+using GamePanelHUDCompass.Models;
+using GamePanelHUDCore.Models;
 
 namespace GamePanelHUDCompass
 {
@@ -8,9 +10,9 @@ namespace GamePanelHUDCompass
     {
         private static void OnDead(Player __instance)
         {
-            if (__instance != HUDCore.YourPlayer)
+            if (__instance != HUDCoreModel.Instance.YourPlayer)
             {
-                DestroyFire(__instance.ProfileId);
+                CompassFireHUDModel.Instance.DestroyFire(__instance.ProfileId);
             }
         }
     }

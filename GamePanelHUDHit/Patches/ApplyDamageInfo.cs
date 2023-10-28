@@ -1,6 +1,8 @@
 ﻿#if !UNITY_EDITOR
 
 using EFT;
+using GamePanelHUDCore.Models;
+using GamePanelHUDHit.Models;
 using static EFTApi.EFTHelpers;
 
 namespace GamePanelHUDHit
@@ -9,17 +11,18 @@ namespace GamePanelHUDHit
     {
         private static void ApplyDamageInfo(Player __instance, DamageInfo damageInfo, EBodyPart bodyPartType)
         {
-            if (_PlayerHelper.DamageInfoHelper.GetPlayer(damageInfo) == HUDCore.YourPlayer)
+            if (_PlayerHelper.DamageInfoHelper.GetPlayer(damageInfo) == HUDCoreModel.Instance.YourPlayer)
             {
+                var armorModel = ArmorModel.Instance;
+
                 float armorDamage;
                 bool hasArmorHit;
-
-                if (Armor.Activate)
+                if (armorModel.Activate)
                 {
-                    armorDamage = Armor.Damage;
+                    armorDamage = armorModel.Damage;
                     hasArmorHit = true;
 
-                    Armor.Reset();
+                    armorModel.Reset();
                 }
                 else
                 {
@@ -27,18 +30,18 @@ namespace GamePanelHUDHit
                     hasArmorHit = false;
                 }
 
-                HitInfo.Hit hitType;
+                HitModel.Hit hitType;
                 if (_PlayerHelper.HealthControllerHelper.RefIsAlive.GetValue(
                         _PlayerHelper.HealthControllerHelper.RefHealthController.GetValue(__instance)))
                 {
-                    hitType = hasArmorHit ? HitInfo.Hit.HasArmorHit : HitInfo.Hit.OnlyHp;
+                    hitType = hasArmorHit ? HitModel.Hit.HasArmorHit : HitModel.Hit.OnlyHp;
                 }
                 else
                 {
-                    hitType = HitInfo.Hit.Dead;
+                    hitType = HitModel.Hit.Dead;
                 }
 
-                var info = new HitInfo
+                var info = new HitModel
                 {
                     Damage = damageInfo.DidBodyDamage,
                     DamagePart = bodyPartType,
@@ -49,7 +52,7 @@ namespace GamePanelHUDHit
                     HitDirection = damageInfo.Direction
                 };
 
-                ShowHit(info);
+                HitHUDModel.Instance.ShowHit(info);
             }
         }
     }
