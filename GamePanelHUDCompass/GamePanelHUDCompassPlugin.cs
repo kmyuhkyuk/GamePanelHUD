@@ -1,6 +1,5 @@
 ﻿#if !UNITY_EDITOR
 
-using System;
 using BepInEx;
 using GamePanelHUDCompass.Models;
 using GamePanelHUDCore.Attributes;
