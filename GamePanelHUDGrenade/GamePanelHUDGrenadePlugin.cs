@@ -7,7 +7,7 @@ using SettingsModel = GamePanelHUDGrenade.Models.SettingsModel;
 
 namespace GamePanelHUDGrenade
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDGrenade", "kmyuhkyuk-GamePanelHUDGrenade", "2.7.8")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDGrenade", "GamePanelHUDGrenade", "2.7.8")]
     [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "2.7.8")]
     [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", "localized/grenade")]
     public class GamePanelHUDGrenadePlugin : BaseUnityPlugin
