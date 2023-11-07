@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace GamePanelHUDDebug.MagDebug
 {
-    [BepInPlugin("com.kmyuhkyuk.AnimatorStateRecord", "kmyuhkyuk-AnimatorStateRecord", "1.0.0")]
+    [BepInPlugin("com.kmyuhkyuk.AnimatorStateRecord", "AnimatorStateRecord", "1.0.0")]
     [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore")]
     public class AnimatorStateRecord : BaseUnityPlugin
     {
