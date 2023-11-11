@@ -1,7 +1,7 @@
-﻿using System.Threading.Tasks;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 #if !UNITY_EDITOR
+using System.Collections;
 using EFTUtils;
 using GamePanelHUDCore.Models;
 using GamePanelHUDCore.Utils;
@@ -70,10 +70,9 @@ namespace GamePanelHUDKill.Views
 
             if (active)
             {
-                _animatorKillUI.SetBool(AnimatorHash.Active, active);
+                _animatorKillUI.SetBool(AnimatorHash.Active, true);
 
-                TextPlay(settingsModel.KeyKillWriteSpeed.Value, settingsModel.KeyKillWrite2Speed.Value,
-                    settingsModel.KeyKillWaitTime.Value);
+                StartCoroutine(TextPlay());
 
                 active = false;
             }
@@ -86,19 +85,21 @@ namespace GamePanelHUDKill.Views
             }
         }
 
-        private async void TextPlay(int speed, int speed2, int waitTime)
+        private IEnumerator TextPlay()
         {
+            var settingsModel = SettingsModel.Instance;
+
             textValue.text = text;
 
-            await TextTask(textValue, speed, false);
+            yield return TextAnimToLeft(textValue, settingsModel.KeyKillWriteWaitTime.Value);
 
             if (isKillInfo)
             {
-                await Task.Delay(waitTime);
+                yield return new WaitForSecondsRealtime(settingsModel.KeyKillWaitTime.Value);
 
                 textValue.text = text2;
 
-                await TextTask(textValue, speed2, true);
+                yield return TextAnimToRight(textValue, settingsModel.KeyKillWrite2WaitTime.Value);
             }
 
             _animatorKillUI.SetBool(AnimatorHash.Complete, true);
@@ -106,62 +107,63 @@ namespace GamePanelHUDKill.Views
             KillHUDView.HasWaitInfoMinus();
         }
 
-        private async Task TextTask(TMP_Text tmpText, int speed, bool toRight)
+        private static IEnumerator TextAnimToRight(TMP_Text tmpText, float waitTime)
         {
             tmpText.ForceMeshUpdate();
             var textInfo = tmpText.textInfo;
             var textCount = textInfo.characterCount;
 
+            tmpText.maxVisibleCharacters = 0;
+
             var complete = false;
-            int current;
+            var current = 0;
 
-            if (toRight)
+            while (!complete)
             {
-                textValue.maxVisibleCharacters = 0;
-
-                current = 0;
-
-                while (!complete)
+                if (current > textCount)
                 {
-                    if (current > textCount)
-                    {
-                        current = textCount;
+                    current = textCount;
 
-                        complete = true;
-                    }
-
-                    tmpText.maxVisibleCharacters = current;
-                    current++;
-
-                    await Task.Delay(speed);
+                    complete = true;
                 }
+
+                tmpText.maxVisibleCharacters = current;
+                current++;
+
+                yield return new WaitForSecondsRealtime(waitTime);
             }
-            else
+        }
+
+        private static IEnumerator TextAnimToLeft(TMP_Text tmpText, float waitTime)
+        {
+            tmpText.ForceMeshUpdate();
+            var textInfo = tmpText.textInfo;
+            var textCount = textInfo.characterCount;
+
+            tmpText.firstVisibleCharacter = textCount;
+
+            var complete = false;
+            var current = textCount;
+
+            while (!complete)
             {
-                textValue.firstVisibleCharacter = textCount;
-
-                current = textCount;
-
-                while (!complete)
+                if (current < 0)
                 {
-                    if (current < 0)
-                    {
-                        current = 0;
+                    current = 0;
 
-                        complete = true;
-                    }
-
-                    tmpText.firstVisibleCharacter = current;
-                    current--;
-
-                    await Task.Delay(speed);
+                    complete = true;
                 }
+
+                tmpText.firstVisibleCharacter = current;
+                current--;
+
+                yield return new WaitForSecondsRealtime(waitTime);
             }
         }
 
 #endif
 
-        private void OnDestroy()
+        private void Destroy()
         {
 #if !UNITY_EDITOR
 

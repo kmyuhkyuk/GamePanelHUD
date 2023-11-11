@@ -165,7 +165,7 @@ namespace GamePanelHUDCompass.Views
 
             if (active)
             {
-                _animatorFire.SetBool(AnimatorHash.Active, active);
+                _animatorFire.SetBool(AnimatorHash.Active, true);
 
                 active = false;
             }
