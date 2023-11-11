@@ -72,25 +72,8 @@ namespace GamePanelHUDKill.Views
             {
                 _animatorKillUI.SetBool(AnimatorHash.Active, active);
 
-                Task.Run(async () =>
-                {
-                    textValue.text = text;
-
-                    await TextTask(textValue, settingsModel.KeyKillWriteSpeed.Value, false);
-
-                    if (isKillInfo)
-                    {
-                        await Task.Delay(settingsModel.KeyKillWaitTime.Value);
-
-                        textValue.text = text2;
-
-                        await TextTask(textValue, settingsModel.KeyKillWrite2Speed.Value, true);
-                    }
-
-                    _animatorKillUI.SetBool(AnimatorHash.Complete, true);
-
-                    KillHUDView.HasWaitInfoMinus();
-                });
+                TextPlay(settingsModel.KeyKillWriteSpeed.Value, settingsModel.KeyKillWrite2Speed.Value,
+                    settingsModel.KeyKillWaitTime.Value);
 
                 active = false;
             }
@@ -101,6 +84,26 @@ namespace GamePanelHUDKill.Views
 
                 canDestroy = false;
             }
+        }
+
+        private async void TextPlay(int speed, int speed2, int waitTime)
+        {
+            textValue.text = text;
+
+            await TextTask(textValue, speed, false);
+
+            if (isKillInfo)
+            {
+                await Task.Delay(waitTime);
+
+                textValue.text = text2;
+
+                await TextTask(textValue, speed2, true);
+            }
+
+            _animatorKillUI.SetBool(AnimatorHash.Complete, true);
+
+            KillHUDView.HasWaitInfoMinus();
         }
 
         private async Task TextTask(TMP_Text tmpText, int speed, bool toRight)
