@@ -72,9 +72,9 @@ namespace GamePanelHUDKill.Models
         public readonly ConfigEntry<Vector2> KeyKillExpSizeDelta;
         public readonly ConfigEntry<Vector2> KeyKillExpLocalScale;
 
-        public readonly ConfigEntry<int> KeyKillWriteSpeed;
-        public readonly ConfigEntry<int> KeyKillWrite2Speed;
-        public readonly ConfigEntry<int> KeyKillWaitTime;
+        public readonly ConfigEntry<float> KeyKillWriteWaitTime;
+        public readonly ConfigEntry<float> KeyKillWrite2WaitTime;
+        public readonly ConfigEntry<float> KeyKillWaitTime;
 
         public readonly ConfigEntry<float> KeyKillDistance;
         public readonly ConfigEntry<float> KeyKillWaitSpeed;
@@ -161,17 +161,17 @@ namespace GamePanelHUDKill.Models
             KeyExpWaitSpeed = configFile.Bind<float>(speedSettings, "Exp Wait Speed", 1,
                 new ConfigDescription(string.Empty, new AcceptableValueRange<float>(0, 10)));
 
-            KeyKillWriteSpeed = configFile.Bind<int>(speedSettings, "Kill Text display Speed", 10,
-                new ConfigDescription("Single character input speed (unit ms)",
-                    new AcceptableValueRange<int>(0, 1000)));
-            KeyKillWrite2Speed = configFile.Bind<int>(speedSettings, "Kill Text 2 display Speed", 10,
-                new ConfigDescription("Single character input speed (unit ms)",
-                    new AcceptableValueRange<int>(0, 1000)));
-            KeyKillWaitTime = configFile.Bind<int>(speedSettings, "Kill Text 2 Wait Time", 500,
-                new ConfigDescription("Play Text to Text2 ago Wait Time (unit ms)",
-                    new AcceptableValueRange<int>(0, 1000)));
+            KeyKillWriteWaitTime = configFile.Bind<float>(speedSettings, "Kill Text Input Speed", 0.01f,
+                new ConfigDescription("Single character input speed (unit s)",
+                    new AcceptableValueRange<float>(0, 10)));
+            KeyKillWrite2WaitTime = configFile.Bind<float>(speedSettings, "Kill Text 2 Input Speed", 0.01f,
+                new ConfigDescription("Single character input speed (unit s)",
+                    new AcceptableValueRange<float>(0, 10)));
+            KeyKillWaitTime = configFile.Bind<float>(speedSettings, "Kill Text 2 Wait Time", 0.5f,
+                new ConfigDescription("Play Text to Text2 ago Wait Time (unit s)",
+                    new AcceptableValueRange<float>(0, 10)));
 
-            KeyKillDistance = configFile.Bind<float>(distanceSettings, "Kill Distance display", 50,
+            KeyKillDistance = configFile.Bind<float>(distanceSettings, "Kill Distance display", 100,
                 new ConfigDescription("When Kill distance >= How many meters display",
                     new AcceptableValueRange<float>(0, 1000)));
 
