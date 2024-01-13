@@ -33,17 +33,16 @@ namespace Build
 
             const string unityEditorPath = "C:\\Users\\24516\\Documents\\GamePanelHUD\\Assets\\Managed";
 
-            Copy.CopyAssembly(arg, "UNITY_EDITOR", baseDirectory, unityEditorPath,
-                new[]
-                {
-                    "GamePanelHUDCore",
-                    "GamePanelHUDCompass",
-                    "GamePanelHUDGrenade",
-                    "GamePanelHUDHit",
-                    "GamePanelHUDKill",
-                    "GamePanelHUDHealth",
-                    "GamePanelHUDWeapon"
-                });
+            Copy.CopyAssembly(arg, "UNITY_EDITOR", baseDirectory, unityEditorPath, new[]
+            {
+                "GamePanelHUDCore",
+                "GamePanelHUDCompass",
+                "GamePanelHUDGrenade",
+                "GamePanelHUDHit",
+                "GamePanelHUDKill",
+                "GamePanelHUDHealth",
+                "GamePanelHUDWeapon"
+            });
         }
     }
 }
