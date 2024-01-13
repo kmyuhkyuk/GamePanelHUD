@@ -23,9 +23,11 @@ namespace GamePanelHUDGrenade.Views
 
         public FontStyles grenadeStyles;
 
-#pragma warning disable CS0649
+#pragma warning disable CS0649 // Field is never assigned to, and will always have its default value
+        // ReSharper disable once InconsistentNaming
         [SerializeField] private TMP_Text countValue;
-#pragma warning restore CS0649
+#pragma warning restore CS0649 // Field is never assigned to, and will always have its default value
+
 #if !UNITY_EDITOR
 
         private void Start()
