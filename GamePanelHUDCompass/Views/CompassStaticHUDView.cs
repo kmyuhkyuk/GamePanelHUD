@@ -110,32 +110,30 @@ namespace GamePanelHUDCompass.Views
             _infoPanelRect.localScale = settingsModel.KeyCompassStaticInfoScale.Value;
 
             var isCenter = false;
-
-            if (CompassStatics.Count > 0 && Removes.Count > 0)
-            {
-                for (var i = 0; i < Removes.Count; i++)
-                {
-                    var remove = Removes[i];
-
-                    if (CompassStatics.TryRemove(remove, out var list))
-                    {
-                        foreach (var ui in list)
-                        {
-                            ui.Destroy();
-                        }
-
-                        Removes.RemoveAt(i);
-                    }
-                }
-            }
-
             if (CompassStatics.Count > 0)
             {
+                if (Removes.Count > 0)
+                {
+                    for (var i = 0; i < Removes.Count; i++)
+                    {
+                        var remove = Removes[i];
+
+                        if (CompassStatics.TryRemove(remove, out var list))
+                        {
+                            foreach (var ui in list)
+                            {
+                                ui.Destroy();
+                            }
+
+                            Removes.RemoveAt(i);
+                        }
+                    }
+                }
+
                 var range = settingsModel.KeyCompassStaticCenterPointRange.Value;
 
                 List<(float XDiff, CompassStaticUIView StaticUI)> allDiff =
                     new List<(float, CompassStaticUIView)>();
-
                 foreach (var uis in CompassStatics.Values)
                 {
                     foreach (var ui in uis)

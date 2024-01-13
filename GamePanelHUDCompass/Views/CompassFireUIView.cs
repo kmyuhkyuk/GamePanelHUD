@@ -22,7 +22,7 @@ namespace GamePanelHUDCompass.Views
 
         public bool isFollower;
 
-        public bool? IsLeft { get; private set; }
+        public int Direction { get; private set; }
 
         public string who;
 
@@ -148,7 +148,7 @@ namespace GamePanelHUDCompass.Views
             var fireXRight = FireXRight;
             var fireXRightRight = FireXRightRight;
 
-            IsLeft = GetDirection(compassHUDModel.Compass.SizeDelta.x, compassHUDModel.Compass.CompassX, _fireX,
+            Direction = GetDirection(compassHUDModel.Compass.SizeDelta.x, compassHUDModel.Compass.CompassX, _fireX,
                 fireXLeft, fireXRight,
                 fireXRightRight, lhs, compassFireHUDModel.CompassFire.PlayerRight);
 
@@ -176,7 +176,7 @@ namespace GamePanelHUDCompass.Views
             _animatorFire.SetTrigger(AnimatorHash.Fire);
         }
 
-        private static bool? GetDirection(float panelX, float compassX, float fireX, float fireXLeft, float fireXRight,
+        private static int GetDirection(float panelX, float compassX, float fireX, float fireXLeft, float fireXRight,
             float fireXRightRight, Vector3 lhs, Vector3 right)
         {
             var panelHalf = panelX / 2;
@@ -193,11 +193,11 @@ namespace GamePanelHUDCompass.Views
 
             if (!realInPanel && !virtualInPanel)
             {
-                return RealDirection(lhs, right);
+                return RealDirection(lhs, right) ? 1 : -1;
             }
             else
             {
-                return default;
+                return 0;
             }
         }
 

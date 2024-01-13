@@ -86,66 +86,62 @@ namespace GamePanelHUDCompass.Views
             _fireLeftRect.anchoredPosition = new Vector2(-directionPosition.x, directionPosition.y);
             _fireLeftRect.localScale = settingsModel.KeyCompassFireDirectionScale.Value;
             var leftDirectionColor = settingsModel.KeyCompassFireColor.Value;
-            var left = false;
 
             _fireRightRect.anchoredPosition = directionPosition;
             _fireRightRect.localScale = settingsModel.KeyCompassFireDirectionScale.Value;
             var rightDirectionColor = settingsModel.KeyCompassFireColor.Value;
+
+            var left = false;
             var right = false;
-
-            if (_compassFires.Count > 0 && _removes.Count > 0)
-            {
-                for (var i = 0; i < _removes.Count; i++)
-                {
-                    var remove = _removes[i];
-
-                    if (_compassFires.TryRemove(remove, out var ui))
-                    {
-                        ui.Destroy();
-
-                        _removes.RemoveAt(i);
-                    }
-                }
-            }
-
             if (_compassFires.Count > 0)
             {
+                if (_removes.Count > 0)
+                {
+                    for (var i = 0; i < _removes.Count; i++)
+                    {
+                        var remove = _removes[i];
+
+                        if (_compassFires.TryRemove(remove, out var ui))
+                        {
+                            ui.Destroy();
+
+                            _removes.RemoveAt(i);
+                        }
+                    }
+                }
+
                 foreach (var fireUI in _compassFires.Values)
                 {
-                    var isLeft = fireUI.IsLeft;
-
-                    if (!isLeft.HasValue)
-                        continue;
-
                     var isBoos = fireUI.isBoss;
 
                     var isFollower = fireUI.isFollower;
 
-                    if ((bool)isLeft)
+                    switch (fireUI.Direction)
                     {
-                        left = true;
+                        case 1:
+                            left = true;
 
-                        if (isBoos)
-                        {
-                            leftDirectionColor = settingsModel.KeyCompassFireBossColor.Value;
-                        }
-                        else if (isFollower)
-                        {
-                            leftDirectionColor = settingsModel.KeyCompassFireFollowerColor.Value;
-                        }
-                    }
-                    else
-                    {
-                        right = true;
+                            if (isBoos)
+                            {
+                                leftDirectionColor = settingsModel.KeyCompassFireBossColor.Value;
+                            }
+                            else if (isFollower)
+                            {
+                                leftDirectionColor = settingsModel.KeyCompassFireFollowerColor.Value;
+                            }
+                            break;
+                        case -1:
+                            right = true;
 
-                        if (isBoos)
-                        {
-                            rightDirectionColor = settingsModel.KeyCompassFireBossColor.Value;
-                        }
-                        else if (isFollower)
-                        {
-                            rightDirectionColor = settingsModel.KeyCompassFireFollowerColor.Value;
-                        }
+                            if (isBoos)
+                            {
+                                rightDirectionColor = settingsModel.KeyCompassFireBossColor.Value;
+                            }
+                            else if (isFollower)
+                            {
+                                rightDirectionColor = settingsModel.KeyCompassFireFollowerColor.Value;
+                            }
+                            break;
                     }
                 }
             }
