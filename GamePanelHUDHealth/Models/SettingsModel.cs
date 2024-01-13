@@ -106,7 +106,6 @@ namespace GamePanelHUDHealth.Models
                 return Instance;
 
             return Instance = new SettingsModel(configFile);
-            ;
         }
     }
 }
