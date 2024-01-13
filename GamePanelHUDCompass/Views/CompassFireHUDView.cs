@@ -129,6 +129,7 @@ namespace GamePanelHUDCompass.Views
                             {
                                 leftDirectionColor = settingsModel.KeyCompassFireFollowerColor.Value;
                             }
+
                             break;
                         case -1:
                             right = true;
@@ -141,6 +142,7 @@ namespace GamePanelHUDCompass.Views
                             {
                                 rightDirectionColor = settingsModel.KeyCompassFireFollowerColor.Value;
                             }
+
                             break;
                     }
                 }
