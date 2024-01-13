@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using CopyBuildAssembly;
 
 namespace Build
@@ -14,12 +15,12 @@ namespace Build
             const string releasePath =
                 "R:\\Battlestate Games\\Client.0.13.5.3.26535\\BepInEx\\plugins\\kmyuhkyuk-GamePanelHUD";
 
-            Copy.CopyAssembly(args, "Release", baseDirectory, Path.Combine(releasePath, "core"), new[]
+            Copy.CopyAssembly(args.ElementAtOrDefault(0), "Release", baseDirectory, Path.Combine(releasePath, "core"), new[]
             {
                 "GamePanelHUDCore"
             });
 
-            Copy.CopyAssembly(args, "Release", baseDirectory, releasePath, new[]
+            Copy.CopyAssembly(args.ElementAtOrDefault(0), "Release", baseDirectory, releasePath, new[]
             {
                 "GamePanelHUDCompass",
                 "GamePanelHUDGrenade",
@@ -31,7 +32,7 @@ namespace Build
 
             const string unityEditorPath = "C:\\Users\\24516\\Documents\\GamePanelHUD\\Assets\\Managed";
 
-            Copy.CopyAssembly(args, "UNITY_EDITOR", baseDirectory, unityEditorPath,
+            Copy.CopyAssembly(args.ElementAtOrDefault(0), "UNITY_EDITOR", baseDirectory, unityEditorPath,
                 new[]
                 {
                     "GamePanelHUDCore",
