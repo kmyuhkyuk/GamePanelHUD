@@ -2,6 +2,8 @@
 
 using EFT.HealthSystem;
 
+// ReSharper disable NotAccessedField.Global
+
 namespace GamePanelHUDHealth.Models
 {
     internal class HealthModel

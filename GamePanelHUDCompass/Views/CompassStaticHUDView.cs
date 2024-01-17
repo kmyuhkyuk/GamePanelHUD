@@ -41,11 +41,11 @@ namespace GamePanelHUDCompass.Views
 
         [SerializeField] private Sprite exfiltration;
 
+        [SerializeField] private TMP_Text nameValue;
+
         [SerializeField] private TMP_Text necessaryValue;
 
         [SerializeField] private TMP_Text requirementsValue;
-
-        [SerializeField] private TMP_Text nameValue;
 
         [SerializeField] private TMP_Text descriptionValue;
 
@@ -61,6 +61,10 @@ namespace GamePanelHUDCompass.Views
 
         private RectTransform _rectTransform;
 
+        private RectTransform _namePanelRect;
+
+        private RectTransform _descriptionPanelRect;
+
         private RectTransform _infoPanelRect;
 
 #if !UNITY_EDITOR
@@ -68,10 +72,13 @@ namespace GamePanelHUDCompass.Views
         {
             _rectTransform = GetComponent<RectTransform>();
 
-            _infoPanelTransform = nameValue.transform.parent.parent;
-            _infoPanelRect = _infoPanelTransform.GetComponent<RectTransform>();
+            _namePanelRect = nameValue.transform.parent.GetComponent<RectTransform>();
+            _descriptionPanelRect = descriptionValue.transform.GetComponent<RectTransform>();
 
             _distancePanelTransform = distanceValue.transform.parent;
+
+            _infoPanelTransform = _namePanelRect.parent;
+            _infoPanelRect = _infoPanelTransform.GetComponent<RectTransform>();
 
             var compassStaticHUDModel = CompassStaticHUDModel.Instance;
 
@@ -98,6 +105,15 @@ namespace GamePanelHUDCompass.Views
                 compassHUDModel.Compass.SizeDelta.y * 1.5f);
             _rectTransform.localScale = settingsModel.KeyLocalScale.Value;
 
+            //Distance panel width is 110, Spacing is 5
+            var outDistanceHalfSize = settingsModel.KeyCompassStaticInfoAutoSizeDelta.Value
+                ? new Vector2((compassHUDModel.Compass.SizeDelta.x - 110 - 5) / 2,
+                    settingsModel.KeyCompassStaticInfoSizeDelta.Value.y)
+                : settingsModel.KeyCompassStaticInfoSizeDelta.Value;
+
+            _namePanelRect.sizeDelta = outDistanceHalfSize;
+            _descriptionPanelRect.sizeDelta = outDistanceHalfSize;
+
             compassStaticRoot.gameObject.SetActive(compassStaticHUDModel.CompassStaticHUDSw);
 
             airdropsRoot.gameObject.SetActive(settingsModel.KeyCompassStaticAirdrop.Value);
@@ -118,15 +134,15 @@ namespace GamePanelHUDCompass.Views
                     {
                         var remove = Removes[i];
 
-                        if (CompassStatics.TryRemove(remove, out var list))
-                        {
-                            foreach (var ui in list)
-                            {
-                                ui.Destroy();
-                            }
+                        if (!CompassStatics.TryRemove(remove, out var list))
+                            continue;
 
-                            Removes.RemoveAt(i);
+                        foreach (var ui in list)
+                        {
+                            ui.Destroy();
                         }
+
+                        Removes.RemoveAt(i);
                     }
                 }
 
@@ -143,11 +159,11 @@ namespace GamePanelHUDCompass.Views
 
                         var xDiff = ui.XDiff;
 
-                        if (xDiff < range && xDiff > -range)
-                        {
-                            allDiff.Add((xDiff, ui));
-                            isCenter = true;
-                        }
+                        if (xDiff >= range || xDiff <= -range)
+                            continue;
+
+                        allDiff.Add((xDiff, ui));
+                        isCenter = true;
                     }
                 }
 
@@ -156,14 +172,15 @@ namespace GamePanelHUDCompass.Views
                     float minXDiff = range;
                     CompassStaticUIView minUI = null;
 
+                    // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
                     foreach (var diff in allDiff)
                     {
-                        if (Math.Abs(diff.XDiff) < minXDiff)
-                        {
-                            minXDiff = diff.XDiff;
+                        if (Math.Abs(diff.XDiff) >= minXDiff)
+                            continue;
 
-                            minUI = diff.StaticUI;
-                        }
+                        minXDiff = diff.XDiff;
+
+                        minUI = diff.StaticUI;
                     }
 
                     if (minUI != null)
@@ -195,8 +212,7 @@ namespace GamePanelHUDCompass.Views
 
                         var textInfo = CultureInfo.CurrentCulture.TextInfo;
                         var requirementsText = minUI.HasRequirements
-                            ? textInfo.ToTitleCase(_LocalizedHelper.Localized("ragfair/REQUIREMENTS",
-                                EStringCase.Lower))
+                            ? $"({textInfo.ToTitleCase(_LocalizedHelper.Localized("ragfair/REQUIREMENTS", EStringCase.Lower))})"
                             : string.Empty;
 
                         var nameStyles = settingsModel.KeyCompassStaticNameStyles.Value;

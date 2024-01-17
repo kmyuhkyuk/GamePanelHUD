@@ -46,32 +46,32 @@ namespace GamePanelHUDGrenade.Controllers
             grenadeHUDModel.GrenadeHUDSw = hudCoreModel.AllHUDSw && hudCoreModel.HasPlayer &&
                                            settingsModel.KeyGrenadeHUDSw.Value;
 
-            if (hudCoreModel.HasPlayer)
+            if (!hudCoreModel.HasPlayer)
+                return;
+
+            var rigAmount = grenadeHUDModel.RigAmount;
+            var pocketAmount = grenadeHUDModel.PocketAmount;
+            var allAmount = grenadeHUDModel.AllAmount;
+
+            //Performance Optimization
+            if (Time.frameCount % 20 == 0)
             {
-                var rigAmount = grenadeHUDModel.RigAmount;
-                var pocketAmount = grenadeHUDModel.PocketAmount;
-                var allAmount = grenadeHUDModel.AllAmount;
+                var slots = _PlayerHelper.InventoryHelper.EquipmentSlots;
 
-                //Performance Optimization
-                if (Time.frameCount % 20 == 0)
-                {
-                    var slots = _PlayerHelper.InventoryHelper.EquipmentSlots;
+                //Get Rig and Pocket
+                _rig = slots[6].ContainedItem;
+                _pocket = slots[10].ContainedItem;
 
-                    //Get Rig and Pocket
-                    _rig = slots[6].ContainedItem;
-                    _pocket = slots[10].ContainedItem;
-
-                    GetGrenadeAmount(_rig, out rigAmount.Frag, out rigAmount.Stun, out rigAmount.Flash,
-                        out rigAmount.Smoke);
-                    GetGrenadeAmount(_pocket, out pocketAmount.Frag, out pocketAmount.Stun, out pocketAmount.Flash,
-                        out pocketAmount.Smoke);
-                }
-
-                allAmount.Frag = rigAmount.Frag + pocketAmount.Frag;
-                allAmount.Stun = rigAmount.Stun + pocketAmount.Stun;
-                allAmount.Flash = rigAmount.Flash + pocketAmount.Flash;
-                allAmount.Smoke = rigAmount.Smoke + pocketAmount.Smoke;
+                GetGrenadeAmount(_rig, out rigAmount.Frag, out rigAmount.Stun, out rigAmount.Flash,
+                    out rigAmount.Smoke);
+                GetGrenadeAmount(_pocket, out pocketAmount.Frag, out pocketAmount.Stun, out pocketAmount.Flash,
+                    out pocketAmount.Smoke);
             }
+
+            allAmount.Frag = rigAmount.Frag + pocketAmount.Frag;
+            allAmount.Stun = rigAmount.Stun + pocketAmount.Stun;
+            allAmount.Flash = rigAmount.Flash + pocketAmount.Flash;
+            allAmount.Smoke = rigAmount.Smoke + pocketAmount.Smoke;
         }
 
         private void GetGrenadeAmount(Item gear, out int frag, out int stun, out int flash, out int smoke)
@@ -123,8 +123,10 @@ namespace GamePanelHUDGrenade.Controllers
             }
             else
             {
+                // ReSharper disable once LoopCanBeConvertedToQuery
                 foreach (var grid in grids)
                 {
+                    // ReSharper disable once LoopCanBeConvertedToQuery
                     foreach (var item in _PlayerHelper.InventoryHelper.RefItems.GetValue(grid))
                     {
                         if (item.GetType() == _grenadeItemType)

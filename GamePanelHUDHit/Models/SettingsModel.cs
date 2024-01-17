@@ -1,6 +1,7 @@
 ﻿#if !UNITY_EDITOR
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using BepInEx.Configuration;
 using GamePanelHUDCore.Attributes;
 using TMPro;
@@ -44,6 +45,7 @@ namespace GamePanelHUDHit.Models
         public readonly ConfigEntry<FontStyles> KeyHitDamageStyles;
         public readonly ConfigEntry<FontStyles> KeyHitArmorDamageStyles;
 
+        [SuppressMessage("ReSharper", "RedundantTypeArgumentsOfMethod")]
         private SettingsModel(ConfigFile configFile)
         {
             const string mainSettings = "Main Settings";
@@ -113,6 +115,7 @@ namespace GamePanelHUDHit.Models
                 new Color(0, 0.5f, 0.8f));
         }
 
+        // ReSharper disable once UnusedMethodReturnValue.Global
         public static SettingsModel Create(ConfigFile configFile)
         {
             if (Instance != null)

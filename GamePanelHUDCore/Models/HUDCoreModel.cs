@@ -13,6 +13,9 @@ using UnityEngine;
 using static EFTApi.EFTHelpers;
 using Object = UnityEngine.Object;
 
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable MemberCanBeMadeStatic.Global
+
 namespace GamePanelHUDCore.Models
 {
     public class HUDCoreModel
@@ -41,6 +44,8 @@ namespace GamePanelHUDCore.Models
 
         public bool HasPlayer => YourPlayer != null;
 
+        public bool HasGameUI => YourGameUI != null;
+
         public bool AllHUDSw;
 
         public readonly GameObject GamePanelHUDPublic;
@@ -67,6 +72,7 @@ namespace GamePanelHUDCore.Models
             Object.DontDestroyOnLoad(gamePanelHUDPublic);
         }
 
+        // ReSharper disable once UnusedMethodReturnValue.Global
         public static HUDCoreModel Create(GameObject gamePanelHUDPublic, UpdateManger updateManger)
         {
             if (Instance != null)
@@ -85,7 +91,7 @@ namespace GamePanelHUDCore.Models
             return LoadHUD(bundleName, new[] { initAssetName });
         }
 
-        public AssetModel<GameObject> LoadHUD(string bundleName, string[] initAssetName)
+        public AssetModel<GameObject> LoadHUD(string bundleName, IEnumerable<string> initAssetName)
         {
             var assetBundle = AssetBundleHelper.LoadBundle(GetBundlePath(bundleName));
 
@@ -103,7 +109,7 @@ namespace GamePanelHUDCore.Models
             return new AssetModel<GameObject>(asset, init);
         }
 
-        private void InitAsset(Dictionary<string, GameObject> asset, Dictionary<string, GameObject> init,
+        private void InitAsset(IReadOnlyDictionary<string, GameObject> asset, IDictionary<string, GameObject> init,
             string initAssetName)
         {
             init.Add(initAssetName, Object.Instantiate(asset[initAssetName], GamePanelHUDPublic.transform));

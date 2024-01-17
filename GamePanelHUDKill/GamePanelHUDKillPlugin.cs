@@ -30,7 +30,7 @@ namespace GamePanelHUDKill
             }
 
             killHUDModel.ScreenRect = hudCoreModel.GamePanelHUDPublic.GetComponent<RectTransform>();
-            killHUDModel.KillPrefab = prefabs.Asset["Kill"];
+            killHUDModel.KillPrefab = prefabs.Asset["Kill"].ReplaceAllFont(EFTFontHelper.BenderNormal);
         }
 
         private void Start()

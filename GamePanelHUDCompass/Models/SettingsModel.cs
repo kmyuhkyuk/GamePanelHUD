@@ -1,5 +1,6 @@
 ﻿#if !UNITY_EDITOR
 
+using System.Diagnostics.CodeAnalysis;
 using BepInEx.Configuration;
 using TMPro;
 using UnityEngine;
@@ -26,7 +27,8 @@ namespace GamePanelHUDCompass.Models
         public readonly ConfigEntry<bool> KeyCompassStaticHideRequirements;
         public readonly ConfigEntry<bool> KeyCompassStaticHideOptional;
         public readonly ConfigEntry<bool> KeyCompassStaticHideSearchedAirdrop;
-        public readonly ConfigEntry<bool> KeyAutoSizeDelta;
+        public readonly ConfigEntry<bool> KeyCompassAutoSizeDelta;
+        public readonly ConfigEntry<bool> KeyCompassStaticInfoAutoSizeDelta;
 
         public readonly ConfigEntry<bool> KeyConditionFindItem;
         public readonly ConfigEntry<bool> KeyConditionLeaveItemAtLocation;
@@ -42,6 +44,7 @@ namespace GamePanelHUDCompass.Models
         public readonly ConfigEntry<Vector2> KeyCompassFireDirectionAnchoredPosition;
         public readonly ConfigEntry<Vector2> KeyCompassFireDirectionScale;
         public readonly ConfigEntry<Vector2> KeyCompassStaticInfoAnchoredPosition;
+        public readonly ConfigEntry<Vector2> KeyCompassStaticInfoSizeDelta;
         public readonly ConfigEntry<Vector2> KeyCompassStaticInfoScale;
 
         public readonly ConfigEntry<float> KeyCompassFireHeight;
@@ -82,6 +85,7 @@ namespace GamePanelHUDCompass.Models
         public readonly ConfigEntry<FontStyles> KeyCompassStaticDescriptionStyles;
         public readonly ConfigEntry<FontStyles> KeyCompassStaticDistanceStyles;
 
+        [SuppressMessage("ReSharper", "RedundantTypeArgumentsOfMethod")]
         private SettingsModel(ConfigFile configFile)
         {
             const string mainSettings = "Main Settings";
@@ -122,7 +126,9 @@ namespace GamePanelHUDCompass.Models
                 configFile.Bind<bool>(mainSettings, "Compass Static Hide Optional", false);
             KeyCompassStaticHideSearchedAirdrop = configFile.Bind<bool>(mainSettings,
                 "Compass Static Hide Already Searched Airdrop", true);
-            KeyAutoSizeDelta = configFile.Bind<bool>(mainSettings, "Auto Size Delta", true);
+            KeyCompassAutoSizeDelta = configFile.Bind<bool>(mainSettings, "Compass Auto Size Delta", true);
+            KeyCompassStaticInfoAutoSizeDelta =
+                configFile.Bind<bool>(mainSettings, "Compass Static Info Auto Size Delta", true);
 
             KeyConditionFindItem = configFile.Bind<bool>(questSettings, "FindItem", true);
             KeyConditionLeaveItemAtLocation = configFile.Bind<bool>(questSettings, "LeaveItemAtLocation", true);
@@ -146,6 +152,8 @@ namespace GamePanelHUDCompass.Models
                 "Compass Fire Direction Local Scale", new Vector2(1, 1));
             KeyCompassStaticInfoAnchoredPosition = configFile.Bind<Vector2>(positionScaleSettings,
                 "Compass Static Info Anchored Position", new Vector2(0, -15));
+            KeyCompassStaticInfoSizeDelta = configFile.Bind<Vector2>(positionScaleSettings,
+                "Compass Static Info Size Delta", new Vector2(240, 70));
             KeyCompassStaticInfoScale = configFile.Bind<Vector2>(positionScaleSettings,
                 "Compass Static Info Local Scale", new Vector2(1, 1));
 
@@ -225,6 +233,7 @@ namespace GamePanelHUDCompass.Models
                 "Compass Static Distance", FontStyles.Bold);
         }
 
+        // ReSharper disable once UnusedMethodReturnValue.Global
         public static SettingsModel Create(ConfigFile configFile)
         {
             if (Instance != null)

@@ -1,5 +1,6 @@
 ﻿#if !UNITY_EDITOR
 
+using System.Diagnostics.CodeAnalysis;
 using BepInEx.Configuration;
 using TMPro;
 using UnityEngine;
@@ -44,6 +45,7 @@ namespace GamePanelHUDWeapon.Models
         public readonly ConfigEntry<FontStyles> KeyAmmoTypeStyles;
         public readonly ConfigEntry<FontStyles> KeyFireModeStyles;
 
+        [SuppressMessage("ReSharper", "RedundantTypeArgumentsOfMethod")]
         private SettingsModel(ConfigFile configFile)
         {
             const string mainSettings = "Main Settings";
@@ -111,6 +113,7 @@ namespace GamePanelHUDWeapon.Models
                 configFile.Bind<FontStyles>(fontStylesSettings, "Fire Mode", FontStyles.Normal);
         }
 
+        // ReSharper disable once UnusedMethodReturnValue.Global
         public static SettingsModel Create(ConfigFile configFile)
         {
             if (Instance != null)

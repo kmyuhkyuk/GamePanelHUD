@@ -10,6 +10,7 @@ namespace GamePanelHUDCompass
 {
     public partial class GamePanelHUDCompassPlugin
     {
+        // ReSharper disable once SuggestBaseTypeForParameter
         private static void OnBoxLand(MonoBehaviour __instance, object ___boxSync)
         {
             var compassStaticHUDModel = CompassStaticHUDModel.Instance;

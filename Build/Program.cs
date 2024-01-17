@@ -3,9 +3,10 @@ using System.IO;
 using System.Linq;
 using CopyBuildAssembly;
 
+// ReSharper disable ClassNeverInstantiated.Global
+
 namespace Build
 {
-    // ReSharper disable once ClassNeverInstantiated.Global
     internal class Program
     {
         private static void Main(string[] args)
@@ -14,7 +15,7 @@ namespace Build
             var arg = args.ElementAtOrDefault(0);
 
             const string releasePath =
-                "R:\\Battlestate Games\\Client.0.13.5.3.26535\\BepInEx\\plugins\\kmyuhkyuk-GamePanelHUD";
+                @"R:\Battlestate Games\Client.0.13.5.3.26535\BepInEx\plugins\kmyuhkyuk-GamePanelHUD";
 
             Copy.CopyAssembly(arg, "Release", baseDirectory, Path.Combine(releasePath, "core"), new[]
             {
@@ -31,7 +32,7 @@ namespace Build
                 "GamePanelHUDWeapon"
             });
 
-            const string unityEditorPath = "C:\\Users\\24516\\Documents\\GamePanelHUD\\Assets\\Managed";
+            const string unityEditorPath = @"C:\Users\24516\Documents\GamePanelHUD\Assets\Managed";
 
             Copy.CopyAssembly(arg, "UNITY_EDITOR", baseDirectory, unityEditorPath, new[]
             {

@@ -101,12 +101,12 @@ namespace GamePanelHUDCompass.Views
                     {
                         var remove = _removes[i];
 
-                        if (_compassFires.TryRemove(remove, out var ui))
-                        {
-                            ui.Destroy();
+                        if (!_compassFires.TryRemove(remove, out var ui))
+                            continue;
 
-                            _removes.RemoveAt(i);
-                        }
+                        ui.Destroy();
+
+                        _removes.RemoveAt(i);
                     }
                 }
 

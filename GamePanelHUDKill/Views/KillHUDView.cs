@@ -226,7 +226,7 @@ namespace GamePanelHUDKill.Views
 
             var isAnim = expRoot.IsAnim;
 
-            if (_currentHasInfo > 0 && !isAnim)
+            if (_currentHasInfo != 0 && !isAnim)
             {
                 expRoot.XpUp(allExp, _lastXp);
             }
@@ -421,11 +421,11 @@ namespace GamePanelHUDKill.Views
         {
             _waitInfo -= 1;
 
-            if (_waitInfo == 0)
-            {
-                expUIView.XpComplete();
-                _testExpUIView.XpComplete();
-            }
+            if (_waitInfo != 0)
+                return;
+
+            expUIView.XpComplete();
+            _testExpUIView.XpComplete();
         }
 
 #endif

@@ -77,12 +77,12 @@ namespace GamePanelHUDKill.Views
                 active = false;
             }
 
-            if (canDestroy)
-            {
-                _animatorKillUI.SetBool(AnimatorHash.CanDestroy, true);
+            if (!canDestroy)
+                return;
 
-                canDestroy = false;
-            }
+            _animatorKillUI.SetBool(AnimatorHash.CanDestroy, true);
+
+            canDestroy = false;
         }
 
         private IEnumerator TextPlay()
@@ -163,6 +163,7 @@ namespace GamePanelHUDKill.Views
 
 #endif
 
+        // ReSharper disable once UnusedMember.Local
         private void Destroy()
         {
 #if !UNITY_EDITOR

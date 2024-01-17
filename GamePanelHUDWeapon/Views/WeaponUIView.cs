@@ -169,7 +169,7 @@ namespace GamePanelHUDWeapon.Views
             patronSignValue.color = patronColor;
 
             //Patron HUD display
-            _patronPanelTransform.gameObject.SetActive(patron > 0);
+            _patronPanelTransform.gameObject.SetActive(patron != 0);
 
             //Set Patron float and color and Style to String
             patronValue.fontStyle = patronStyles;
@@ -201,12 +201,12 @@ namespace GamePanelHUDWeapon.Views
             ammoTypeValue.color = ammoTypeColor;
             ammoTypeValue.text = ammoType;
 
-            if (weaponIsTrigger)
-            {
-                _animatorWeaponName.SetTrigger(AnimatorHash.Active);
+            if (!weaponIsTrigger)
+                return;
 
-                weaponIsTrigger = false;
-            }
+            _animatorWeaponName.SetTrigger(AnimatorHash.Active);
+
+            weaponIsTrigger = false;
         }
 
 #endif

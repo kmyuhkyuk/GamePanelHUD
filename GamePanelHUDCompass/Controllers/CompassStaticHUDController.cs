@@ -57,15 +57,15 @@ namespace GamePanelHUDCompass.Controllers
                     compassStaticHUDModel.CompassStatic.EquipmentAndQuestRaidItems = hashSet;
                 }
 
-                if (compassStaticHUDModel.CompassStaticCacheBool)
-                {
-                    ShowQuest(hudCoreModel.YourPlayer, hudCoreModel.TheWorld, hudCoreModel.TheGame,
-                        compassStaticHUDModel.ShowStatic);
+                if (!compassStaticHUDModel.CompassStaticCacheBool)
+                    return;
 
-                    ShowExfiltration(hudCoreModel.YourPlayer, hudCoreModel.TheWorld, compassStaticHUDModel.ShowStatic);
+                ShowQuest(hudCoreModel.YourPlayer, hudCoreModel.TheWorld, hudCoreModel.TheGame,
+                    compassStaticHUDModel.ShowStatic);
 
-                    compassStaticHUDModel.CompassStaticCacheBool = false;
-                }
+                ShowExfiltration(hudCoreModel.YourPlayer, hudCoreModel.TheWorld, compassStaticHUDModel.ShowStatic);
+
+                compassStaticHUDModel.CompassStaticCacheBool = false;
             }
             else
             {
@@ -74,6 +74,7 @@ namespace GamePanelHUDCompass.Controllers
             }
         }
 
+        // ReSharper disable once SuggestBaseTypeForParameter
         private static void ShowQuest(Player player, GameWorld world, AbstractGame game, Action<StaticModel> showStatic)
         {
             if (player is HideoutPlayer)
@@ -190,22 +191,22 @@ namespace GamePanelHUDCompass.Controllers
                             {
                                 foreach (var questItem in questItems)
                                 {
-                                    if (questItem.Id.Equals(itemId, StringComparison.OrdinalIgnoreCase))
-                                    {
-                                        var staticModel = new StaticModel
-                                        {
-                                            Id = findItem.id,
-                                            Where = questItem.Item.transform.position,
-                                            Target = new[] { itemId },
-                                            NameKey = nameKey,
-                                            DescriptionKey = findItem.id,
-                                            TraderId = traderId,
-                                            IsNotNecessary = !findItem.IsNecessary,
-                                            InfoType = StaticModel.Type.ConditionFindItem
-                                        };
+                                    if (!questItem.Id.Equals(itemId, StringComparison.OrdinalIgnoreCase))
+                                        continue;
 
-                                        showStatic(staticModel);
-                                    }
+                                    var staticModel = new StaticModel
+                                    {
+                                        Id = findItem.id,
+                                        Where = questItem.Item.transform.position,
+                                        Target = new[] { itemId },
+                                        NameKey = nameKey,
+                                        DescriptionKey = findItem.id,
+                                        TraderId = traderId,
+                                        IsNotNecessary = !findItem.IsNecessary,
+                                        InfoType = StaticModel.Type.ConditionFindItem
+                                    };
+
+                                    showStatic(staticModel);
                                 }
                             }
 
@@ -256,25 +257,25 @@ namespace GamePanelHUDCompass.Controllers
 
                                         foreach (var zoneId in zoneIds)
                                         {
-                                            if (_GameWorldHelper.ZoneHelper.TryGetValues(zoneId,
+                                            if (!_GameWorldHelper.ZoneHelper.TryGetValues(zoneId,
                                                     out IEnumerable<ExperienceTrigger> triggers))
-                                            {
-                                                foreach (var trigger in triggers)
-                                                {
-                                                    var staticModel = new StaticModel
-                                                    {
-                                                        Id = counterCreator.id,
-                                                        Where = trigger.transform.position,
-                                                        ZoneId = zoneId,
-                                                        NameKey = nameKey,
-                                                        DescriptionKey = counterCreator.id,
-                                                        TraderId = traderId,
-                                                        IsNotNecessary = !counterCreator.IsNecessary,
-                                                        InfoType = StaticModel.Type.ConditionInZone
-                                                    };
+                                                continue;
 
-                                                    showStatic(staticModel);
-                                                }
+                                            foreach (var trigger in triggers)
+                                            {
+                                                var staticModel = new StaticModel
+                                                {
+                                                    Id = counterCreator.id,
+                                                    Where = trigger.transform.position,
+                                                    ZoneId = zoneId,
+                                                    NameKey = nameKey,
+                                                    DescriptionKey = counterCreator.id,
+                                                    TraderId = traderId,
+                                                    IsNotNecessary = !counterCreator.IsNecessary,
+                                                    InfoType = StaticModel.Type.ConditionInZone
+                                                };
+
+                                                showStatic(staticModel);
                                             }
                                         }
 
@@ -290,6 +291,7 @@ namespace GamePanelHUDCompass.Controllers
             }
         }
 
+        // ReSharper disable once SuggestBaseTypeForParameter
         private static void ShowExfiltration(Player player, GameWorld world,
             Action<StaticModel> showStatic)
         {
@@ -312,7 +314,7 @@ namespace GamePanelHUDCompass.Controllers
                 var exfiltrationRequirements = new Func<bool>[]
                 {
                     () => point.Status == EExfiltrationStatus.NotPresent,
-                    () => point.Status == EExfiltrationStatus.UncompleteRequirements,
+                    () => point.Status == EExfiltrationStatus.UncompleteRequirements
                 };
 
                 var staticModel = new StaticModel
@@ -327,29 +329,29 @@ namespace GamePanelHUDCompass.Controllers
 
                 showStatic(staticModel);
 
-                if (point.Status == EExfiltrationStatus.UncompleteRequirements)
+                if (point.Status != EExfiltrationStatus.UncompleteRequirements)
+                    continue;
+
+                var switchs = EFTVersion.AkiVersion > Version.Parse("3.6.1")
+                    ? Traverse.Create(point).Field("_switches").GetValue<List<Switch>>().ToArray()
+                    : Traverse.Create(point).Field("list_1").GetValue<List<Switch>>().ToArray();
+
+                foreach (var @switch in switchs)
                 {
-                    var switchs = EFTVersion.AkiVersion > Version.Parse("3.6.1")
-                        ? Traverse.Create(point).Field("_switches").GetValue<List<Switch>>().ToArray()
-                        : Traverse.Create(point).Field("list_1").GetValue<List<Switch>>().ToArray();
-
-                    foreach (var @switch in switchs)
+                    var staticModel2 = new StaticModel
                     {
-                        var staticModel2 = new StaticModel
+                        Id = @switch.Id,
+                        Where = @switch.transform.position,
+                        NameKey = point.Settings.Name,
+                        DescriptionKey = @switch.ExtractionZoneTip,
+                        InfoType = StaticModel.Type.Switch,
+                        Requirements = exfiltrationRequirements.Concat(new Func<bool>[]
                         {
-                            Id = @switch.Id,
-                            Where = @switch.transform.position,
-                            NameKey = point.Settings.Name,
-                            DescriptionKey = @switch.ExtractionZoneTip,
-                            InfoType = StaticModel.Type.Switch,
-                            Requirements = exfiltrationRequirements.Concat(new Func<bool>[]
-                            {
-                                () => @switch.DoorState == EDoorState.Open
-                            }).ToArray()
-                        };
+                            () => @switch.DoorState == EDoorState.Open
+                        }).ToArray()
+                    };
 
-                        showStatic(staticModel2);
-                    }
+                    showStatic(staticModel2);
                 }
             }
         }

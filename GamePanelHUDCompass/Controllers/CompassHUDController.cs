@@ -32,19 +32,19 @@ namespace GamePanelHUDCompass.Controllers
                                            hudCoreModel.HasPlayer &&
                                            settingsModel.KeyCompassHUDSw.Value;
 
-            compassHUDModel.Compass.SizeDelta = settingsModel.KeyAutoSizeDelta.Value
+            compassHUDModel.Compass.SizeDelta = settingsModel.KeyCompassAutoSizeDelta.Value
                 ? new Vector2(
                     compassHUDModel.ScreenRect.sizeDelta.x * ((float)settingsModel.KeyAutoSizeDeltaRate.Value / 100),
                     settingsModel.KeySizeDelta.Value.y)
                 : settingsModel.KeySizeDelta.Value;
 
-            if (hudCoreModel.HasPlayer)
-            {
-                compassHUDModel.CamTransform = hudCoreModel.YourPlayer.CameraPosition;
+            if (!hudCoreModel.HasPlayer)
+                return;
 
-                compassHUDModel.Compass.Angle = GetAngle(compassHUDModel.CamTransform.eulerAngles,
-                    EFTGlobal.LevelSettings.NorthDirection);
-            }
+            compassHUDModel.CamTransform = hudCoreModel.YourPlayer.CameraPosition;
+
+            compassHUDModel.Compass.Angle = GetAngle(compassHUDModel.CamTransform.eulerAngles,
+                EFTGlobal.LevelSettings.NorthDirection);
         }
 
         private static float GetAngle(Vector3 eulerAngles, float northDirection)
@@ -53,8 +53,8 @@ namespace GamePanelHUDCompass.Controllers
 
             if (num >= 0)
                 return num;
-            else
-                return num + 360;
+
+            return num + 360;
         }
 
 #endif
