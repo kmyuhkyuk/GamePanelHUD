@@ -69,280 +69,270 @@ namespace GamePanelHUDWeapon.Controllers
                                          settingsModel.KeyWeaponHUDSw.Value;
 
             //Get Player
-            if (hudCoreModel.HasPlayer)
+            if (!hudCoreModel.HasPlayer)
+                return;
+
+            reflectionModel.AmmoCount
+                .GetValue(reflectionModel.AmmoCountPanel.GetValue(hudCoreModel.YourGameUI.BattleUiScreen))
+                .gameObject
+                .SetActive(!settingsModel.KeyHideGameAmmoPanel.Value);
+
+            _currentFirearmController = EFTGlobal.FirearmController;
+
+            //Get Weapon Class
+            _currentWeapon = EFTGlobal.Weapon;
+            _animatorWeapon = _PlayerHelper.WeaponHelper.WeaponAnimator;
+
+            if (EFTVersion.AkiVersion > Version.Parse("3.4.1"))
             {
-                reflectionModel.AmmoCount
-                    .GetValue(reflectionModel.AmmoCountPanel.GetValue(hudCoreModel.YourGameUI.BattleUiScreen))
-                    .gameObject
-                    .SetActive(!settingsModel.KeyHideGameAmmoPanel.Value);
+                _currentLauncher = EFTGlobal.UnderbarrelWeapon;
+                _animatorLauncher = _PlayerHelper.WeaponHelper.LauncherIAnimator;
+            }
 
-                _currentFirearmController = EFTGlobal.FirearmController;
+            var weaponActive = _currentWeapon != null;
 
-                //Get Weapon Class
-                _currentWeapon = EFTGlobal.Weapon;
-                _animatorWeapon = _PlayerHelper.WeaponHelper.WeaponAnimator;
+            var launcherActive = weaponActive && _currentFirearmController != null &&
+                                 _currentFirearmController.IsInLauncherMode();
 
-                if (EFTVersion.AkiVersion > Version.Parse("3.4.1"))
+            if (_weaponCacheBool)
+            {
+                _oldWeapon = _currentWeapon;
+
+                if (!settingsModel.KeyWeaponNameAlways.Value && settingsModel.KeyAutoWeaponName.Value)
                 {
-                    _currentLauncher = EFTGlobal.UnderbarrelWeapon;
-                    _animatorLauncher = _PlayerHelper.WeaponHelper.LauncherIAnimator;
+                    weaponHUDModel.WeaponTrigger();
                 }
 
-                var weaponActive = _currentWeapon != null;
+                _weaponCacheBool = false;
+                _launcherCacheBool = false;
+            }
+            //Not same Weapon trigger
+            else if (weaponActive && _currentWeapon != _oldWeapon || !weaponActive)
+            {
+                _weaponCacheBool = true;
+                _magCacheBool = true;
+            }
 
-                var launcherActive = weaponActive && _currentFirearmController != null &&
-                                     _currentFirearmController.IsInLauncherMode();
-
-                if (_weaponCacheBool)
+            //Switch Launcher trigger
+            if (launcherActive != _launcherCacheBool)
+            {
+                if (!settingsModel.KeyWeaponNameAlways.Value && settingsModel.KeyAutoWeaponName.Value)
                 {
-                    _oldWeapon = _currentWeapon;
+                    weaponHUDModel.WeaponTrigger();
+                }
 
-                    if (!settingsModel.KeyWeaponNameAlways.Value && settingsModel.KeyAutoWeaponName.Value)
+                _launcherCacheBool = launcherActive;
+            }
+            else if (!launcherActive)
+            {
+                _launcherCacheBool = false;
+            }
+
+            //Get Ammo Count
+            if (!weaponActive)
+                return;
+
+            var currentAnimator = launcherActive ? _animatorLauncher : _animatorWeapon;
+
+            var currentState = currentAnimator.GetCurrentAnimatorStateInfo(1).fullPathHash;
+
+            weaponHUDModel.Weapon.WeaponNameAlways = settingsModel.KeyWeaponNameAlways.Value ||
+                                                     currentState == 1355507738 &&
+                                                     settingsModel.KeyLookWeaponName.Value; //2.LookWeapon
+
+            //MagCount and PatronCount
+            if (!launcherActive)
+            {
+                _allReloadBool =
+                    _currentFirearmController != null && _currentFirearmController.IsInReloadOperation() ||
+                    currentState == 1058993437; //1.OriginalReloadCheck 2.TakeHands
+
+                //Get Weapon Name
+                weaponHUDModel.Weapon.WeaponName = _LocalizedHelper.Localized(_currentWeapon.Name);
+
+                weaponHUDModel.Weapon.WeaponShortName = _LocalizedHelper.Localized(_currentWeapon.ShortName);
+
+                //Get Fire Mode
+                weaponHUDModel.Weapon.FireMode =
+                    _LocalizedHelper.Localized(_currentWeapon.SelectedFireMode.ToString());
+
+                weaponHUDModel.Weapon.AmmoType = _LocalizedHelper.Localized(_currentWeapon.AmmoCaliber);
+
+                if (_currentWeapon.ReloadMode != Weapon.EReloadMode.OnlyBarrel)
+                {
+                    var magInWeapon = _animatorWeapon.GetBool(AnimatorHash.MagInWeapon);
+                    var magSame = _currentMag == _oldMag;
+
+                    var ammoInChamber = (int)_animatorWeapon.GetFloat(AnimatorHash.AmmoInChamber);
+                    var chambersCount = _currentWeapon.ChamberAmmoCount;
+                    var maxMagazineCount = _currentWeapon.GetMaxMagazineCount();
+
+                    _currentMag = _PlayerHelper.WeaponHelper.CurrentMagazine;
+
+                    if (_magCacheBool)
                     {
-                        weaponHUDModel.WeaponTrigger();
+                        _oldMag = _currentMag;
+
+                        _magCacheBool = false;
                     }
 
-                    _weaponCacheBool = false;
-                    _launcherCacheBool = false;
-                }
-                //Not same Weapon trigger
-                else if (weaponActive && _currentWeapon != _oldWeapon || !weaponActive)
-                {
-                    _weaponCacheBool = true;
-                    _magCacheBool = true;
-                }
-
-                //Switch Launcher trigger
-                if (launcherActive != _launcherCacheBool)
-                {
-                    if (!settingsModel.KeyWeaponNameAlways.Value && settingsModel.KeyAutoWeaponName.Value)
+                    switch (magInWeapon)
                     {
-                        weaponHUDModel.WeaponTrigger();
-                    }
-
-                    _launcherCacheBool = launcherActive;
-                }
-                else if (!launcherActive)
-                {
-                    _launcherCacheBool = false;
-                }
-
-                //Get Ammo Count
-                if (weaponActive)
-                {
-                    var currentAnimator = launcherActive ? _animatorLauncher : _animatorWeapon;
-
-                    var currentState = currentAnimator.GetCurrentAnimatorStateInfo(1).fullPathHash;
-
-                    weaponHUDModel.Weapon.WeaponNameAlways = settingsModel.KeyWeaponNameAlways.Value ||
-                                                             currentState == 1355507738 &&
-                                                             settingsModel.KeyLookWeaponName.Value; //2.LookWeapon
-
-                    //MagCount and PatronCount
-                    if (!launcherActive)
-                    {
-                        _allReloadBool =
-                            _currentFirearmController != null && _currentFirearmController.IsInReloadOperation() ||
-                            currentState == 1058993437; //1.OriginalReloadCheck 2.TakeHands
-
-                        //Get Weapon Name
-                        weaponHUDModel.Weapon.WeaponName = _LocalizedHelper.Localized(_currentWeapon.Name);
-
-                        weaponHUDModel.Weapon.WeaponShortName = _LocalizedHelper.Localized(_currentWeapon.ShortName);
-
-                        //Get Fire Mode
-                        weaponHUDModel.Weapon.FireMode =
-                            _LocalizedHelper.Localized(_currentWeapon.SelectedFireMode.ToString());
-
-                        weaponHUDModel.Weapon.AmmoType = _LocalizedHelper.Localized(_currentWeapon.AmmoCaliber);
-
-                        if (_currentWeapon.ReloadMode != Weapon.EReloadMode.OnlyBarrel)
+                        case true when !_allReloadBool && magSame:
                         {
-                            var magInWeapon = _animatorWeapon.GetBool(AnimatorHash.MagInWeapon);
-                            var magSame = _currentMag == _oldMag;
+                            var count = _currentWeapon.GetCurrentMagazineCount();
 
-                            var ammoInChamber = (int)_animatorWeapon.GetFloat(AnimatorHash.AmmoInChamber);
-                            var chambersCount = _currentWeapon.ChamberAmmoCount;
-                            var maxMagazineCount = _currentWeapon.GetMaxMagazineCount();
+                            weaponHUDModel.Weapon.Patron = chambersCount;
 
-                            _currentMag = _PlayerHelper.WeaponHelper.CurrentMagazine;
+                            weaponHUDModel.Weapon.Normalized = (float)count / maxMagazineCount;
 
-                            if (_magCacheBool)
-                            {
-                                _oldMag = _currentMag;
+                            weaponHUDModel.Weapon.MagCount = count;
 
-                                _magCacheBool = false;
-                            }
-
-                            switch (magInWeapon)
-                            {
-                                case true when !_allReloadBool && magSame:
-                                {
-                                    var count = _currentWeapon.GetCurrentMagazineCount();
-                                    var maxCount = maxMagazineCount;
-
-                                    weaponHUDModel.Weapon.Patron = chambersCount;
-
-                                    weaponHUDModel.Weapon.Normalized = (float)count / maxCount;
-
-                                    weaponHUDModel.Weapon.MagCount = count;
-
-                                    weaponHUDModel.Weapon.MagMaxCount = maxCount;
-                                    break;
-                                }
-                                case false when _allReloadBool:
-                                    weaponHUDModel.Weapon.Patron = ammoInChamber;
-
-                                    weaponHUDModel.Weapon.Normalized = 0;
-
-                                    weaponHUDModel.Weapon.MagCount = 0;
-
-                                    weaponHUDModel.Weapon.MagMaxCount = 0;
-
-                                    _oldMag = _currentMag;
-                                    break;
-                                case true when _allReloadBool && magSame:
-                                {
-                                    var count = (int)_animatorWeapon.GetFloat(AnimatorHash.AmmoInMag);
-                                    var maxCount = maxMagazineCount;
-
-                                    weaponHUDModel.Weapon.Patron = ammoInChamber;
-
-                                    weaponHUDModel.Weapon.Normalized = (float)count / maxCount;
-
-                                    weaponHUDModel.Weapon.MagCount = count;
-
-                                    weaponHUDModel.Weapon.MagMaxCount = maxCount;
-                                    break;
-                                }
-                                case false when ammoInChamber != 0 && !_allReloadBool:
-                                    weaponHUDModel.Weapon.Patron = chambersCount;
-
-                                    weaponHUDModel.Weapon.Normalized = 0;
-
-                                    weaponHUDModel.Weapon.MagCount = 0;
-
-                                    weaponHUDModel.Weapon.MagMaxCount = 0;
-                                    break;
-                                case false when !_allReloadBool:
-                                    weaponHUDModel.Weapon.Patron = 0;
-
-                                    weaponHUDModel.Weapon.Normalized = 0;
-
-                                    weaponHUDModel.Weapon.MagCount = 0;
-
-                                    weaponHUDModel.Weapon.MagMaxCount = 0;
-                                    break;
-                            }
+                            weaponHUDModel.Weapon.MagMaxCount = maxMagazineCount;
+                            break;
                         }
-                        else
+                        case false when _allReloadBool:
+                            weaponHUDModel.Weapon.Patron = ammoInChamber;
+
+                            weaponHUDModel.Weapon.Normalized = 0;
+
+                            weaponHUDModel.Weapon.MagCount = 0;
+
+                            weaponHUDModel.Weapon.MagMaxCount = 0;
+
+                            _oldMag = _currentMag;
+                            break;
+                        case true when _allReloadBool && magSame:
                         {
-                            var ammoInChamber = (int)_animatorWeapon.GetFloat(AnimatorHash.AmmoInChamber);
-                            var chambersCount = _PlayerHelper.WeaponHelper.Chambers.Length;
+                            var count = (int)_animatorWeapon.GetFloat(AnimatorHash.AmmoInMag);
 
-                            switch (_allReloadBool)
-                            {
-                                case false when ammoInChamber != 0:
-                                {
-                                    var count = _currentWeapon.ChamberAmmoCount;
-                                    var maxCount = chambersCount;
+                            weaponHUDModel.Weapon.Patron = ammoInChamber;
 
-                                    weaponHUDModel.Weapon.Patron = 0;
+                            weaponHUDModel.Weapon.Normalized = (float)count / maxMagazineCount;
 
-                                    weaponHUDModel.Weapon.MagCount = count;
+                            weaponHUDModel.Weapon.MagCount = count;
 
-                                    weaponHUDModel.Weapon.MagMaxCount = maxCount;
-
-                                    weaponHUDModel.Weapon.Normalized = (float)count / maxCount - 0.1f;
-                                    break;
-                                }
-                                case true:
-                                {
-                                    var count = ammoInChamber;
-                                    var maxCount = chambersCount;
-
-                                    weaponHUDModel.Weapon.Patron = 0;
-
-                                    weaponHUDModel.Weapon.MagCount = count;
-
-                                    weaponHUDModel.Weapon.MagMaxCount = maxCount;
-
-                                    weaponHUDModel.Weapon.Normalized = (float)count / maxCount - 0.1f;
-                                    break;
-                                }
-                                case false:
-                                    weaponHUDModel.Weapon.Patron = 0;
-
-                                    weaponHUDModel.Weapon.MagCount = 0;
-
-                                    weaponHUDModel.Weapon.MagMaxCount = chambersCount;
-
-                                    weaponHUDModel.Weapon.Normalized = 0;
-                                    break;
-                            }
+                            weaponHUDModel.Weapon.MagMaxCount = maxMagazineCount;
+                            break;
                         }
+                        case false when ammoInChamber != 0 && !_allReloadBool:
+                            weaponHUDModel.Weapon.Patron = chambersCount;
+
+                            weaponHUDModel.Weapon.Normalized = 0;
+
+                            weaponHUDModel.Weapon.MagCount = 0;
+
+                            weaponHUDModel.Weapon.MagMaxCount = 0;
+                            break;
+                        case false when !_allReloadBool:
+                            weaponHUDModel.Weapon.Patron = 0;
+
+                            weaponHUDModel.Weapon.Normalized = 0;
+
+                            weaponHUDModel.Weapon.MagCount = 0;
+
+                            weaponHUDModel.Weapon.MagMaxCount = 0;
+                            break;
                     }
-                    else
+                }
+                else
+                {
+                    var ammoInChamber = (int)_animatorWeapon.GetFloat(AnimatorHash.AmmoInChamber);
+                    var chambersCount = _PlayerHelper.WeaponHelper.Chambers.Length;
+
+                    switch (_allReloadBool)
                     {
-                        _allReloadBool = currentState == 1285477936; //1.LauncherReload
-
-                        //Get Weapon Name
-                        weaponHUDModel.Weapon.WeaponName = _LocalizedHelper.Localized(((Item)_currentLauncher).Name);
-
-                        weaponHUDModel.Weapon.WeaponShortName =
-                            _LocalizedHelper.Localized(((Item)_currentLauncher).ShortName);
-
-                        var launcherTemplate = _PlayerHelper.WeaponHelper.UnderbarrelWeaponTemplate;
-
-                        //Get Fire Mode
-                        weaponHUDModel.Weapon.FireMode = _LocalizedHelper.Localized(nameof(Weapon.EFireMode.single));
-
-                        weaponHUDModel.Weapon.AmmoType = _LocalizedHelper.Localized(launcherTemplate.ammoCaliber);
-
-                        var ammoInChamber = (int)_animatorLauncher.GetFloat(AnimatorHash.AmmoInChamber);
-                        var chambersCount = _PlayerHelper.WeaponHelper.UnderbarrelChambers.Length;
-
-                        switch (_allReloadBool)
+                        case false when ammoInChamber != 0:
                         {
-                            case false when ammoInChamber != 0:
-                            {
-                                var count = _PlayerHelper.WeaponHelper.UnderbarrelChamberAmmoCount;
-                                var maxCount = chambersCount;
+                            var count = _currentWeapon.ChamberAmmoCount;
 
-                                weaponHUDModel.Weapon.Patron = 0;
+                            weaponHUDModel.Weapon.Patron = 0;
 
-                                weaponHUDModel.Weapon.MagCount = count;
+                            weaponHUDModel.Weapon.MagCount = count;
 
-                                weaponHUDModel.Weapon.MagMaxCount = maxCount;
+                            weaponHUDModel.Weapon.MagMaxCount = chambersCount;
 
-                                weaponHUDModel.Weapon.Normalized = (float)count / maxCount - 0.1f;
-                                break;
-                            }
-                            case true:
-                            {
-                                var count = ammoInChamber;
-                                var maxCount = chambersCount;
-
-                                weaponHUDModel.Weapon.Patron = 0;
-
-                                weaponHUDModel.Weapon.MagCount = ammoInChamber;
-
-                                weaponHUDModel.Weapon.MagMaxCount = maxCount;
-
-                                weaponHUDModel.Weapon.Normalized = (float)count / maxCount - 0.1f;
-                                break;
-                            }
-                            case false:
-                                weaponHUDModel.Weapon.Patron = 0;
-
-                                weaponHUDModel.Weapon.MagCount = 0;
-
-                                weaponHUDModel.Weapon.MagMaxCount = chambersCount;
-
-                                weaponHUDModel.Weapon.Normalized = 0;
-                                break;
+                            weaponHUDModel.Weapon.Normalized = (float)count / chambersCount - 0.1f;
+                            break;
                         }
+                        case true:
+                        {
+                            weaponHUDModel.Weapon.Patron = 0;
+
+                            weaponHUDModel.Weapon.MagCount = ammoInChamber;
+
+                            weaponHUDModel.Weapon.MagMaxCount = chambersCount;
+
+                            weaponHUDModel.Weapon.Normalized = (float)ammoInChamber / chambersCount - 0.1f;
+                            break;
+                        }
+                        case false:
+                            weaponHUDModel.Weapon.Patron = 0;
+
+                            weaponHUDModel.Weapon.MagCount = 0;
+
+                            weaponHUDModel.Weapon.MagMaxCount = chambersCount;
+
+                            weaponHUDModel.Weapon.Normalized = 0;
+                            break;
                     }
+                }
+            }
+            else
+            {
+                _allReloadBool = currentState == 1285477936; //1.LauncherReload
+
+                //Get Weapon Name
+                weaponHUDModel.Weapon.WeaponName = _LocalizedHelper.Localized(((Item)_currentLauncher).Name);
+
+                weaponHUDModel.Weapon.WeaponShortName =
+                    _LocalizedHelper.Localized(((Item)_currentLauncher).ShortName);
+
+                var launcherTemplate = _PlayerHelper.WeaponHelper.UnderbarrelWeaponTemplate;
+
+                //Get Fire Mode
+                weaponHUDModel.Weapon.FireMode = _LocalizedHelper.Localized(nameof(Weapon.EFireMode.single));
+
+                weaponHUDModel.Weapon.AmmoType = _LocalizedHelper.Localized(launcherTemplate.ammoCaliber);
+
+                var ammoInChamber = (int)_animatorLauncher.GetFloat(AnimatorHash.AmmoInChamber);
+                var chambersCount = _PlayerHelper.WeaponHelper.UnderbarrelChambers.Length;
+
+                switch (_allReloadBool)
+                {
+                    case false when ammoInChamber != 0:
+                    {
+                        var count = _PlayerHelper.WeaponHelper.UnderbarrelChamberAmmoCount;
+
+                        weaponHUDModel.Weapon.Patron = 0;
+
+                        weaponHUDModel.Weapon.MagCount = count;
+
+                        weaponHUDModel.Weapon.MagMaxCount = chambersCount;
+
+                        weaponHUDModel.Weapon.Normalized = (float)count / chambersCount - 0.1f;
+                        break;
+                    }
+                    case true:
+                    {
+                        weaponHUDModel.Weapon.Patron = 0;
+
+                        weaponHUDModel.Weapon.MagCount = ammoInChamber;
+
+                        weaponHUDModel.Weapon.MagMaxCount = chambersCount;
+
+                        weaponHUDModel.Weapon.Normalized = (float)ammoInChamber / chambersCount - 0.1f;
+                        break;
+                    }
+                    case false:
+                        weaponHUDModel.Weapon.Patron = 0;
+
+                        weaponHUDModel.Weapon.MagCount = 0;
+
+                        weaponHUDModel.Weapon.MagMaxCount = chambersCount;
+
+                        weaponHUDModel.Weapon.Normalized = 0;
+                        break;
                 }
             }
         }

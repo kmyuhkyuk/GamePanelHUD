@@ -5,6 +5,7 @@ namespace GamePanelHUDCore.Attributes
     // ReSharper disable InvalidXmlDocComment
     // ReSharper disable FieldCanBeMadeReadOnly.Global
     // ReSharper disable NotAccessedField.Global
+    // ReSharper disable UnusedMember.Global
     /// <summary>
     ///     You can copy this file to any project and Declare Attribute, EFTConfigurationManager will auto search Attribute by
     ///     name and fields

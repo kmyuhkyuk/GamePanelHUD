@@ -21,7 +21,7 @@ namespace GamePanelHUDCore.Controllers
                 allHUDSw = true;
             }
             //All HUD display 
-            else if (hudCoreModel.YourGameUI != null)
+            else if (hudCoreModel.HasGameUI)
             {
                 allHUDSw = hudCoreModel.YourGameUI.BattleUiScreen.gameObject.activeSelf;
             }

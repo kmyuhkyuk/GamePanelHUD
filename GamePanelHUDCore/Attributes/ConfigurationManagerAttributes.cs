@@ -7,6 +7,7 @@ namespace GamePanelHUDCore.Attributes
     // ReSharper disable CommentTypo
     // ReSharper disable NotAccessedField.Global
     // ReSharper disable ClassNeverInstantiated.Global
+    // ReSharper disable UnusedMember.Global
     /// <summary>
     ///     Class that specifies how a setting should be displayed inside the ConfigurationManager settings window.
     ///     Usage:

@@ -49,7 +49,7 @@ namespace GamePanelHUDGrenade.Views
         {
             //Set GrenadeAmount int and color and Style to String
             Color grenadeValueColor;
-            if (zeroWarning && grenadeAmount > 0 || !zeroWarning)
+            if (zeroWarning && grenadeAmount != 0 || !zeroWarning)
             {
                 grenadeValueColor = grenadeColor;
             }

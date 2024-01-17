@@ -22,11 +22,11 @@ namespace GamePanelHUDHit.Models
 
         public void Set(DamageInfo damageInfo, float armorDamage)
         {
-            if (_PlayerHelper.DamageInfoHelper.GetPlayer(damageInfo) == HUDCoreModel.Instance.YourPlayer)
-            {
-                Damage = armorDamage;
-                Activate = true;
-            }
+            if (_PlayerHelper.DamageInfoHelper.GetPlayer(damageInfo) != HUDCoreModel.Instance.YourPlayer)
+                return;
+
+            Damage = armorDamage;
+            Activate = true;
         }
 
         public void Reset()

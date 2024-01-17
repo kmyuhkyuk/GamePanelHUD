@@ -55,20 +55,20 @@ namespace GamePanelHUDKill.Views
         {
             _animatorExpUI.SetFloat(AnimatorHash.Speed, xpWaitSpeed);
 
-            if (active && !IsClear)
-            {
-                xp += waitXp;
+            if (!active || IsClear)
+                return;
 
-                waitXp = 0;
+            xp += waitXp;
 
-                xpValue.fontStyle = xpStyles;
-                xpValue.color = xpColor;
-                xpValue.text = xp.ToString();
+            waitXp = 0;
 
-                _animatorExpUI.SetTrigger(AnimatorHash.Active);
+            xpValue.fontStyle = xpStyles;
+            xpValue.color = xpColor;
+            xpValue.text = xp.ToString();
 
-                active = false;
-            }
+            _animatorExpUI.SetTrigger(AnimatorHash.Active);
+
+            active = false;
         }
 
         public void XpUp(int up, int lastXp)
@@ -94,6 +94,7 @@ namespace GamePanelHUDKill.Views
 
 #endif
 
+        // ReSharper disable once UnusedMember.Local
         private void ClearXp()
         {
             xp = 0;

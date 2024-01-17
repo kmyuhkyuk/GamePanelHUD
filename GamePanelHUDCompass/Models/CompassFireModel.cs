@@ -18,8 +18,8 @@ namespace GamePanelHUDCompass.Models
 
             if (num >= 0)
                 return num;
-            else
-                return num + 360;
+
+            return num + 360;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿#if !UNITY_EDITOR
 
+using System.Diagnostics.CodeAnalysis;
 using BepInEx.Configuration;
 using TMPro;
 using UnityEngine;
@@ -27,6 +28,7 @@ namespace GamePanelHUDGrenade.Models
         public readonly ConfigEntry<FontStyles> KeyStunStyles;
         public readonly ConfigEntry<FontStyles> KeySmokeStyles;
 
+        [SuppressMessage("ReSharper", "RedundantTypeArgumentsOfMethod")]
         private SettingsModel(ConfigFile configFile)
         {
             const string mainSettings = "Main Settings";
@@ -62,6 +64,7 @@ namespace GamePanelHUDGrenade.Models
             KeySmokeStyles = configFile.Bind<FontStyles>(fontStylesSettings, "Smoke", FontStyles.Normal);
         }
 
+        // ReSharper disable once UnusedMethodReturnValue.Global
         public static SettingsModel Create(ConfigFile configFile)
         {
             if (Instance != null)

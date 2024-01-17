@@ -14,19 +14,19 @@ namespace GamePanelHUDCompass
         {
             var hudCoreModel = HUDCoreModel.Instance;
 
-            if (____player != hudCoreModel.YourPlayer)
-            {
-                var fireModel = new FireModel
-                {
-                    Who = ____player.ProfileId,
-                    Where = shotPosition,
-                    Role = _PlayerHelper.RefRole.GetValue(_PlayerHelper.RefSettings.GetValue(____player.Profile.Info)),
-                    IsSilenced = __instance.IsSilenced && !__instance.IsInLauncherMode(),
-                    Distance = Vector3.Distance(shotPosition, hudCoreModel.YourPlayer.CameraPosition.position)
-                };
+            if (____player == hudCoreModel.YourPlayer)
+                return;
 
-                CompassFireHUDModel.Instance.ShowFire(fireModel);
-            }
+            var fireModel = new FireModel
+            {
+                Who = ____player.ProfileId,
+                Where = shotPosition,
+                Role = _PlayerHelper.RefRole.GetValue(_PlayerHelper.RefSettings.GetValue(____player.Profile.Info)),
+                IsSilenced = __instance.IsSilenced && !__instance.IsInLauncherMode(),
+                Distance = Vector3.Distance(shotPosition, hudCoreModel.YourPlayer.CameraPosition.position)
+            };
+
+            CompassFireHUDModel.Instance.ShowFire(fireModel);
         }
     }
 }

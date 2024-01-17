@@ -38,34 +38,35 @@ namespace GamePanelHUDHealth.Controllers
             }
 
             var healthController = healthHUDModel.HealthController;
-            if (healthController != null)
-            {
-                var health = healthHUDModel.Health;
 
-                health.Head =
-                    _PlayerHelper.HealthControllerHelper.GetBodyPartHealth(healthController, EBodyPart.Head);
-                health.Chest =
-                    _PlayerHelper.HealthControllerHelper.GetBodyPartHealth(healthController, EBodyPart.Chest);
-                health.Stomach =
-                    _PlayerHelper.HealthControllerHelper.GetBodyPartHealth(healthController, EBodyPart.Stomach);
-                health.LeftArm =
-                    _PlayerHelper.HealthControllerHelper.GetBodyPartHealth(healthController, EBodyPart.LeftArm);
-                health.RightArm =
-                    _PlayerHelper.HealthControllerHelper.GetBodyPartHealth(healthController, EBodyPart.RightArm);
-                health.LeftLeg =
-                    _PlayerHelper.HealthControllerHelper.GetBodyPartHealth(healthController, EBodyPart.LeftLeg);
-                health.RightLeg =
-                    _PlayerHelper.HealthControllerHelper.GetBodyPartHealth(healthController, EBodyPart.RightLeg);
-                health.Common =
-                    _PlayerHelper.HealthControllerHelper.GetBodyPartHealth(healthController, EBodyPart.Common);
+            if (healthController == null)
+                return;
 
-                health.Hydration = _PlayerHelper.HealthControllerHelper.RefHydration.GetValue(healthController);
-                health.Energy = _PlayerHelper.HealthControllerHelper.RefEnergy.GetValue(healthController);
+            var health = healthHUDModel.Health;
 
-                health.HealthRate = _PlayerHelper.HealthControllerHelper.RefHealthRate.GetValue(healthController);
-                health.HydrationRate = _PlayerHelper.HealthControllerHelper.RefHydrationRate.GetValue(healthController);
-                health.EnergyRate = _PlayerHelper.HealthControllerHelper.RefEnergyRate.GetValue(healthController);
-            }
+            health.Head =
+                _PlayerHelper.HealthControllerHelper.GetBodyPartHealth(healthController, EBodyPart.Head);
+            health.Chest =
+                _PlayerHelper.HealthControllerHelper.GetBodyPartHealth(healthController, EBodyPart.Chest);
+            health.Stomach =
+                _PlayerHelper.HealthControllerHelper.GetBodyPartHealth(healthController, EBodyPart.Stomach);
+            health.LeftArm =
+                _PlayerHelper.HealthControllerHelper.GetBodyPartHealth(healthController, EBodyPart.LeftArm);
+            health.RightArm =
+                _PlayerHelper.HealthControllerHelper.GetBodyPartHealth(healthController, EBodyPart.RightArm);
+            health.LeftLeg =
+                _PlayerHelper.HealthControllerHelper.GetBodyPartHealth(healthController, EBodyPart.LeftLeg);
+            health.RightLeg =
+                _PlayerHelper.HealthControllerHelper.GetBodyPartHealth(healthController, EBodyPart.RightLeg);
+            health.Common =
+                _PlayerHelper.HealthControllerHelper.GetBodyPartHealth(healthController, EBodyPart.Common);
+
+            health.Hydration = _PlayerHelper.HealthControllerHelper.RefHydration.GetValue(healthController);
+            health.Energy = _PlayerHelper.HealthControllerHelper.RefEnergy.GetValue(healthController);
+
+            health.HealthRate = _PlayerHelper.HealthControllerHelper.RefHealthRate.GetValue(healthController);
+            health.HydrationRate = _PlayerHelper.HealthControllerHelper.RefHydrationRate.GetValue(healthController);
+            health.EnergyRate = _PlayerHelper.HealthControllerHelper.RefEnergyRate.GetValue(healthController);
         }
 
 #endif

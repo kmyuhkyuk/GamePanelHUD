@@ -163,12 +163,12 @@ namespace GamePanelHUDCompass.Views
             _animatorFire.SetFloat(AnimatorHash.ToSmallSpeed, settingsModel.KeyCompassFireToSmallSpeed.Value);
             _animatorFire.SetFloat(AnimatorHash.SmallSpeed, settingsModel.KeyCompassFireSmallWaitSpeed.Value);
 
-            if (active)
-            {
-                _animatorFire.SetBool(AnimatorHash.Active, true);
+            if (!active)
+                return;
 
-                active = false;
-            }
+            _animatorFire.SetBool(AnimatorHash.Active, true);
+
+            active = false;
         }
 
         public void Fire()
@@ -192,13 +192,9 @@ namespace GamePanelHUDCompass.Views
                                  -fireXRightRight < panelMaxX && -fireXRightRight > panelMinX;
 
             if (!realInPanel && !virtualInPanel)
-            {
                 return RealDirection(lhs, right) ? 1 : -1;
-            }
-            else
-            {
-                return 0;
-            }
+
+            return 0;
         }
 
         private static bool RealDirection(Vector3 lhs, Vector3 right)
@@ -207,6 +203,7 @@ namespace GamePanelHUDCompass.Views
         }
 
 #endif
+        // ReSharper disable once UnusedMember.Local
         private void ToDestroy()
         {
             CompassFireHUDView.Remove(who);

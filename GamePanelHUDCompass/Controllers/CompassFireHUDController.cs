@@ -31,14 +31,14 @@ namespace GamePanelHUDCompass.Controllers
             compassFireHUDModel.CompassFireHUDSw =
                 compassHUDModel.CompassHUDSw && settingsModel.KeyCompassFireHUDSw.Value;
 
-            if (hudCoreModel.HasPlayer)
-            {
-                compassFireHUDModel.CompassFire.NorthVector = EFTGlobal.LevelSettings.NorthVector;
+            if (!hudCoreModel.HasPlayer)
+                return;
 
-                compassFireHUDModel.CompassFire.CameraPosition = compassHUDModel.CamTransform.position;
+            compassFireHUDModel.CompassFire.NorthVector = EFTGlobal.LevelSettings.NorthVector;
 
-                compassFireHUDModel.CompassFire.PlayerRight = compassHUDModel.CamTransform.right;
-            }
+            compassFireHUDModel.CompassFire.CameraPosition = compassHUDModel.CamTransform.position;
+
+            compassFireHUDModel.CompassFire.PlayerRight = compassHUDModel.CamTransform.right;
         }
 
 #endif
