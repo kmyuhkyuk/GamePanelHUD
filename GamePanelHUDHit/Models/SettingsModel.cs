@@ -79,7 +79,7 @@ namespace GamePanelHUDHit.Models
             KeyHitDamageAnchoredPosition = configFile.Bind<Vector2>(prsSettings,
                 "Hit Damage Anchored Position", new Vector2(30, 0));
             KeyHitDamageSizeDelta =
-                configFile.Bind<Vector2>(prsSettings, "Hit Damage Size Delta", new Vector2(60, 34));
+                configFile.Bind<Vector2>(prsSettings, "Hit Damage Size Delta", new Vector2(80, 34));
             KeyHitDamageLocalScale =
                 configFile.Bind<Vector2>(prsSettings, "Hit Damage Local Scale", new Vector2(1, 1));
 
