@@ -1,5 +1,6 @@
 ﻿#if !UNITY_EDITOR
 using BepInEx;
+using EFTUtils;
 using GamePanelHUDCore.Attributes;
 using GamePanelHUDCore.Models;
 using GamePanelHUDKill.Models;
@@ -22,6 +23,11 @@ namespace GamePanelHUDKill
             var killHUDModel = KillHUDModel.Instance;
 
             var prefabs = hudCoreModel.LoadHUD("gamepanelkillhud.bundle", "GamePanelKillHUD");
+
+            foreach (var keyValue in prefabs.Init)
+            {
+                keyValue.Value.ReplaceAllFont(EFTFontHelper.BenderNormal);
+            }
 
             killHUDModel.ScreenRect = hudCoreModel.GamePanelHUDPublic.GetComponent<RectTransform>();
             killHUDModel.KillPrefab = prefabs.Asset["Kill"];

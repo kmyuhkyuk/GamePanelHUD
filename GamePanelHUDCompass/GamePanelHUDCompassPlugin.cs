@@ -1,6 +1,7 @@
 ﻿#if !UNITY_EDITOR
 
 using BepInEx;
+using EFTUtils;
 using GamePanelHUDCompass.Models;
 using GamePanelHUDCore.Attributes;
 using GamePanelHUDCore.Models;
@@ -21,12 +22,18 @@ namespace GamePanelHUDCompass
 
             var prefabs = HUDCoreModel.Instance.LoadHUD("gamepanelcompasshud.bundle", "GamePanelCompassHUD");
 
+            foreach (var keyValue in prefabs.Init)
+            {
+                keyValue.Value.ReplaceAllFont(EFTFontHelper.BenderNormal);
+            }
+
             CompassHUDModel.Instance.ScreenRect =
                 HUDCoreModel.Instance.GamePanelHUDPublic.GetComponent<RectTransform>();
 
-            CompassFireHUDModel.Instance.FirePrefab = prefabs.Asset["Fire"];
+            CompassFireHUDModel.Instance.FirePrefab = prefabs.Asset["Fire"].ReplaceAllFont(EFTFontHelper.BenderNormal);
 
-            CompassStaticHUDModel.Instance.StaticPrefab = prefabs.Asset["Point"];
+            CompassStaticHUDModel.Instance.StaticPrefab =
+                prefabs.Asset["Point"].ReplaceAllFont(EFTFontHelper.BenderNormal);
         }
 
         private void Start()
