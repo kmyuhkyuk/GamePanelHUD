@@ -1,6 +1,7 @@
 ﻿#if !UNITY_EDITOR
 
 using BepInEx;
+using EFTUtils;
 using GamePanelHUDCore.Attributes;
 using GamePanelHUDCore.Models;
 using GamePanelHUDHit.Models;
@@ -22,7 +23,10 @@ namespace GamePanelHUDHit
 
             var hudCoreModel = HUDCoreModel.Instance;
 
-            hudCoreModel.LoadHUD("gamepanelhithud.bundle", "GamePanelHitHUD");
+            foreach (var keyValue in hudCoreModel.LoadHUD("gamepanelhithud.bundle", "GamePanelHitHUD").Init)
+            {
+                keyValue.Value.ReplaceAllFont(EFTFontHelper.BenderNormal);
+            }
 
             HitHUDModel.Instance.ScreenRect = hudCoreModel.GamePanelHUDPublic.GetComponent<RectTransform>();
         }

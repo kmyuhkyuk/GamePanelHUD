@@ -1,6 +1,7 @@
 ﻿#if !UNITY_EDITOR
 
 using BepInEx;
+using EFTUtils;
 using GamePanelHUDCore.Attributes;
 using GamePanelHUDCore.Models;
 using static EFTApi.EFTHelpers;
@@ -17,7 +18,11 @@ namespace GamePanelHUDHealth
         {
             SettingsModel.Create(Config);
 
-            HUDCoreModel.Instance.LoadHUD("gamepanelhealthhud.bundle", "GamePanelHealthHUD");
+            foreach (var keyValue in HUDCoreModel.Instance.LoadHUD("gamepanelhealthhud.bundle", "GamePanelHealthHUD")
+                         .Init)
+            {
+                keyValue.Value.ReplaceAllFont(EFTFontHelper.BenderNormal);
+            }
         }
 
         private void Start()

@@ -1,6 +1,7 @@
 ﻿#if !UNITY_EDITOR
 
 using BepInEx;
+using EFTUtils;
 using GamePanelHUDCore.Attributes;
 using GamePanelHUDCore.Models;
 using SettingsModel = GamePanelHUDGrenade.Models.SettingsModel;
@@ -16,7 +17,11 @@ namespace GamePanelHUDGrenade
         {
             SettingsModel.Create(Config);
 
-            HUDCoreModel.Instance.LoadHUD("gamepanelgrenadehud.bundle", "GamePanelGrenadeHUD");
+            foreach (var keyValue in HUDCoreModel.Instance.LoadHUD("gamepanelgrenadehud.bundle", "GamePanelGrenadeHUD")
+                         .Init)
+            {
+                keyValue.Value.ReplaceAllFont(EFTFontHelper.BenderNormal);
+            }
         }
     }
 }

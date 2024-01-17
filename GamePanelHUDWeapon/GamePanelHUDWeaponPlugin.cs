@@ -1,6 +1,7 @@
 ﻿#if !UNITY_EDITOR
 
 using BepInEx;
+using EFTUtils;
 using GamePanelHUDCore.Attributes;
 using GamePanelHUDCore.Models;
 using SettingsModel = GamePanelHUDWeapon.Models.SettingsModel;
@@ -16,7 +17,11 @@ namespace GamePanelHUDWeapon
         {
             SettingsModel.Create(Config);
 
-            HUDCoreModel.Instance.LoadHUD("gamepanelweaponhud.bundle", "GamePanelWeaponHUD");
+            foreach (var keyValue in HUDCoreModel.Instance.LoadHUD("gamepanelweaponhud.bundle", "GamePanelWeaponHUD")
+                         .Init)
+            {
+                keyValue.Value.ReplaceAllFont(EFTFontHelper.BenderNormal);
+            }
         }
     }
 }
