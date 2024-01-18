@@ -32,6 +32,11 @@ namespace Build
                 "GamePanelHUDWeapon"
             });
 
+            Copy.GenerateSevenZip(arg, "Release", releasePath, null, @"BepInEx\plugins", Array.Empty<string>(),
+                Array.Empty<string>(), new[] { Path.Combine(baseDirectory, "ReadMe.txt") }, Array.Empty<string>());
+
+            //Unity 
+
             const string unityEditorPath = @"C:\Users\24516\Documents\GamePanelHUD\Assets\Managed";
 
             Copy.CopyAssembly(arg, "UNITY_EDITOR", baseDirectory, unityEditorPath, new[]
