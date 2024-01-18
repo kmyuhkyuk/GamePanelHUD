@@ -14,15 +14,23 @@ namespace Build
             var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
             var arg = args.ElementAtOrDefault(0);
 
-            const string releasePath =
+            const string modPath =
                 @"R:\Battlestate Games\Client.0.13.5.3.26535\BepInEx\plugins\kmyuhkyuk-GamePanelHUD";
 
-            Copy.CopyAssembly(arg, "Release", baseDirectory, Path.Combine(releasePath, "core"), new[]
+            var previewName = $"{new DirectoryInfo(modPath).Name}-(Preview).7z";
+
+            var releasePreview = new[]
+            {
+                "Release",
+                "Preview"
+            };
+
+            Copy.CopyAssembly(arg, releasePreview, baseDirectory, Path.Combine(modPath, "core"), new[]
             {
                 "GamePanelHUDCore"
             });
 
-            Copy.CopyAssembly(arg, "Release", baseDirectory, releasePath, new[]
+            Copy.CopyAssembly(arg, releasePreview, baseDirectory, modPath, new[]
             {
                 "GamePanelHUDCompass",
                 "GamePanelHUDGrenade",
@@ -32,7 +40,10 @@ namespace Build
                 "GamePanelHUDWeapon"
             });
 
-            Copy.GenerateSevenZip(arg, "Release", releasePath, null, @"BepInEx\plugins", Array.Empty<string>(),
+            Copy.GenerateSevenZip(arg, "Release", modPath, null, @"BepInEx\plugins", Array.Empty<string>(),
+                Array.Empty<string>(), new[] { Path.Combine(baseDirectory, "ReadMe.txt") }, Array.Empty<string>());
+
+            Copy.GenerateSevenZip(arg, "Preview", modPath, previewName, @"BepInEx\plugins", Array.Empty<string>(),
                 Array.Empty<string>(), new[] { Path.Combine(baseDirectory, "ReadMe.txt") }, Array.Empty<string>());
 
             //Unity 
