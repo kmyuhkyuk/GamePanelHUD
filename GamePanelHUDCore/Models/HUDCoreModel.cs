@@ -10,6 +10,7 @@ using EFTApi;
 using EFTUtils;
 using GamePanelHUDCore.Controllers;
 using UnityEngine;
+using UnityEngine.UI;
 using static EFTApi.EFTHelpers;
 using Object = UnityEngine.Object;
 
@@ -48,18 +49,15 @@ namespace GamePanelHUDCore.Models
 
         public bool AllHUDSw;
 
-        public readonly GameObject GamePanelHUDPublic;
+        public readonly GameObject GamePanelHUDPublic = new GameObject("GamePanelHUDPublic", typeof(Canvas), typeof(CanvasScaler));
 
-        public readonly UpdateManger UpdateManger;
+        public readonly UpdateManger UpdateManger = new UpdateManger();
 
         public readonly string ModPath = Path.Combine(BepInEx.Paths.PluginPath, "kmyuhkyuk-GamePanelHUD");
 
-        private HUDCoreModel(GameObject gamePanelHUDPublic, UpdateManger updateManger)
+        private HUDCoreModel()
         {
-            GamePanelHUDPublic = gamePanelHUDPublic;
-            UpdateManger = updateManger;
-
-            var canvas = gamePanelHUDPublic.GetComponent<Canvas>();
+            var canvas = GamePanelHUDPublic.GetComponent<Canvas>();
 
             canvas.renderMode = RenderMode.ScreenSpaceOverlay;
             canvas.sortingOrder = 1;
@@ -67,18 +65,18 @@ namespace GamePanelHUDCore.Models
                                               AdditionalCanvasShaderChannels.Normal |
                                               AdditionalCanvasShaderChannels.Tangent;
 
-            gamePanelHUDPublic.AddComponent<HUDCoreController>();
+            GamePanelHUDPublic.AddComponent<HUDCoreController>();
 
-            Object.DontDestroyOnLoad(gamePanelHUDPublic);
+            Object.DontDestroyOnLoad(GamePanelHUDPublic);
         }
 
         // ReSharper disable once UnusedMethodReturnValue.Global
-        public static HUDCoreModel Create(GameObject gamePanelHUDPublic, UpdateManger updateManger)
+        public static HUDCoreModel Create()
         {
             if (Instance != null)
                 return Instance;
 
-            return Instance = new HUDCoreModel(gamePanelHUDPublic, updateManger);
+            return Instance = new HUDCoreModel();
         }
 
         public string GetBundlePath(string bundleName)
