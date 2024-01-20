@@ -1,11 +1,8 @@
 ﻿#if !UNITY_EDITOR
 
 using BepInEx;
-using EFTUtils;
 using GamePanelHUDCore.Attributes;
 using GamePanelHUDCore.Models;
-using UnityEngine;
-using UnityEngine.UI;
 
 namespace GamePanelHUDCore
 {
@@ -14,16 +11,11 @@ namespace GamePanelHUDCore
     [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", "../localized/core")]
     public class GamePanelHUDCorePlugin : BaseUnityPlugin
     {
-        private static readonly GameObject GamePanelHUDPublic =
-            new GameObject("GamePanelHUDPublic", typeof(Canvas), typeof(CanvasScaler));
-
-        private static readonly UpdateManger UpdateManger = new UpdateManger();
-
         private void Awake()
         {
             SettingsModel.Create(Config);
 
-            HUDCoreModel.Create(GamePanelHUDPublic, UpdateManger);
+            HUDCoreModel.Create();
         }
     }
 }
