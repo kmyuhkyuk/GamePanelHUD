@@ -143,7 +143,7 @@ namespace GamePanelHUDKill.Views
 
             var expRoot = killModel.IsTest ? _testExpUIView : expUIView;
 
-            var baseExp = _SessionHelper.ExperienceHelper.GetBaseExp(killModel.Exp, killModel.Side);
+            var baseExp = _ExperienceHelper.GetBaseExp(killModel.Exp, killModel.Side);
 
             var allExp = baseExp;
 
@@ -159,7 +159,7 @@ namespace GamePanelHUDKill.Views
             if (killModel.KillCount > 1 && settingsModel.KeyKillHasStreak.Value)
             {
                 var streakXp =
-                    _SessionHelper.ExperienceHelper.GetStreakExp(killModel.Exp, killModel.Side, killModel.KillCount);
+                    _ExperienceHelper.GetStreakExp(killModel.Exp, killModel.Side, killModel.KillCount);
 
                 allKillList.Add(AddStreakInfo(killModel, settingsModel, killRoot, streakXp));
 
@@ -170,7 +170,7 @@ namespace GamePanelHUDKill.Views
 
             if (killModel.Part == EBodyPart.Head && settingsModel.KeyKillHasOther.Value)
             {
-                var headXp = _SessionHelper.ExperienceHelper.GetHeadExp(killModel.Exp, killModel.Side);
+                var headXp = _ExperienceHelper.GetHeadExp(killModel.Exp, killModel.Side);
 
                 allKillList.Add(AddOtherInfo(settingsModel, killRoot, _LocalizedHelper.Localized("StatsHeadshot"),
                     headXp, true));
@@ -260,9 +260,9 @@ namespace GamePanelHUDKill.Views
             var weaponName = _LocalizedHelper.Localized(killModel.WeaponName);
 
             string sideKey;
-            if (isScav && _PlayerHelper.RoleHelper.IsBossOrFollower(killModel.Role))
+            if (isScav && _RoleHelper.IsBossOrFollower(killModel.Role))
             {
-                sideKey = _PlayerHelper.RoleHelper.GetScavRoleKey(killModel.Role);
+                sideKey = _RoleHelper.GetScavRoleKey(killModel.Role);
             }
             else
             {
@@ -282,10 +282,10 @@ namespace GamePanelHUDKill.Views
             string sideColor;
             switch (isScav)
             {
-                case true when _PlayerHelper.RoleHelper.IsBoss(killModel.Role):
+                case true when _RoleHelper.IsBoss(killModel.Role):
                     sideColor = settingsModel.KeyKillBossColor.Value.ColorToHtml();
                     break;
-                case true when _PlayerHelper.RoleHelper.IsFollower(killModel.Role):
+                case true when _RoleHelper.IsFollower(killModel.Role):
                     sideColor = settingsModel.KeyKillFollowerColor.Value.ColorToHtml();
                     break;
                 default:

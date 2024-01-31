@@ -321,7 +321,7 @@ namespace GamePanelHUDCompass.Views
                 case StaticModel.Type.ConditionFindItem:
                 case StaticModel.Type.ConditionVisitPlace:
                 case StaticModel.Type.ConditionInZone:
-                    _SessionHelper.TradersHelper.TradersAvatarData.GetAvatar(staticModel.TraderId, staticUI.BindIcon);
+                    _TradersAvatarHelper.BindAvatar(staticModel.TraderId, staticUI.BindIcon);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(staticModel.InfoType), staticModel.InfoType, null);

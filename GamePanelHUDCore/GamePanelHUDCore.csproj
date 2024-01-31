@@ -64,15 +64,15 @@
     </Reference>
     <Reference Include="EFTApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=13a2b05844723184, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\EFTApi\Build\bin\Release\EFTApi.dll</HintPath>
+      <HintPath>..\..\EFTApi\Build\bin\Current\EFTApi.dll</HintPath>
     </Reference>
     <Reference Include="EFTReflection, Version=1.1.2.0, Culture=neutral, PublicKeyToken=13a2b05844723184, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\EFTApi\Build\bin\Release\EFTReflection.dll</HintPath>
+      <HintPath>..\..\EFTApi\Build\bin\Current\EFTReflection.dll</HintPath>
     </Reference>
     <Reference Include="EFTUtils, Version=1.0.0.0, Culture=neutral, PublicKeyToken=13a2b05844723184, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\EFTApi\Build\bin\Release\EFTUtils.dll</HintPath>
+      <HintPath>..\..\EFTApi\Build\bin\Current\EFTUtils.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

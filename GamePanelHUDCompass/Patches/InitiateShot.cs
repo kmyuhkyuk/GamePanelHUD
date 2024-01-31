@@ -17,11 +17,13 @@ namespace GamePanelHUDCompass
             if (____player == hudCoreModel.YourPlayer)
                 return;
 
+            var settings = _PlayerHelper.RefSettings.GetValue(____player.Profile.Info);
+
             var fireModel = new FireModel
             {
                 Who = ____player.ProfileId,
                 Where = shotPosition,
-                Role = _PlayerHelper.RefRole.GetValue(_PlayerHelper.RefSettings.GetValue(____player.Profile.Info)),
+                Role = _PlayerHelper.RefRole.GetValue(settings),
                 IsSilenced = __instance.IsSilenced && !__instance.IsInLauncherMode(),
                 Distance = Vector3.Distance(shotPosition, hudCoreModel.YourPlayer.CameraPosition.position)
             };

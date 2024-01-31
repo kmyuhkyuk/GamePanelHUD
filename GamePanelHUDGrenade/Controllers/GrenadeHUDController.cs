@@ -56,7 +56,7 @@ namespace GamePanelHUDGrenade.Controllers
             //Performance Optimization
             if (Time.frameCount % 20 == 0)
             {
-                var slots = _PlayerHelper.InventoryHelper.EquipmentSlots;
+                var slots = _InventoryHelper.EquipmentSlots;
 
                 //Get Rig and Pocket
                 _rig = slots[6].ContainedItem;
@@ -84,13 +84,13 @@ namespace GamePanelHUDGrenade.Controllers
             if (gear == null)
                 return;
 
-            var grids = _PlayerHelper.InventoryHelper.RefGrids.GetValue(gear);
+            var grids = _InventoryHelper.RefGrids.GetValue(gear);
 
             if (!SettingsModel.Instance.KeyMergeGrenade.Value)
             {
                 foreach (var grid in grids)
                 {
-                    foreach (var item in _PlayerHelper.InventoryHelper.RefItems.GetValue(grid))
+                    foreach (var item in _InventoryHelper.RefItems.GetValue(grid))
                     {
                         if (item.GetType() == _grenadeItemType)
                         {
@@ -127,7 +127,7 @@ namespace GamePanelHUDGrenade.Controllers
                 foreach (var grid in grids)
                 {
                     // ReSharper disable once LoopCanBeConvertedToQuery
-                    foreach (var item in _PlayerHelper.InventoryHelper.RefItems.GetValue(grid))
+                    foreach (var item in _InventoryHelper.RefItems.GetValue(grid))
                     {
                         if (item.GetType() == _grenadeItemType)
                         {

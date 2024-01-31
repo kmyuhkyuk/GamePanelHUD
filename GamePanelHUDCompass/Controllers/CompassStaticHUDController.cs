@@ -50,9 +50,9 @@ namespace GamePanelHUDCompass.Controllers
                 //Performance Optimization
                 if (Time.frameCount % 20 == 0)
                 {
-                    var hashSet = _PlayerHelper.InventoryHelper.EquipmentHash;
+                    var hashSet = _InventoryHelper.EquipmentHash;
 
-                    hashSet.UnionWith(_PlayerHelper.InventoryHelper.QuestRaidItemsHash);
+                    hashSet.UnionWith(_InventoryHelper.QuestRaidItemsHash);
 
                     compassStaticHUDModel.CompassStatic.EquipmentAndQuestRaidItems = hashSet;
                 }
@@ -91,7 +91,7 @@ namespace GamePanelHUDCompass.Controllers
             (string Id, LootItem Item)[] questItems =
                 lootItemsList.Where(x => x.Item.QuestItem).Select(x => (x.TemplateId, x)).ToArray();
 
-            var is231Up = EFTVersion.AkiVersion > Version.Parse("2.3.1");
+            var is231Up = EFTVersion.AkiVersion > EFTVersion.Parse("2.3.1");
 
             foreach (var item in questsList)
             {
@@ -131,7 +131,7 @@ namespace GamePanelHUDCompass.Controllers
                         {
                             var zoneId = location.zoneId;
 
-                            if (_GameWorldHelper.ZoneHelper.TryGetValues(zoneId,
+                            if (_ZoneHelper.TryGetValues(zoneId,
                                     out IEnumerable<PlaceItemTrigger> triggers))
                             {
                                 foreach (var trigger in triggers)
@@ -159,7 +159,7 @@ namespace GamePanelHUDCompass.Controllers
                         {
                             var zoneId = beacon.zoneId;
 
-                            if (_GameWorldHelper.ZoneHelper.TryGetValues(zoneId,
+                            if (_ZoneHelper.TryGetValues(zoneId,
                                     out IEnumerable<PlaceItemTrigger> triggers))
                             {
                                 foreach (var trigger in triggers)
@@ -228,7 +228,7 @@ namespace GamePanelHUDCompass.Controllers
                                     {
                                         var zoneId = place.target;
 
-                                        if (_GameWorldHelper.ZoneHelper.TryGetValues(zoneId,
+                                        if (_ZoneHelper.TryGetValues(zoneId,
                                                 out IEnumerable<ExperienceTrigger> triggers))
                                         {
                                             foreach (var trigger in triggers)
@@ -257,7 +257,7 @@ namespace GamePanelHUDCompass.Controllers
 
                                         foreach (var zoneId in zoneIds)
                                         {
-                                            if (!_GameWorldHelper.ZoneHelper.TryGetValues(zoneId,
+                                            if (!_ZoneHelper.TryGetValues(zoneId,
                                                     out IEnumerable<ExperienceTrigger> triggers))
                                                 continue;
 
@@ -332,7 +332,7 @@ namespace GamePanelHUDCompass.Controllers
                 if (point.Status != EExfiltrationStatus.UncompleteRequirements)
                     continue;
 
-                var switchs = EFTVersion.AkiVersion > Version.Parse("3.6.1")
+                var switchs = EFTVersion.AkiVersion > EFTVersion.Parse("3.6.1")
                     ? Traverse.Create(point).Field("_switches").GetValue<List<Switch>>().ToArray()
                     : Traverse.Create(point).Field("list_1").GetValue<List<Switch>>().ToArray();
 

@@ -17,13 +17,13 @@ namespace GamePanelHUDCompass
 
             var looTable = __instance.GetComponentInChildren<LootableContainer>();
 
-            var controller = _GameWorldHelper.LootableContainerHelper.RefItemOwner.GetValue(looTable);
+            var controller = _LootableContainerHelper.RefItemOwner.GetValue(looTable);
 
-            var item = _GameWorldHelper.LootableContainerHelper.RefRootItem.GetValue(controller);
+            var item = _LootableContainerHelper.RefRootItem.GetValue(controller);
 
             string nameKey;
             string descriptionKey;
-            switch (_AirdropHelper.AirdropSynchronizableObjectHelper.RefAirdropType?.GetValue(___boxSync))
+            switch (_AirdropSynchronizableObjectHelper.RefAirdropType?.GetValue(___boxSync))
             {
                 case 0:
                     nameKey = "6223349b3136504a544d1608 Name";
@@ -56,7 +56,7 @@ namespace GamePanelHUDCompass
                 InfoType = StaticModel.Type.Airdrop,
                 Requirements = new Func<bool>[]
                 {
-                    () => _GameWorldHelper.SearchableItemClassHelper.RefAllSearchersIds?.GetValue(item)
+                    () => _SearchableItemClassHelper.RefAllSearchersIds?.GetValue(item)
                         .Contains(compassStaticHUDModel.CompassStatic.YourProfileId) ?? false
                 }
             };

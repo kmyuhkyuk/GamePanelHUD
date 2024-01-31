@@ -175,8 +175,8 @@ namespace GamePanelHUDCompass.Views
 
                     fireUI.where = fireModel.Where;
 
-                    var isBoss = _PlayerHelper.RoleHelper.IsBoss(fireModel.Role);
-                    var isFollower = _PlayerHelper.RoleHelper.IsFollower(fireModel.Role);
+                    var isBoss = _RoleHelper.IsBoss(fireModel.Role);
+                    var isFollower = _RoleHelper.IsFollower(fireModel.Role);
 
                     fireUI.isBoss = isBoss;
 

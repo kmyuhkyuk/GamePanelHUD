@@ -11,7 +11,7 @@ namespace GamePanelHUDHit
     {
         private static void ApplyDamageInfo(Player __instance, DamageInfo damageInfo, EBodyPart bodyPartType)
         {
-            if (_PlayerHelper.DamageInfoHelper.GetPlayer(damageInfo) != HUDCoreModel.Instance.YourPlayer)
+            if (_DamageInfoHelper.GetPlayer(damageInfo) != HUDCoreModel.Instance.YourPlayer)
                 return;
 
             var armorModel = ArmorModel.Instance;
@@ -32,8 +32,8 @@ namespace GamePanelHUDHit
             }
 
             HitModel.Hit hitType;
-            if (_PlayerHelper.HealthControllerHelper.RefIsAlive.GetValue(
-                    _PlayerHelper.HealthControllerHelper.RefHealthController.GetValue(__instance)))
+            if (_HealthControllerHelper.RefIsAlive.GetValue(
+                    _HealthControllerHelper.RefHealthController.GetValue(__instance)))
             {
                 hitType = hasArmorHit ? HitModel.Hit.HasArmorHit : HitModel.Hit.OnlyHp;
             }
