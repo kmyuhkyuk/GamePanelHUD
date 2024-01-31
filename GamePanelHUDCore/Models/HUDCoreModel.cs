@@ -90,28 +90,18 @@ namespace GamePanelHUDCore.Models
             return LoadHUD(bundleName, new[] { initAssetName });
         }
 
-        public AssetModel<GameObject> LoadHUD(string bundleName, IEnumerable<string> initAssetName)
+        public AssetModel<GameObject> LoadHUD(string bundleName, IEnumerable<string> initAssetNames)
         {
             var assetBundle = AssetBundleHelper.LoadBundle(GetBundlePath(bundleName));
 
-            var asset = assetBundle.LoadAllAssets<GameObject>().ToDictionary(x => x.name, x => x);
+            var assetDictionary = assetBundle.LoadAllAssets<GameObject>().ToDictionary(x => x.name, x => x);
 
-            var init = new Dictionary<string, GameObject>();
-
-            foreach (var name in initAssetName)
-            {
-                InitAsset(asset, init, name);
-            }
+            var initDictionary = initAssetNames.ToDictionary(initAssetName => initAssetName,
+                initAssetName => Object.Instantiate(assetDictionary[initAssetName], GamePanelHUDPublic.transform));
 
             assetBundle.Unload(false);
 
-            return new AssetModel<GameObject>(asset, init);
-        }
-
-        private void InitAsset(IReadOnlyDictionary<string, GameObject> asset, IDictionary<string, GameObject> init,
-            string initAssetName)
-        {
-            init.Add(initAssetName, Object.Instantiate(asset[initAssetName], GamePanelHUDPublic.transform));
+            return new AssetModel<GameObject>(assetDictionary, initDictionary);
         }
     }
 }
