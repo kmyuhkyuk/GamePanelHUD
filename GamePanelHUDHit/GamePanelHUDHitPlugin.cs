@@ -34,7 +34,7 @@ namespace GamePanelHUDHit
         private void Start()
         {
             _PlayerHelper.ApplyDamageInfo.Add(this, nameof(ApplyDamageInfo));
-            _PlayerHelper.ArmorComponentHelper.ApplyDamage.Add(this, nameof(ApplyDamage),
+            _ArmorComponentHelper.ApplyDamage.Add(this, nameof(ApplyDamage),
                 HarmonyPatchType.ILManipulator);
         }
     }

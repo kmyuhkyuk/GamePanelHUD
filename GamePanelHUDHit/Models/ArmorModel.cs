@@ -22,7 +22,7 @@ namespace GamePanelHUDHit.Models
 
         public void Set(DamageInfo damageInfo, float armorDamage)
         {
-            if (_PlayerHelper.DamageInfoHelper.GetPlayer(damageInfo) != HUDCoreModel.Instance.YourPlayer)
+            if (_DamageInfoHelper.GetPlayer(damageInfo) != HUDCoreModel.Instance.YourPlayer)
                 return;
 
             Damage = armorDamage;

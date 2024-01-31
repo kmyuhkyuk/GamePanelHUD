@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 #if !UNITY_EDITOR
 using EFT;
 using EFT.InventoryLogic;
@@ -81,12 +80,12 @@ namespace GamePanelHUDWeapon.Controllers
 
             //Get Weapon Class
             _currentWeapon = EFTGlobal.Weapon;
-            _animatorWeapon = _PlayerHelper.WeaponHelper.WeaponAnimator;
+            _animatorWeapon = _WeaponHelper.WeaponAnimator;
 
-            if (EFTVersion.AkiVersion > Version.Parse("3.4.1"))
+            if (EFTVersion.AkiVersion > EFTVersion.Parse("3.4.1"))
             {
-                _currentLauncher = EFTGlobal.UnderbarrelWeapon;
-                _animatorLauncher = _PlayerHelper.WeaponHelper.LauncherIAnimator;
+                _currentLauncher = _WeaponHelper.UnderbarrelWeapon;
+                _animatorLauncher = _WeaponHelper.LauncherIAnimator;
             }
 
             var weaponActive = _currentWeapon != null;
@@ -167,7 +166,7 @@ namespace GamePanelHUDWeapon.Controllers
                     var chambersCount = _currentWeapon.ChamberAmmoCount;
                     var maxMagazineCount = _currentWeapon.GetMaxMagazineCount();
 
-                    _currentMag = _PlayerHelper.WeaponHelper.CurrentMagazine;
+                    _currentMag = _WeaponHelper.CurrentMagazine;
 
                     if (_magCacheBool)
                     {
@@ -238,7 +237,7 @@ namespace GamePanelHUDWeapon.Controllers
                 else
                 {
                     var ammoInChamber = (int)_animatorWeapon.GetFloat(AnimatorHash.AmmoInChamber);
-                    var chambersCount = _PlayerHelper.WeaponHelper.Chambers.Length;
+                    var chambersCount = _WeaponHelper.Chambers.Length;
 
                     switch (_allReloadBool)
                     {
@@ -288,7 +287,7 @@ namespace GamePanelHUDWeapon.Controllers
                 weaponHUDModel.Weapon.WeaponShortName =
                     _LocalizedHelper.Localized(((Item)_currentLauncher).ShortName);
 
-                var launcherTemplate = _PlayerHelper.WeaponHelper.UnderbarrelWeaponTemplate;
+                var launcherTemplate = _WeaponHelper.UnderbarrelWeaponTemplate;
 
                 //Get Fire Mode
                 weaponHUDModel.Weapon.FireMode = _LocalizedHelper.Localized(nameof(Weapon.EFireMode.single));
@@ -296,13 +295,13 @@ namespace GamePanelHUDWeapon.Controllers
                 weaponHUDModel.Weapon.AmmoType = _LocalizedHelper.Localized(launcherTemplate.ammoCaliber);
 
                 var ammoInChamber = (int)_animatorLauncher.GetFloat(AnimatorHash.AmmoInChamber);
-                var chambersCount = _PlayerHelper.WeaponHelper.UnderbarrelChambers.Length;
+                var chambersCount = _WeaponHelper.UnderbarrelChambers.Length;
 
                 switch (_allReloadBool)
                 {
                     case false when ammoInChamber != 0:
                     {
-                        var count = _PlayerHelper.WeaponHelper.UnderbarrelChamberAmmoCount;
+                        var count = _WeaponHelper.UnderbarrelChamberAmmoCount;
 
                         weaponHUDModel.Weapon.Patron = 0;
 

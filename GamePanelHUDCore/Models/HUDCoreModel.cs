@@ -49,7 +49,8 @@ namespace GamePanelHUDCore.Models
 
         public bool AllHUDSw;
 
-        public readonly GameObject GamePanelHUDPublic = new GameObject("GamePanelHUDPublic", typeof(Canvas), typeof(CanvasScaler));
+        public readonly GameObject GamePanelHUDPublic =
+            new GameObject("GamePanelHUDPublic", typeof(Canvas), typeof(CanvasScaler));
 
         public readonly UpdateManger UpdateManger = new UpdateManger();
 

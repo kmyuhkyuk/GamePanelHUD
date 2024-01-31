@@ -248,7 +248,7 @@ namespace GamePanelHUDKill.Models
             var allowRole = (WildSpawnType)role.GetValue(UnityEngine.Random.Range(0, role.Length));
             try
             {
-                _PlayerHelper.RoleHelper.IsBossOrFollower(allowRole);
+                _RoleHelper.IsBossOrFollower(allowRole);
             }
             catch
             {
