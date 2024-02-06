@@ -105,6 +105,7 @@
     <Compile Include="Models\CompassStaticHUDModel.cs" />
     <Compile Include="Models\CompassStaticModel.cs" />
     <Compile Include="Models\FireModel.cs" />
+    <Compile Include="Models\ReflectionModel.cs" />
     <Compile Include="Models\SettingsModel.cs" />
     <Compile Include="Models\StaticModel.cs" />
     <Compile Include="Patches\InitiateShot.cs" />
