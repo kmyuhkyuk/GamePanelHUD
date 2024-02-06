@@ -2,7 +2,6 @@
 
 using System.Threading.Tasks;
 using GamePanelHUDHealth.Models;
-using HarmonyLib;
 
 namespace GamePanelHUDHealth
 {
@@ -11,7 +10,7 @@ namespace GamePanelHUDHealth
         private static async void Execute(Task<MainMenuController> __result)
         {
             HealthHUDModel.Instance.HealthController =
-                Traverse.Create(await __result).Property("HealthController").GetValue<object>();
+                ReflectionModel.Instance.RefHealthController.GetValue(await __result);
         }
     }
 }

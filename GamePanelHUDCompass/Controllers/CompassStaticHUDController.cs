@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using EFT;
@@ -9,7 +8,6 @@ using UnityEngine;
 using EFT.Quests;
 using EFTApi;
 using EFTUtils;
-using HarmonyLib;
 using static EFTApi.EFTHelpers;
 using GamePanelHUDCore.Models;
 using GamePanelHUDCompass.Models;
@@ -63,7 +61,7 @@ namespace GamePanelHUDCompass.Controllers
                 ShowQuest(hudCoreModel.YourPlayer, hudCoreModel.TheWorld, hudCoreModel.TheGame,
                     compassStaticHUDModel.ShowStatic);
 
-                ShowExfiltration(hudCoreModel.YourPlayer, hudCoreModel.TheWorld, compassStaticHUDModel.ShowStatic);
+                ShowExfiltration(hudCoreModel.YourPlayer, compassStaticHUDModel.ShowStatic);
 
                 compassStaticHUDModel.CompassStaticCacheBool = false;
             }
@@ -75,18 +73,22 @@ namespace GamePanelHUDCompass.Controllers
         }
 
         // ReSharper disable once SuggestBaseTypeForParameter
-        private static void ShowQuest(Player player, GameWorld world, AbstractGame game, Action<StaticModel> showStatic)
+        private static void ShowQuest(Player player, GameWorld world, AbstractGame game, Action<StaticModel> callback)
         {
             if (player is HideoutPlayer)
                 return;
 
-            var questData = Traverse.Create(player).Field("_questController").GetValue<object>();
+            var reflectionModel = ReflectionModel.Instance;
 
-            var quests = Traverse.Create(questData).Field("Quests").GetValue<object>();
+            var questData = _PlayerHelper.RefQuestController.GetValue(player);
 
-            var questsList = Traverse.Create(quests).Field("list_0").GetValue<IList>();
+            var quests = reflectionModel.RefQuests.GetValue(questData);
 
-            var lootItemsList = Traverse.Create(world).Field("LootItems").Field("list_0").GetValue<List<LootItem>>();
+            var questsList = reflectionModel.RefQuestsList.GetValue(quests);
+
+            var lootItems = _GameWorldHelper.RefLootItems.GetValue(world);
+
+            var lootItemsList = reflectionModel.RefLootList.GetValue(lootItems);
 
             (string Id, LootItem Item)[] questItems =
                 lootItemsList.Where(x => x.Item.QuestItem).Select(x => (x.TemplateId, x)).ToArray();
@@ -95,12 +97,12 @@ namespace GamePanelHUDCompass.Controllers
 
             foreach (var item in questsList)
             {
-                if (Traverse.Create(item).Property("QuestStatus").GetValue<EQuestStatus>() != EQuestStatus.Started)
+                if (reflectionModel.RefQuestStatus.GetValue(item) != EQuestStatus.Started)
                     continue;
 
-                var template = Traverse.Create(item).Property("Template").GetValue<object>();
+                var template = reflectionModel.RefTemplate.GetValue(item);
 
-                var locationId = Traverse.Create(template).Field("LocationId").GetValue<string>();
+                var locationId = reflectionModel.RefLocationId.GetValue(template);
 
                 if (locationId != game.LocationObjectId && locationId != "any")
                     continue;
@@ -108,20 +110,19 @@ namespace GamePanelHUDCompass.Controllers
                 switch (is231Up)
                 {
                     case true when (player.Profile.Side == EPlayerSide.Savage ? 1 : 0) !=
-                                   Traverse.Create(template).Field("PlayerGroup").GetValue<int>():
+                                   reflectionModel.RefPlayerGroup.GetValue(template):
                     case false when player.Profile.Side == EPlayerSide.Savage:
                         continue;
                 }
 
-                var nameKey = Traverse.Create(template).Property("NameLocaleKey").GetValue<string>();
+                var nameKey = reflectionModel.RefNameLocaleKey.GetValue(template);
 
-                var traderId = Traverse.Create(template).Field("TraderId").GetValue<string>();
+                var traderId = reflectionModel.RefTraderId.GetValue(template);
 
-                var availableForFinishConditions =
-                    Traverse.Create(item).Property("AvailableForFinishConditions").GetValue<object>();
+                var availableForFinishConditions = reflectionModel.RefAvailableForFinishConditions.GetValue(item);
 
                 var availableForFinishConditionsList =
-                    Traverse.Create(availableForFinishConditions).Field("list_0").GetValue<IList>();
+                    reflectionModel.RefAvailableForFinishConditionsList.GetValue(availableForFinishConditions);
 
                 foreach (var condition in availableForFinishConditionsList)
                 {
@@ -149,7 +150,7 @@ namespace GamePanelHUDCompass.Controllers
                                         InfoType = StaticModel.Type.ConditionLeaveItemAtLocation
                                     };
 
-                                    showStatic(staticModel);
+                                    callback(staticModel);
                                 }
                             }
 
@@ -177,7 +178,7 @@ namespace GamePanelHUDCompass.Controllers
                                         InfoType = StaticModel.Type.ConditionPlaceBeacon
                                     };
 
-                                    showStatic(staticModel);
+                                    callback(staticModel);
                                 }
                             }
 
@@ -206,7 +207,7 @@ namespace GamePanelHUDCompass.Controllers
                                         InfoType = StaticModel.Type.ConditionFindItem
                                     };
 
-                                    showStatic(staticModel);
+                                    callback(staticModel);
                                 }
                             }
 
@@ -214,11 +215,11 @@ namespace GamePanelHUDCompass.Controllers
                         }
                         case ConditionCounterCreator counterCreator:
                         {
-                            var counter = Traverse.Create(counterCreator).Field("counter").GetValue<object>();
+                            var counter = reflectionModel.RefCounter.GetValue(counterCreator);
 
-                            var conditions = Traverse.Create(counter).Property("conditions").GetValue<object>();
+                            var conditions = reflectionModel.RefConditions.GetValue(counter);
 
-                            var conditionsList = Traverse.Create(conditions).Field("list_0").GetValue<IList>();
+                            var conditionsList = reflectionModel.RefConditionsList.GetValue(conditions);
 
                             foreach (var condition2 in conditionsList)
                             {
@@ -245,7 +246,7 @@ namespace GamePanelHUDCompass.Controllers
                                                     InfoType = StaticModel.Type.ConditionVisitPlace
                                                 };
 
-                                                showStatic(staticModel);
+                                                callback(staticModel);
                                             }
                                         }
 
@@ -275,7 +276,7 @@ namespace GamePanelHUDCompass.Controllers
                                                     InfoType = StaticModel.Type.ConditionInZone
                                                 };
 
-                                                showStatic(staticModel);
+                                                callback(staticModel);
                                             }
                                         }
 
@@ -292,20 +293,16 @@ namespace GamePanelHUDCompass.Controllers
         }
 
         // ReSharper disable once SuggestBaseTypeForParameter
-        private static void ShowExfiltration(Player player, GameWorld world,
-            Action<StaticModel> showStatic)
+        private static void ShowExfiltration(Player player, Action<StaticModel> callback)
         {
             if (player is HideoutPlayer)
                 return;
 
-            var exfiltrationController = Traverse.Create(world).Property("ExfiltrationController").GetValue<object>();
-
             var exfiltrationPoints = player.Profile.Side != EPlayerSide.Savage
-                ? Traverse.Create(exfiltrationController).Method("EligiblePoints", new[] { typeof(Profile) })
-                    .GetValue<ExfiltrationPoint[]>(player.Profile)
-                : Traverse.Create(exfiltrationController).Property("ScavExfiltrationPoints")
-                    .GetValue<ScavExfiltrationPoint[]>().Where(x => x.EligibleIds.Contains(player.ProfileId))
-                    .ToArray<ExfiltrationPoint>();
+                ? _ExfiltrationControllerHelper.EligiblePoints(_ExfiltrationControllerHelper.ExfiltrationController,
+                    player.Profile)
+                : _ExfiltrationControllerHelper.ScavExfiltrationPoints
+                    .Where(x => x.EligibleIds.Contains(player.ProfileId)).ToArray<ExfiltrationPoint>();
 
             for (var i = 0; i < exfiltrationPoints.Length; i++)
             {
@@ -327,18 +324,14 @@ namespace GamePanelHUDCompass.Controllers
                     Requirements = exfiltrationRequirements
                 };
 
-                showStatic(staticModel);
+                callback(staticModel);
 
                 if (point.Status != EExfiltrationStatus.UncompleteRequirements)
                     continue;
 
-                var switchs = EFTVersion.AkiVersion > EFTVersion.Parse("3.6.1")
-                    ? Traverse.Create(point).Field("_switches").GetValue<List<Switch>>().ToArray()
-                    : Traverse.Create(point).Field("list_1").GetValue<List<Switch>>().ToArray();
-
-                foreach (var @switch in switchs)
+                foreach (var @switch in _ExfiltrationPointHelper.RefSwitchs.GetValue(point))
                 {
-                    var staticModel2 = new StaticModel
+                    var switchStaticModel = new StaticModel
                     {
                         Id = @switch.Id,
                         Where = @switch.transform.position,
@@ -351,7 +344,7 @@ namespace GamePanelHUDCompass.Controllers
                         }).ToArray()
                     };
 
-                    showStatic(staticModel2);
+                    callback(switchStaticModel);
                 }
             }
         }
