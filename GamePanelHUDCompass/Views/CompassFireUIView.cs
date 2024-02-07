@@ -84,7 +84,7 @@ namespace GamePanelHUDCompass.Views
 
         private float FireXRight => _fireX + 2880;
 
-        private float FireXRightRight => _fireX + 5760; //2880 * 2
+        private float FireXRightRight => _fireX + 2880 * 2;
 
 #if !UNITY_EDITOR
         private void Awake()
@@ -105,7 +105,10 @@ namespace GamePanelHUDCompass.Views
             _virtualRect = _virtualRedRect.parent.GetComponent<RectTransform>();
             _virtual2Rect = _virtual2RedRect.parent.GetComponent<RectTransform>();
             _virtual3Rect = _virtual3RedRect.parent.GetComponent<RectTransform>();
+        }
 
+        private void Start()
+        {
             _realOutlineRect.sizeDelta = outlineSizeDelta;
             _virtualOutlineRect.sizeDelta = outlineSizeDelta;
             _virtual2OutlineRect.sizeDelta = outlineSizeDelta;
@@ -125,10 +128,7 @@ namespace GamePanelHUDCompass.Views
             virtualRed.color = fireColor;
             virtual2Red.color = fireColor;
             virtual3Red.color = fireColor;
-        }
 
-        private void Start()
-        {
             HUDCoreModel.Instance.UpdateManger.Register(this);
         }
 

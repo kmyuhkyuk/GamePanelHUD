@@ -70,7 +70,7 @@ namespace GamePanelHUDCompass.Views
 
         private float IconXRight => _iconX + 2880;
 
-        private float IconXRightRight => _iconX + 5760; //2880 * 2
+        private float IconXRightRight => _iconX + 2880 * 2;
 
 #if !UNITY_EDITOR
         private void Awake()
