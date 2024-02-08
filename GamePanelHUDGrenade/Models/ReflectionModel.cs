@@ -12,11 +12,11 @@ namespace GamePanelHUDGrenade.Models
 
         public static ReflectionModel Instance => Lazy.Value;
 
-        public readonly RefHelper.PropertyRef<object, ThrowWeapType> ThrowType;
+        public readonly RefHelper.PropertyRef<object, ThrowWeapType> RefThrowType;
 
         private ReflectionModel()
         {
-            ThrowType = RefHelper.PropertyRef<object, ThrowWeapType>.Create(
+            RefThrowType = RefHelper.PropertyRef<object, ThrowWeapType>.Create(
                 RefTool.GetEftType(x => x.GetProperty("ThrowType", RefTool.Public) != null), "ThrowType");
         }
     }

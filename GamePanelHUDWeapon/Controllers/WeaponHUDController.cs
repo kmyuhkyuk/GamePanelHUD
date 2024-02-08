@@ -71,8 +71,8 @@ namespace GamePanelHUDWeapon.Controllers
             if (!hudCoreModel.HasPlayer)
                 return;
 
-            reflectionModel.AmmoCount
-                .GetValue(reflectionModel.AmmoCountPanel.GetValue(hudCoreModel.YourGameUI.BattleUiScreen))
+            reflectionModel.RefAmmoCount
+                .GetValue(reflectionModel.RefAmmoCountPanel.GetValue(hudCoreModel.YourGameUI.BattleUiScreen))
                 .gameObject
                 .SetActive(!settingsModel.KeyHideGameAmmoPanel.Value);
 

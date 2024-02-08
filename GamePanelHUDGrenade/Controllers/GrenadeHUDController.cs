@@ -94,7 +94,7 @@ namespace GamePanelHUDGrenade.Controllers
                     {
                         if (item.GetType() == _grenadeItemType)
                         {
-                            var throwType = ReflectionModel.Instance.ThrowType.GetValue(item);
+                            var throwType = ReflectionModel.Instance.RefThrowType.GetValue(item);
 
                             switch (throwType)
                             {
