@@ -12,14 +12,14 @@ namespace GamePanelHUDWeapon.Models
 
         public static ReflectionModel Instance => Lazy.Value;
 
-        public readonly RefHelper.FieldRef<BattleUIScreen, AmmoCountPanel> AmmoCountPanel;
-        public readonly RefHelper.FieldRef<AmmoCountPanel, CustomTextMeshProUGUI> AmmoCount;
+        public readonly RefHelper.FieldRef<BattleUIScreen, AmmoCountPanel> RefAmmoCountPanel;
+        public readonly RefHelper.FieldRef<AmmoCountPanel, CustomTextMeshProUGUI> RefAmmoCount;
 
         private ReflectionModel()
         {
-            AmmoCountPanel =
+            RefAmmoCountPanel =
                 RefHelper.FieldRef<BattleUIScreen, AmmoCountPanel>.Create("_ammoCountPanel");
-            AmmoCount = RefHelper.FieldRef<AmmoCountPanel, CustomTextMeshProUGUI>.Create("_ammoCount");
+            RefAmmoCount = RefHelper.FieldRef<AmmoCountPanel, CustomTextMeshProUGUI>.Create("_ammoCount");
         }
     }
 }
