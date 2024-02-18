@@ -16,9 +16,9 @@ namespace GamePanelHUDCompass.Models
 
         public static ReflectionModel Instance => Lazy.Value;
 
-        public readonly RefHelper.RefBase<object, object> RefQuests;
+        public readonly RefHelper.IRef<object, object> RefQuests;
 
-        public readonly RefHelper.RefBase<object, object> RefConditions;
+        public readonly RefHelper.IRef<object, object> RefConditions;
 
         public readonly RefHelper.FieldRef<object, IList> RefQuestsList;
 
@@ -66,13 +66,13 @@ namespace GamePanelHUDCompass.Models
 
             if (EFTVersion.AkiVersion > EFTVersion.Parse("2.3.1"))
             {
-                RefPlayerGroup = RefHelper.FieldRef<object, int>.Create(RefTemplate.RefType, "PlayerGroup");
+                RefPlayerGroup = RefHelper.FieldRef<object, int>.Create(RefTemplate.PropertyType, "PlayerGroup");
             }
 
-            RefLocationId = RefHelper.FieldRef<object, string>.Create(RefTemplate.RefType, "LocationId");
+            RefLocationId = RefHelper.FieldRef<object, string>.Create(RefTemplate.PropertyType, "LocationId");
 
-            RefNameLocaleKey = RefHelper.PropertyRef<object, string>.Create(RefTemplate.RefType, "NameLocaleKey");
-            RefTraderId = RefHelper.FieldRef<object, string>.Create(RefTemplate.RefType, "TraderId");
+            RefNameLocaleKey = RefHelper.PropertyRef<object, string>.Create(RefTemplate.PropertyType, "NameLocaleKey");
+            RefTraderId = RefHelper.FieldRef<object, string>.Create(RefTemplate.PropertyType, "TraderId");
             RefAvailableForFinishConditions =
                 RefHelper.PropertyRef<object, object>.Create(questDataType, "AvailableForFinishConditions");
             RefAvailableForFinishConditionsList =
