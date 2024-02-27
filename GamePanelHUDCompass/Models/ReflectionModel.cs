@@ -24,11 +24,11 @@ namespace GamePanelHUDCompass.Models
 
         public readonly RefHelper.FieldRef<object, List<LootItem>> RefLootList;
 
-        public readonly RefHelper.FieldRef<object, string> RefLocationId;
+        public readonly RefHelper.IRef<object, string> RefLocationId;
 
-        [CanBeNull] public readonly RefHelper.FieldRef<object, int> RefPlayerGroup;
+        [CanBeNull] public readonly RefHelper.IRef<object, int> RefPlayerGroup;
 
-        public readonly RefHelper.FieldRef<object, string> RefTraderId;
+        public readonly RefHelper.IRef<object, string> RefTraderId;
 
         public readonly RefHelper.FieldRef<object, IList> RefAvailableForFinishConditionsList;
 
@@ -64,15 +64,27 @@ namespace GamePanelHUDCompass.Models
             RefQuestStatus = RefHelper.PropertyRef<object, EQuestStatus>.Create(questDataType, "QuestStatus");
             RefTemplate = RefHelper.PropertyRef<object, object>.Create(questDataType, "Template");
 
-            if (EFTVersion.AkiVersion > EFTVersion.Parse("2.3.1"))
+            if (EFTVersion.AkiVersion > EFTVersion.Parse("3.7.6"))
+            {
+                RefPlayerGroup = RefHelper.PropertyRef<object, int>.Create(RefTemplate.PropertyType, "PlayerGroup");
+            }
+            else if (EFTVersion.AkiVersion > EFTVersion.Parse("2.3.1"))
             {
                 RefPlayerGroup = RefHelper.FieldRef<object, int>.Create(RefTemplate.PropertyType, "PlayerGroup");
             }
 
-            RefLocationId = RefHelper.FieldRef<object, string>.Create(RefTemplate.PropertyType, "LocationId");
+            if (EFTVersion.AkiVersion > EFTVersion.Parse("3.7.6"))
+            {
+                RefLocationId = RefHelper.PropertyRef<object, string>.Create(RefTemplate.PropertyType, "LocationId");
+                RefTraderId = RefHelper.PropertyRef<object, string>.Create(RefTemplate.PropertyType, "TraderId");
+            }
+            else
+            {
+                RefLocationId = RefHelper.FieldRef<object, string>.Create(RefTemplate.PropertyType, "LocationId");
+                RefTraderId = RefHelper.FieldRef<object, string>.Create(RefTemplate.PropertyType, "TraderId");
+            }
 
             RefNameLocaleKey = RefHelper.PropertyRef<object, string>.Create(RefTemplate.PropertyType, "NameLocaleKey");
-            RefTraderId = RefHelper.FieldRef<object, string>.Create(RefTemplate.PropertyType, "TraderId");
             RefAvailableForFinishConditions =
                 RefHelper.PropertyRef<object, object>.Create(questDataType, "AvailableForFinishConditions");
             RefAvailableForFinishConditionsList =
