@@ -55,24 +55,31 @@
   <ItemGroup>
     <Reference Include="CopyBuildAssembly, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\CopyBuildAssembly.1.0.0\lib\net472\CopyBuildAssembly.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="LibGit2Sharp, Version=0.29.0.0, Culture=neutral, PublicKeyToken=7cbde695407f0333, processorArchitecture=MSIL">
       <HintPath>..\packages\LibGit2Sharp.0.29.0\lib\net472\LibGit2Sharp.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Mono.Cecil, Version=0.11.5.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
       <HintPath>..\packages\Mono.Cecil.0.11.5\lib\net40\Mono.Cecil.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Mono.Cecil.Mdb, Version=0.11.5.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
       <HintPath>..\packages\Mono.Cecil.0.11.5\lib\net40\Mono.Cecil.Mdb.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Mono.Cecil.Pdb, Version=0.11.5.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
       <HintPath>..\packages\Mono.Cecil.0.11.5\lib\net40\Mono.Cecil.Pdb.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Mono.Cecil.Rocks, Version=0.11.5.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
       <HintPath>..\packages\Mono.Cecil.0.11.5\lib\net40\Mono.Cecil.Rocks.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="SevenZipSharp, Version=1.6.1.23, Culture=neutral, PublicKeyToken=c8ff6ba0184838bb, processorArchitecture=MSIL">
       <HintPath>..\packages\Squid-Box.SevenZipSharp.1.6.1.23\lib\net472\SevenZipSharp.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -122,14 +129,14 @@
   <PropertyGroup>
     <PostBuildEvent>start $(TargetPath) $(ConfigurationName) $(SolutionDir)</PostBuildEvent>
   </PropertyGroup>
-  <Import Project="..\packages\7z.Libs.23.01.0\build\net\7z.Libs.targets" Condition="Exists('..\packages\7z.Libs.23.01.0\build\net\7z.Libs.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>这台计算机上缺少此项目引用的 NuGet 程序包。使用“NuGet 程序包还原”可下载这些程序包。有关更多信息，请参见 http://go.microsoft.com/fwlink/?LinkID=322105。缺少的文件是 {0}。</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\7z.Libs.23.01.0\build\net\7z.Libs.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\7z.Libs.23.01.0\build\net\7z.Libs.targets'))" />
     <Error Condition="!Exists('..\packages\LibGit2Sharp.NativeBinaries.2.0.321\build\net46\LibGit2Sharp.NativeBinaries.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\LibGit2Sharp.NativeBinaries.2.0.321\build\net46\LibGit2Sharp.NativeBinaries.props'))" />
     <Error Condition="!Exists('..\packages\CopyBuildAssembly.1.0.0\build\CopyBuildAssembly.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CopyBuildAssembly.1.0.0\build\CopyBuildAssembly.targets'))" />
+    <Error Condition="!Exists('..\packages\7z.Libs.23.01.0\build\net\7z.Libs.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\7z.Libs.23.01.0\build\net\7z.Libs.targets'))" />
   </Target>
   <Import Project="..\packages\CopyBuildAssembly.1.0.0\build\CopyBuildAssembly.targets" Condition="Exists('..\packages\CopyBuildAssembly.1.0.0\build\CopyBuildAssembly.targets')" />
+  <Import Project="..\packages\7z.Libs.23.01.0\build\net\7z.Libs.targets" Condition="Exists('..\packages\7z.Libs.23.01.0\build\net\7z.Libs.targets')" />
 </Project>
