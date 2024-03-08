@@ -13,6 +13,7 @@ namespace Build
         {
             var baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
             var arg = args.ElementAtOrDefault(0);
+            var sha = Copy.GetTipSha(args.ElementAtOrDefault(1));
 
             const string modPath =
                 @"R:\Battlestate Games\Client.0.14.1.1.28875\BepInEx\plugins\kmyuhkyuk-GamePanelHUD";
@@ -28,7 +29,7 @@ namespace Build
             Copy.CopyAssembly(arg, releasePreview, baseDirectory, Path.Combine(modPath, "core"), new[]
             {
                 "GamePanelHUDCore"
-            });
+            }, sha);
 
             Copy.CopyAssembly(arg, releasePreview, baseDirectory, modPath, new[]
             {
@@ -38,7 +39,7 @@ namespace Build
                 "GamePanelHUDKill",
                 "GamePanelHUDHealth",
                 "GamePanelHUDWeapon"
-            });
+            }, sha);
 
             Copy.GenerateSevenZip(arg, "Release", modPath, null, @"BepInEx\plugins", Array.Empty<string>(),
                 Array.Empty<string>(), new[] { Path.Combine(baseDirectory, "ReadMe.txt") }, Array.Empty<string>());
