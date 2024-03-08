@@ -55,31 +55,24 @@
   <ItemGroup>
     <Reference Include="CopyBuildAssembly, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\CopyBuildAssembly.1.0.0\lib\net472\CopyBuildAssembly.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="LibGit2Sharp, Version=0.29.0.0, Culture=neutral, PublicKeyToken=7cbde695407f0333, processorArchitecture=MSIL">
       <HintPath>..\packages\LibGit2Sharp.0.29.0\lib\net472\LibGit2Sharp.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Mono.Cecil, Version=0.11.5.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
       <HintPath>..\packages\Mono.Cecil.0.11.5\lib\net40\Mono.Cecil.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Mono.Cecil.Mdb, Version=0.11.5.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
       <HintPath>..\packages\Mono.Cecil.0.11.5\lib\net40\Mono.Cecil.Mdb.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Mono.Cecil.Pdb, Version=0.11.5.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
       <HintPath>..\packages\Mono.Cecil.0.11.5\lib\net40\Mono.Cecil.Pdb.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="Mono.Cecil.Rocks, Version=0.11.5.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
       <HintPath>..\packages\Mono.Cecil.0.11.5\lib\net40\Mono.Cecil.Rocks.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="SevenZipSharp, Version=1.6.1.23, Culture=neutral, PublicKeyToken=c8ff6ba0184838bb, processorArchitecture=MSIL">
       <HintPath>..\packages\Squid-Box.SevenZipSharp.1.6.1.23\lib\net472\SevenZipSharp.dll</HintPath>
-      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
