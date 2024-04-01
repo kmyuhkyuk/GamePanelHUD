@@ -26,6 +26,8 @@ namespace GamePanelHUDCompass.Controllers
 
         private void Start()
         {
+            HUDCoreModel.Instance.WorldStart += OnWorldStart;
+
             HUDCoreModel.Instance.UpdateManger.Register(this);
         }
 
@@ -54,22 +56,22 @@ namespace GamePanelHUDCompass.Controllers
 
                     compassStaticHUDModel.CompassStatic.EquipmentAndQuestRaidItems = hashSet;
                 }
-
-                if (!compassStaticHUDModel.CompassStaticCacheBool)
-                    return;
-
-                ShowQuest(hudCoreModel.YourPlayer, hudCoreModel.TheWorld, hudCoreModel.TheGame,
-                    compassStaticHUDModel.ShowStatic);
-
-                ShowExfiltration(hudCoreModel.YourPlayer, compassStaticHUDModel.ShowStatic);
-
-                compassStaticHUDModel.CompassStaticCacheBool = false;
             }
             else
             {
                 compassStaticHUDModel.CompassStatic.EquipmentAndQuestRaidItems = null;
                 compassStaticHUDModel.AirdropCount = 0;
             }
+        }
+
+        private static void OnWorldStart(GameWorld __instance)
+        {
+            var hudCoreModel = HUDCoreModel.Instance;
+            var compassStaticHUDModel = CompassStaticHUDModel.Instance;
+
+            ShowQuest(hudCoreModel.YourPlayer, __instance, hudCoreModel.TheGame,
+                compassStaticHUDModel.ShowStatic);
+            ShowExfiltration(hudCoreModel.YourPlayer, compassStaticHUDModel.ShowStatic);
         }
 
         // ReSharper disable once SuggestBaseTypeForParameter

@@ -38,12 +38,13 @@ namespace GamePanelHUDCompass
 
         private void Start()
         {
-            HUDCoreModel.Instance.WorldStart += OnWorldStart;
-
             _FirearmControllerHelper.InitiateShot.Add(this, nameof(InitiateShot));
             _PlayerHelper.OnDead.Add(this, nameof(OnDead));
             _AirdropBoxHelper.OnBoxLand?.Add(this, nameof(OnBoxLand));
             _QuestHelper.OnConditionValueChanged.Add(this, nameof(OnConditionValueChanged));
+
+            //Coop
+            _AirdropBoxHelper.CoopOnBoxLand?.Add(this, nameof(OnBoxLand));
         }
     }
 }
