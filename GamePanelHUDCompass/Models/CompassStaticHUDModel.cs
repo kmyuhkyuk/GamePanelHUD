@@ -16,8 +16,6 @@ namespace GamePanelHUDCompass.Models
 
         public GameObject StaticPrefab;
 
-        public bool CompassStaticCacheBool;
-
         public int AirdropCount;
 
         public readonly CompassStaticModel CompassStatic = new CompassStaticModel();

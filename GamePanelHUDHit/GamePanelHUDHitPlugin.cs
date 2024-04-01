@@ -36,6 +36,52 @@ namespace GamePanelHUDHit
             _PlayerHelper.ApplyDamageInfo.Add(this, nameof(ApplyDamageInfo));
             _ArmorComponentHelper.ApplyDamage.Add(this, nameof(ApplyDamage),
                 HarmonyPatchType.ILManipulator);
+
+            //Coop
+            _PlayerHelper.ObservedCoopApplyDamageInfo?.Add(this, nameof(CoopApplyDamageInfo));
+        }
+
+        private static void BaseApplyDamageInfo(DamageInfo damageInfo, EBodyPart bodyPartType, object healthController)
+        {
+            var armorModel = ArmorModel.Instance;
+
+            float armorDamage;
+            bool hasArmorHit;
+            if (armorModel.Activate)
+            {
+                armorDamage = armorModel.Damage;
+                hasArmorHit = true;
+
+                armorModel.Reset();
+            }
+            else
+            {
+                armorDamage = 0;
+                hasArmorHit = false;
+            }
+
+            HitModel.Hit hitType;
+            if (_HealthControllerHelper.RefIsAlive.GetValue(healthController))
+            {
+                hitType = hasArmorHit ? HitModel.Hit.HasArmorHit : HitModel.Hit.OnlyHp;
+            }
+            else
+            {
+                hitType = HitModel.Hit.Dead;
+            }
+
+            var info = new HitModel
+            {
+                Damage = damageInfo.DidBodyDamage,
+                DamagePart = bodyPartType,
+                HitPoint = damageInfo.HitPoint,
+                ArmorDamage = armorDamage,
+                HasArmorHit = hasArmorHit,
+                HitType = hitType,
+                HitDirection = damageInfo.Direction
+            };
+
+            HitHUDModel.Instance.ShowHit(info);
         }
     }
 }
