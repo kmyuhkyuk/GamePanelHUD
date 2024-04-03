@@ -11,7 +11,9 @@ namespace GamePanelHUDCompass
         // ReSharper disable once InconsistentNaming
         private static void CoopOnBoxLand(MonoBehaviour __instance, object ___boxSync, LootableContainer ___Container)
         {
-            BaseOnBoxLand(__instance.transform.position, ___boxSync, ___Container);
+            GetNameDescriptionKey(___boxSync, out var nameKey, out var descriptionKey);
+
+            ShowAirdrop(__instance.transform.position, nameKey, descriptionKey, ___Container);
         }
     }
 }
