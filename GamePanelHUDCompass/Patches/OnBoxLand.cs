@@ -10,7 +10,9 @@ namespace GamePanelHUDCompass
         // ReSharper disable once SuggestBaseTypeForParameter
         private static void OnBoxLand(MonoBehaviour __instance, object ___boxSync, LootableContainer ___container)
         {
-            BaseOnBoxLand(__instance.transform.position, ___boxSync, ___container);
+            GetNameDescriptionKey(___boxSync, out var nameKey, out var descriptionKey);
+
+            ShowAirdrop(__instance.transform.position, nameKey, descriptionKey, ___container);
         }
     }
 }

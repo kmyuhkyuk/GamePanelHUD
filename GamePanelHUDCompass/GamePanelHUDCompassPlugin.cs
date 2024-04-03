@@ -59,10 +59,8 @@ namespace GamePanelHUDCompass
             _QuestHelper.OnConditionValueChanged.Add(this, nameof(OnConditionValueChanged));
         }
 
-        private static void BaseOnBoxLand(Vector3 position, object boxSync, LootableContainer container)
+        private static void GetNameDescriptionKey(object boxSync, out string nameKey, out string descriptionKey)
         {
-            string nameKey;
-            string descriptionKey;
             switch (_AirdropSynchronizableObjectHelper.RefAirdropType?.GetValue(boxSync))
             {
                 case 0:
@@ -86,8 +84,6 @@ namespace GamePanelHUDCompass
                     descriptionKey = "Unknown";
                     break;
             }
-
-            ShowAirdrop(position, nameKey, descriptionKey, container);
         }
 
         private static void ShowAirdrop(Vector3 position, string nameKey, string descriptionKey,

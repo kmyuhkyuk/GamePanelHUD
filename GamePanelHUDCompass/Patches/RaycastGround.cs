@@ -3,7 +3,6 @@
 using EFT.Interactive;
 using EFTApi;
 using UnityEngine;
-using static EFTApi.EFTHelpers;
 
 namespace GamePanelHUDCompass
 {
@@ -17,29 +16,7 @@ namespace GamePanelHUDCompass
             string descriptionKey;
             if (EFTVersion.AkiVersion > EFTVersion.Parse("3.0.0"))
             {
-                switch (_AirdropSynchronizableObjectHelper.RefAirdropType?.GetValue(___airdropSynchronizableObject_0))
-                {
-                    case 0:
-                        nameKey = "6223349b3136504a544d1608 Name";
-                        descriptionKey = "6223349b3136504a544d1608 Description";
-                        break;
-                    case 1:
-                        nameKey = "622334fa3136504a544d160c Name";
-                        descriptionKey = "622334fa3136504a544d160c Description";
-                        break;
-                    case 2:
-                        nameKey = "622334c873090231d904a9fc Name";
-                        descriptionKey = "622334c873090231d904a9fc Description";
-                        break;
-                    case 3:
-                        nameKey = "6223351bb5d97a7b2c635ca7 Name";
-                        descriptionKey = "6223351bb5d97a7b2c635ca7 Description";
-                        break;
-                    default:
-                        nameKey = "Unknown";
-                        descriptionKey = "Unknown";
-                        break;
-                }
+                GetNameDescriptionKey(___airdropSynchronizableObject_0, out nameKey, out descriptionKey);
             }
             else
             {
