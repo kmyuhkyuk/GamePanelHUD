@@ -105,7 +105,6 @@
     <Compile Include="GamePanelHUDHealthPlugin.cs" />
     <Compile Include="Models\HealthHUDModel.cs" />
     <Compile Include="Models\HealthModel.cs" />
-    <Compile Include="Models\ReflectionModel.cs" />
     <Compile Include="Models\SettingsModel.cs" />
     <Compile Include="Patches\Execute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
