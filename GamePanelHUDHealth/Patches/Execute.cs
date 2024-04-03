@@ -1,7 +1,7 @@
 ﻿#if !UNITY_EDITOR
 
 using System.Threading.Tasks;
-using GamePanelHUDHealth.Models;
+using static EFTApi.EFTHelpers;
 
 namespace GamePanelHUDHealth
 {
@@ -9,8 +9,7 @@ namespace GamePanelHUDHealth
     {
         private static async void Execute(Task<MainMenuController> __result)
         {
-            HealthHUDModel.Instance.HealthController =
-                ReflectionModel.Instance.RefHealthController.GetValue(await __result);
+            _MainMenuControllerHelper.RefHealthController.GetValue(await __result);
         }
     }
 }
