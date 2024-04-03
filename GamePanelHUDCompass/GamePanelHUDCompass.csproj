@@ -109,6 +109,7 @@
     <Compile Include="Models\SettingsModel.cs" />
     <Compile Include="Models\StaticModel.cs" />
     <Compile Include="Patches\InitiateShot.cs" />
+    <Compile Include="Patches\OldOnBoxLand.cs" />
     <Compile Include="Patches\OnBoxLand.cs" />
     <Compile Include="Patches\OnConditionValueChanged.cs" />
     <Compile Include="Patches\OnDead.cs" />

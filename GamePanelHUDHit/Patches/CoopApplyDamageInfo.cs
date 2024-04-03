@@ -18,7 +18,7 @@ namespace GamePanelHUDHit
             //Clone HealthController to do local compute
             var store = _HealthControllerHelper.ObservedCoopStore(
                 _HealthControllerHelper.RefHealthController.GetValue(__instance));
-            var inventoryController = _PlayerHelper.RefInventoryController.GetValue(__instance);
+            var inventoryController = _InventoryControllerHelper.RefInventoryController.GetValue(__instance);
             var skillManager = _PlayerHelper.RefSkills.GetValue(__instance);
             var coopHealthController = _HealthControllerHelper.CoopHealthControllerCreate(store, __instance,
                 inventoryController, skillManager, __instance.IsAI);

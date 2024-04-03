@@ -1,6 +1,9 @@
 ﻿#if !UNITY_EDITOR
 
+using System;
 using BepInEx;
+using EFT.Interactive;
+using EFTApi;
 using EFTUtils;
 using GamePanelHUDCompass.Models;
 using GamePanelHUDCore.Attributes;
@@ -40,11 +43,47 @@ namespace GamePanelHUDCompass
         {
             _FirearmControllerHelper.InitiateShot.Add(this, nameof(InitiateShot));
             _PlayerHelper.OnDead.Add(this, nameof(OnDead));
-            _AirdropBoxHelper.OnBoxLand?.Add(this, nameof(OnBoxLand));
+
+            if (EFTVersion.AkiVersion > EFTVersion.Parse("3.4.1"))
+            {
+                _AirdropBoxHelper.OnBoxLand?.Add(this, nameof(OnBoxLand));
+            }
+            else
+            {
+                _AirdropLogicClassHelper.OnBoxLand.Add(this, nameof(OldOnBoxLand));
+            }
+
             _QuestHelper.OnConditionValueChanged.Add(this, nameof(OnConditionValueChanged));
 
             //Coop
             _AirdropBoxHelper.CoopOnBoxLand?.Add(this, nameof(OnBoxLand));
+        }
+
+        private static void BaseOnBoxLand(Vector3 position, string nameKey, string descriptionKey,
+            LootableContainer container)
+        {
+            var compassStaticHUDModel = CompassStaticHUDModel.Instance;
+
+            var controller = _LootableContainerHelper.RefItemOwner.GetValue(container);
+
+            var item = _LootableContainerHelper.RefRootItem.GetValue(controller);
+
+            var searchStates = _SearchableItemClassHelper.RefSearchStates.GetValue(item);
+
+            var staticModel = new StaticModel
+            {
+                Id = $"Airdrop_{compassStaticHUDModel.AirdropCount++}",
+                Where = position,
+                NameKey = nameKey,
+                DescriptionKey = descriptionKey,
+                InfoType = StaticModel.Type.Airdrop,
+                Requirements = new Func<bool>[]
+                {
+                    () => searchStates.ContainsKey(compassStaticHUDModel.CompassStatic.YourProfileId)
+                }
+            };
+
+            compassStaticHUDModel.ShowStatic(staticModel);
         }
     }
 }
