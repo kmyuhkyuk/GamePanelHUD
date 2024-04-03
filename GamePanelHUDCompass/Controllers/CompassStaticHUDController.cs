@@ -82,11 +82,9 @@ namespace GamePanelHUDCompass.Controllers
 
             var reflectionModel = ReflectionModel.Instance;
 
-            var questData = _PlayerHelper.RefQuestController.GetValue(player);
+            var questData = _QuestControllerHelper.RefQuestController.GetValue(player);
 
             var quests = reflectionModel.RefQuests.GetValue(questData);
-
-            var questsList = reflectionModel.RefQuestsList.GetValue(quests);
 
             var lootItems = _GameWorldHelper.RefLootItems.GetValue(world);
 
@@ -97,7 +95,7 @@ namespace GamePanelHUDCompass.Controllers
 
             var is231Up = EFTVersion.AkiVersion > EFTVersion.Parse("2.3.1");
 
-            foreach (var item in questsList)
+            foreach (var item in quests)
             {
                 if (reflectionModel.RefQuestStatus.GetValue(item) != EQuestStatus.Started)
                     continue;
@@ -123,10 +121,7 @@ namespace GamePanelHUDCompass.Controllers
 
                 var availableForFinishConditions = reflectionModel.RefAvailableForFinishConditions.GetValue(item);
 
-                var availableForFinishConditionsList =
-                    reflectionModel.RefAvailableForFinishConditionsList.GetValue(availableForFinishConditions);
-
-                foreach (var condition in availableForFinishConditionsList)
+                foreach (var condition in availableForFinishConditions)
                 {
                     switch (condition)
                     {
@@ -221,9 +216,7 @@ namespace GamePanelHUDCompass.Controllers
 
                             var conditions = reflectionModel.RefConditions.GetValue(counter);
 
-                            var conditionsList = reflectionModel.RefConditionsList.GetValue(conditions);
-
-                            foreach (var condition2 in conditionsList)
+                            foreach (var condition2 in conditions)
                             {
                                 switch (condition2)
                                 {

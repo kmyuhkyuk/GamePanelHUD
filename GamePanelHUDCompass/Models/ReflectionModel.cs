@@ -16,11 +16,9 @@ namespace GamePanelHUDCompass.Models
 
         public static ReflectionModel Instance => Lazy.Value;
 
-        public readonly RefHelper.IRef<object, object> RefQuests;
+        public readonly RefHelper.IRef<object, IEnumerable> RefQuests;
 
-        public readonly RefHelper.IRef<object, object> RefConditions;
-
-        public readonly RefHelper.FieldRef<object, IList> RefQuestsList;
+        public readonly RefHelper.IRef<object, IEnumerable> RefConditions;
 
         public readonly RefHelper.FieldRef<object, List<LootItem>> RefLootList;
 
@@ -30,11 +28,7 @@ namespace GamePanelHUDCompass.Models
 
         public readonly RefHelper.IRef<object, string> RefTraderId;
 
-        public readonly RefHelper.FieldRef<object, IList> RefAvailableForFinishConditionsList;
-
         public readonly RefHelper.FieldRef<ConditionCounterCreator, object> RefCounter;
-
-        public readonly RefHelper.FieldRef<object, IList> RefConditionsList;
 
         public readonly RefHelper.PropertyRef<object, EQuestStatus> RefQuestStatus;
 
@@ -42,24 +36,24 @@ namespace GamePanelHUDCompass.Models
 
         public readonly RefHelper.PropertyRef<object, string> RefNameLocaleKey;
 
-        public readonly RefHelper.PropertyRef<object, object> RefAvailableForFinishConditions;
+        public readonly RefHelper.PropertyRef<object, IEnumerable> RefAvailableForFinishConditions;
 
         private ReflectionModel()
         {
             if (EFTVersion.AkiVersion > EFTVersion.Parse("3.7.6"))
             {
-                RefQuests = RefHelper.PropertyRef<object, object>.Create(_PlayerHelper.RefQuestController.FieldType,
+                RefQuests = RefHelper.PropertyRef<object, IEnumerable>.Create(
+                    _QuestControllerHelper.RefQuestController.FieldType,
                     "Quests");
             }
             else
             {
-                RefQuests = RefHelper.FieldRef<object, object>.Create(_PlayerHelper.RefQuestController.FieldType,
+                RefQuests = RefHelper.FieldRef<object, IEnumerable>.Create(
+                    _QuestControllerHelper.RefQuestController.FieldType,
                     "Quests");
             }
 
-            RefQuestsList = RefHelper.FieldRef<object, IList>.Create(RefQuests.RefType, "list_0");
-
-            var questDataType = RefQuestsList.FieldType.GetGenericArguments()[0];
+            var questDataType = RefQuests.RefType.BaseType?.GetGenericArguments()[0];
 
             RefQuestStatus = RefHelper.PropertyRef<object, EQuestStatus>.Create(questDataType, "QuestStatus");
             RefTemplate = RefHelper.PropertyRef<object, object>.Create(questDataType, "Template");
@@ -86,22 +80,18 @@ namespace GamePanelHUDCompass.Models
 
             RefNameLocaleKey = RefHelper.PropertyRef<object, string>.Create(RefTemplate.PropertyType, "NameLocaleKey");
             RefAvailableForFinishConditions =
-                RefHelper.PropertyRef<object, object>.Create(questDataType, "AvailableForFinishConditions");
-            RefAvailableForFinishConditionsList =
-                RefHelper.FieldRef<object, IList>.Create(RefAvailableForFinishConditions.PropertyType, "list_0");
+                RefHelper.PropertyRef<object, IEnumerable>.Create(questDataType, "AvailableForFinishConditions");
 
             if (EFTVersion.AkiVersion > EFTVersion.Parse("3.7.6"))
             {
                 RefCounter = RefHelper.FieldRef<ConditionCounterCreator, object>.Create("_templateConditions");
-                RefConditions = RefHelper.FieldRef<object, object>.Create(RefCounter.FieldType, "Conditions");
+                RefConditions = RefHelper.FieldRef<object, IEnumerable>.Create(RefCounter.FieldType, "Conditions");
             }
             else
             {
                 RefCounter = RefHelper.FieldRef<ConditionCounterCreator, object>.Create("counter");
-                RefConditions = RefHelper.PropertyRef<object, object>.Create(RefCounter.FieldType, "conditions");
+                RefConditions = RefHelper.PropertyRef<object, IEnumerable>.Create(RefCounter.FieldType, "conditions");
             }
-
-            RefConditionsList = RefHelper.FieldRef<object, IList>.Create(RefConditions.RefType, "list_0");
 
             RefLootList =
                 RefHelper.FieldRef<object, List<LootItem>>.Create(_GameWorldHelper.RefLootItems.FieldType, "list_0");

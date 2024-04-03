@@ -1,8 +1,6 @@
 ﻿#if !UNITY_EDITOR
 
-using System;
 using EFT.Interactive;
-using GamePanelHUDCompass.Models;
 using UnityEngine;
 using static EFTApi.EFTHelpers;
 
@@ -11,16 +9,8 @@ namespace GamePanelHUDCompass
     public partial class GamePanelHUDCompassPlugin
     {
         // ReSharper disable once SuggestBaseTypeForParameter
-        private static void OnBoxLand(MonoBehaviour __instance, object ___boxSync)
+        private static void OnBoxLand(MonoBehaviour __instance, object ___boxSync, LootableContainer ___container)
         {
-            var compassStaticHUDModel = CompassStaticHUDModel.Instance;
-
-            var looTable = __instance.GetComponentInChildren<LootableContainer>();
-
-            var controller = _LootableContainerHelper.RefItemOwner.GetValue(looTable);
-
-            var item = _LootableContainerHelper.RefRootItem.GetValue(controller);
-
             string nameKey;
             string descriptionKey;
             switch (_AirdropSynchronizableObjectHelper.RefAirdropType?.GetValue(___boxSync))
@@ -47,23 +37,7 @@ namespace GamePanelHUDCompass
                     break;
             }
 
-            var staticModel = new StaticModel
-            {
-                Id = $"Airdrop{compassStaticHUDModel.AirdropCount}",
-                Where = __instance.transform.position,
-                NameKey = nameKey,
-                DescriptionKey = descriptionKey,
-                InfoType = StaticModel.Type.Airdrop,
-                Requirements = new Func<bool>[]
-                {
-                    () => _SearchableItemClassHelper.RefAllSearchersIds?.GetValue(item)
-                        .Contains(compassStaticHUDModel.CompassStatic.YourProfileId) ?? false
-                }
-            };
-
-            compassStaticHUDModel.AirdropCount++;
-
-            compassStaticHUDModel.ShowStatic(staticModel);
+            BaseOnBoxLand(__instance.transform.position, nameKey, descriptionKey, ___container);
         }
     }
 }
