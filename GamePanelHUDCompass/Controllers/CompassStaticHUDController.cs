@@ -115,7 +115,9 @@ namespace GamePanelHUDCompass.Controllers
                         continue;
                 }
 
-                var nameKey = reflectionModel.RefNameLocaleKey.GetValue(template);
+                var name = reflectionModel.RefName.GetValue(template);
+
+                var nameKey = string.IsNullOrEmpty(name) ? $"{reflectionModel.RefId.GetValue(template)} name" : name;
 
                 var traderId = reflectionModel.RefTraderId.GetValue(template);
 
