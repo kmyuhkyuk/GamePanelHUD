@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using EFT.Interactive;
 using EFT.Quests;
 using EFTApi;
 using EFTReflection;
 using JetBrains.Annotations;
+using Newtonsoft.Json;
 using static EFTApi.EFTHelpers;
 
 namespace GamePanelHUDCompass.Models
@@ -34,7 +36,9 @@ namespace GamePanelHUDCompass.Models
 
         public readonly RefHelper.PropertyRef<object, object> RefTemplate;
 
-        public readonly RefHelper.PropertyRef<object, string> RefNameLocaleKey;
+        public readonly RefHelper.FieldRef<object, string> RefId;
+
+        public readonly RefHelper.FieldRef<object, string> RefName;
 
         public readonly RefHelper.PropertyRef<object, IEnumerable> RefAvailableForFinishConditions;
 
@@ -77,8 +81,9 @@ namespace GamePanelHUDCompass.Models
                 RefLocationId = RefHelper.FieldRef<object, string>.Create(RefTemplate.PropertyType, "LocationId");
                 RefTraderId = RefHelper.FieldRef<object, string>.Create(RefTemplate.PropertyType, "TraderId");
             }
-
-            RefNameLocaleKey = RefHelper.PropertyRef<object, string>.Create(RefTemplate.PropertyType, "NameLocaleKey");
+            
+            RefId = RefHelper.FieldRef<object, string>.Create(RefTemplate.PropertyType, "Id");
+            RefName = RefHelper.FieldRef<object, string>.Create(RefTemplate.PropertyType, x => x.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName == "name");
             RefAvailableForFinishConditions =
                 RefHelper.PropertyRef<object, IEnumerable>.Create(questDataType, "AvailableForFinishConditions");
 
