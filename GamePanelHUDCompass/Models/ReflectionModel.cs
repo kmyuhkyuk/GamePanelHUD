@@ -66,7 +66,7 @@ namespace GamePanelHUDCompass.Models
             {
                 RefPlayerGroup = RefHelper.PropertyRef<object, int>.Create(RefTemplate.PropertyType, "PlayerGroup");
             }
-            else if (EFTVersion.AkiVersion > EFTVersion.Parse("2.3.1"))
+            else if (EFTVersion.AkiVersion > EFTVersion.Parse("3.0.0"))
             {
                 RefPlayerGroup = RefHelper.FieldRef<object, int>.Create(RefTemplate.PropertyType, "PlayerGroup");
             }
@@ -81,9 +81,10 @@ namespace GamePanelHUDCompass.Models
                 RefLocationId = RefHelper.FieldRef<object, string>.Create(RefTemplate.PropertyType, "LocationId");
                 RefTraderId = RefHelper.FieldRef<object, string>.Create(RefTemplate.PropertyType, "TraderId");
             }
-            
+
             RefId = RefHelper.FieldRef<object, string>.Create(RefTemplate.PropertyType, "Id");
-            RefName = RefHelper.FieldRef<object, string>.Create(RefTemplate.PropertyType, x => x.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName == "name");
+            RefName = RefHelper.FieldRef<object, string>.Create(RefTemplate.PropertyType,
+                x => x.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName == "name");
             RefAvailableForFinishConditions =
                 RefHelper.PropertyRef<object, IEnumerable>.Create(questDataType, "AvailableForFinishConditions");
 

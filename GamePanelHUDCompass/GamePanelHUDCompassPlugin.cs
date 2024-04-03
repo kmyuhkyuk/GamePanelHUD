@@ -50,7 +50,7 @@ namespace GamePanelHUDCompass
             }
             else
             {
-                _AirdropLogicClassHelper.OnBoxLand.Add(this, nameof(OldOnBoxLand));
+                _AirdropLogicClassHelper.RaycastGround.Add(this, nameof(RaycastGround));
             }
 
             _QuestHelper.OnConditionValueChanged.Add(this, nameof(OnConditionValueChanged));
