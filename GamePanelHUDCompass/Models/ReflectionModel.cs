@@ -36,7 +36,7 @@ namespace GamePanelHUDCompass.Models
 
         public readonly RefHelper.PropertyRef<object, object> RefTemplate;
 
-        public readonly RefHelper.FieldRef<object, string> RefId;
+        public readonly RefHelper.IRef<object, string> RefId;
 
         public readonly RefHelper.FieldRef<object, string> RefName;
 
@@ -75,14 +75,15 @@ namespace GamePanelHUDCompass.Models
             {
                 RefLocationId = RefHelper.PropertyRef<object, string>.Create(RefTemplate.PropertyType, "LocationId");
                 RefTraderId = RefHelper.PropertyRef<object, string>.Create(RefTemplate.PropertyType, "TraderId");
+                RefId = RefHelper.PropertyRef<object, string>.Create(RefTemplate.PropertyType, "Id");
             }
             else
             {
                 RefLocationId = RefHelper.FieldRef<object, string>.Create(RefTemplate.PropertyType, "LocationId");
                 RefTraderId = RefHelper.FieldRef<object, string>.Create(RefTemplate.PropertyType, "TraderId");
+                RefId = RefHelper.FieldRef<object, string>.Create(RefTemplate.PropertyType, "Id");
             }
 
-            RefId = RefHelper.FieldRef<object, string>.Create(RefTemplate.PropertyType, "Id");
             RefName = RefHelper.FieldRef<object, string>.Create(RefTemplate.PropertyType,
                 x => x.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName == "name");
             RefAvailableForFinishConditions =
