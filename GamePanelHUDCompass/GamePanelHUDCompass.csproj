@@ -112,6 +112,7 @@
     <Compile Include="Models\ReflectionModel.cs" />
     <Compile Include="Models\SettingsModel.cs" />
     <Compile Include="Models\StaticModel.cs" />
+    <Compile Include="Patches\CoopOnBoxLand.cs" />
     <Compile Include="Patches\InitiateShot.cs" />
     <Compile Include="Patches\RaycastGround.cs" />
     <Compile Include="Patches\OnBoxLand.cs" />

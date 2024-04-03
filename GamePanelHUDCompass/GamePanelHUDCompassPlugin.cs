@@ -47,6 +47,9 @@ namespace GamePanelHUDCompass
             if (EFTVersion.AkiVersion > EFTVersion.Parse("3.4.1"))
             {
                 _AirdropBoxHelper.OnBoxLand?.Add(this, nameof(OnBoxLand));
+
+                //Coop
+                _AirdropBoxHelper.CoopOnBoxLand?.Add(this, nameof(CoopOnBoxLand));
             }
             else
             {
@@ -54,12 +57,40 @@ namespace GamePanelHUDCompass
             }
 
             _QuestHelper.OnConditionValueChanged.Add(this, nameof(OnConditionValueChanged));
-
-            //Coop
-            _AirdropBoxHelper.CoopOnBoxLand?.Add(this, nameof(OnBoxLand));
         }
 
-        private static void BaseOnBoxLand(Vector3 position, string nameKey, string descriptionKey,
+        private static void BaseOnBoxLand(Vector3 position, object boxSync, LootableContainer container)
+        {
+            string nameKey;
+            string descriptionKey;
+            switch (_AirdropSynchronizableObjectHelper.RefAirdropType?.GetValue(boxSync))
+            {
+                case 0:
+                    nameKey = "6223349b3136504a544d1608 Name";
+                    descriptionKey = "6223349b3136504a544d1608 Description";
+                    break;
+                case 1:
+                    nameKey = "622334fa3136504a544d160c Name";
+                    descriptionKey = "622334fa3136504a544d160c Description";
+                    break;
+                case 2:
+                    nameKey = "622334c873090231d904a9fc Name";
+                    descriptionKey = "622334c873090231d904a9fc Description";
+                    break;
+                case 3:
+                    nameKey = "6223351bb5d97a7b2c635ca7 Name";
+                    descriptionKey = "6223351bb5d97a7b2c635ca7 Description";
+                    break;
+                default:
+                    nameKey = "Unknown";
+                    descriptionKey = "Unknown";
+                    break;
+            }
+
+            ShowAirdrop(position, nameKey, descriptionKey, container);
+        }
+
+        private static void ShowAirdrop(Vector3 position, string nameKey, string descriptionKey,
             LootableContainer container)
         {
             var compassStaticHUDModel = CompassStaticHUDModel.Instance;

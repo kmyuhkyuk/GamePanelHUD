@@ -47,7 +47,7 @@ namespace GamePanelHUDCompass
                 descriptionKey = "61a89e5445a2672acf66c877 Description";
             }
 
-            BaseOnBoxLand(___airdropSynchronizableObject_0.transform.position, nameKey, descriptionKey,
+            ShowAirdrop(___airdropSynchronizableObject_0.transform.position, nameKey, descriptionKey,
                 ___airdropSynchronizableObject_0.transform.GetComponentInChildren<LootableContainer>());
         }
     }
