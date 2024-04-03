@@ -75,7 +75,7 @@ namespace GamePanelHUDCompass.Controllers
         }
 
         // ReSharper disable once SuggestBaseTypeForParameter
-        private static void ShowQuest(Player player, GameWorld world, AbstractGame game, Action<StaticModel> callback)
+        private static void ShowQuest(Player player, GameWorld world, AbstractGame game, Action<StaticModel> showStatic)
         {
             if (player is HideoutPlayer)
                 return;
@@ -152,7 +152,7 @@ namespace GamePanelHUDCompass.Controllers
                                         InfoType = StaticModel.Type.ConditionLeaveItemAtLocation
                                     };
 
-                                    callback(staticModel);
+                                    showStatic(staticModel);
                                 }
                             }
 
@@ -180,7 +180,7 @@ namespace GamePanelHUDCompass.Controllers
                                         InfoType = StaticModel.Type.ConditionPlaceBeacon
                                     };
 
-                                    callback(staticModel);
+                                    showStatic(staticModel);
                                 }
                             }
 
@@ -209,7 +209,7 @@ namespace GamePanelHUDCompass.Controllers
                                         InfoType = StaticModel.Type.ConditionFindItem
                                     };
 
-                                    callback(staticModel);
+                                    showStatic(staticModel);
                                 }
                             }
 
@@ -248,7 +248,7 @@ namespace GamePanelHUDCompass.Controllers
                                                     InfoType = StaticModel.Type.ConditionVisitPlace
                                                 };
 
-                                                callback(staticModel);
+                                                showStatic(staticModel);
                                             }
                                         }
 
@@ -278,7 +278,7 @@ namespace GamePanelHUDCompass.Controllers
                                                     InfoType = StaticModel.Type.ConditionInZone
                                                 };
 
-                                                callback(staticModel);
+                                                showStatic(staticModel);
                                             }
                                         }
 
@@ -295,7 +295,7 @@ namespace GamePanelHUDCompass.Controllers
         }
 
         // ReSharper disable once SuggestBaseTypeForParameter
-        private static void ShowExfiltration(Player player, Action<StaticModel> callback)
+        private static void ShowExfiltration(Player player, Action<StaticModel> showStatic)
         {
             if (player is HideoutPlayer)
                 return;
@@ -326,7 +326,7 @@ namespace GamePanelHUDCompass.Controllers
                     Requirements = exfiltrationRequirements
                 };
 
-                callback(staticModel);
+                showStatic(staticModel);
 
                 if (point.Status != EExfiltrationStatus.UncompleteRequirements)
                     continue;
@@ -346,7 +346,7 @@ namespace GamePanelHUDCompass.Controllers
                         }).ToArray()
                     };
 
-                    callback(switchStaticModel);
+                    showStatic(switchStaticModel);
                 }
             }
         }
