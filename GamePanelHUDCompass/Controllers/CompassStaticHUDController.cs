@@ -93,7 +93,7 @@ namespace GamePanelHUDCompass.Controllers
             (string Id, LootItem Item)[] questItems =
                 lootItemsList.Where(x => x.Item.QuestItem).Select(x => (x.TemplateId, x)).ToArray();
 
-            var is231Up = EFTVersion.AkiVersion > EFTVersion.Parse("2.3.1");
+            var is300Up = EFTVersion.AkiVersion > EFTVersion.Parse("3.0.0");
 
             foreach (var item in quests)
             {
@@ -107,7 +107,7 @@ namespace GamePanelHUDCompass.Controllers
                 if (locationId != game.LocationObjectId && locationId != "any")
                     continue;
 
-                switch (is231Up)
+                switch (is300Up)
                 {
                     case true when (player.Profile.Side == EPlayerSide.Savage ? 1 : 0) !=
                                    reflectionModel.RefPlayerGroup.GetValue(template):

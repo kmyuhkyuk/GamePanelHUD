@@ -11,7 +11,7 @@ namespace GamePanelHUDCompass
     {
         // ReSharper disable once SuggestBaseTypeForParameter
         // ReSharper disable once InconsistentNaming
-        private static void OldOnBoxLand(MonoBehaviour ___airdropSynchronizableObject_0)
+        private static void RaycastGround(MonoBehaviour ___airdropSynchronizableObject_0)
         {
             string nameKey;
             string descriptionKey;
