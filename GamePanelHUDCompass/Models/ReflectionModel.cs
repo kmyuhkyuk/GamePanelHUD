@@ -1,8 +1,8 @@
-﻿using System;
+﻿#if !UNITY_EDITOR
+
+using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Reflection;
-using EFT.Interactive;
 using EFT.Quests;
 using EFTApi;
 using EFTReflection;
@@ -21,8 +21,6 @@ namespace GamePanelHUDCompass.Models
         public readonly RefHelper.IRef<object, IEnumerable> RefQuests;
 
         public readonly RefHelper.IRef<object, IEnumerable> RefConditions;
-
-        public readonly RefHelper.FieldRef<object, List<LootItem>> RefLootList;
 
         public readonly RefHelper.IRef<object, string> RefLocationId;
 
@@ -99,9 +97,8 @@ namespace GamePanelHUDCompass.Models
                 RefCounter = RefHelper.FieldRef<ConditionCounterCreator, object>.Create("counter");
                 RefConditions = RefHelper.PropertyRef<object, IEnumerable>.Create(RefCounter.FieldType, "conditions");
             }
-
-            RefLootList =
-                RefHelper.FieldRef<object, List<LootItem>>.Create(_GameWorldHelper.RefLootItems.FieldType, "list_0");
         }
     }
 }
+
+#endif

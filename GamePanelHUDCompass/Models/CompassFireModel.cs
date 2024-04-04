@@ -14,6 +14,8 @@ namespace GamePanelHUDCompass.Models
 
         public float GetToAngle(Vector3 lhs)
         {
+            lhs.y = 0;
+
             var num = Vector3.SignedAngle(lhs, NorthVector, Vector3.up);
 
             if (num >= 0)

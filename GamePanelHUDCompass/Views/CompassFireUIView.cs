@@ -38,53 +38,43 @@ namespace GamePanelHUDCompass.Views
 
         [SerializeField] private Image realOutline;
 
-        [SerializeField] private Image virtualOutline;
+        [SerializeField] private Image virtualLeftOutline;
 
-        [SerializeField] private Image virtual2Outline;
-
-        [SerializeField] private Image virtual3Outline;
+        [SerializeField] private Image virtualRightOutline;
 
         [SerializeField] private Image realRed;
 
-        [SerializeField] private Image virtualRed;
+        [SerializeField] private Image virtualLeftRed;
 
-        [SerializeField] private Image virtual2Red;
-
-        [SerializeField] private Image virtual3Red;
+        [SerializeField] private Image virtualRightRed;
 
         private Animator _animatorFire;
 
         private RectTransform _realRect;
 
-        private RectTransform _virtualRect;
+        private RectTransform _virtualLeftRect;
 
-        private RectTransform _virtual2Rect;
-
-        private RectTransform _virtual3Rect;
+        private RectTransform _virtualRightRect;
 
         private RectTransform _realOutlineRect;
 
-        private RectTransform _virtualOutlineRect;
+        private RectTransform _virtualLeftOutlineRect;
 
-        private RectTransform _virtual2OutlineRect;
-
-        private RectTransform _virtual3OutlineRect;
+        private RectTransform _virtualRightOutlineRect;
 
         private RectTransform _realRedRect;
 
-        private RectTransform _virtualRedRect;
+        private RectTransform _virtualLeftRedRect;
 
-        private RectTransform _virtual2RedRect;
+        private RectTransform _virtualRightRedRect;
 
-        private RectTransform _virtual3RedRect;
+        private float _angle;
 
-        private float _fireX;
+        private float FireX => _angle * 8f + 8 * 360;
 
-        private float FireXLeft => _fireX - 2880;
+        private float FireXLeft => FireX - 8 * 360;
 
-        private float FireXRight => _fireX + 2880;
-
-        private float FireXRightRight => _fireX + 2880 * 2;
+        private float FireXRight => FireX + 8 * 360;
 
 #if !UNITY_EDITOR
         private void Awake()
@@ -92,42 +82,35 @@ namespace GamePanelHUDCompass.Views
             _animatorFire = GetComponent<Animator>();
 
             _realOutlineRect = realOutline.GetComponent<RectTransform>();
-            _virtualOutlineRect = virtualOutline.GetComponent<RectTransform>();
-            _virtual2OutlineRect = virtual2Outline.GetComponent<RectTransform>();
-            _virtual3OutlineRect = virtual3Outline.GetComponent<RectTransform>();
+            _virtualLeftOutlineRect = virtualLeftOutline.GetComponent<RectTransform>();
+            _virtualRightOutlineRect = virtualRightOutline.GetComponent<RectTransform>();
 
             _realRedRect = realRed.GetComponent<RectTransform>();
-            _virtualRedRect = virtualRed.GetComponent<RectTransform>();
-            _virtual2RedRect = virtual2Red.GetComponent<RectTransform>();
-            _virtual3RedRect = virtual3Red.GetComponent<RectTransform>();
+            _virtualLeftRedRect = virtualLeftRed.GetComponent<RectTransform>();
+            _virtualRightRedRect = virtualRightRed.GetComponent<RectTransform>();
 
             _realRect = _realRedRect.parent.GetComponent<RectTransform>();
-            _virtualRect = _virtualRedRect.parent.GetComponent<RectTransform>();
-            _virtual2Rect = _virtual2RedRect.parent.GetComponent<RectTransform>();
-            _virtual3Rect = _virtual3RedRect.parent.GetComponent<RectTransform>();
+            _virtualLeftRect = _virtualLeftRedRect.parent.GetComponent<RectTransform>();
+            _virtualRightRect = _virtualRightRedRect.parent.GetComponent<RectTransform>();
         }
 
         private void Start()
         {
             _realOutlineRect.sizeDelta = outlineSizeDelta;
-            _virtualOutlineRect.sizeDelta = outlineSizeDelta;
-            _virtual2OutlineRect.sizeDelta = outlineSizeDelta;
-            _virtual3OutlineRect.sizeDelta = outlineSizeDelta;
+            _virtualLeftOutlineRect.sizeDelta = outlineSizeDelta;
+            _virtualRightOutlineRect.sizeDelta = outlineSizeDelta;
 
             _realRedRect.sizeDelta = fireSizeDelta;
-            _virtualRedRect.sizeDelta = fireSizeDelta;
-            _virtual2RedRect.sizeDelta = fireSizeDelta;
-            _virtual3RedRect.sizeDelta = fireSizeDelta;
+            _virtualLeftRedRect.sizeDelta = fireSizeDelta;
+            _virtualRightRedRect.sizeDelta = fireSizeDelta;
 
             realOutline.color = outlineColor;
-            virtualOutline.color = outlineColor;
-            virtual2Outline.color = outlineColor;
-            virtual3Outline.color = outlineColor;
+            virtualLeftOutline.color = outlineColor;
+            virtualRightOutline.color = outlineColor;
 
             realRed.color = fireColor;
-            virtualRed.color = fireColor;
-            virtual2Red.color = fireColor;
-            virtual3Red.color = fireColor;
+            virtualLeftRed.color = fireColor;
+            virtualRightRed.color = fireColor;
 
             HUDCoreModel.Instance.UpdateManger.Register(this);
         }
@@ -140,23 +123,19 @@ namespace GamePanelHUDCompass.Views
 
             var lhs = where - compassFireHUDModel.CompassFire.CameraPosition;
 
-            var angle = compassFireHUDModel.CompassFire.GetToAngle(lhs);
+            _angle = compassFireHUDModel.CompassFire.GetToAngle(lhs);
 
-            _fireX = -(angle / 15 * 120);
-
+            var fireX = FireX;
             var fireXLeft = FireXLeft;
             var fireXRight = FireXRight;
-            var fireXRightRight = FireXRightRight;
 
-            Direction = GetDirection(compassHUDModel.Compass.SizeDelta.x, compassHUDModel.Compass.CompassX, _fireX,
-                fireXLeft, fireXRight,
-                fireXRightRight, lhs, compassFireHUDModel.CompassFire.PlayerRight);
+            Direction = GetDirection(compassHUDModel.Compass.SizeDelta.x, compassHUDModel.Compass.CompassX, fireX,
+                fireXLeft, fireXRight, lhs, compassFireHUDModel.CompassFire.PlayerRight);
 
             var height = settingsModel.KeyCompassFireHeight.Value;
-            _realRect.anchoredPosition = new Vector2(_fireX, height);
-            _virtualRect.anchoredPosition = new Vector2(fireXLeft, height);
-            _virtual2Rect.anchoredPosition = new Vector2(fireXRight, height);
-            _virtual3Rect.anchoredPosition = new Vector2(fireXRightRight, height);
+            _realRect.anchoredPosition = new Vector2(fireX, height);
+            _virtualLeftRect.anchoredPosition = new Vector2(fireXLeft, height);
+            _virtualRightRect.anchoredPosition = new Vector2(fireXRight, height);
 
             _animatorFire.SetFloat(AnimatorHash.Active, settingsModel.KeyCompassFireActiveSpeed.Value);
             _animatorFire.SetFloat(AnimatorHash.Speed, settingsModel.KeyCompassFireWaitSpeed.Value);
@@ -177,7 +156,7 @@ namespace GamePanelHUDCompass.Views
         }
 
         private static int GetDirection(float panelX, float compassX, float fireX, float fireXLeft, float fireXRight,
-            float fireXRightRight, Vector3 lhs, Vector3 right)
+            Vector3 lhs, Vector3 right)
         {
             var panelHalf = panelX / 2;
 
@@ -188,8 +167,7 @@ namespace GamePanelHUDCompass.Views
             var realInPanel = -fireX < panelMaxX && -fireX > panelMinX;
 
             var virtualInPanel = -fireXLeft < panelMaxX && -fireXLeft > panelMinX ||
-                                 -fireXRight < panelMaxX && -fireXRight > panelMinX ||
-                                 -fireXRightRight < panelMaxX && -fireXRightRight > panelMinX;
+                                 -fireXRight < panelMaxX && -fireXRight > panelMinX;
 
             if (!realInPanel && !virtualInPanel)
                 return RealDirection(lhs, right) ? 1 : -1;
