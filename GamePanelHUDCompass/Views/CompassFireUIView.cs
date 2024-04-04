@@ -70,7 +70,7 @@ namespace GamePanelHUDCompass.Views
 
         private float _angle;
 
-        private float FireX => _angle * 8f + 8 * 360;
+        private float FireX => -_angle * 8f + 8 * 360;
 
         private float FireXLeft => FireX - 8 * 360;
 
