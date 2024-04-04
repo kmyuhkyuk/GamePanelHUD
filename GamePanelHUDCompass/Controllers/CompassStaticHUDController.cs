@@ -69,13 +69,12 @@ namespace GamePanelHUDCompass.Controllers
             var hudCoreModel = HUDCoreModel.Instance;
             var compassStaticHUDModel = CompassStaticHUDModel.Instance;
 
-            ShowQuest(hudCoreModel.YourPlayer, __instance, hudCoreModel.TheGame,
-                compassStaticHUDModel.ShowStatic);
+            ShowQuest(hudCoreModel.YourPlayer, hudCoreModel.TheGame, compassStaticHUDModel.ShowStatic);
             ShowExfiltration(hudCoreModel.YourPlayer, compassStaticHUDModel.ShowStatic);
         }
 
         // ReSharper disable once SuggestBaseTypeForParameter
-        private static void ShowQuest(Player player, GameWorld world, AbstractGame game, Action<StaticModel> showStatic)
+        private static void ShowQuest(Player player, AbstractGame game, Action<StaticModel> showStatic)
         {
             if (player is HideoutPlayer)
                 return;
@@ -86,12 +85,10 @@ namespace GamePanelHUDCompass.Controllers
 
             var quests = reflectionModel.RefQuests.GetValue(questData);
 
-            var lootItems = _GameWorldHelper.RefLootItems.GetValue(world);
-
-            var lootItemsList = reflectionModel.RefLootList.GetValue(lootItems);
+            var lootItems = EFTGlobal.LootList.OfType<LootItem>();
 
             (string Id, LootItem Item)[] questItems =
-                lootItemsList.Where(x => x.Item.QuestItem).Select(x => (x.TemplateId, x)).ToArray();
+                lootItems.Where(x => x.Item.QuestItem).Select(x => (x.TemplateId, x)).ToArray();
 
             var is300Up = EFTVersion.AkiVersion > EFTVersion.Parse("3.0.0");
 

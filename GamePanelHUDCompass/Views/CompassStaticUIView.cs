@@ -46,31 +46,27 @@ namespace GamePanelHUDCompass.Views
 
         [SerializeField] private Image real;
 
-        [SerializeField] private Image @virtual;
+        [SerializeField] private Image virtualLeft;
 
-        [SerializeField] private Image virtual2;
-
-        [SerializeField] private Image virtual3;
+        [SerializeField] private Image virtualRight;
 
         private Sprite _icon;
 
         private RectTransform _realRect;
 
-        private RectTransform _virtualRect;
+        private RectTransform _virtualLeftRect;
 
-        private RectTransform _virtual2Rect;
-
-        private RectTransform _virtual3Rect;
+        private RectTransform _virtualRightRect;
 
         private CanvasGroup _canvasGroup;
 
-        private float _iconX;
+        private float _angle;
 
-        private float IconXLeft => _iconX - 2880;
+        private float IconX => -_angle * 8f + 8 * 360;
 
-        private float IconXRight => _iconX + 2880;
+        private float IconXLeft => IconX - 8 * 360;
 
-        private float IconXRightRight => _iconX + 2880 * 2;
+        private float IconXRight => IconX + 8 * 360;
 
 #if !UNITY_EDITOR
         private void Awake()
@@ -78,9 +74,8 @@ namespace GamePanelHUDCompass.Views
             _canvasGroup = GetComponent<CanvasGroup>();
 
             _realRect = real.GetComponent<RectTransform>();
-            _virtualRect = @virtual.GetComponent<RectTransform>();
-            _virtual2Rect = virtual2.GetComponent<RectTransform>();
-            _virtual3Rect = virtual3.GetComponent<RectTransform>();
+            _virtualLeftRect = virtualLeft.GetComponent<RectTransform>();
+            _virtualRightRect = virtualRight.GetComponent<RectTransform>();
         }
 
         private void Start()
@@ -129,22 +124,18 @@ namespace GamePanelHUDCompass.Views
 
             var lhs = where - compassFireHUDModel.CompassFire.CameraPosition;
 
-            var angle = compassFireHUDModel.CompassFire.GetToAngle(lhs);
+            _angle = compassFireHUDModel.CompassFire.GetToAngle(lhs);
 
-            _iconX = -(angle / 15 * 120);
-
+            var iconX = IconX;
             var iconXLeft = IconXLeft;
             var iconXRight = IconXRight;
-            var iconXRightRight = IconXRightRight;
 
-            //Center always is Virtual2
-            XDiff = -iconXRight - compassHUDModel.Compass.CompassX;
+            XDiff = -iconX - compassHUDModel.Compass.CompassX;
 
             var height = settingsModel.KeyCompassStaticHeight.Value;
-            _realRect.anchoredPosition = new Vector2(_iconX, height);
-            _virtualRect.anchoredPosition = new Vector2(iconXLeft, height);
-            _virtual2Rect.anchoredPosition = new Vector2(iconXRight, height);
-            _virtual3Rect.anchoredPosition = new Vector2(iconXRightRight, height);
+            _realRect.anchoredPosition = new Vector2(iconX, height);
+            _virtualLeftRect.anchoredPosition = new Vector2(iconXLeft, height);
+            _virtualRightRect.anchoredPosition = new Vector2(iconXRight, height);
 
             switch (InfoType)
             {
@@ -340,9 +331,8 @@ namespace GamePanelHUDCompass.Views
             _icon = sprite;
 
             real.sprite = _icon;
-            @virtual.sprite = _icon;
-            virtual2.sprite = _icon;
-            virtual3.sprite = _icon;
+            virtualLeft.sprite = _icon;
+            virtualRight.sprite = _icon;
         }
 
         private void Enabled(bool sw)
@@ -354,17 +344,15 @@ namespace GamePanelHUDCompass.Views
         private void SetSizeDelta(Vector2 size)
         {
             _realRect.sizeDelta = size;
-            _virtualRect.sizeDelta = size;
-            _virtual2Rect.sizeDelta = size;
-            _virtual3Rect.sizeDelta = size;
+            _virtualLeftRect.sizeDelta = size;
+            _virtualRightRect.sizeDelta = size;
         }
 
         private void SetNativeSize()
         {
             real.SetNativeSize();
-            @virtual.SetNativeSize();
-            virtual2.SetNativeSize();
-            virtual3.SetNativeSize();
+            virtualLeft.SetNativeSize();
+            virtualRight.SetNativeSize();
         }
 
         public void Destroy()
