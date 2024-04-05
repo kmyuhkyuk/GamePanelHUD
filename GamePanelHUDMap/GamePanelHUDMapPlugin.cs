@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace GamePanelHUDMap
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDMap", "GamePanelHUDMap", "2.7.8")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDMap", "GamePanelHUDMap", "3.0.0")]
     [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore")]
     public class GamePanelHUDMapPlugin : BaseUnityPlugin, IUpdate
     {

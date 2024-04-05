@@ -14,8 +14,8 @@ using SettingsModel = GamePanelHUDCompass.Models.SettingsModel;
 
 namespace GamePanelHUDCompass
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCompass", "GamePanelHUDCompass", "2.7.8")]
-    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "2.7.8")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCompass", "GamePanelHUDCompass", "3.0.0")]
+    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "3.0.0")]
     [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", "localized/compass")]
     public partial class GamePanelHUDCompassPlugin : BaseUnityPlugin
     {
