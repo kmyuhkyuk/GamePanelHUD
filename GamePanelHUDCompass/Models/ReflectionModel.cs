@@ -2,12 +2,11 @@
 
 using System;
 using System.Collections;
-using System.Reflection;
+using System.Linq;
 using EFT.Quests;
 using EFTApi;
 using EFTReflection;
 using JetBrains.Annotations;
-using Newtonsoft.Json;
 using static EFTApi.EFTHelpers;
 
 namespace GamePanelHUDCompass.Models
@@ -83,7 +82,8 @@ namespace GamePanelHUDCompass.Models
             }
 
             RefName = RefHelper.FieldRef<object, string>.Create(RefTemplate.PropertyType,
-                x => x.GetCustomAttribute<JsonPropertyAttribute>()?.PropertyName == "name");
+                x => x.CustomAttributes.SingleOrDefault(c => c.AttributeType.Name == "JsonPropertyAttribute")
+                    ?.ConstructorArguments.ElementAtOrDefault(0).Value as string == "name");
             RefAvailableForFinishConditions =
                 RefHelper.PropertyRef<object, IEnumerable>.Create(questDataType, "AvailableForFinishConditions");
 
