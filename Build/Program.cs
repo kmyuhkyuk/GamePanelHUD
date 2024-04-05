@@ -19,6 +19,10 @@ namespace Build
             const string modPath =
                 @"R:\Battlestate Games\Client.0.14.1.2.29197\BepInEx\plugins\kmyuhkyuk-GamePanelHUD";
 
+            var versionName = "2.7.8";
+
+            var releaseName = $"{new DirectoryInfo(modPath).Name}-({versionName} Release).7z";
+
             var previewName = $"{new DirectoryInfo(modPath).Name}-(Preview).7z";
 
             var releasePreview = new[]
@@ -44,7 +48,7 @@ namespace Build
                     "GamePanelHUDWeapon"
                 }, sha);
 
-                Copy.GenerateSevenZip(arg, "Release", modPath, null, @"BepInEx\plugins", Array.Empty<string>(),
+                Copy.GenerateSevenZip(arg, "Release", modPath, releaseName, @"BepInEx\plugins", Array.Empty<string>(),
                     Array.Empty<string>(), new[] { Path.Combine(baseDirectory, "ReadMe.txt") }, Array.Empty<string>());
 
                 Copy.GenerateSevenZip(arg, "Preview", modPath, previewName, @"BepInEx\plugins", Array.Empty<string>(),
