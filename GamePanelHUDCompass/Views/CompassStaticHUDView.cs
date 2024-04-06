@@ -107,7 +107,7 @@ namespace GamePanelHUDCompass.Views
 
             //Distance panel width is 110, Spacing is 5
             var outDistanceHalfSize = settingsModel.KeyCompassStaticInfoAutoSizeDelta.Value
-                ? new Vector2((compassHUDModel.Compass.SizeDelta.x - 110 - 5) / 2,
+                ? new Vector2((compassHUDModel.Compass.SizeDelta.x - 110 - 5 - 10) / 2,
                     settingsModel.KeyCompassStaticInfoSizeDelta.Value.y)
                 : settingsModel.KeyCompassStaticInfoSizeDelta.Value;
 
