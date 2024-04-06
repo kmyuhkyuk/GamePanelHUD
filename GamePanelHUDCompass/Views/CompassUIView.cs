@@ -52,16 +52,17 @@ namespace GamePanelHUDCompass.Views
 
         private TMP_Text[] _azimuthsAngles;
 
+        private static readonly int MaskSoftnessX = Shader.PropertyToID("_MaskSoftnessX");
+
 #if !UNITY_EDITOR
         private void Awake()
         {
             _azimuthsImages = azimuthsValueRoot.GetComponentsInChildren<Image>();
             _azimuthsAngles = azimuthsValueRoot.GetComponentsInChildren<TMP_Text>();
 
-            //Fixed font mask
             foreach (var azimuthsAngle in _azimuthsAngles)
             {
-                azimuthsAngle.fontMaterial.shaderKeywords = new[] { "MASK_SOFT" };
+                azimuthsAngle.fontMaterial.SetFloat(MaskSoftnessX, 100);
             }
 
             _anglePanelTransform = directionValue.transform.parent;
