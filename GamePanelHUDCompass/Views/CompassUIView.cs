@@ -57,6 +57,13 @@ namespace GamePanelHUDCompass.Views
         {
             _azimuthsImages = azimuthsValueRoot.GetComponentsInChildren<Image>();
             _azimuthsAngles = azimuthsValueRoot.GetComponentsInChildren<TMP_Text>();
+
+            //Fixed font mask
+            foreach (var azimuthsAngle in _azimuthsAngles)
+            {
+                azimuthsAngle.fontMaterial.shaderKeywords = new[] { "MASK_SOFT" };
+            }
+
             _anglePanelTransform = directionValue.transform.parent;
         }
 
