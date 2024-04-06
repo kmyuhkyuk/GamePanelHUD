@@ -26,6 +26,10 @@ namespace GamePanelHUDCompass.Views
 
         public float XDiff { get; private set; }
 
+        public float XLeftDiff { get; private set; }
+
+        public float XRightDiff { get; private set; }
+
         public bool HasRequirements { get; private set; }
 
         public bool InZone { get; private set; }
@@ -131,6 +135,8 @@ namespace GamePanelHUDCompass.Views
             var iconXRight = IconXRight;
 
             XDiff = -iconX - compassHUDModel.Compass.CompassX;
+            XLeftDiff = -iconXLeft - compassHUDModel.Compass.CompassX;
+            XRightDiff = -iconXRight - compassHUDModel.Compass.CompassX;
 
             var height = settingsModel.KeyCompassStaticHeight.Value;
             _realRect.anchoredPosition = new Vector2(iconX, height);

@@ -158,12 +158,24 @@ namespace GamePanelHUDCompass.Views
                             continue;
 
                         var xDiff = ui.XDiff;
+                        var xLeftDiff = ui.XLeftDiff;
+                        var xRightDiff = ui.XRightDiff;
 
-                        if (xDiff >= range || xDiff <= -range)
-                            continue;
-
-                        allDiff.Add((xDiff, ui));
-                        isCenter = true;
+                        if (xDiff < range && xDiff > -range)
+                        {
+                            allDiff.Add((xDiff, ui));
+                            isCenter = true;
+                        }
+                        else if (xLeftDiff < range && xLeftDiff > -range)
+                        {
+                            allDiff.Add((xLeftDiff, ui));
+                            isCenter = true;
+                        }
+                        else if (xRightDiff < range && xRightDiff > -range)
+                        {
+                            allDiff.Add((xRightDiff, ui));
+                            isCenter = true;
+                        }
                     }
                 }
 
