@@ -1,0 +1,17 @@
+{
+    "GamePanelHUDGrenade": "游戏屏幕面板手雷",
+    "Main Settings": "主设置",
+    "Position Scale Settings": "位置大小设置",
+    "Color Settings": "颜色设置",
+    "Font Styles Settings": "字体样式设置",
+    "Grenade HUD display": "手雷计数器显示",
+    "Merge All Grenade Count": "合并所有手雷统计",
+    "Grenade Count Zero Warning": "手雷数量为零警告",
+    "Anchored Position": "指示栏位置",
+    "Size Delta": "指示栏高度",
+    "Local Scale": "指示栏大小",
+    "Frag": "碎片",
+    "Stun": "闪光",
+    "Smoke": "烟雾",
+    "Warning": "警告"
+}
