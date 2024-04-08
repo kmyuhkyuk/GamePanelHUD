@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\LibGit2Sharp.NativeBinaries.2.0.321\build\net46\LibGit2Sharp.NativeBinaries.props" Condition="Exists('..\packages\LibGit2Sharp.NativeBinaries.2.0.321\build\net46\LibGit2Sharp.NativeBinaries.props')" />
+  <Import Project="..\packages\LibGit2Sharp.NativeBinaries.2.0.322\build\net46\LibGit2Sharp.NativeBinaries.props" Condition="Exists('..\packages\LibGit2Sharp.NativeBinaries.2.0.322\build\net46\LibGit2Sharp.NativeBinaries.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -56,8 +56,8 @@
     <Reference Include="CopyBuildAssembly, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\CopyBuildAssembly.1.0.0\lib\net472\CopyBuildAssembly.dll</HintPath>
     </Reference>
-    <Reference Include="LibGit2Sharp, Version=0.29.0.0, Culture=neutral, PublicKeyToken=7cbde695407f0333, processorArchitecture=MSIL">
-      <HintPath>..\packages\LibGit2Sharp.0.29.0\lib\net472\LibGit2Sharp.dll</HintPath>
+    <Reference Include="LibGit2Sharp, Version=0.30.0.0, Culture=neutral, PublicKeyToken=7cbde695407f0333, processorArchitecture=MSIL">
+      <HintPath>..\packages\LibGit2Sharp.0.30.0\lib\net472\LibGit2Sharp.dll</HintPath>
     </Reference>
     <Reference Include="Mono.Cecil, Version=0.11.5.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
       <HintPath>..\packages\Mono.Cecil.0.11.5\lib\net40\Mono.Cecil.dll</HintPath>
@@ -86,6 +86,20 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="localized\compass\en.json" />
+    <None Include="localized\compass\zh.json" />
+    <None Include="localized\core\en.json" />
+    <None Include="localized\core\zh.json" />
+    <None Include="localized\grenade\en.json" />
+    <None Include="localized\grenade\zh.json" />
+    <None Include="localized\health\en.json" />
+    <None Include="localized\health\zh.json" />
+    <None Include="localized\hit\en.json" />
+    <None Include="localized\hit\zh.json" />
+    <None Include="localized\kill\en.json" />
+    <None Include="localized\kill\zh.json" />
+    <None Include="localized\weapon\en.json" />
+    <None Include="localized\weapon\zh.json" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -118,18 +132,20 @@
       <Name>GamePanelHUDWeapon</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>start $(TargetPath) $(ConfigurationName) $(SolutionDir)</PostBuildEvent>
+    <PostBuildEvent>xcopy $(ProjectDir)localized $(TargetDir)localized /E /Y
+start $(TargetPath) $(ConfigurationName) $(SolutionDir)</PostBuildEvent>
   </PropertyGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>这台计算机上缺少此项目引用的 NuGet 程序包。使用“NuGet 程序包还原”可下载这些程序包。有关更多信息，请参见 http://go.microsoft.com/fwlink/?LinkID=322105。缺少的文件是 {0}。</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\LibGit2Sharp.NativeBinaries.2.0.321\build\net46\LibGit2Sharp.NativeBinaries.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\LibGit2Sharp.NativeBinaries.2.0.321\build\net46\LibGit2Sharp.NativeBinaries.props'))" />
-    <Error Condition="!Exists('..\packages\CopyBuildAssembly.1.0.0\build\CopyBuildAssembly.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CopyBuildAssembly.1.0.0\build\CopyBuildAssembly.targets'))" />
     <Error Condition="!Exists('..\packages\7z.Libs.23.01.0\build\net\7z.Libs.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\7z.Libs.23.01.0\build\net\7z.Libs.targets'))" />
+    <Error Condition="!Exists('..\packages\LibGit2Sharp.NativeBinaries.2.0.322\build\net46\LibGit2Sharp.NativeBinaries.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\LibGit2Sharp.NativeBinaries.2.0.322\build\net46\LibGit2Sharp.NativeBinaries.props'))" />
+    <Error Condition="!Exists('..\packages\CopyBuildAssembly.1.0.0\build\CopyBuildAssembly.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CopyBuildAssembly.1.0.0\build\CopyBuildAssembly.targets'))" />
   </Target>
-  <Import Project="..\packages\CopyBuildAssembly.1.0.0\build\CopyBuildAssembly.targets" Condition="Exists('..\packages\CopyBuildAssembly.1.0.0\build\CopyBuildAssembly.targets')" />
   <Import Project="..\packages\7z.Libs.23.01.0\build\net\7z.Libs.targets" Condition="Exists('..\packages\7z.Libs.23.01.0\build\net\7z.Libs.targets')" />
+  <Import Project="..\packages\CopyBuildAssembly.1.0.0\build\CopyBuildAssembly.targets" Condition="Exists('..\packages\CopyBuildAssembly.1.0.0\build\CopyBuildAssembly.targets')" />
 </Project>
