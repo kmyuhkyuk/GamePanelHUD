@@ -43,7 +43,7 @@ namespace GamePanelHUDHit
                     EFTVersion.AkiVersion > EFTVersion.Parse("3.4.1")
                         ? processor.Create(Mono.Cecil.Cil.OpCodes.Nop)
                         : processor.Create(Mono.Cecil.Cil.OpCodes.Ldind_R4),
-                    processor.Create(Mono.Cecil.Cil.OpCodes.Call,
+                    processor.Create(Mono.Cecil.Cil.OpCodes.Callvirt,
                         AccessTools.Method(typeof(ArmorModel), nameof(ArmorModel.Set)))
                 });
         }
