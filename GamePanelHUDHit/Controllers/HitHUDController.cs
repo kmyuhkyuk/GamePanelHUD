@@ -27,7 +27,7 @@ namespace GamePanelHUDHit.Controllers
             var hitHUDModel = HitHUDModel.Instance;
             var settingsModel = SettingsModel.Instance;
 
-            hitHUDModel.HitHUDSw = hudCoreModel.AllHUDSw && hudCoreModel.HasPlayer && settingsModel.KeyHitHUDSw.Value;
+            hitHUDModel.HitHUDSw = hudCoreModel.AllHUDSw && settingsModel.KeyHitHUDSw.Value && hudCoreModel.HasPlayer;
 
             if (!hudCoreModel.HasPlayer)
             {

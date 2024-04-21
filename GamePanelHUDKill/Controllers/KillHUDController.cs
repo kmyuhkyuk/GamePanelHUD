@@ -27,8 +27,8 @@ namespace GamePanelHUDKill.Controllers
             var settingsModel = SettingsModel.Instance;
 
             killHUDModel.KillHUDSw =
-                hudCoreModel.AllHUDSw && hudCoreModel.HasPlayer && settingsModel.KeyKillHUDSw.Value;
-            killHUDModel.ExpHUDSw = hudCoreModel.AllHUDSw && hudCoreModel.HasPlayer && settingsModel.KeyExpHUDSw.Value;
+                hudCoreModel.AllHUDSw && settingsModel.KeyKillHUDSw.Value && hudCoreModel.HasPlayer;
+            killHUDModel.ExpHUDSw = hudCoreModel.AllHUDSw && settingsModel.KeyExpHUDSw.Value && hudCoreModel.HasPlayer;
 
             if (!hudCoreModel.HasPlayer)
             {
