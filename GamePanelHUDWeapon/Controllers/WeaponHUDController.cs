@@ -64,11 +64,13 @@ namespace GamePanelHUDWeapon.Controllers
             var reflectionModel = ReflectionModel.Instance;
             var settingsModel = SettingsModel.Instance;
 
-            weaponHUDModel.WeaponHUDSw = hudCoreModel.AllHUDSw && _currentWeapon != null && hudCoreModel.HasPlayer &&
+            var hasPlayer = hudCoreModel.HasPlayer;
+
+            weaponHUDModel.WeaponHUDSw = hudCoreModel.AllHUDSw && _currentWeapon != null && hasPlayer &&
                                          settingsModel.KeyWeaponHUDSw.Value;
 
             //Get Player
-            if (!hudCoreModel.HasPlayer)
+            if (!hasPlayer)
                 return;
 
             reflectionModel.RefAmmoCount

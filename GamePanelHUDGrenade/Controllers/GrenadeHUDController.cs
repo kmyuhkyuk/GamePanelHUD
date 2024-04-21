@@ -43,10 +43,12 @@ namespace GamePanelHUDGrenade.Controllers
             var grenadeHUDModel = GrenadeHUDModel.Instance;
             var settingsModel = SettingsModel.Instance;
 
-            grenadeHUDModel.GrenadeHUDSw = hudCoreModel.AllHUDSw && hudCoreModel.HasPlayer &&
+            var hasPlayer = hudCoreModel.HasPlayer;
+
+            grenadeHUDModel.GrenadeHUDSw = hudCoreModel.AllHUDSw && hasPlayer &&
                                            settingsModel.KeyGrenadeHUDSw.Value;
 
-            if (!hudCoreModel.HasPlayer)
+            if (!hasPlayer)
                 return;
 
             var rigAmount = grenadeHUDModel.RigAmount;

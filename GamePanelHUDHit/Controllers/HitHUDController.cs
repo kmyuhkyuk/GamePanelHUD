@@ -27,9 +27,11 @@ namespace GamePanelHUDHit.Controllers
             var hitHUDModel = HitHUDModel.Instance;
             var settingsModel = SettingsModel.Instance;
 
-            hitHUDModel.HitHUDSw = hudCoreModel.AllHUDSw && settingsModel.KeyHitHUDSw.Value && hudCoreModel.HasPlayer;
+            var hasPlayer = hudCoreModel.HasPlayer;
 
-            if (!hudCoreModel.HasPlayer)
+            hitHUDModel.HitHUDSw = hudCoreModel.AllHUDSw && hasPlayer && settingsModel.KeyHitHUDSw.Value;
+
+            if (!hasPlayer)
             {
                 ArmorModel.Instance.Reset();
             }

@@ -28,11 +28,13 @@ namespace GamePanelHUDHealth.Controllers
             var healthHUDModel = HealthHUDModel.Instance;
             var settingsModel = SettingsModel.Instance;
 
+            var hasPlayer = hudCoreModel.HasPlayer;
+
             healthHUDModel.HealthHUDSw = hudCoreModel.AllHUDSw && healthHUDModel.HealthController != null &&
-                                         hudCoreModel.HasPlayer &&
+                                         hasPlayer &&
                                          settingsModel.KeyHealthHUDSw.Value;
 
-            if (hudCoreModel.HasPlayer)
+            if (hasPlayer)
             {
                 healthHUDModel.HealthController = _HealthControllerHelper.HealthController;
             }
