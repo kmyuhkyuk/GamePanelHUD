@@ -151,12 +151,12 @@ namespace GamePanelHUDKill.Views
 
             var allKillList = new List<KillUIView>();
 
-            if (killModel.Distance >= settingsModel.KeyKillDistance.Value && settingsModel.KeyKillHasDistance.Value)
+            if (settingsModel.KeyKillHasDistance.Value && killModel.Distance >= settingsModel.KeyKillDistance.Value)
             {
                 allKillList.Add(AddDistanceInfo(killModel, settingsModel, killRoot));
             }
 
-            if (killModel.KillCount > 1 && settingsModel.KeyKillHasStreak.Value)
+            if (settingsModel.KeyKillHasStreak.Value && killModel.KillCount > 1)
             {
                 var streakXp =
                     _ExperienceHelper.GetStreakExp(killModel.Exp, killModel.Side, killModel.KillCount);
@@ -168,7 +168,7 @@ namespace GamePanelHUDKill.Views
                 allInfo++;
             }
 
-            if (killModel.Part == EBodyPart.Head && settingsModel.KeyKillHasOther.Value)
+            if (settingsModel.KeyKillHasOther.Value && killModel.Part == EBodyPart.Head)
             {
                 var headXp = _ExperienceHelper.GetHeadExp(killModel.Exp, killModel.Side);
 
