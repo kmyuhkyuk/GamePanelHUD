@@ -26,11 +26,13 @@ namespace GamePanelHUDKill.Controllers
             var killHUDModel = KillHUDModel.Instance;
             var settingsModel = SettingsModel.Instance;
 
-            killHUDModel.KillHUDSw =
-                hudCoreModel.AllHUDSw && settingsModel.KeyKillHUDSw.Value && hudCoreModel.HasPlayer;
-            killHUDModel.ExpHUDSw = hudCoreModel.AllHUDSw && settingsModel.KeyExpHUDSw.Value && hudCoreModel.HasPlayer;
+            var hasPlayer = hudCoreModel.HasPlayer;
 
-            if (!hudCoreModel.HasPlayer)
+            killHUDModel.KillHUDSw =
+                hudCoreModel.AllHUDSw && hasPlayer && settingsModel.KeyKillHUDSw.Value;
+            killHUDModel.ExpHUDSw = hudCoreModel.AllHUDSw && hasPlayer && settingsModel.KeyExpHUDSw.Value;
+
+            if (!hasPlayer)
             {
                 killHUDModel.KillCount = 0;
             }

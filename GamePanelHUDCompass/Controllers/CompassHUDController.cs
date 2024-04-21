@@ -28,8 +28,10 @@ namespace GamePanelHUDCompass.Controllers
             var compassHUDModel = CompassHUDModel.Instance;
             var settingsModel = SettingsModel.Instance;
 
+            var hasPlayer = hudCoreModel.HasPlayer;
+
             compassHUDModel.CompassHUDSw = hudCoreModel.AllHUDSw && compassHUDModel.CamTransform != null &&
-                                           hudCoreModel.HasPlayer &&
+                                           hasPlayer &&
                                            settingsModel.KeyCompassHUDSw.Value;
 
             compassHUDModel.Compass.SizeDelta = settingsModel.KeyCompassAutoSizeDelta.Value
@@ -38,7 +40,7 @@ namespace GamePanelHUDCompass.Controllers
                     settingsModel.KeySizeDelta.Value.y)
                 : settingsModel.KeySizeDelta.Value;
 
-            if (!hudCoreModel.HasPlayer)
+            if (!hasPlayer)
                 return;
 
             compassHUDModel.CamTransform = hudCoreModel.YourPlayer.CameraPosition;
