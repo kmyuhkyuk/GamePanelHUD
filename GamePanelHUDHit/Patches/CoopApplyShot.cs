@@ -9,8 +9,8 @@ namespace GamePanelHUDHit
 {
     public partial class GamePanelHUDHitPlugin
     {
-        private static void CoopApplyDamageInfo(Player __instance, DamageInfo damageInfo, EBodyPart bodyPartType,
-            EBodyPartColliderType colliderType, float absorbed)
+        private static void CoopApplyShot(Player __instance, DamageInfo damageInfo, EBodyPart bodyPartType,
+            EBodyPartColliderType colliderType)
         {
             if (_DamageInfoHelper.GetPlayer(damageInfo) != HUDCoreModel.Instance.YourPlayer)
                 return;
@@ -40,7 +40,7 @@ namespace GamePanelHUDHit
                 _HealthControllerHelper.CoopApplyDamage(coopHealthController, bodyPartType, damageInfo.Damage,
                     damageInfo);
 
-            _HealthControllerHelper.BluntContusion(coopHealthController, bodyPartType, absorbed);
+            _HealthControllerHelper.BluntContusion(coopHealthController, bodyPartType, 0);
 
             if (damageInfo.DidBodyDamage >= float.Epsilon)
             {

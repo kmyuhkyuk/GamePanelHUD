@@ -38,7 +38,7 @@ namespace GamePanelHUDHit
                 HarmonyPatchType.ILManipulator);
 
             //Coop
-            _PlayerHelper.ObservedCoopApplyDamageInfo?.Add(this, nameof(CoopApplyDamageInfo));
+            _PlayerHelper.ObservedCoopApplyShot?.Add(this, nameof(CoopApplyShot));
         }
 
         private static void BaseApplyDamageInfo(DamageInfo damageInfo, EBodyPart bodyPartType, object healthController)
