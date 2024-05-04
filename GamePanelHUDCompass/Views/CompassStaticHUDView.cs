@@ -187,7 +187,7 @@ namespace GamePanelHUDCompass.Views
                     // ReSharper disable once ForeachCanBePartlyConvertedToQueryUsingAnotherGetEnumerator
                     foreach (var diff in allDiff)
                     {
-                        if (Math.Abs(diff.XDiff) >= minXDiff)
+                        if (Math.Abs(diff.XDiff) > minXDiff)
                             continue;
 
                         minXDiff = diff.XDiff;
