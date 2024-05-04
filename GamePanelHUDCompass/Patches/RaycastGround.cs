@@ -25,7 +25,7 @@ namespace GamePanelHUDCompass
             }
 
             ShowAirdrop(___airdropSynchronizableObject_0.transform.position, nameKey, descriptionKey,
-                ___airdropSynchronizableObject_0.transform.GetComponentInChildren<LootableContainer>());
+                ___airdropSynchronizableObject_0.GetComponentInChildren<LootableContainer>());
         }
     }
 }

@@ -73,7 +73,7 @@ namespace GamePanelHUDCompass.Views
             _rectTransform = GetComponent<RectTransform>();
 
             _namePanelRect = nameValue.transform.parent.GetComponent<RectTransform>();
-            _descriptionPanelRect = descriptionValue.transform.GetComponent<RectTransform>();
+            _descriptionPanelRect = descriptionValue.GetComponent<RectTransform>();
 
             _distancePanelTransform = distanceValue.transform.parent;
 
