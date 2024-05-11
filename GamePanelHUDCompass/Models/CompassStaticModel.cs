@@ -6,13 +6,13 @@ namespace GamePanelHUDCompass.Models
 {
     internal class CompassStaticModel
     {
-        public HashSet<string> EquipmentAndQuestRaidItems;
+        public HashSet<string> EquipmentAndQuestRaidItemHashSet;
 
         public string YourProfileId;
 
         public List<string> TriggerZones;
 
-        public bool HasEquipmentAndQuestRaidItems => EquipmentAndQuestRaidItems != null;
+        public bool HasEquipmentAndQuestRaidItemHashSet => EquipmentAndQuestRaidItemHashSet != null;
     }
 }
 
