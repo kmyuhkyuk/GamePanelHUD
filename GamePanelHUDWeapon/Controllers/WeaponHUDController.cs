@@ -87,7 +87,7 @@ namespace GamePanelHUDWeapon.Controllers
             if (EFTVersion.AkiVersion > EFTVersion.Parse("3.4.1"))
             {
                 _currentLauncher = _WeaponHelper.UnderbarrelWeapon;
-                _animatorLauncher = _WeaponHelper.LauncherIAnimator;
+                _animatorLauncher = _WeaponHelper.LauncherAnimator;
             }
 
             var weaponActive = _currentWeapon != null;
