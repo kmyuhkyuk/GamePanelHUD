@@ -50,16 +50,16 @@ namespace GamePanelHUDCompass.Controllers
                 //Performance Optimization
                 if (Time.frameCount % 20 == 0)
                 {
-                    var hashSet = _InventoryHelper.EquipmentHash;
+                    var hashSet = _InventoryHelper.EquipmentItemHashSet;
 
-                    hashSet.UnionWith(_InventoryHelper.QuestRaidItemsHash);
+                    hashSet.UnionWith(_InventoryHelper.QuestRaidItemHashSet);
 
-                    compassStaticHUDModel.CompassStatic.EquipmentAndQuestRaidItems = hashSet;
+                    compassStaticHUDModel.CompassStatic.EquipmentAndQuestRaidItemHashSet = hashSet;
                 }
             }
             else
             {
-                compassStaticHUDModel.CompassStatic.EquipmentAndQuestRaidItems = null;
+                compassStaticHUDModel.CompassStatic.EquipmentAndQuestRaidItemHashSet = null;
                 compassStaticHUDModel.AirdropCount = 0;
             }
         }

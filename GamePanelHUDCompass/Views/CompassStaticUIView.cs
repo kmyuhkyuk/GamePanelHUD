@@ -254,11 +254,11 @@ namespace GamePanelHUDCompass.Views
             var settingsModel = SettingsModel.Instance;
 
             var hasItems = true;
-            if (compassStaticHUDModel.CompassStatic.HasEquipmentAndQuestRaidItems)
+            if (compassStaticHUDModel.CompassStatic.HasEquipmentAndQuestRaidItemHashSet)
             {
                 foreach (var id in target)
                 {
-                    if (!compassStaticHUDModel.CompassStatic.EquipmentAndQuestRaidItems.Contains(id))
+                    if (!compassStaticHUDModel.CompassStatic.EquipmentAndQuestRaidItemHashSet.Contains(id))
                     {
                         hasItems = false;
                     }
@@ -287,11 +287,11 @@ namespace GamePanelHUDCompass.Views
             var settingsModel = SettingsModel.Instance;
 
             var hasItems = true;
-            if (compassStaticHUDModel.CompassStatic.HasEquipmentAndQuestRaidItems)
+            if (compassStaticHUDModel.CompassStatic.HasEquipmentAndQuestRaidItemHashSet)
             {
                 foreach (var id in target)
                 {
-                    if (!compassStaticHUDModel.CompassStatic.EquipmentAndQuestRaidItems.Contains(id))
+                    if (!compassStaticHUDModel.CompassStatic.EquipmentAndQuestRaidItemHashSet.Contains(id))
                     {
                         hasItems = false;
                     }
