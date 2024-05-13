@@ -11,7 +11,7 @@ using static EFTApi.EFTHelpers;
 
 namespace GamePanelHUDKill.Models
 {
-    public class SettingsModel
+    internal class SettingsModel
     {
         public static SettingsModel Instance { get; private set; }
 
