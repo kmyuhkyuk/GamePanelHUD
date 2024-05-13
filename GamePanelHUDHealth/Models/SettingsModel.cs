@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace GamePanelHUDHealth.Models
 {
-    public class SettingsModel
+    internal class SettingsModel
     {
         public static SettingsModel Instance { get; private set; }
 
