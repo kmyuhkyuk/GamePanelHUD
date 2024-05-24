@@ -293,10 +293,12 @@ namespace GamePanelHUDCompass.Views
             {
                 foreach (var id in target)
                 {
-                    if (!compassStaticHUDModel.CompassStatic.EquipmentAndQuestRaidItemHashSet.Contains(id))
-                    {
-                        hasItems = false;
-                    }
+                    if (compassStaticHUDModel.CompassStatic.EquipmentAndQuestRaidItemHashSet.Contains(id)) 
+                        continue;
+
+                    hasItems = false;
+
+                    break;
                 }
             }
 
