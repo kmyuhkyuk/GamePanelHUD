@@ -139,9 +139,9 @@ namespace GamePanelHUDCompass.Views
             XRightDiff = -iconXRight - compassHUDModel.Compass.CompassX;
 
             var height = settingsModel.KeyCompassStaticHeight.Value;
-            _realRect.anchoredPosition = new Vector2(iconX, height);
-            _virtualLeftRect.anchoredPosition = new Vector2(iconXLeft, height);
-            _virtualRightRect.anchoredPosition = new Vector2(iconXRight, height);
+            //_realRect.anchoredPosition = new Vector2(iconX, height);
+            //_virtualLeftRect.anchoredPosition = new Vector2(iconXLeft, height);
+            //_virtualRightRect.anchoredPosition = new Vector2(iconXRight, height);
 
             switch (InfoType)
             {
@@ -258,10 +258,12 @@ namespace GamePanelHUDCompass.Views
             {
                 foreach (var id in target)
                 {
-                    if (!compassStaticHUDModel.CompassStatic.EquipmentAndQuestRaidItemHashSet.Contains(id))
-                    {
-                        hasItems = false;
-                    }
+                    if (compassStaticHUDModel.CompassStatic.EquipmentAndQuestRaidItemHashSet.Contains(id)) 
+                        continue;
+
+                    hasItems = false;
+
+                    break;
                 }
             }
 
