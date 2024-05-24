@@ -85,19 +85,30 @@ namespace GamePanelHUDCompass.Controllers
 
             var quests = reflectionModel.RefQuests.GetValue(questData);
 
-            var lootItems = EFTGlobal.LootList.OfType<LootItem>();
+            var questItemDictionary = new Dictionary<string, List<LootItem>>();
+            foreach (var lootItem in EFTGlobal.LootList.OfType<LootItem>())
+            {
+                if (!lootItem.Item.QuestItem)
+                    continue;
 
-            (string Id, LootItem Item)[] questItems =
-                lootItems.Where(x => x.Item.QuestItem).Select(x => (x.TemplateId, x)).ToArray();
+                if (questItemDictionary.TryGetValue(lootItem.TemplateId, out var lootItemList))
+                {
+                    lootItemList.Add(lootItem);
+                }
+                else
+                {
+                    questItemDictionary.Add(lootItem.TemplateId, new List<LootItem> { lootItem });
+                }
+            }
 
             var is300Up = EFTVersion.AkiVersion > EFTVersion.Parse("3.0.0");
 
-            foreach (var item in quests)
+            foreach (var quest in quests)
             {
-                if (reflectionModel.RefQuestStatus.GetValue(item) != EQuestStatus.Started)
+                if (reflectionModel.RefQuestStatus.GetValue(quest) != EQuestStatus.Started)
                     continue;
 
-                var template = reflectionModel.RefTemplate.GetValue(item);
+                var template = reflectionModel.RefTemplate.GetValue(quest);
 
                 var locationId = reflectionModel.RefLocationId.GetValue(template);
 
@@ -118,7 +129,7 @@ namespace GamePanelHUDCompass.Controllers
 
                 var traderId = reflectionModel.RefTraderId.GetValue(template);
 
-                var availableForFinishConditions = reflectionModel.RefAvailableForFinishConditions.GetValue(item);
+                var availableForFinishConditions = reflectionModel.RefAvailableForFinishConditions.GetValue(quest);
 
                 foreach (var condition in availableForFinishConditions)
                 {
@@ -186,15 +197,15 @@ namespace GamePanelHUDCompass.Controllers
 
                             foreach (var itemId in itemIds)
                             {
-                                foreach (var questItem in questItems)
-                                {
-                                    if (!questItem.Id.Equals(itemId, StringComparison.OrdinalIgnoreCase))
-                                        continue;
+                                if (!questItemDictionary.TryGetValue(itemId, out var questItemList))
+                                    continue;
 
+                                foreach (var questItem in questItemList)
+                                {
                                     var staticModel = new StaticModel
                                     {
                                         Id = findItem.id,
-                                        Where = questItem.Item.transform.position,
+                                        Where = questItem.transform.position,
                                         Target = new[] { itemId },
                                         NameKey = nameKey,
                                         DescriptionKey = findItem.id,

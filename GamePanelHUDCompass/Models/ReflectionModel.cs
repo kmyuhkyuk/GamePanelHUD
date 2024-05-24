@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using EFT.Quests;
 using EFTApi;
@@ -19,7 +20,7 @@ namespace GamePanelHUDCompass.Models
 
         public readonly RefHelper.IRef<object, IEnumerable> RefQuests;
 
-        public readonly RefHelper.IRef<object, IEnumerable> RefConditions;
+        public readonly RefHelper.IRef<object, IEnumerable<Condition>> RefConditions;
 
         public readonly RefHelper.IRef<object, string> RefLocationId;
 
@@ -37,7 +38,7 @@ namespace GamePanelHUDCompass.Models
 
         public readonly RefHelper.FieldRef<object, string> RefName;
 
-        public readonly RefHelper.PropertyRef<object, IEnumerable> RefAvailableForFinishConditions;
+        public readonly RefHelper.PropertyRef<object, IEnumerable<Condition>> RefAvailableForFinishConditions;
 
         private ReflectionModel()
         {
@@ -85,17 +86,20 @@ namespace GamePanelHUDCompass.Models
                 x => x.CustomAttributes.SingleOrDefault(c => c.AttributeType.Name == "JsonPropertyAttribute")
                     ?.ConstructorArguments.ElementAtOrDefault(0).Value as string == "name");
             RefAvailableForFinishConditions =
-                RefHelper.PropertyRef<object, IEnumerable>.Create(questDataType, "AvailableForFinishConditions");
+                RefHelper.PropertyRef<object, IEnumerable<Condition>>.Create(questDataType,
+                    "AvailableForFinishConditions");
 
             if (EFTVersion.AkiVersion > EFTVersion.Parse("3.7.6"))
             {
                 RefCounter = RefHelper.FieldRef<ConditionCounterCreator, object>.Create("_templateConditions");
-                RefConditions = RefHelper.FieldRef<object, IEnumerable>.Create(RefCounter.FieldType, "Conditions");
+                RefConditions =
+                    RefHelper.FieldRef<object, IEnumerable<Condition>>.Create(RefCounter.FieldType, "Conditions");
             }
             else
             {
                 RefCounter = RefHelper.FieldRef<ConditionCounterCreator, object>.Create("counter");
-                RefConditions = RefHelper.PropertyRef<object, IEnumerable>.Create(RefCounter.FieldType, "conditions");
+                RefConditions =
+                    RefHelper.PropertyRef<object, IEnumerable<Condition>>.Create(RefCounter.FieldType, "conditions");
             }
         }
     }
