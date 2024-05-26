@@ -12,8 +12,8 @@ using SettingsModel = GamePanelHUDHit.Models.SettingsModel;
 
 namespace GamePanelHUDHit
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDHit", "GamePanelHUDHit", "3.0.0")]
-    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "3.0.0")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDHit", "GamePanelHUDHit", "3.1.0")]
+    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "3.1.0")]
     [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", "localized/hit")]
     public partial class GamePanelHUDHitPlugin : BaseUnityPlugin
     {
