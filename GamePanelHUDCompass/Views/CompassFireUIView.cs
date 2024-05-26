@@ -50,11 +50,7 @@ namespace GamePanelHUDCompass.Views
 
         private Animator _animatorFire;
 
-        private RectTransform _realRect;
-
-        private RectTransform _virtualLeftRect;
-
-        private RectTransform _virtualRightRect;
+        private RectTransform _rectTransform;
 
         private RectTransform _realOutlineRect;
 
@@ -81,6 +77,8 @@ namespace GamePanelHUDCompass.Views
         {
             _animatorFire = GetComponent<Animator>();
 
+            _rectTransform = GetComponent<RectTransform>();
+
             _realOutlineRect = realOutline.GetComponent<RectTransform>();
             _virtualLeftOutlineRect = virtualLeftOutline.GetComponent<RectTransform>();
             _virtualRightOutlineRect = virtualRightOutline.GetComponent<RectTransform>();
@@ -88,10 +86,6 @@ namespace GamePanelHUDCompass.Views
             _realRedRect = realRed.GetComponent<RectTransform>();
             _virtualLeftRedRect = virtualLeftRed.GetComponent<RectTransform>();
             _virtualRightRedRect = virtualRightRed.GetComponent<RectTransform>();
-
-            _realRect = _realRedRect.parent.GetComponent<RectTransform>();
-            _virtualLeftRect = _virtualLeftRedRect.parent.GetComponent<RectTransform>();
-            _virtualRightRect = _virtualRightRedRect.parent.GetComponent<RectTransform>();
         }
 
         private void Start()
@@ -126,16 +120,12 @@ namespace GamePanelHUDCompass.Views
             _angle = compassFireHUDModel.CompassFire.GetToAngle(lhs);
 
             var fireX = FireX;
-            var fireXLeft = FireXLeft;
-            var fireXRight = FireXRight;
 
             Direction = GetDirection(compassHUDModel.Compass.SizeDelta.x, compassHUDModel.Compass.CompassX, fireX,
-                fireXLeft, fireXRight, lhs, compassFireHUDModel.CompassFire.PlayerRight);
+                FireXLeft, FireXRight, lhs, compassFireHUDModel.CompassFire.PlayerRight);
 
-            var height = settingsModel.KeyCompassFireHeight.Value;
-            _realRect.anchoredPosition = new Vector2(fireX + compassHUDModel.Compass.CompassX, height);
-            _virtualLeftRect.anchoredPosition = new Vector2(fireXLeft + compassHUDModel.Compass.CompassX, height);
-            _virtualRightRect.anchoredPosition = new Vector2(fireXRight + compassHUDModel.Compass.CompassX, height);
+            _rectTransform.anchoredPosition = new Vector2(fireX + compassHUDModel.Compass.CompassX,
+                settingsModel.KeyCompassFireHeight.Value);
 
             _animatorFire.SetFloat(AnimatorHash.Active, settingsModel.KeyCompassFireActiveSpeed.Value);
             _animatorFire.SetFloat(AnimatorHash.Speed, settingsModel.KeyCompassFireWaitSpeed.Value);
