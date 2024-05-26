@@ -140,7 +140,7 @@ namespace GamePanelHUDCompass.Views
             XLeftDiff = -IconXLeft - compassHUDModel.Compass.CompassX;
             XRightDiff = -IconXRight - compassHUDModel.Compass.CompassX;
 
-            _rectTransform.anchoredPosition = new Vector2(iconX, settingsModel.KeyCompassStaticHeight.Value);
+            _rectTransform.anchoredPosition = new Vector2(iconX + compassHUDModel.Compass.CompassX, settingsModel.KeyCompassStaticHeight.Value);
 
             switch (InfoType)
             {
