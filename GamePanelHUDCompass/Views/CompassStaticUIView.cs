@@ -56,6 +56,8 @@ namespace GamePanelHUDCompass.Views
 
         private Sprite _icon;
 
+        private RectTransform _rectTransform;
+
         private RectTransform _realRect;
 
         private RectTransform _virtualLeftRect;
@@ -76,6 +78,8 @@ namespace GamePanelHUDCompass.Views
         private void Awake()
         {
             _canvasGroup = GetComponent<CanvasGroup>();
+
+            _rectTransform = GetComponent<RectTransform>();
 
             _realRect = real.GetComponent<RectTransform>();
             _virtualLeftRect = virtualLeft.GetComponent<RectTransform>();
@@ -131,17 +135,12 @@ namespace GamePanelHUDCompass.Views
             _angle = compassFireHUDModel.CompassFire.GetToAngle(lhs);
 
             var iconX = IconX;
-            var iconXLeft = IconXLeft;
-            var iconXRight = IconXRight;
 
             XDiff = -iconX - compassHUDModel.Compass.CompassX;
-            XLeftDiff = -iconXLeft - compassHUDModel.Compass.CompassX;
-            XRightDiff = -iconXRight - compassHUDModel.Compass.CompassX;
+            XLeftDiff = -IconXLeft - compassHUDModel.Compass.CompassX;
+            XRightDiff = -IconXRight - compassHUDModel.Compass.CompassX;
 
-            var height = settingsModel.KeyCompassStaticHeight.Value;
-            _realRect.anchoredPosition = new Vector2(iconX + compassHUDModel.Compass.CompassX, height);
-            _virtualLeftRect.anchoredPosition = new Vector2(iconXLeft + compassHUDModel.Compass.CompassX, height);
-            _virtualRightRect.anchoredPosition = new Vector2(iconXRight + compassHUDModel.Compass.CompassX, height);
+            _rectTransform.anchoredPosition = new Vector2(iconX, settingsModel.KeyCompassStaticHeight.Value);
 
             switch (InfoType)
             {
