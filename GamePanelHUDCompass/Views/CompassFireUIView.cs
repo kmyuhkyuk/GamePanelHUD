@@ -133,9 +133,9 @@ namespace GamePanelHUDCompass.Views
                 fireXLeft, fireXRight, lhs, compassFireHUDModel.CompassFire.PlayerRight);
 
             var height = settingsModel.KeyCompassFireHeight.Value;
-            _realRect.anchoredPosition = new Vector2(fireX, height);
-            _virtualLeftRect.anchoredPosition = new Vector2(fireXLeft, height);
-            _virtualRightRect.anchoredPosition = new Vector2(fireXRight, height);
+            _realRect.anchoredPosition = new Vector2(fireX + compassHUDModel.Compass.CompassX, height);
+            _virtualLeftRect.anchoredPosition = new Vector2(fireXLeft + compassHUDModel.Compass.CompassX, height);
+            _virtualRightRect.anchoredPosition = new Vector2(fireXRight + compassHUDModel.Compass.CompassX, height);
 
             _animatorFire.SetFloat(AnimatorHash.Active, settingsModel.KeyCompassFireActiveSpeed.Value);
             _animatorFire.SetFloat(AnimatorHash.Speed, settingsModel.KeyCompassFireWaitSpeed.Value);

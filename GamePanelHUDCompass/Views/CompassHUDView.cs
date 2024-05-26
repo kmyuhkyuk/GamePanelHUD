@@ -46,7 +46,7 @@ namespace GamePanelHUDCompass.Views
 
             compassUIView.arrowColor = settingsModel.KeyArrowColor.Value;
             compassUIView.azimuthsColor = settingsModel.KeyAzimuthsColor.Value;
-            compassUIView.azimuthAngleColor = settingsModel.KeyAzimuthsAngleColor.Value;
+            compassUIView.azimuthsAngleColor = settingsModel.KeyAzimuthsAngleColor.Value;
             compassUIView.directionColor = settingsModel.KeyDirectionColor.Value;
             compassUIView.angleColor = settingsModel.KeyAngleColor.Value;
 

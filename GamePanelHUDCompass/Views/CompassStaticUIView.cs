@@ -139,9 +139,9 @@ namespace GamePanelHUDCompass.Views
             XRightDiff = -iconXRight - compassHUDModel.Compass.CompassX;
 
             var height = settingsModel.KeyCompassStaticHeight.Value;
-            _realRect.anchoredPosition = new Vector2(iconX, height);
-            _virtualLeftRect.anchoredPosition = new Vector2(iconXLeft, height);
-            _virtualRightRect.anchoredPosition = new Vector2(iconXRight, height);
+            _realRect.anchoredPosition = new Vector2(iconX + compassHUDModel.Compass.CompassX, height);
+            _virtualLeftRect.anchoredPosition = new Vector2(iconXLeft + compassHUDModel.Compass.CompassX, height);
+            _virtualRightRect.anchoredPosition = new Vector2(iconXRight + compassHUDModel.Compass.CompassX, height);
 
             switch (InfoType)
             {

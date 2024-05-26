@@ -22,7 +22,7 @@ namespace GamePanelHUDCompass.Views
 
         public Color azimuthsColor;
 
-        public Color azimuthAngleColor;
+        public Color azimuthsAngleColor;
 
         public Color arrowColor;
 
@@ -40,31 +40,29 @@ namespace GamePanelHUDCompass.Views
 
         [SerializeField] private RectTransform azimuthsRoot;
 
-        [SerializeField] private Transform azimuthsValueRoot;
-
         [SerializeField] private TMP_Text directionValue;
 
         [SerializeField] private TMP_Text angleValue;
 
+        [SerializeField] private Image azimuths;
+
+        [SerializeField] private TMP_Text azimuthsAngle;
+
+        [SerializeField] private Image virtualLeftAzimuths;
+
+        [SerializeField] private TMP_Text virtualLeftAzimuthsAngle;
+
+        [SerializeField] private Image virtualRightAzimuths;
+
+        [SerializeField] private TMP_Text virtualRightAzimuthsAngle;
+
         private Transform _anglePanelTransform;
-
-        private Image[] _azimuthsImages;
-
-        private TMP_Text[] _azimuthsAngles;
 
         private static readonly int MaskSoftnessX = Shader.PropertyToID("_MaskSoftnessX");
 
 #if !UNITY_EDITOR
         private void Awake()
         {
-            _azimuthsImages = azimuthsValueRoot.GetComponentsInChildren<Image>();
-            _azimuthsAngles = azimuthsValueRoot.GetComponentsInChildren<TMP_Text>();
-
-            foreach (var azimuthsAngle in _azimuthsAngles)
-            {
-                azimuthsAngle.fontMaterial.SetFloat(MaskSoftnessX, 100);
-            }
-
             _anglePanelTransform = directionValue.transform.parent;
         }
 
@@ -87,16 +85,20 @@ namespace GamePanelHUDCompass.Views
         {
             arrow.color = arrowColor;
 
-            foreach (var image in _azimuthsImages)
-            {
-                image.color = azimuthsColor;
-            }
+            azimuths.color = azimuthsColor;
 
-            foreach (var text in _azimuthsAngles)
-            {
-                text.fontStyle = azimuthsAngleStyles;
-                text.color = azimuthAngleColor;
-            }
+            azimuthsAngle.fontStyle = azimuthsAngleStyles;
+            azimuthsAngle.color = azimuthsAngleColor;
+
+            virtualLeftAzimuths.color = azimuthsColor;
+
+            virtualLeftAzimuthsAngle.fontStyle = azimuthsAngleStyles;
+            virtualLeftAzimuthsAngle.color = azimuthsAngleColor;
+
+            virtualRightAzimuths.color = azimuthsColor;
+
+            virtualRightAzimuthsAngle.fontStyle = azimuthsAngleStyles;
+            virtualRightAzimuthsAngle.color = azimuthsAngleColor;
 
             azimuthsRoot.anchoredPosition = new Vector2(compassX, 0);
 
