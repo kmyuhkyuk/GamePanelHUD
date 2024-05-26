@@ -29,8 +29,6 @@ namespace GamePanelHUDCompass.Views
 
         [SerializeField] private Transform compassStaticRoot;
 
-        [SerializeField] private RectTransform azimuthsRoot;
-
         [SerializeField] private Transform airdropsRoot;
 
         [SerializeField] private Transform questsRoot;
@@ -119,8 +117,6 @@ namespace GamePanelHUDCompass.Views
             airdropsRoot.gameObject.SetActive(settingsModel.KeyCompassStaticAirdrop.Value);
             exfiltrationsRoot.gameObject.SetActive(settingsModel.KeyCompassStaticExfiltration.Value);
             questsRoot.gameObject.SetActive(settingsModel.KeyCompassStaticQuest.Value);
-
-            azimuthsRoot.anchoredPosition = new Vector2(compassHUDModel.Compass.CompassX, 0);
 
             _infoPanelRect.anchoredPosition = settingsModel.KeyCompassStaticInfoAnchoredPosition.Value;
             _infoPanelRect.localScale = settingsModel.KeyCompassStaticInfoScale.Value;

@@ -26,8 +26,6 @@ namespace GamePanelHUDCompass.Views
 
         [SerializeField] private Transform compassFireRoot;
 
-        [SerializeField] private RectTransform azimuthsRoot;
-
         [SerializeField] private Transform firesRoot;
 
         [SerializeField] private TMP_Text fireLeft;
@@ -78,8 +76,6 @@ namespace GamePanelHUDCompass.Views
             _rectTransform.localScale = settingsModel.KeyLocalScale.Value;
 
             _compassFireGroup.alpha = compassFireHUDModel.CompassFireHUDSw ? 1 : 0;
-
-            azimuthsRoot.anchoredPosition = new Vector2(compassHUDModel.Compass.CompassX, 0);
 
             var directionPosition = settingsModel.KeyCompassFireDirectionAnchoredPosition.Value;
 
