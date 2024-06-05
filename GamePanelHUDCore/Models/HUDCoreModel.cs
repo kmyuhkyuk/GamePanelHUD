@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using EFT;
-using EFT.UI;
 using EFTApi;
 using EFTUtils;
 using GamePanelHUDCore.Controllers;
@@ -25,7 +24,7 @@ namespace GamePanelHUDCore.Models
 
         public Player YourPlayer => EFTGlobal.Player;
 
-        public GameUI YourGameUI => EFTGlobal.GameUI;
+        public MonoBehaviour YourBattleUIScreen => EFTGlobal.BattleUIScreen;
 
         public GameWorld TheWorld => EFTGlobal.GameWorld;
 
@@ -44,8 +43,6 @@ namespace GamePanelHUDCore.Models
         }
 
         public bool HasPlayer => YourPlayer != null;
-
-        public bool HasGameUI => YourGameUI != null;
 
         public bool AllHUDSw;
 

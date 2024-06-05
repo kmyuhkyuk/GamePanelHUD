@@ -63,6 +63,10 @@ namespace GamePanelHUDCompass.Views
 #if !UNITY_EDITOR
         private void Awake()
         {
+            azimuthsAngle.fontMaterial.SetFloat(MaskSoftnessX, 100);
+            virtualLeftAzimuthsAngle.fontMaterial.SetFloat(MaskSoftnessX, 100);
+            virtualRightAzimuthsAngle.fontMaterial.SetFloat(MaskSoftnessX, 100);
+
             _anglePanelTransform = directionValue.transform.parent;
         }
 
