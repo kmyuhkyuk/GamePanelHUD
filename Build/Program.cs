@@ -19,7 +19,7 @@ namespace Build
             const string modPath =
                 @"R:\Battlestate Games\Client.0.14.8.6.30268\BepInEx\plugins\kmyuhkyuk-GamePanelHUD";
 
-            var modDirectoryName = Path.GetDirectoryName(modPath);
+            var modDirectoryName = new DirectoryInfo(modPath).Name;
 
             var versionName = "3.1.0";
 
