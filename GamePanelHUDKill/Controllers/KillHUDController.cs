@@ -15,6 +15,7 @@ namespace GamePanelHUDKill.Controllers
 #endif
     {
 #if !UNITY_EDITOR
+
         private void Start()
         {
             HUDCoreModel.Instance.UpdateManger.Register(this);
@@ -37,6 +38,7 @@ namespace GamePanelHUDKill.Controllers
                 killHUDModel.KillCount = 0;
             }
         }
+
 #endif
     }
 }

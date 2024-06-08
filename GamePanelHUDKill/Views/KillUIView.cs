@@ -43,6 +43,7 @@ namespace GamePanelHUDKill.Views
         private Animator _animatorKillUI;
 
 #if !UNITY_EDITOR
+
         private void Awake()
         {
             _animatorKillUI = GetComponent<Animator>();

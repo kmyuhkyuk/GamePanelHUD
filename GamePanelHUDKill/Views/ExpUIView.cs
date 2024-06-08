@@ -41,6 +41,7 @@ namespace GamePanelHUDKill.Views
         private Animator _animatorExpUI;
 
 #if !UNITY_EDITOR
+
         private void Awake()
         {
             _animatorExpUI = GetComponent<Animator>();

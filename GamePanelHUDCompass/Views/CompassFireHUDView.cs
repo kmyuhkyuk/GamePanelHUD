@@ -43,6 +43,7 @@ namespace GamePanelHUDCompass.Views
         internal static Action<string> Remove;
 
 #if !UNITY_EDITOR
+
         private void Awake()
         {
             _rectTransform = GetComponent<RectTransform>();
@@ -229,6 +230,7 @@ namespace GamePanelHUDCompass.Views
                 _removes.Add(id);
             }
         }
+
 #endif
     }
 }

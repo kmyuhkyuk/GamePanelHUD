@@ -5,6 +5,7 @@ using EFTUtils;
 using GamePanelHUDCore.Models;
 using GamePanelHUDCompass.Models;
 using SettingsModel = GamePanelHUDCompass.Models.SettingsModel;
+
 #endif
 
 namespace GamePanelHUDCompass.Controllers

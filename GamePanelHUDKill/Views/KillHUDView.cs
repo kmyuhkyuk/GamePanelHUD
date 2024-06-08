@@ -54,6 +54,7 @@ namespace GamePanelHUDKill.Views
         internal static Action HasWaitInfoMinus;
 
 #if !UNITY_EDITOR
+
         private void Awake()
         {
             _testKillsRoot = Instantiate(killsRoot.gameObject, killsRoot.transform.parent).transform;

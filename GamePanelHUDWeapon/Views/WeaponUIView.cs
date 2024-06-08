@@ -101,6 +101,7 @@ namespace GamePanelHUDWeapon.Views
         private Transform _fireModePanelTransform;
 
 #if !UNITY_EDITOR
+
         private void Awake()
         {
             _animatorWeaponName = weaponNameValue.transform.parent.GetComponent<Animator>();
