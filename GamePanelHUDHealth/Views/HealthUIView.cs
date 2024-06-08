@@ -79,6 +79,7 @@ namespace GamePanelHUDHealth.Views
         private Animator _animatorDownBuffArrow;
 
 #if !UNITY_EDITOR
+
         private void Awake()
         {
             _animatorUpBuffArrow = upBuffArrow.GetComponent<Animator>();

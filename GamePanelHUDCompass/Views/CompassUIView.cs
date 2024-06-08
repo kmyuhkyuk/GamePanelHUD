@@ -61,6 +61,7 @@ namespace GamePanelHUDCompass.Views
         private static readonly int MaskSoftnessX = Shader.PropertyToID("_MaskSoftnessX");
 
 #if !UNITY_EDITOR
+
         private void Awake()
         {
             azimuthsAngle.fontMaterial.SetFloat(MaskSoftnessX, 100);

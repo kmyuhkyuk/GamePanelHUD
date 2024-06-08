@@ -22,6 +22,7 @@ namespace GamePanelHUDHit.Views
         private CanvasGroup _hitGroup;
 
 #if !UNITY_EDITOR
+
         private void Awake()
         {
             _testHitUIView = Instantiate(hitUIView, transform);

@@ -19,6 +19,7 @@ namespace GamePanelHUDCompass.Views
         private RectTransform _rectTransform;
 
 #if !UNITY_EDITOR
+
         private void Awake()
         {
             _rectTransform = GetComponent<RectTransform>();

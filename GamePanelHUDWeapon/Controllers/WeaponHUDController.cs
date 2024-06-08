@@ -9,6 +9,7 @@ using GamePanelHUDCore.Models;
 using GamePanelHUDCore.Utils;
 using GamePanelHUDWeapon.Models;
 using SettingsModel = GamePanelHUDWeapon.Models.SettingsModel;
+
 #endif
 
 namespace GamePanelHUDWeapon.Controllers

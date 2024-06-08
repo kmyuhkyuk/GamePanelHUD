@@ -75,6 +75,7 @@ namespace GamePanelHUDCompass.Views
         private float IconXRight => IconX + 8 * 360;
 
 #if !UNITY_EDITOR
+
         private void Awake()
         {
             _canvasGroup = GetComponent<CanvasGroup>();

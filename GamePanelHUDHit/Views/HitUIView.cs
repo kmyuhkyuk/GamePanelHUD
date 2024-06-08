@@ -108,6 +108,7 @@ namespace GamePanelHUDHit.Views
         private Animator _animatorHitUI;
 
 #if !UNITY_EDITOR
+
         private void Awake()
         {
             _animatorHitUI = GetComponent<Animator>();

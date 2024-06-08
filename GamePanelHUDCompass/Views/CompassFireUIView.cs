@@ -73,6 +73,7 @@ namespace GamePanelHUDCompass.Views
         private float FireXRight => FireX + 8 * 360;
 
 #if !UNITY_EDITOR
+
         private void Awake()
         {
             _animatorFire = GetComponent<Animator>();
@@ -184,6 +185,7 @@ namespace GamePanelHUDCompass.Views
             HUDCoreModel.Instance.UpdateManger.Remove(this);
             Destroy(gameObject);
         }
+
 #endif
     }
 }
