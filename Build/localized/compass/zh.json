@@ -70,5 +70,7 @@
     "Compass Static InZone": "罗盘静态区域内",
     "Compass Fire Direction": "罗盘开火方向",
     "Compass Static Info Auto Size Delta": "罗盘静态自动高度",
-    "Compass Static Info Size Delta": "罗盘静态高度"
+    "Compass Static Info Size Delta": "罗盘静态高度",
+    "Immersive Compass": "沉浸式罗盘",
+    "Immersive Compass Wait Time": "沉浸式罗盘等待时间"
 }

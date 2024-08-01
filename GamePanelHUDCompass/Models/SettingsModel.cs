@@ -29,6 +29,7 @@ namespace GamePanelHUDCompass.Models
         public readonly ConfigEntry<bool> KeyCompassStaticHideSearchedAirdrop;
         public readonly ConfigEntry<bool> KeyCompassAutoSizeDelta;
         public readonly ConfigEntry<bool> KeyCompassStaticInfoAutoSizeDelta;
+        public readonly ConfigEntry<bool> KeyImmersiveCompass;
 
         public readonly ConfigEntry<bool> KeyConditionFindItem;
         public readonly ConfigEntry<bool> KeyConditionLeaveItemAtLocation;
@@ -54,6 +55,7 @@ namespace GamePanelHUDCompass.Models
         public readonly ConfigEntry<float> KeyCompassFireToSmallSpeed;
         public readonly ConfigEntry<float> KeyCompassFireSmallWaitSpeed;
         public readonly ConfigEntry<float> KeyCompassStaticHeight;
+        public readonly ConfigEntry<float> KeyImmersiveCompassWaitTime;
 
         public readonly ConfigEntry<int> KeyAutoSizeDeltaRate;
         public readonly ConfigEntry<int> KeyCompassStaticCenterPointRange;
@@ -129,6 +131,7 @@ namespace GamePanelHUDCompass.Models
             KeyCompassAutoSizeDelta = configFile.Bind<bool>(mainSettings, "Compass Auto Size Delta", true);
             KeyCompassStaticInfoAutoSizeDelta =
                 configFile.Bind<bool>(mainSettings, "Compass Static Info Auto Size Delta", true);
+            KeyImmersiveCompass = configFile.Bind<bool>(mainSettings, "Immersive Compass", false);
 
             KeyConditionFindItem = configFile.Bind<bool>(questSettings, "FindItem", true);
             KeyConditionLeaveItemAtLocation = configFile.Bind<bool>(questSettings, "LeaveItemAtLocation", true);
@@ -167,6 +170,8 @@ namespace GamePanelHUDCompass.Models
             KeyCompassFireSmallWaitSpeed = configFile.Bind<float>(speedSettings,
                 "Compass Fire Small Wait Speed", 1,
                 new ConfigDescription(string.Empty, new AcceptableValueRange<float>(0, 10)));
+            KeyImmersiveCompassWaitTime = configFile.Bind<float>(speedSettings, "Immersive Compass Wait Time", 0.2f,
+                new ConfigDescription(string.Empty, new AcceptableValueRange<float>(0, 10)));
 
             KeyCompassFireHeight = configFile.Bind<float>(positionScaleSettings, "Compass Fire Height", 8);
             KeyCompassStaticHeight =
@@ -178,7 +183,6 @@ namespace GamePanelHUDCompass.Models
                     new AcceptableValueRange<float>(0, 1000)));
             KeyCompassStaticCenterPointRange =
                 configFile.Bind<int>(otherSettings, "Compass Static Center Point Range", 20);
-
             KeyAutoSizeDeltaRate = configFile.Bind<int>(rateSettings, "Auto Size Delta Rate", 30,
                 new ConfigDescription("Screen percentage", new AcceptableValueRange<int>(0, 100)));
 

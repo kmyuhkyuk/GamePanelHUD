@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 #if !UNITY_EDITOR
+using System.Collections;
 using EFTApi;
 using EFTUtils;
 using GamePanelHUDCore.Models;
@@ -16,6 +17,13 @@ namespace GamePanelHUDCompass.Controllers
 #endif
     {
 #if !UNITY_EDITOR
+
+        private Coroutine _compassStateCoroutine;
+
+        private void Awake()
+        {
+            CompassHUDModel.Instance.SetCompassState = SetCompassState;
+        }
 
         private void Start()
         {
@@ -47,6 +55,28 @@ namespace GamePanelHUDCompass.Controllers
 
             compassHUDModel.Compass.Angle = GetAngle(compassHUDModel.CamTransform.eulerAngles,
                 EFTGlobal.LevelSettings.NorthDirection);
+        }
+
+        private void SetCompassState(bool isVisible)
+        {
+            if (_compassStateCoroutine != null)
+            {
+                StopCoroutine(_compassStateCoroutine);
+            }
+
+            _compassStateCoroutine =
+                StartCoroutine(ChangeCompassState(isVisible,
+                    SettingsModel.Instance.KeyImmersiveCompassWaitTime.Value));
+        }
+
+        private static IEnumerator ChangeCompassState(bool isVisible, float waitTime)
+        {
+            if (isVisible)
+            {
+                yield return new WaitForSeconds(waitTime);
+            }
+
+            CompassHUDModel.Instance.Compass.CompassState = isVisible;
         }
 
         private static float GetAngle(Vector3 eulerAngles, float northDirection)

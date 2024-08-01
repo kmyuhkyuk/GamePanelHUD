@@ -65,6 +65,8 @@ namespace GamePanelHUDCompass.Views
 
         private RectTransform _infoPanelRect;
 
+        private CanvasGroup _compassStaticGroup;
+
 #if !UNITY_EDITOR
 
         private void Awake()
@@ -78,6 +80,8 @@ namespace GamePanelHUDCompass.Views
 
             _infoPanelTransform = _namePanelRect.parent;
             _infoPanelRect = _infoPanelTransform.GetComponent<RectTransform>();
+
+            _compassStaticGroup = compassStaticRoot.GetComponent<CanvasGroup>();
 
             var compassStaticHUDModel = CompassStaticHUDModel.Instance;
 
@@ -98,6 +102,10 @@ namespace GamePanelHUDCompass.Views
             var compassFireHUDModel = CompassFireHUDModel.Instance;
             var compassStaticHUDModel = CompassStaticHUDModel.Instance;
             var settingsModel = SettingsModel.Instance;
+
+            _compassStaticGroup.alpha = settingsModel.KeyImmersiveCompass.Value
+                ? compassHUDModel.Compass.CompassState ? 1 : 0
+                : 1;
 
             _rectTransform.anchoredPosition = settingsModel.KeyAnchoredPosition.Value;
             _rectTransform.sizeDelta = new Vector2(compassHUDModel.Compass.SizeDelta.x,

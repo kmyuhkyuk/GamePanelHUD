@@ -43,6 +43,7 @@ namespace GamePanelHUDCompass
         {
             _FirearmControllerHelper.InitiateShot.Add(this, nameof(InitiateShot));
             _PlayerHelper.OnDead.Add(this, nameof(OnDead));
+            _PlayerHelper.SetPropVisibility.Add(this, nameof(SetPropVisibility));
 
             if (EFTVersion.AkiVersion > EFTVersion.Parse("3.4.1"))
             {

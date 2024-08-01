@@ -10,6 +10,8 @@ namespace GamePanelHUDCompass.Models
 
         public Vector2 SizeDelta;
 
+        public bool CompassState;
+
         public float CompassX => -Angle * 8f;
     }
 }

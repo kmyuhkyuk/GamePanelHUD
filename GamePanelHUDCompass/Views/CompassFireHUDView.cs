@@ -76,7 +76,12 @@ namespace GamePanelHUDCompass.Views
             _rectTransform.sizeDelta = compassHUDModel.Compass.SizeDelta;
             _rectTransform.localScale = settingsModel.KeyLocalScale.Value;
 
-            _compassFireGroup.alpha = compassFireHUDModel.CompassFireHUDSw ? 1 : 0;
+            _compassFireGroup.alpha =
+                compassFireHUDModel.CompassFireHUDSw &&
+                (settingsModel.KeyImmersiveCompass.Value && compassHUDModel.Compass.CompassState ||
+                 !settingsModel.KeyImmersiveCompass.Value)
+                    ? 1
+                    : 0;
 
             var directionPosition = settingsModel.KeyCompassFireDirectionAnchoredPosition.Value;
 
