@@ -19,6 +19,8 @@ namespace GamePanelHUDCompass.Models
 
         public readonly CompassModel Compass = new CompassModel();
 
+        public Action<bool> SetCompassState;
+
         private CompassHUDModel()
         {
         }

@@ -114,6 +114,7 @@
     <Compile Include="Patches\OnBoxLand.cs" />
     <Compile Include="Patches\OnConditionValueChanged.cs" />
     <Compile Include="Patches\OnDead.cs" />
+    <Compile Include="Patches\SetPropVisibility.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Views\CompassFireHUDView.cs" />
     <Compile Include="Views\CompassFireUIView.cs" />

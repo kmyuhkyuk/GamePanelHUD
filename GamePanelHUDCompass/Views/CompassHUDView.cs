@@ -18,11 +18,15 @@ namespace GamePanelHUDCompass.Views
 
         private RectTransform _rectTransform;
 
+        private CanvasGroup _compassGroup;
+
 #if !UNITY_EDITOR
 
         private void Awake()
         {
             _rectTransform = GetComponent<RectTransform>();
+
+            _compassGroup = compassUIView.GetComponent<CanvasGroup>();
         }
 
         private void Start()
@@ -34,6 +38,10 @@ namespace GamePanelHUDCompass.Views
         {
             var compassHUDModel = CompassHUDModel.Instance;
             var settingsModel = SettingsModel.Instance;
+
+            _compassGroup.alpha = settingsModel.KeyImmersiveCompass.Value
+                ? compassHUDModel.Compass.CompassState ? 1 : 0
+                : 1;
 
             _rectTransform.anchoredPosition = settingsModel.KeyAnchoredPosition.Value;
             _rectTransform.sizeDelta = compassHUDModel.Compass.SizeDelta;
