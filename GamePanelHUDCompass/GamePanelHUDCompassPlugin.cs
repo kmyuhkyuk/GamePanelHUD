@@ -25,9 +25,9 @@ namespace GamePanelHUDCompass
 
             var prefabs = HUDCoreModel.Instance.LoadHUD("gamepanelcompasshud.bundle", "GamePanelCompassHUD");
 
-            foreach (var keyValue in prefabs.Init)
+            foreach (var value in prefabs.Init.Values)
             {
-                keyValue.Value.ReplaceAllFont(EFTFontHelper.BenderNormal);
+                value.ReplaceAllFont(EFTFontHelper.BenderNormal);
             }
 
             CompassHUDModel.Instance.ScreenRect =

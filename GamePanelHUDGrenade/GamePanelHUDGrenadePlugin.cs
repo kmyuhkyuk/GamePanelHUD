@@ -17,10 +17,10 @@ namespace GamePanelHUDGrenade
         {
             SettingsModel.Create(Config);
 
-            foreach (var keyValue in HUDCoreModel.Instance.LoadHUD("gamepanelgrenadehud.bundle", "GamePanelGrenadeHUD")
-                         .Init)
+            foreach (var value in HUDCoreModel.Instance.LoadHUD("gamepanelgrenadehud.bundle", "GamePanelGrenadeHUD")
+                         .Init.Values)
             {
-                keyValue.Value.ReplaceAllFont(EFTFontHelper.BenderNormal);
+                value.ReplaceAllFont(EFTFontHelper.BenderNormal);
             }
         }
     }
