@@ -23,9 +23,9 @@ namespace GamePanelHUDHit
 
             var hudCoreModel = HUDCoreModel.Instance;
 
-            foreach (var keyValue in hudCoreModel.LoadHUD("gamepanelhithud.bundle", "GamePanelHitHUD").Init)
+            foreach (var value in hudCoreModel.LoadHUD("gamepanelhithud.bundle", "GamePanelHitHUD").Init.Values)
             {
-                keyValue.Value.ReplaceAllFont(EFTFontHelper.BenderNormal);
+                value.ReplaceAllFont(EFTFontHelper.BenderNormal);
             }
 
             HitHUDModel.Instance.ScreenRect = hudCoreModel.GamePanelHUDPublic.GetComponent<RectTransform>();

@@ -18,10 +18,10 @@ namespace GamePanelHUDHealth
         {
             SettingsModel.Create(Config);
 
-            foreach (var keyValue in HUDCoreModel.Instance.LoadHUD("gamepanelhealthhud.bundle", "GamePanelHealthHUD")
-                         .Init)
+            foreach (var value in HUDCoreModel.Instance.LoadHUD("gamepanelhealthhud.bundle", "GamePanelHealthHUD")
+                         .Init.Values)
             {
-                keyValue.Value.ReplaceAllFont(EFTFontHelper.BenderNormal);
+                value.ReplaceAllFont(EFTFontHelper.BenderNormal);
             }
         }
 
