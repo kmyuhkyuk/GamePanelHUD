@@ -16,7 +16,7 @@ namespace GamePanelHUDCompass
 {
     [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCompass", "GamePanelHUDCompass", "3.1.1")]
     [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "3.1.1")]
-    [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", "localized/compass")]
+    [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", @"localized\compass")]
     public partial class GamePanelHUDCompassPlugin : BaseUnityPlugin
     {
         private void Awake()

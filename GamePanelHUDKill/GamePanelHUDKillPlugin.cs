@@ -12,7 +12,7 @@ namespace GamePanelHUDKill
 {
     [BepInPlugin("com.kmyuhkyuk.GamePanelHUDKill", "GamePanelHUDKill", "3.1.1")]
     [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "3.1.1")]
-    [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", "localized/kill")]
+    [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", @"localized\kill")]
     public partial class GamePanelHUDKillPlugin : BaseUnityPlugin
     {
         private void Awake()
