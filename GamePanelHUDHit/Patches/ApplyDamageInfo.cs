@@ -8,7 +8,7 @@ namespace GamePanelHUDHit
 {
     public partial class GamePanelHUDHitPlugin
     {
-        private static void ApplyDamageInfo(Player __instance, DamageInfo damageInfo, EBodyPart bodyPartType)
+        private static void ApplyDamageInfo(Player __instance, object damageInfo, EBodyPart bodyPartType)
         {
             if (_DamageInfoHelper.GetPlayer(damageInfo) != HUDCoreModel.Instance.YourPlayer)
                 return;

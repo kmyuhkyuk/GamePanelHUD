@@ -63,13 +63,25 @@ namespace GamePanelHUDHealth.Controllers
             health.Common =
                 _HealthControllerHelper.GetBodyPartHealth(healthController, EBodyPart.Common);
 
-            health.Hydration = _HealthControllerHelper.RefHydration.GetValue(healthController);
-            health.Energy = _HealthControllerHelper.RefEnergy.GetValue(healthController);
+            if (hasPlayer)
+            {
+                health.Hydration = _HealthControllerHelper.Hydration;
+                health.Energy = _HealthControllerHelper.Energy;
 
-            health.HealthRate = _HealthControllerHelper.RefHealthRate.GetValue(healthController);
-            health.HydrationRate =
-                _HealthControllerHelper.RefHydrationRate.GetValue(healthController);
-            health.EnergyRate = _HealthControllerHelper.RefEnergyRate.GetValue(healthController);
+                health.HealthRate = _HealthControllerHelper.HealthRate;
+                health.HydrationRate = _HealthControllerHelper.HydrationRate;
+                health.EnergyRate = _HealthControllerHelper.EnergyRate;
+            }
+            else
+            {
+                health.Hydration = _HealthControllerHelper.RefHydration.GetValue(healthController);
+                health.Energy = _HealthControllerHelper.RefEnergy.GetValue(healthController);
+
+                health.HealthRate = _HealthControllerHelper.RefHealthRate.GetValue(healthController);
+                health.HydrationRate =
+                    _HealthControllerHelper.RefHydrationRate.GetValue(healthController);
+                health.EnergyRate = _HealthControllerHelper.RefEnergyRate.GetValue(healthController);
+            }
         }
 
 #endif

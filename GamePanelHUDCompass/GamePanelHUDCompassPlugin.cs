@@ -45,7 +45,7 @@ namespace GamePanelHUDCompass
             _PlayerHelper.OnDead.Add(this, nameof(OnDead));
             _PlayerHelper.SetPropVisibility.Add(this, nameof(SetPropVisibility));
 
-            if (EFTVersion.AkiVersion > EFTVersion.Parse("3.4.1"))
+            if (EFTVersion.AkiVersion > EFTVersion.Parse("3.4.1") && EFTVersion.AkiVersion < EFTVersion.Parse("3.10.0"))
             {
                 _AirdropBoxHelper.OnBoxLand?.Add(this, nameof(OnBoxLand));
 
@@ -96,7 +96,20 @@ namespace GamePanelHUDCompass
 
             var item = _LootableContainerHelper.RefRootItem.GetValue(controller);
 
-            var searchStates = _SearchableItemClassHelper.RefSearchStates.GetValue(item);
+            Func<bool> isSearchedFunc;
+
+            if (EFTVersion.AkiVersion > EFTVersion.Parse("3.9.8"))
+            {
+                isSearchedFunc = () =>
+                    _SearchControllerHelper.GetIsSearched(_SearchControllerHelper.SearchController, item);
+            }
+            else
+            {
+                var searchStates = _SearchableItemClassHelper.RefSearchStates?.GetValue(item);
+
+                isSearchedFunc = () =>
+                    searchStates?.ContainsKey(compassStaticHUDModel.CompassStatic.YourProfileId) ?? false;
+            }
 
             var staticModel = new StaticModel
             {
@@ -105,9 +118,9 @@ namespace GamePanelHUDCompass
                 NameKey = nameKey,
                 DescriptionKey = descriptionKey,
                 InfoType = StaticModel.Type.Airdrop,
-                Requirements = new Func<bool>[]
+                Requirements = new[]
                 {
-                    () => searchStates.ContainsKey(compassStaticHUDModel.CompassStatic.YourProfileId)
+                    isSearchedFunc
                 }
             };
 

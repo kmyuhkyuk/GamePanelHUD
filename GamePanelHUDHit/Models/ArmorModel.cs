@@ -20,7 +20,7 @@ namespace GamePanelHUDHit.Models
         {
         }
 
-        public void Set(DamageInfo damageInfo, float armorDamage)
+        public void Set(object damageInfo, float armorDamage)
         {
             if (_DamageInfoHelper.GetPlayer(damageInfo) != HUDCoreModel.Instance.YourPlayer)
                 return;

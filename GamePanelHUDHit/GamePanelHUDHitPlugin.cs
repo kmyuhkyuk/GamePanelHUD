@@ -41,7 +41,7 @@ namespace GamePanelHUDHit
             _PlayerHelper.ObservedCoopApplyShot?.Add(this, nameof(CoopApplyShot));
         }
 
-        private static void BaseApplyDamageInfo(DamageInfo damageInfo, EBodyPart bodyPartType, object healthController)
+        private static void BaseApplyDamageInfo(object damageInfo, EBodyPart bodyPartType, object healthController)
         {
             var armorModel = ArmorModel.Instance;
 
@@ -72,13 +72,13 @@ namespace GamePanelHUDHit
 
             var info = new HitModel
             {
-                Damage = damageInfo.DidBodyDamage,
+                Damage = _DamageInfoHelper.RefDamage.GetValue(damageInfo),
                 DamagePart = bodyPartType,
-                HitPoint = damageInfo.HitPoint,
+                HitPoint = _DamageInfoHelper.RefHitPoint.GetValue(damageInfo),
                 ArmorDamage = armorDamage,
                 HasArmorHit = hasArmorHit,
                 HitType = hitType,
-                HitDirection = damageInfo.Direction
+                HitDirection = _DamageInfoHelper.RefDirection.GetValue(damageInfo)
             };
 
             HitHUDModel.Instance.ShowHit(info);
