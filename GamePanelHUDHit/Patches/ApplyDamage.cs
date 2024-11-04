@@ -32,7 +32,7 @@ namespace GamePanelHUDHit
                     //Get DamageInfo
                     processor.Create(Mono.Cecil.Cil.OpCodes.Ldarg_1),
                     //Convert ref struct
-                    processor.Create(Mono.Cecil.Cil.OpCodes.Ldobj, typeof(DamageInfo)),
+                    processor.Create(Mono.Cecil.Cil.OpCodes.Ldobj, typeof(object)),
                     //Get ApplyDurabilityDamage first parameter
                     EFTVersion.AkiVersion > EFTVersion.Parse("3.7.6")
                         ? callApplyDurabilityDamage.Prev.Previous

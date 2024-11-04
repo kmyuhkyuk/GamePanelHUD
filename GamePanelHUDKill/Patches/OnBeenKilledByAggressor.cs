@@ -11,7 +11,7 @@ namespace GamePanelHUDKill
     public partial class GamePanelHUDKillPlugin
     {
         // ReSharper disable once SuggestBaseTypeForParameter
-        private static void OnBeenKilledByAggressor(Player __instance, Player aggressor, DamageInfo damageInfo,
+        private static void OnBeenKilledByAggressor(Player __instance, Player aggressor, object damageInfo,
             EBodyPart bodyPart)
         {
             if (aggressor != HUDCoreModel.Instance.YourPlayer)
@@ -23,7 +23,7 @@ namespace GamePanelHUDKill
             var killModel = new KillModel
             {
                 PlayerName = __instance.Profile.Nickname,
-                WeaponName = damageInfo.Weapon.ShortName,
+                WeaponName = _DamageInfoHelper.RefWeapon.GetValue(damageInfo).ShortName,
                 Part = bodyPart,
                 Distance = Vector3.Distance(aggressor.Position, __instance.Position),
                 Level = __instance.Profile.Info.Level,

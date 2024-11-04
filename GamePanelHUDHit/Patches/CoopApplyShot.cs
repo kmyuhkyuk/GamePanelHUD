@@ -9,7 +9,7 @@ namespace GamePanelHUDHit
 {
     public partial class GamePanelHUDHitPlugin
     {
-        private static void CoopApplyShot(Player __instance, DamageInfo damageInfo, EBodyPart bodyPartType,
+        private static void CoopApplyShot(Player __instance, object damageInfo, EBodyPart bodyPartType,
             EBodyPartColliderType colliderType)
         {
             if (_DamageInfoHelper.GetPlayer(damageInfo) != HUDCoreModel.Instance.YourPlayer)
@@ -23,7 +23,9 @@ namespace GamePanelHUDHit
             var coopHealthController = _HealthControllerHelper.CoopHealthControllerCreate(store, __instance,
                 inventoryController, skillManager, __instance.IsAI);
 
-            _HealthControllerHelper.DoWoundRelapse(coopHealthController, damageInfo.Damage, bodyPartType);
+            var damage = _DamageInfoHelper.RefDamage.GetValue(damageInfo);
+
+            _HealthControllerHelper.DoWoundRelapse(coopHealthController, damage, bodyPartType);
 
             if (EFTVersion.AkiVersion > EFTVersion.Parse("3.7.6"))
             {
@@ -36,13 +38,14 @@ namespace GamePanelHUDHit
                     _PlayerHelper.CoopGetBleedBlock(__instance, (int)bodyPartType));
             }
 
-            damageInfo.DidBodyDamage =
-                _HealthControllerHelper.CoopApplyDamage(coopHealthController, bodyPartType, damageInfo.Damage,
-                    damageInfo);
+            var didBodyDamage =
+                _HealthControllerHelper.CoopApplyDamage(coopHealthController, bodyPartType, damage, damageInfo);
+
+            _DamageInfoHelper.RefDidBodyDamage.SetValue(damageInfo, didBodyDamage);
 
             _HealthControllerHelper.BluntContusion(coopHealthController, bodyPartType, 0);
 
-            if (damageInfo.DidBodyDamage >= float.Epsilon)
+            if (didBodyDamage >= float.Epsilon)
             {
                 _HealthControllerHelper.TryApplySideEffects(coopHealthController, damageInfo, bodyPartType, out _);
             }

@@ -133,6 +133,8 @@ namespace GamePanelHUDCompass.Controllers
 
                 foreach (var condition in availableForFinishConditions)
                 {
+                    var id = _ConditionMongoIDHelper.RefId.GetValue(condition).ToString();
+
                     switch (condition)
                     {
                         case ConditionLeaveItemAtLocation location:
@@ -146,12 +148,12 @@ namespace GamePanelHUDCompass.Controllers
                                 {
                                     var staticModel = new StaticModel
                                     {
-                                        Id = location.id,
+                                        Id = id,
                                         Where = trigger.transform.position,
                                         ZoneId = zoneId,
                                         Target = location.target,
                                         NameKey = nameKey,
-                                        DescriptionKey = location.id,
+                                        DescriptionKey = id,
                                         TraderId = traderId,
                                         IsNotNecessary = !location.IsNecessary,
                                         InfoType = StaticModel.Type.ConditionLeaveItemAtLocation
@@ -174,12 +176,12 @@ namespace GamePanelHUDCompass.Controllers
                                 {
                                     var staticModel = new StaticModel
                                     {
-                                        Id = beacon.id,
+                                        Id = id,
                                         Where = trigger.transform.position,
                                         ZoneId = zoneId,
                                         Target = beacon.target,
                                         NameKey = nameKey,
-                                        DescriptionKey = beacon.id,
+                                        DescriptionKey = id,
                                         TraderId = traderId,
                                         IsNotNecessary = !beacon.IsNecessary,
                                         InfoType = StaticModel.Type.ConditionPlaceBeacon
@@ -204,11 +206,11 @@ namespace GamePanelHUDCompass.Controllers
                                 {
                                     var staticModel = new StaticModel
                                     {
-                                        Id = findItem.id,
+                                        Id = id,
                                         Where = questItem.transform.position,
                                         Target = new[] { itemId },
                                         NameKey = nameKey,
-                                        DescriptionKey = findItem.id,
+                                        DescriptionKey = id,
                                         TraderId = traderId,
                                         IsNotNecessary = !findItem.IsNecessary,
                                         InfoType = StaticModel.Type.ConditionFindItem
@@ -241,11 +243,11 @@ namespace GamePanelHUDCompass.Controllers
                                             {
                                                 var staticModel = new StaticModel
                                                 {
-                                                    Id = counterCreator.id,
+                                                    Id = id,
                                                     Where = trigger.transform.position,
                                                     ZoneId = zoneId,
                                                     NameKey = nameKey,
-                                                    DescriptionKey = counterCreator.id,
+                                                    DescriptionKey = id,
                                                     TraderId = traderId,
                                                     IsNotNecessary = !counterCreator.IsNecessary,
                                                     InfoType = StaticModel.Type.ConditionVisitPlace
@@ -271,11 +273,11 @@ namespace GamePanelHUDCompass.Controllers
                                             {
                                                 var staticModel = new StaticModel
                                                 {
-                                                    Id = counterCreator.id,
+                                                    Id = id,
                                                     Where = trigger.transform.position,
                                                     ZoneId = zoneId,
                                                     NameKey = nameKey,
-                                                    DescriptionKey = counterCreator.id,
+                                                    DescriptionKey = id,
                                                     TraderId = traderId,
                                                     IsNotNecessary = !counterCreator.IsNecessary,
                                                     InfoType = StaticModel.Type.ConditionInZone
