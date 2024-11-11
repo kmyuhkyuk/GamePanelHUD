@@ -27,7 +27,7 @@ namespace GamePanelHUDKill
                 Part = bodyPart,
                 Distance = Vector3.Distance(aggressor.Position, __instance.Position),
                 Level = __instance.Profile.Info.Level,
-                Side = __instance.Profile.Info.Side,
+                Side = _InfoClassHelper.RefSide.GetValue(__instance.Profile.Info),
                 Exp = _PlayerHelper.RefExperience.GetValue(settings),
                 Role = _PlayerHelper.RefRole.GetValue(settings),
                 KillCount = killHUDModel.KillCount++
