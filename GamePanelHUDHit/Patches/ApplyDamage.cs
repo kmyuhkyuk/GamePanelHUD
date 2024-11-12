@@ -6,6 +6,7 @@ using GamePanelHUDHit.Models;
 using HarmonyLib;
 using MonoMod.Cil;
 using MonoMod.Utils;
+using static EFTApi.EFTHelpers;
 
 namespace GamePanelHUDHit
 {
@@ -32,7 +33,7 @@ namespace GamePanelHUDHit
                     //Get DamageInfo
                     processor.Create(Mono.Cecil.Cil.OpCodes.Ldarg_1),
                     //Convert ref struct
-                    processor.Create(Mono.Cecil.Cil.OpCodes.Ldobj, typeof(object)),
+                    processor.Create(Mono.Cecil.Cil.OpCodes.Ldobj, _DamageInfoHelper.RefDamage.DeclaringType),
                     //Get ApplyDurabilityDamage first parameter
                     EFTVersion.AkiVersion > EFTVersion.Parse("3.7.6")
                         ? callApplyDurabilityDamage.Prev.Previous
