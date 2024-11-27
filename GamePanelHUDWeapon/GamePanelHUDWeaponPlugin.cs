@@ -8,8 +8,8 @@ using SettingsModel = GamePanelHUDWeapon.Models.SettingsModel;
 
 namespace GamePanelHUDWeapon
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDWeapon", "GamePanelHUDWeapon", "3.1.1")]
-    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "3.1.1")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDWeapon", "GamePanelHUDWeapon", "3.2.0")]
+    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "3.2.0")]
     [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", @"localized\weapon")]
     public class GamePanelHUDWeaponPlugin : BaseUnityPlugin
     {

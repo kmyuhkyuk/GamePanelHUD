@@ -6,8 +6,8 @@ using GamePanelHUDCore.Models;
 
 namespace GamePanelHUDCore
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCore", "GamePanelHUDCore", "3.1.1")]
-    [BepInDependency("com.kmyuhkyuk.EFTApi", "1.2.2")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCore", "GamePanelHUDCore", "3.2.0")]
+    [BepInDependency("com.kmyuhkyuk.EFTApi", "1.3.0")]
     [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", @"..\localized\core")]
     public class GamePanelHUDCorePlugin : BaseUnityPlugin
     {
