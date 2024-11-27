@@ -34,6 +34,8 @@ namespace GamePanelHUDHit
                     processor.Create(Mono.Cecil.Cil.OpCodes.Ldarg_1),
                     //Convert ref struct
                     processor.Create(Mono.Cecil.Cil.OpCodes.Ldobj, _DamageInfoHelper.RefDamage.DeclaringType),
+                    //Box struct
+                    processor.Create(Mono.Cecil.Cil.OpCodes.Box, _DamageInfoHelper.RefDamage.DeclaringType),
                     //Get ApplyDurabilityDamage first parameter
                     EFTVersion.AkiVersion > EFTVersion.Parse("3.7.6")
                         ? callApplyDurabilityDamage.Prev.Previous
