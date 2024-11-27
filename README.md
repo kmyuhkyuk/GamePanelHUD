@@ -3,7 +3,7 @@
 Create Screen Panel HUD In Raid
 
 ## How build the source
-1. Dowload or Clone the branch
-2. Visual Studio open GamePanelHUDBuild.sln
-3. using project need dll
-4. build GamePanelHUD.dll to bin\Debug
+1. Clone master branch
+2. Open GamePanelHUD.sln with Visual Studio
+3. References dll required by project
+5. Build GamePanelHUDCore and other modules (Ignore *Build* project)
