@@ -32,8 +32,8 @@ using System.Runtime.InteropServices;
 //通过使用 "*"，如下所示:
 // [assembly: AssemblyVersion("1.0.*")]
 #if Preview
-[assembly: AssemblyVersion("3.1.1.*")]
+[assembly: AssemblyVersion("3.2.0.*")]
 #else
-[assembly: AssemblyVersion("3.1.1.0")]
-[assembly: AssemblyFileVersion("3.1.1.0")]
+[assembly: AssemblyVersion("3.2.0.0")]
+[assembly: AssemblyFileVersion("3.2.0.0")]
 #endif
