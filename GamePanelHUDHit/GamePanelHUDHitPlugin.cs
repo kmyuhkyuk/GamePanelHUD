@@ -1,19 +1,20 @@
 ﻿#if !UNITY_EDITOR
 
 using BepInEx;
-using EFTUtils;
+using EFT.HealthSystem;
+using KmyTarkovUtils;
 using GamePanelHUDCore.Attributes;
 using GamePanelHUDCore.Models;
 using GamePanelHUDHit.Models;
 using HarmonyLib;
 using UnityEngine;
-using static EFTApi.EFTHelpers;
+using static KmyTarkovApi.EFTHelpers;
 using SettingsModel = GamePanelHUDHit.Models.SettingsModel;
 
 namespace GamePanelHUDHit
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDHit", "GamePanelHUDHit", "3.2.0")]
-    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "3.2.0")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDHit", "GamePanelHUDHit", "3.3.0")]
+    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "3.3.0")]
     [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", @"localized\hit")]
     public partial class GamePanelHUDHitPlugin : BaseUnityPlugin
     {
@@ -41,7 +42,8 @@ namespace GamePanelHUDHit
             _PlayerHelper.ObservedCoopApplyShot?.Add(this, nameof(CoopApplyShot));
         }
 
-        private static void BaseApplyDamageInfo(object damageInfo, EBodyPart bodyPartType, object healthController)
+        private static void BaseApplyDamageInfo(DamageInfoStruct damageInfo, EBodyPart bodyPartType,
+            IHealthController healthController)
         {
             var armorModel = ArmorModel.Instance;
 
@@ -61,7 +63,7 @@ namespace GamePanelHUDHit
             }
 
             HitModel.Hit hitType;
-            if (_HealthControllerHelper.RefIsAlive.GetValue(healthController))
+            if (healthController.IsAlive)
             {
                 hitType = hasArmorHit ? HitModel.Hit.HasArmorHit : HitModel.Hit.OnlyHp;
             }
@@ -72,13 +74,13 @@ namespace GamePanelHUDHit
 
             var info = new HitModel
             {
-                Damage = _DamageInfoHelper.RefDamage.GetValue(damageInfo),
+                Damage = damageInfo.Damage,
                 DamagePart = bodyPartType,
-                HitPoint = _DamageInfoHelper.RefHitPoint.GetValue(damageInfo),
+                HitPoint = damageInfo.HitPoint,
                 ArmorDamage = armorDamage,
                 HasArmorHit = hasArmorHit,
                 HitType = hitType,
-                HitDirection = _DamageInfoHelper.RefDirection.GetValue(damageInfo)
+                HitDirection = damageInfo.Direction
             };
 
             HitHUDModel.Instance.ShowHit(info);

@@ -1,6 +1,7 @@
 ﻿#if !UNITY_EDITOR
 
 using System;
+using EFT.HealthSystem;
 
 namespace GamePanelHUDHealth.Models
 {
@@ -12,7 +13,7 @@ namespace GamePanelHUDHealth.Models
 
         public bool HealthHUDSw;
 
-        public object HealthController;
+        public IHealthController HealthController;
 
         public readonly HealthModel Health = new HealthModel();
 

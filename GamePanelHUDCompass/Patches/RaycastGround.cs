@@ -1,8 +1,7 @@
 ﻿#if !UNITY_EDITOR
 
 using EFT.Interactive;
-using EFTApi;
-using UnityEngine;
+using EFT.SynchronizableObjects;
 
 namespace GamePanelHUDCompass
 {
@@ -10,19 +9,9 @@ namespace GamePanelHUDCompass
     {
         // ReSharper disable once SuggestBaseTypeForParameter
         // ReSharper disable once InconsistentNaming
-        private static void RaycastGround(MonoBehaviour ___airdropSynchronizableObject_0)
+        private static void RaycastGround(AirdropSynchronizableObject ___airdropSynchronizableObject_0)
         {
-            string nameKey;
-            string descriptionKey;
-            if (EFTVersion.AkiVersion > EFTVersion.Parse("3.0.0"))
-            {
-                GetNameDescriptionKey(___airdropSynchronizableObject_0, out nameKey, out descriptionKey);
-            }
-            else
-            {
-                nameKey = "61a89e5445a2672acf66c877 Name";
-                descriptionKey = "61a89e5445a2672acf66c877 Description";
-            }
+            GetNameDescriptionKey(___airdropSynchronizableObject_0, out var nameKey, out var descriptionKey);
 
             ShowAirdrop(___airdropSynchronizableObject_0.transform.position, nameKey, descriptionKey,
                 ___airdropSynchronizableObject_0.GetComponentInChildren<LootableContainer>());

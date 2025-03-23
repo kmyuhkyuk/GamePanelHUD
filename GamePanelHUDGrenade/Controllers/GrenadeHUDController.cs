@@ -4,10 +4,9 @@ using UnityEngine;
 using GamePanelHUDCore.Models;
 using GamePanelHUDGrenade.Models;
 using SettingsModel = GamePanelHUDGrenade.Models.SettingsModel;
-using static EFTApi.EFTHelpers;
 using EFT.InventoryLogic;
-using EFTReflection;
-using EFTUtils;
+using KmyTarkovApi;
+using KmyTarkovUtils;
 
 #endif
 
@@ -20,18 +19,9 @@ namespace GamePanelHUDGrenade.Controllers
     {
 #if !UNITY_EDITOR
 
-        private Item _rig;
+        private CompoundItem _rig;
 
-        private Item _pocket;
-
-        private Type _grenadeItemType;
-
-        private void Awake()
-        {
-            _grenadeItemType = RefTool.GetEftType(x =>
-                x.GetMethod("CreateFragment", RefTool.Public) != null &&
-                x.GetProperty("GetExplDelay", RefTool.Public) != null);
-        }
+        private CompoundItem _pocket;
 
         private void Start()
         {
@@ -59,11 +49,11 @@ namespace GamePanelHUDGrenade.Controllers
             //Performance Optimization
             if (Time.frameCount % 20 == 0)
             {
-                var slots = _InventoryHelper.EquipmentSlots;
+                var slots = EFTGlobal.Inventory.Equipment.Slots;
 
                 //Get Rig and Pocket
-                _rig = slots[6].ContainedItem;
-                _pocket = slots[10].ContainedItem;
+                _rig = slots[6].ContainedItem as CompoundItem;
+                _pocket = slots[10].ContainedItem as CompoundItem;
 
                 GetGrenadeAmount(_rig, out rigAmount.Frag, out rigAmount.Stun, out rigAmount.Flash,
                     out rigAmount.Smoke);
@@ -77,7 +67,8 @@ namespace GamePanelHUDGrenade.Controllers
             allAmount.Smoke = rigAmount.Smoke + pocketAmount.Smoke;
         }
 
-        private void GetGrenadeAmount(Item gear, out int frag, out int stun, out int flash, out int smoke)
+        private static void GetGrenadeAmount(CompoundItem gear, out int frag, out int stun, out int flash,
+            out int smoke)
         {
             frag = 0;
             stun = 0;
@@ -87,17 +78,17 @@ namespace GamePanelHUDGrenade.Controllers
             if (gear == null)
                 return;
 
-            var grids = _InventoryHelper.RefGrids.GetValue(gear);
+            var grids = gear.Grids;
 
             if (!SettingsModel.Instance.KeyMergeGrenade.Value)
             {
                 foreach (var grid in grids)
                 {
-                    foreach (var item in _InventoryHelper.RefItems.GetValue(grid))
+                    foreach (var item in grid.Items)
                     {
-                        if (item.GetType() == _grenadeItemType)
+                        if (item is ThrowWeapItemClass throwWeapItem)
                         {
-                            var throwType = ReflectionModel.Instance.RefThrowType.GetValue(item);
+                            var throwType = throwWeapItem.ThrowType;
 
                             switch (throwType)
                             {
@@ -130,9 +121,9 @@ namespace GamePanelHUDGrenade.Controllers
                 foreach (var grid in grids)
                 {
                     // ReSharper disable once LoopCanBeConvertedToQuery
-                    foreach (var item in _InventoryHelper.RefItems.GetValue(grid))
+                    foreach (var item in grid.Items)
                     {
-                        if (item.GetType() == _grenadeItemType)
+                        if (item is ThrowWeapItemClass)
                         {
                             frag++;
                         }

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 #if !UNITY_EDITOR
-using EFTUtils;
+using KmyTarkovUtils;
 using GamePanelHUDCore.Models;
 using GamePanelHUDKill.Models;
 using SettingsModel = GamePanelHUDKill.Models.SettingsModel;

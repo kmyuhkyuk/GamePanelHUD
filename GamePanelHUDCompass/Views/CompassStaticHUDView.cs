@@ -7,8 +7,8 @@ using UnityEngine;
 using UnityEngine.UI;
 #if !UNITY_EDITOR
 using EFT;
-using EFTUtils;
-using static EFTApi.EFTHelpers;
+using KmyTarkovUtils;
+using static KmyTarkovApi.EFTHelpers;
 using GamePanelHUDCore.Models;
 using GamePanelHUDCompass.Models;
 using SettingsModel = GamePanelHUDCompass.Models.SettingsModel;
@@ -338,7 +338,7 @@ namespace GamePanelHUDCompass.Views
                 case StaticModel.Type.ConditionFindItem:
                 case StaticModel.Type.ConditionVisitPlace:
                 case StaticModel.Type.ConditionInZone:
-                    _TradersAvatarHelper.BindAvatar(staticModel.TraderId, staticUI.BindIcon);
+                    _TraderSettingsHelper.BindAvatar(staticModel.TraderId, staticUI.BindIcon);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(staticModel.InfoType), staticModel.InfoType, null);

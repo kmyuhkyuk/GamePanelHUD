@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 #if !UNITY_EDITOR
+using KmyTarkovApi;
 using GamePanelHUDCore.Models;
 using GamePanelHUDHealth.Models;
 using SettingsModel = GamePanelHUDHealth.Models.SettingsModel;
-using EFTUtils;
-using static EFTApi.EFTHelpers;
+using KmyTarkovUtils;
+using static KmyTarkovApi.EFTHelpers;
 
 #endif
 
@@ -36,7 +37,7 @@ namespace GamePanelHUDHealth.Controllers
 
             if (hasPlayer)
             {
-                healthHUDModel.HealthController = _HealthControllerHelper.HealthController;
+                healthHUDModel.HealthController = EFTGlobal.HealthController;
             }
 
             var healthController = healthHUDModel.HealthController;
@@ -63,25 +64,12 @@ namespace GamePanelHUDHealth.Controllers
             health.Common =
                 _HealthControllerHelper.GetBodyPartHealth(healthController, EBodyPart.Common);
 
-            if (hasPlayer)
-            {
-                health.Hydration = _HealthControllerHelper.Hydration;
-                health.Energy = _HealthControllerHelper.Energy;
+            health.Hydration = healthController.Hydration;
+            health.Energy = healthController.Energy;
 
-                health.HealthRate = _HealthControllerHelper.HealthRate;
-                health.HydrationRate = _HealthControllerHelper.HydrationRate;
-                health.EnergyRate = _HealthControllerHelper.EnergyRate;
-            }
-            else
-            {
-                health.Hydration = _HealthControllerHelper.RefHydration.GetValue(healthController);
-                health.Energy = _HealthControllerHelper.RefEnergy.GetValue(healthController);
-
-                health.HealthRate = _HealthControllerHelper.RefHealthRate.GetValue(healthController);
-                health.HydrationRate =
-                    _HealthControllerHelper.RefHydrationRate.GetValue(healthController);
-                health.EnergyRate = _HealthControllerHelper.RefEnergyRate.GetValue(healthController);
-            }
+            health.HealthRate = healthController.HealthRate;
+            health.HydrationRate = healthController.HydrationRate;
+            health.EnergyRate = healthController.EnergyRate;
         }
 
 #endif

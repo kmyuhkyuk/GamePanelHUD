@@ -2,7 +2,6 @@
 
 using EFT.Quests;
 using GamePanelHUDCompass.Models;
-using static EFTApi.EFTHelpers;
 
 namespace GamePanelHUDCompass
 {
@@ -13,8 +12,7 @@ namespace GamePanelHUDCompass
         {
             if (status != EQuestStatus.Started)
             {
-                CompassStaticHUDModel.Instance.DestroyStatic(_ConditionMongoIDHelper.RefId.GetValue(condition)
-                    .ToString());
+                CompassStaticHUDModel.Instance.DestroyStatic(condition.id);
             }
         }
     }

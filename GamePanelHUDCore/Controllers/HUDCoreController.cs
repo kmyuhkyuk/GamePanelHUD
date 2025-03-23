@@ -23,7 +23,7 @@ namespace GamePanelHUDCore.Controllers
             //All HUD display 
             else if (hudCoreModel.HasPlayer)
             {
-                allHUDSw = hudCoreModel.YourBattleUIScreen.gameObject.activeSelf;
+                allHUDSw = hudCoreModel.YourEftBattleUIScreen.gameObject.activeSelf;
             }
             else
             {

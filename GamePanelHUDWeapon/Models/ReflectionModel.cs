@@ -2,7 +2,7 @@
 
 using System;
 using EFT.UI;
-using EFTReflection;
+using KmyTarkovReflection;
 
 namespace GamePanelHUDWeapon.Models
 {

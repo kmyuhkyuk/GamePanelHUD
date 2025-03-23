@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 #if !UNITY_EDITOR
 using SettingsModel = GamePanelHUDGrenade.Models.SettingsModel;
-using EFTUtils;
+using KmyTarkovUtils;
 using GamePanelHUDCore.Models;
 using GamePanelHUDGrenade.Models;
 

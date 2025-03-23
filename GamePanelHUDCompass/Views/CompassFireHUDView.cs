@@ -4,8 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 #if !UNITY_EDITOR
-using static EFTApi.EFTHelpers;
-using EFTUtils;
+using KmyTarkovUtils;
 using GamePanelHUDCore.Models;
 using GamePanelHUDCompass.Models;
 using SettingsModel = GamePanelHUDCompass.Models.SettingsModel;
@@ -177,8 +176,8 @@ namespace GamePanelHUDCompass.Views
 
                     fireUI.where = fireModel.Where;
 
-                    var isBoss = _RoleHelper.IsBoss(fireModel.Role);
-                    var isFollower = _RoleHelper.IsFollower(fireModel.Role);
+                    var isBoss = fireModel.Role.IsBoss();
+                    var isFollower = fireModel.Role.IsFollower();
 
                     fireUI.isBoss = isBoss;
 

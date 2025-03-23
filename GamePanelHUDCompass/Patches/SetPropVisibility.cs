@@ -2,7 +2,6 @@
 
 using EFT;
 using GamePanelHUDCompass.Models;
-using static EFTApi.EFTHelpers;
 
 namespace GamePanelHUDCompass
 {
@@ -10,7 +9,7 @@ namespace GamePanelHUDCompass
     {
         private static void SetPropVisibility(Player __instance, bool isVisible)
         {
-            if (_PlayerHelper.IsYourPlayer(__instance))
+            if (__instance.IsYourPlayer)
             {
                 CompassHUDModel.Instance.SetCompassState(isVisible);
             }
