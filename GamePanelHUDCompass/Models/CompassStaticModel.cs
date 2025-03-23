@@ -1,14 +1,13 @@
 ﻿#if !UNITY_EDITOR
 
 using System.Collections.Generic;
+using EFT;
 
 namespace GamePanelHUDCompass.Models
 {
     internal class CompassStaticModel
     {
-        public HashSet<object> EquipmentAndQuestRaidItemHashSet;
-
-        public string YourProfileId;
+        public HashSet<MongoID> EquipmentAndQuestRaidItemHashSet;
 
         public List<string> TriggerZones;
 

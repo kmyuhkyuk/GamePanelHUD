@@ -2,9 +2,9 @@
 #if !UNITY_EDITOR
 using EFT;
 using EFT.InventoryLogic;
-using EFTApi;
-using EFTUtils;
-using static EFTApi.EFTHelpers;
+using KmyTarkovApi;
+using KmyTarkovUtils;
+using static KmyTarkovApi.EFTHelpers;
 using GamePanelHUDCore.Models;
 using GamePanelHUDCore.Utils;
 using GamePanelHUDWeapon.Models;
@@ -27,11 +27,11 @@ namespace GamePanelHUDWeapon.Controllers
 
 #endif
 
-        private object _currentLauncher;
+        private LauncherItemClass _currentLauncher;
 
-        private object _currentMag;
+        private MagazineItemClass _currentMag;
 
-        private object _oldMag;
+        private MagazineItemClass _oldMag;
 
         private Animator _animatorWeapon;
 
@@ -75,7 +75,7 @@ namespace GamePanelHUDWeapon.Controllers
                 return;
 
             reflectionModel.RefAmmoCount
-                .GetValue(_BattleUIScreenHelper.AmmoCountPanel)
+                .GetValue(_EftBattleUIScreenHelper.AmmoCountPanel)
                 .gameObject
                 .SetActive(!settingsModel.KeyHideGameAmmoPanel.Value);
 
@@ -85,11 +85,8 @@ namespace GamePanelHUDWeapon.Controllers
             _currentWeapon = EFTGlobal.Weapon;
             _animatorWeapon = _WeaponHelper.WeaponAnimator;
 
-            if (EFTVersion.AkiVersion > EFTVersion.Parse("3.4.1"))
-            {
-                _currentLauncher = _WeaponHelper.UnderbarrelWeapon;
-                _animatorLauncher = _WeaponHelper.LauncherAnimator;
-            }
+            _currentLauncher = _WeaponHelper.UnderbarrelWeapon;
+            _animatorLauncher = _WeaponHelper.LauncherAnimator;
 
             var weaponActive = _currentWeapon != null;
 
@@ -169,7 +166,7 @@ namespace GamePanelHUDWeapon.Controllers
                     var chambersCount = _currentWeapon.ChamberAmmoCount;
                     var maxMagazineCount = _currentWeapon.GetMaxMagazineCount();
 
-                    _currentMag = _WeaponHelper.CurrentMagazine;
+                    _currentMag = _currentWeapon.GetCurrentMagazine();
 
                     if (_magCacheBool)
                     {
@@ -240,7 +237,7 @@ namespace GamePanelHUDWeapon.Controllers
                 else
                 {
                     var ammoInChamber = (int)_animatorWeapon.GetFloat(AnimatorHash.AmmoInChamber);
-                    var chambersCount = _WeaponHelper.Chambers.Length;
+                    var chambersCount = _currentWeapon.Chambers.Length;
 
                     switch (_allReloadBool)
                     {
@@ -285,12 +282,12 @@ namespace GamePanelHUDWeapon.Controllers
                 _allReloadBool = currentState == 1285477936; //1.LauncherReload
 
                 //Get Weapon Name
-                weaponHUDModel.Weapon.WeaponName = _LocalizedHelper.Localized(((Item)_currentLauncher).Name);
+                weaponHUDModel.Weapon.WeaponName = _LocalizedHelper.Localized(_currentLauncher.Name);
 
                 weaponHUDModel.Weapon.WeaponShortName =
-                    _LocalizedHelper.Localized(((Item)_currentLauncher).ShortName);
+                    _LocalizedHelper.Localized(_currentLauncher.ShortName);
 
-                var launcherTemplate = _WeaponHelper.UnderbarrelWeaponTemplate;
+                var launcherTemplate = _currentLauncher.WeaponTemplate;
 
                 //Get Fire Mode
                 weaponHUDModel.Weapon.FireMode = _LocalizedHelper.Localized(nameof(Weapon.EFireMode.single));
@@ -298,13 +295,13 @@ namespace GamePanelHUDWeapon.Controllers
                 weaponHUDModel.Weapon.AmmoType = _LocalizedHelper.Localized(launcherTemplate.ammoCaliber);
 
                 var ammoInChamber = (int)_animatorLauncher.GetFloat(AnimatorHash.AmmoInChamber);
-                var chambersCount = _WeaponHelper.UnderbarrelChambers.Length;
+                var chambersCount = _currentLauncher.Chambers.Length;
 
                 switch (_allReloadBool)
                 {
                     case false when ammoInChamber != 0:
                     {
-                        var count = _WeaponHelper.UnderbarrelChamberAmmoCount;
+                        var count = _currentLauncher.ChamberAmmoCount;
 
                         weaponHUDModel.Weapon.Patron = 0;
 

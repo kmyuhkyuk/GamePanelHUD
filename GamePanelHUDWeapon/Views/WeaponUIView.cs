@@ -1,7 +1,7 @@
 ﻿using TMPro;
 using UnityEngine;
 #if !UNITY_EDITOR
-using EFTUtils;
+using KmyTarkovUtils;
 using GamePanelHUDCore.Models;
 using GamePanelHUDCore.Utils;
 

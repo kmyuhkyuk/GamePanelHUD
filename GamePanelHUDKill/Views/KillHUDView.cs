@@ -4,8 +4,8 @@ using System.Linq;
 using UnityEngine;
 #if !UNITY_EDITOR
 using EFT;
-using EFTUtils;
-using static EFTApi.EFTHelpers;
+using KmyTarkovUtils;
+using static KmyTarkovApi.EFTHelpers;
 using GamePanelHUDCore.Models;
 using GamePanelHUDKill.Models;
 using SettingsModel = GamePanelHUDKill.Models.SettingsModel;
@@ -144,7 +144,8 @@ namespace GamePanelHUDKill.Views
 
             var expRoot = killModel.IsTest ? _testExpUIView : expUIView;
 
-            var baseExp = _ExperienceHelper.GetBaseExp(killModel.Exp, killModel.Side);
+            var baseExp = _ExperienceHelper.GetBaseExp(killModel.Exp, killModel.Side, killModel.Role,
+                killModel.ScavKillExpPenalty, killModel.HasMarkOfUnknown, killModel.IsAI);
 
             var allExp = baseExp;
 
@@ -160,7 +161,7 @@ namespace GamePanelHUDKill.Views
             if (settingsModel.KeyKillHasStreak.Value && killModel.KillCount > 1)
             {
                 var streakXp =
-                    _ExperienceHelper.GetStreakExp(killModel.Exp, killModel.Side, killModel.KillCount);
+                    _ExperienceHelper.GetStreakExp(baseExp, killModel.KillCount);
 
                 allKillList.Add(AddStreakInfo(killModel, settingsModel, killRoot, streakXp));
 
@@ -171,7 +172,7 @@ namespace GamePanelHUDKill.Views
 
             if (settingsModel.KeyKillHasOther.Value && killModel.Part == EBodyPart.Head)
             {
-                var headXp = _ExperienceHelper.GetHeadExp(killModel.Exp, killModel.Side);
+                var headXp = _ExperienceHelper.GetHeadExp(baseExp, killModel.Side);
 
                 allKillList.Add(AddOtherInfo(settingsModel, killRoot, _LocalizedHelper.Localized("StatsHeadshot"),
                     headXp, true));
@@ -261,9 +262,9 @@ namespace GamePanelHUDKill.Views
             var weaponName = _LocalizedHelper.Localized(killModel.WeaponName);
 
             string sideKey;
-            if (isScav && _RoleHelper.IsBossOrFollower(killModel.Role))
+            if (isScav && killModel.Role.IsBossOrFollower())
             {
-                sideKey = _RoleHelper.GetScavRoleKey(killModel.Role);
+                sideKey = killModel.Role.GetScavRoleKey();
             }
             else
             {
@@ -283,10 +284,10 @@ namespace GamePanelHUDKill.Views
             string sideColor;
             switch (isScav)
             {
-                case true when _RoleHelper.IsBoss(killModel.Role):
+                case true when killModel.Role.IsBoss():
                     sideColor = settingsModel.KeyKillBossColor.Value.ColorToHtml();
                     break;
-                case true when _RoleHelper.IsFollower(killModel.Role):
+                case true when killModel.Role.IsFollower():
                     sideColor = settingsModel.KeyKillFollowerColor.Value.ColorToHtml();
                     break;
                 default:

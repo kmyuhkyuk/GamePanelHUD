@@ -2,20 +2,22 @@
 
 using System;
 using BepInEx;
+using EFT.Airdrop;
 using EFT.Interactive;
-using EFTApi;
-using EFTUtils;
+using EFT.SynchronizableObjects;
+using KmyTarkovApi;
+using KmyTarkovUtils;
 using GamePanelHUDCompass.Models;
 using GamePanelHUDCore.Attributes;
 using GamePanelHUDCore.Models;
 using UnityEngine;
-using static EFTApi.EFTHelpers;
+using static KmyTarkovApi.EFTHelpers;
 using SettingsModel = GamePanelHUDCompass.Models.SettingsModel;
 
 namespace GamePanelHUDCompass
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCompass", "GamePanelHUDCompass", "3.2.0")]
-    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "3.2.0")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCompass", "GamePanelHUDCompass", "3.3.0")]
+    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "3.3.0")]
     [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", @"localized\compass")]
     public partial class GamePanelHUDCompassPlugin : BaseUnityPlugin
     {
@@ -45,38 +47,29 @@ namespace GamePanelHUDCompass
             _PlayerHelper.OnDead.Add(this, nameof(OnDead));
             _PlayerHelper.SetPropVisibility.Add(this, nameof(SetPropVisibility));
 
-            if (EFTVersion.AkiVersion > EFTVersion.Parse("3.4.1") && EFTVersion.AkiVersion < EFTVersion.Parse("3.10.0"))
-            {
-                _AirdropBoxHelper.OnBoxLand?.Add(this, nameof(OnBoxLand));
+            _AirdropLogicClassHelper.RaycastGround.Add(this, nameof(RaycastGround));
 
-                //Coop
-                _AirdropBoxHelper.CoopOnBoxLand?.Add(this, nameof(CoopOnBoxLand));
-            }
-            else
-            {
-                _AirdropLogicClassHelper.RaycastGround.Add(this, nameof(RaycastGround));
-            }
-
-            _QuestHelper.OnConditionValueChanged.Add(this, nameof(OnConditionValueChanged));
+            _AbstractQuestControllerClassHelper.OnConditionValueChanged.Add(this, nameof(OnConditionValueChanged));
         }
 
-        private static void GetNameDescriptionKey(object boxSync, out string nameKey, out string descriptionKey)
+        private static void GetNameDescriptionKey(AirdropSynchronizableObject boxSync, out string nameKey,
+            out string descriptionKey)
         {
-            switch (_AirdropSynchronizableObjectHelper.RefAirdropType?.GetValue(boxSync))
+            switch (boxSync.AirdropType)
             {
-                case 0:
+                case EAirdropType.Common:
                     nameKey = "6223349b3136504a544d1608 Name";
                     descriptionKey = "6223349b3136504a544d1608 Description";
                     break;
-                case 1:
+                case EAirdropType.Supply:
                     nameKey = "622334fa3136504a544d160c Name";
                     descriptionKey = "622334fa3136504a544d160c Description";
                     break;
-                case 2:
+                case EAirdropType.Medical:
                     nameKey = "622334c873090231d904a9fc Name";
                     descriptionKey = "622334c873090231d904a9fc Description";
                     break;
-                case 3:
+                case EAirdropType.Weapon:
                     nameKey = "6223351bb5d97a7b2c635ca7 Name";
                     descriptionKey = "6223351bb5d97a7b2c635ca7 Description";
                     break;
@@ -92,24 +85,9 @@ namespace GamePanelHUDCompass
         {
             var compassStaticHUDModel = CompassStaticHUDModel.Instance;
 
-            var controller = _LootableContainerHelper.RefItemOwner.GetValue(container);
+            var controller = container.ItemOwner;
 
-            var item = _LootableContainerHelper.RefRootItem.GetValue(controller);
-
-            Func<bool> isSearchedFunc;
-
-            if (EFTVersion.AkiVersion > EFTVersion.Parse("3.9.8"))
-            {
-                isSearchedFunc = () =>
-                    _SearchControllerHelper.GetIsSearched(_SearchControllerHelper.SearchController, item);
-            }
-            else
-            {
-                var searchStates = _SearchableItemClassHelper.RefSearchStates?.GetValue(item);
-
-                isSearchedFunc = () =>
-                    searchStates?.ContainsKey(compassStaticHUDModel.CompassStatic.YourProfileId) ?? false;
-            }
+            var item = (SearchableItemItemClass)controller.RootItem;
 
             var staticModel = new StaticModel
             {
@@ -118,9 +96,9 @@ namespace GamePanelHUDCompass
                 NameKey = nameKey,
                 DescriptionKey = descriptionKey,
                 InfoType = StaticModel.Type.Airdrop,
-                Requirements = new[]
+                Requirements = new Func<bool>[]
                 {
-                    isSearchedFunc
+                    () => EFTGlobal.Player.SearchController.IsSearched(item)
                 }
             };
 

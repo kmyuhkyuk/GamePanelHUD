@@ -7,7 +7,6 @@ using EFT;
 using GamePanelHUDCore.Attributes;
 using TMPro;
 using UnityEngine;
-using static EFTApi.EFTHelpers;
 
 namespace GamePanelHUDKill.Models
 {
@@ -248,7 +247,7 @@ namespace GamePanelHUDKill.Models
             var allowRole = (WildSpawnType)role.GetValue(UnityEngine.Random.Range(0, role.Length));
             try
             {
-                _RoleHelper.IsBossOrFollower(allowRole);
+                allowRole.IsBossOrFollower();
             }
             catch
             {
@@ -257,15 +256,18 @@ namespace GamePanelHUDKill.Models
 
             var killModel = new KillModel
             {
-                WeaponName = TestWeaponName[UnityEngine.Random.Range(0, TestWeaponName.Length)],
                 PlayerName = TestName[UnityEngine.Random.Range(0, TestName.Length)],
-                Role = allowRole,
+                WeaponName = TestWeaponName[UnityEngine.Random.Range(0, TestWeaponName.Length)],
+                Part = (EBodyPart)part.GetValue(UnityEngine.Random.Range(0, part.Length)),
                 Distance = UnityEngine.Random.Range(0f, 100f),
                 Level = UnityEngine.Random.Range(1, 79),
-                Exp = UnityEngine.Random.Range(100, 1001),
-                KillCount = UnityEngine.Random.Range(0, 11),
-                Part = (EBodyPart)part.GetValue(UnityEngine.Random.Range(0, part.Length)),
                 Side = (EPlayerSide)side.GetValue(UnityEngine.Random.Range(0, side.Length)),
+                Exp = UnityEngine.Random.Range(100, 1001),
+                Role = allowRole,
+                KillCount = UnityEngine.Random.Range(0, 11),
+                ScavKillExpPenalty = 0.5f,
+                HasMarkOfUnknown = false,
+                IsAI = true,
                 IsTest = true
             };
 

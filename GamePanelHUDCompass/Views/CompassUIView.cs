@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 #if !UNITY_EDITOR
-using EFTUtils;
+using KmyTarkovUtils;
 using GamePanelHUDCore.Models;
 
 #endif

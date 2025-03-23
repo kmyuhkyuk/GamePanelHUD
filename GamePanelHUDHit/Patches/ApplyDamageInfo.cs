@@ -2,19 +2,17 @@
 
 using EFT;
 using GamePanelHUDCore.Models;
-using static EFTApi.EFTHelpers;
 
 namespace GamePanelHUDHit
 {
     public partial class GamePanelHUDHitPlugin
     {
-        private static void ApplyDamageInfo(Player __instance, object damageInfo, EBodyPart bodyPartType)
+        private static void ApplyDamageInfo(Player __instance, DamageInfoStruct damageInfo, EBodyPart bodyPartType)
         {
-            if (_DamageInfoHelper.GetPlayer(damageInfo) != HUDCoreModel.Instance.YourPlayer)
+            if ((Player)damageInfo.Player?.iPlayer != HUDCoreModel.Instance.YourPlayer)
                 return;
 
-            BaseApplyDamageInfo(damageInfo, bodyPartType,
-                _HealthControllerHelper.RefHealthController.GetValue(__instance));
+            BaseApplyDamageInfo(damageInfo, bodyPartType, __instance.HealthController);
         }
     }
 }

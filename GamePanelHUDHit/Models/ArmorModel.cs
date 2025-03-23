@@ -1,8 +1,8 @@
 ﻿#if !UNITY_EDITOR
 
 using System;
+using EFT;
 using GamePanelHUDCore.Models;
-using static EFTApi.EFTHelpers;
 
 namespace GamePanelHUDHit.Models
 {
@@ -20,9 +20,9 @@ namespace GamePanelHUDHit.Models
         {
         }
 
-        public void Set(object damageInfo, float armorDamage)
+        public void Set(DamageInfoStruct damageInfo, float armorDamage)
         {
-            if (_DamageInfoHelper.GetPlayer(damageInfo) != HUDCoreModel.Instance.YourPlayer)
+            if ((Player)damageInfo.Player?.iPlayer != HUDCoreModel.Instance.YourPlayer)
                 return;
 
             Damage = armorDamage;

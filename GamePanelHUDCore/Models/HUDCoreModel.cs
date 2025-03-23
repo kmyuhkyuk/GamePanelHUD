@@ -5,12 +5,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using EFT;
-using EFTApi;
-using EFTUtils;
+using EFT.UI;
+using KmyTarkovApi;
+using KmyTarkovUtils;
 using GamePanelHUDCore.Controllers;
 using UnityEngine;
 using UnityEngine.UI;
-using static EFTApi.EFTHelpers;
+using static KmyTarkovApi.EFTHelpers;
 using Object = UnityEngine.Object;
 
 // ReSharper disable MemberCanBePrivate.Global
@@ -24,7 +25,7 @@ namespace GamePanelHUDCore.Models
 
         public Player YourPlayer => EFTGlobal.Player;
 
-        public MonoBehaviour YourBattleUIScreen => EFTGlobal.BattleUIScreen;
+        public EftBattleUIScreen YourEftBattleUIScreen => EFTGlobal.EftBattleUIScreen;
 
         public GameWorld TheWorld => EFTGlobal.GameWorld;
 

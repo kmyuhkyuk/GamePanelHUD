@@ -1,12 +1,10 @@
 ﻿#if !UNITY_EDITOR
 
 using EFT.InventoryLogic;
-using EFTApi;
 using GamePanelHUDHit.Models;
 using HarmonyLib;
 using MonoMod.Cil;
 using MonoMod.Utils;
-using static EFTApi.EFTHelpers;
 
 namespace GamePanelHUDHit
 {
@@ -25,7 +23,7 @@ namespace GamePanelHUDHit
 
             codes.InsertRange(
                 //Parameters Start Index
-                callApplyDurabilityDamage.Index - (EFTVersion.AkiVersion > EFTVersion.Parse("3.7.6") ? 2 : 1), new[]
+                callApplyDurabilityDamage.Index - 2, new[]
                 {
                     //Get ArmorModel Instance
                     processor.Create(Mono.Cecil.Cil.OpCodes.Call,
@@ -33,19 +31,9 @@ namespace GamePanelHUDHit
                     //Get DamageInfo
                     processor.Create(Mono.Cecil.Cil.OpCodes.Ldarg_1),
                     //Convert ref struct
-                    processor.Create(Mono.Cecil.Cil.OpCodes.Ldobj, _DamageInfoHelper.RefDamage.DeclaringType),
-                    //Box struct
-                    processor.Create(Mono.Cecil.Cil.OpCodes.Box, _DamageInfoHelper.RefDamage.DeclaringType),
+                    processor.Create(Mono.Cecil.Cil.OpCodes.Ldobj, typeof(DamageInfoStruct)),
                     //Get ApplyDurabilityDamage first parameter
-                    EFTVersion.AkiVersion > EFTVersion.Parse("3.7.6")
-                        ? callApplyDurabilityDamage.Prev.Previous
-                        : EFTVersion.AkiVersion > EFTVersion.Parse("3.4.1")
-                            ? callApplyDurabilityDamage.Prev
-                            : processor.Create(Mono.Cecil.Cil.OpCodes.Ldarg_3),
-                    //Convert out float
-                    EFTVersion.AkiVersion > EFTVersion.Parse("3.4.1")
-                        ? processor.Create(Mono.Cecil.Cil.OpCodes.Nop)
-                        : processor.Create(Mono.Cecil.Cil.OpCodes.Ldind_R4),
+                    callApplyDurabilityDamage.Prev.Previous,
                     processor.Create(Mono.Cecil.Cil.OpCodes.Callvirt,
                         AccessTools.Method(typeof(ArmorModel), nameof(ArmorModel.Set)))
                 });

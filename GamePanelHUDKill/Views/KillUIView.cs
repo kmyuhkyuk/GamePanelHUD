@@ -2,7 +2,7 @@
 using UnityEngine;
 #if !UNITY_EDITOR
 using System.Collections;
-using EFTUtils;
+using KmyTarkovUtils;
 using GamePanelHUDCore.Models;
 using GamePanelHUDCore.Utils;
 using SettingsModel = GamePanelHUDKill.Models.SettingsModel;

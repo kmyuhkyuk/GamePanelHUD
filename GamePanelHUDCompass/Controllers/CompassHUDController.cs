@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 #if !UNITY_EDITOR
 using System.Collections;
-using EFTApi;
-using EFTUtils;
+using KmyTarkovApi;
+using KmyTarkovUtils;
 using GamePanelHUDCore.Models;
 using GamePanelHUDCompass.Models;
 using SettingsModel = GamePanelHUDCompass.Models.SettingsModel;

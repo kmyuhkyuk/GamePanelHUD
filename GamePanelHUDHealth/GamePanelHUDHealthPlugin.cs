@@ -1,16 +1,16 @@
 ﻿#if !UNITY_EDITOR
 
 using BepInEx;
-using EFTUtils;
+using KmyTarkovUtils;
 using GamePanelHUDCore.Attributes;
 using GamePanelHUDCore.Models;
-using static EFTApi.EFTHelpers;
+using static KmyTarkovApi.EFTHelpers;
 using SettingsModel = GamePanelHUDHealth.Models.SettingsModel;
 
 namespace GamePanelHUDHealth
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDHealth", "GamePanelHUDHealth", "3.2.0")]
-    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "3.2.0")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDHealth", "GamePanelHUDHealth", "3.3.0")]
+    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "3.3.0")]
     [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", @"localized\health")]
     public partial class GamePanelHUDHealthPlugin : BaseUnityPlugin
     {
@@ -27,7 +27,7 @@ namespace GamePanelHUDHealth
 
         private void Start()
         {
-            _MainMenuControllerHelper.Execute.Add(this, nameof(Execute));
+            _MainMenuControllerClassHelper.Execute.Add(this, nameof(Execute));
         }
     }
 }

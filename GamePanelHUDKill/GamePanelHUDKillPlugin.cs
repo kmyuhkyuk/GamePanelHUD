@@ -1,17 +1,17 @@
 ﻿#if !UNITY_EDITOR
 using BepInEx;
-using EFTUtils;
+using KmyTarkovUtils;
 using GamePanelHUDCore.Attributes;
 using GamePanelHUDCore.Models;
 using GamePanelHUDKill.Models;
 using UnityEngine;
-using static EFTApi.EFTHelpers;
+using static KmyTarkovApi.EFTHelpers;
 using SettingsModel = GamePanelHUDKill.Models.SettingsModel;
 
 namespace GamePanelHUDKill
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDKill", "GamePanelHUDKill", "3.2.0")]
-    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "3.2.0")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDKill", "GamePanelHUDKill", "3.3.0")]
+    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "3.3.0")]
     [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", @"localized\kill")]
     public partial class GamePanelHUDKillPlugin : BaseUnityPlugin
     {

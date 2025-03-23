@@ -51,46 +51,50 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
-      <HintPath>R:\Battlestate Games\Client.0.12.12.15.17349\BepInEx\core\0Harmony.dll</HintPath>
+      <HintPath>R:\Battlestate Games\Client.0.16.1.3.35392\BepInEx\core\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>R:\Battlestate Games\Client.0.12.12.15.17349\EscapeFromTarkov_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>R:\Battlestate Games\Client.0.16.1.3.35392\EscapeFromTarkov_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="BepInEx">
-      <HintPath>R:\Battlestate Games\Client.0.12.12.15.17349\BepInEx\core\BepInEx.dll</HintPath>
+      <HintPath>R:\Battlestate Games\Client.0.16.1.3.35392\BepInEx\core\BepInEx.dll</HintPath>
     </Reference>
-    <Reference Include="EFTApi">
-      <HintPath>..\..\EFTApi\Build\bin\Current\EFTApi.dll</HintPath>
+    <Reference Include="KmyTarkovApi">
+      <HintPath>..\..\KmyTarkovApi\Build\bin\Current\KmyTarkovApi.dll</HintPath>
     </Reference>
-    <Reference Include="EFTReflection">
-      <HintPath>..\..\EFTApi\Build\bin\Current\EFTReflection.dll</HintPath>
+    <Reference Include="KmyTarkovReflection">
+      <HintPath>..\..\KmyTarkovApi\Build\bin\Current\KmyTarkovReflection.dll</HintPath>
     </Reference>
-    <Reference Include="EFTUtils">
-      <HintPath>..\..\EFTApi\Build\bin\Current\EFTUtils.dll</HintPath>
+    <Reference Include="KmyTarkovUtils">
+      <HintPath>..\..\KmyTarkovApi\Build\bin\Current\KmyTarkovUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="Sirenix.Serialization, Version=3.0.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>R:\Battlestate Games\Client.0.16.1.3.35392\EscapeFromTarkov_Data\Managed\Sirenix.Serialization.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Unity.TextMeshPro, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>R:\Battlestate Games\Client.0.12.12.15.17349\EscapeFromTarkov_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+      <HintPath>R:\Battlestate Games\Client.0.16.1.3.35392\EscapeFromTarkov_Data\Managed\Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>R:\Battlestate Games\Client.0.12.12.15.17349\EscapeFromTarkov_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>R:\Battlestate Games\Client.0.16.1.3.35392\EscapeFromTarkov_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AnimationModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>R:\Battlestate Games\Client.0.12.12.15.17349\EscapeFromTarkov_Data\Managed\UnityEngine.AnimationModule.dll</HintPath>
+      <HintPath>R:\Battlestate Games\Client.0.16.1.3.35392\EscapeFromTarkov_Data\Managed\UnityEngine.AnimationModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.CoreModule">
-      <HintPath>R:\Battlestate Games\Client.0.12.12.15.17349\EscapeFromTarkov_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <HintPath>R:\Battlestate Games\Client.0.16.1.3.35392\EscapeFromTarkov_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>R:\Battlestate Games\Client.0.12.12.15.17349\EscapeFromTarkov_Data\Managed\UnityEngine.UI.dll</HintPath>
+      <HintPath>R:\Battlestate Games\Client.0.16.1.3.35392\EscapeFromTarkov_Data\Managed\UnityEngine.UI.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UIModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>R:\Battlestate Games\Client.0.12.12.15.17349\EscapeFromTarkov_Data\Managed\UnityEngine.UIModule.dll</HintPath>
+      <HintPath>R:\Battlestate Games\Client.0.16.1.3.35392\EscapeFromTarkov_Data\Managed\UnityEngine.UIModule.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -105,13 +109,10 @@
     <Compile Include="Models\CompassStaticHUDModel.cs" />
     <Compile Include="Models\CompassStaticModel.cs" />
     <Compile Include="Models\FireModel.cs" />
-    <Compile Include="Models\ReflectionModel.cs" />
     <Compile Include="Models\SettingsModel.cs" />
     <Compile Include="Models\StaticModel.cs" />
-    <Compile Include="Patches\CoopOnBoxLand.cs" />
     <Compile Include="Patches\InitiateShot.cs" />
     <Compile Include="Patches\RaycastGround.cs" />
-    <Compile Include="Patches\OnBoxLand.cs" />
     <Compile Include="Patches\OnConditionValueChanged.cs" />
     <Compile Include="Patches\OnDead.cs" />
     <Compile Include="Patches\SetPropVisibility.cs" />

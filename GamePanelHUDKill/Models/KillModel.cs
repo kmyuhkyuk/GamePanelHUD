@@ -24,6 +24,12 @@ namespace GamePanelHUDKill.Models
 
         public WildSpawnType Role;
 
+        public float ScavKillExpPenalty;
+
+        public bool HasMarkOfUnknown;
+
+        public bool IsAI;
+
         public bool IsTest;
     }
 }

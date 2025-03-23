@@ -6,9 +6,8 @@ using EFT.Interactive;
 using UnityEngine;
 #if !UNITY_EDITOR
 using EFT.Quests;
-using EFTApi;
-using EFTUtils;
-using static EFTApi.EFTHelpers;
+using KmyTarkovUtils;
+using static KmyTarkovApi.EFTHelpers;
 using GamePanelHUDCore.Models;
 using GamePanelHUDCompass.Models;
 using SettingsModel = GamePanelHUDCompass.Models.SettingsModel;
@@ -43,8 +42,6 @@ namespace GamePanelHUDCompass.Controllers
 
             if (hudCoreModel.HasPlayer)
             {
-                compassStaticHUDModel.CompassStatic.YourProfileId = hudCoreModel.YourPlayer.ProfileId;
-
                 compassStaticHUDModel.CompassStatic.TriggerZones = hudCoreModel.YourPlayer.TriggerZones;
 
                 //Performance Optimization
@@ -79,14 +76,12 @@ namespace GamePanelHUDCompass.Controllers
             if (player is HideoutPlayer)
                 return;
 
-            var reflectionModel = ReflectionModel.Instance;
+            var hudCoreModel = HUDCoreModel.Instance;
 
-            var questData = _QuestControllerHelper.RefQuestController.GetValue(player);
-
-            var quests = reflectionModel.RefQuests.GetValue(questData);
+            var quests = _AbstractQuestControllerClassHelper.RefQuests.GetValue(player.AbstractQuestControllerClass);
 
             var questItemDictionary = new Dictionary<string, List<LootItem>>();
-            foreach (var lootItem in EFTGlobal.LootList.OfType<LootItem>())
+            foreach (var lootItem in hudCoreModel.TheWorld.LootList.OfType<LootItem>())
             {
                 if (!lootItem.Item.QuestItem)
                     continue;
@@ -101,39 +96,31 @@ namespace GamePanelHUDCompass.Controllers
                 }
             }
 
-            var is300Up = EFTVersion.AkiVersion > EFTVersion.Parse("3.0.0");
-
             foreach (var quest in quests)
             {
-                if (reflectionModel.RefQuestStatus.GetValue(quest) != EQuestStatus.Started)
+                if (quest.QuestStatus != EQuestStatus.Started)
                     continue;
 
-                var template = reflectionModel.RefTemplate.GetValue(quest);
+                var template = quest.Template;
 
-                var locationId = reflectionModel.RefLocationId.GetValue(template);
+                var locationId = template.LocationId;
 
                 if (locationId != game.LocationObjectId && locationId != "any")
                     continue;
 
-                switch (is300Up)
+                if ((player.Profile.Side == EPlayerSide.Savage ? EPlayerGroup.Scav : EPlayerGroup.Pmc) !=
+                    template.PlayerGroup)
+                    continue;
+
+                var name = template.Name;
+
+                var nameKey = string.IsNullOrEmpty(name) ? $"{template.Id} name" : name;
+
+                var traderId = template.TraderId;
+
+                foreach (var condition in quest.NecessaryConditions)
                 {
-                    case true when (player.Profile.Side == EPlayerSide.Savage ? 1 : 0) !=
-                                   reflectionModel.RefPlayerGroup.GetValue(template):
-                    case false when player.Profile.Side == EPlayerSide.Savage:
-                        continue;
-                }
-
-                var name = reflectionModel.RefName.GetValue(template);
-
-                var nameKey = string.IsNullOrEmpty(name) ? $"{reflectionModel.RefId.GetValue(template)} name" : name;
-
-                var traderId = reflectionModel.RefTraderId.GetValue(template);
-
-                var availableForFinishConditions = reflectionModel.RefAvailableForFinishConditions.GetValue(quest);
-
-                foreach (var condition in availableForFinishConditions)
-                {
-                    var id = _ConditionMongoIDHelper.RefId.GetValue(condition).ToString();
+                    var id = condition.id;
 
                     switch (condition)
                     {
@@ -224,9 +211,9 @@ namespace GamePanelHUDCompass.Controllers
                         }
                         case ConditionCounterCreator counterCreator:
                         {
-                            var counter = reflectionModel.RefCounter.GetValue(counterCreator);
+                            var templateConditions = counterCreator._templateConditions;
 
-                            var conditions = reflectionModel.RefConditions.GetValue(counter);
+                            var conditions = _ConditionCounterTemplateHelper.RefConditions.GetValue(templateConditions);
 
                             foreach (var condition2 in conditions)
                             {
@@ -305,10 +292,11 @@ namespace GamePanelHUDCompass.Controllers
             if (player is HideoutPlayer)
                 return;
 
+            var hudCoreModel = HUDCoreModel.Instance;
+
             var exfiltrationPoints = player.Profile.Side != EPlayerSide.Savage
-                ? _ExfiltrationControllerHelper.EligiblePoints(_ExfiltrationControllerHelper.ExfiltrationController,
-                    player.Profile)
-                : _ExfiltrationControllerHelper.ScavExfiltrationPoints
+                ? hudCoreModel.TheWorld.ExfiltrationController.EligiblePoints(player.Profile)
+                : hudCoreModel.TheWorld.ExfiltrationController.ScavExfiltrationPoints
                     .Where(x => x.EligibleIds.Contains(player.ProfileId)).ToArray<ExfiltrationPoint>();
 
             for (var i = 0; i < exfiltrationPoints.Length; i++)

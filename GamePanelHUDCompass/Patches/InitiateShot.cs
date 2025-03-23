@@ -4,7 +4,6 @@ using EFT;
 using GamePanelHUDCompass.Models;
 using GamePanelHUDCore.Models;
 using UnityEngine;
-using static EFTApi.EFTHelpers;
 
 namespace GamePanelHUDCompass
 {
@@ -17,13 +16,13 @@ namespace GamePanelHUDCompass
             if (____player == hudCoreModel.YourPlayer)
                 return;
 
-            var settings = _PlayerHelper.RefSettings.GetValue(____player.Profile.Info);
+            var settings = ____player.Profile.Info.Settings;
 
             var fireModel = new FireModel
             {
                 Who = ____player.ProfileId,
                 Where = shotPosition,
-                Role = _PlayerHelper.RefRole.GetValue(settings),
+                Role = settings.Role,
                 IsSilenced = __instance.IsSilenced && !__instance.IsInLauncherMode(),
                 Distance = Vector3.Distance(shotPosition, hudCoreModel.YourPlayer.CameraPosition.position)
             };
