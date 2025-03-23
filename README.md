@@ -1,6 +1,6 @@
 # GamePanelHUD
 
-Create Screen Panel HUD In Raid
+Tarkov All-in-one HUD Expansion
 
 ## How build the source
 1. Clone master branch
