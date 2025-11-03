@@ -1,9 +1,9 @@
 ﻿#if !UNITY_EDITOR
 
 using BepInEx;
-using KmyTarkovUtils;
 using GamePanelHUDCore.Attributes;
 using GamePanelHUDCore.Models;
+using KmyTarkovUtils;
 using SettingsModel = GamePanelHUDWeapon.Models.SettingsModel;
 
 namespace GamePanelHUDWeapon
@@ -16,7 +16,10 @@ namespace GamePanelHUDWeapon
         private void Awake()
         {
             SettingsModel.Create(Config);
+        }
 
+        private void Start()
+        {
             foreach (var value in HUDCoreModel.Instance.LoadHUD("gamepanelweaponhud.bundle", "GamePanelWeaponHUD")
                          .Init.Values)
             {

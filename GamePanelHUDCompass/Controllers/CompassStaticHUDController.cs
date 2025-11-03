@@ -66,19 +66,17 @@ namespace GamePanelHUDCompass.Controllers
             var hudCoreModel = HUDCoreModel.Instance;
             var compassStaticHUDModel = CompassStaticHUDModel.Instance;
 
-            ShowQuest(hudCoreModel.YourPlayer, hudCoreModel.TheGame, compassStaticHUDModel.ShowStatic);
-            ShowExfiltration(hudCoreModel.YourPlayer, compassStaticHUDModel.ShowStatic);
+            if (hudCoreModel.YourPlayer is HideoutPlayer)
+                return;
+
+            ShowQuest(hudCoreModel.YourPlayer.Profile, hudCoreModel.TheGame, compassStaticHUDModel.ShowStatic);
+            ShowExfiltration(hudCoreModel.YourPlayer.Profile, hudCoreModel.YourPlayer.ProfileId, compassStaticHUDModel.ShowStatic);
         }
 
         // ReSharper disable once SuggestBaseTypeForParameter
-        private static void ShowQuest(Player player, AbstractGame game, Action<StaticModel> showStatic)
+        private static void ShowQuest(Profile profile, AbstractGame game, Action<StaticModel> showStatic)
         {
-            if (player is HideoutPlayer)
-                return;
-
             var hudCoreModel = HUDCoreModel.Instance;
-
-            var quests = _AbstractQuestControllerClassHelper.RefQuests.GetValue(player.AbstractQuestControllerClass);
 
             var questItemDictionary = new Dictionary<string, List<LootItem>>();
             foreach (var lootItem in hudCoreModel.TheWorld.LootList.OfType<LootItem>())
@@ -96,7 +94,7 @@ namespace GamePanelHUDCompass.Controllers
                 }
             }
 
-            foreach (var quest in quests)
+            foreach (var quest in _AbstractQuestControllerClassHelper.Quests)
             {
                 if (quest.QuestStatus != EQuestStatus.Started)
                     continue;
@@ -108,7 +106,7 @@ namespace GamePanelHUDCompass.Controllers
                 if (locationId != game.LocationObjectId && locationId != "any")
                     continue;
 
-                if ((player.Profile.Side == EPlayerSide.Savage ? EPlayerGroup.Scav : EPlayerGroup.Pmc) !=
+                if ((profile.Side == EPlayerSide.Savage ? EPlayerGroup.Scav : EPlayerGroup.Pmc) !=
                     template.PlayerGroup)
                     continue;
 
@@ -211,7 +209,8 @@ namespace GamePanelHUDCompass.Controllers
                         }
                         case ConditionCounterCreator counterCreator:
                         {
-                            var templateConditions = counterCreator._templateConditions;
+                            var templateConditions =
+                                _ConditionCounterCreatorHelper.RefTemplateConditions.GetValue(counterCreator);
 
                             var conditions = _ConditionCounterTemplateHelper.RefConditions.GetValue(templateConditions);
 
@@ -287,17 +286,14 @@ namespace GamePanelHUDCompass.Controllers
         }
 
         // ReSharper disable once SuggestBaseTypeForParameter
-        private static void ShowExfiltration(Player player, Action<StaticModel> showStatic)
+        private static void ShowExfiltration(Profile profile, string profileId, Action<StaticModel> showStatic)
         {
-            if (player is HideoutPlayer)
-                return;
-
             var hudCoreModel = HUDCoreModel.Instance;
 
-            var exfiltrationPoints = player.Profile.Side != EPlayerSide.Savage
-                ? hudCoreModel.TheWorld.ExfiltrationController.EligiblePoints(player.Profile)
+            var exfiltrationPoints = profile.Side != EPlayerSide.Savage
+                ? hudCoreModel.TheWorld.ExfiltrationController.EligiblePoints(profile)
                 : hudCoreModel.TheWorld.ExfiltrationController.ScavExfiltrationPoints
-                    .Where(x => x.EligibleIds.Contains(player.ProfileId)).ToArray<ExfiltrationPoint>();
+                    .Where(x => x.EligibleIds.Contains(profileId)).ToArray<ExfiltrationPoint>();
 
             for (var i = 0; i < exfiltrationPoints.Length; i++)
             {

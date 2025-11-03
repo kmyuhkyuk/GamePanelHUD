@@ -1,9 +1,9 @@
 ﻿#if !UNITY_EDITOR
 
 using BepInEx;
-using KmyTarkovUtils;
 using GamePanelHUDCore.Attributes;
 using GamePanelHUDCore.Models;
+using KmyTarkovUtils;
 using static KmyTarkovApi.EFTHelpers;
 using SettingsModel = GamePanelHUDHealth.Models.SettingsModel;
 
@@ -17,16 +17,16 @@ namespace GamePanelHUDHealth
         private void Awake()
         {
             SettingsModel.Create(Config);
+        }
 
+        private void Start()
+        {
             foreach (var value in HUDCoreModel.Instance.LoadHUD("gamepanelhealthhud.bundle", "GamePanelHealthHUD")
                          .Init.Values)
             {
                 value.ReplaceAllFont(EFTFontHelper.BenderNormal);
             }
-        }
 
-        private void Start()
-        {
             _MainMenuControllerClassHelper.Execute.Add(this, nameof(Execute));
         }
     }
