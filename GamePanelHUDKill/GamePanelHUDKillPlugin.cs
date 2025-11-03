@@ -1,9 +1,9 @@
 ﻿#if !UNITY_EDITOR
 using BepInEx;
-using KmyTarkovUtils;
 using GamePanelHUDCore.Attributes;
 using GamePanelHUDCore.Models;
 using GamePanelHUDKill.Models;
+using KmyTarkovUtils;
 using UnityEngine;
 using static KmyTarkovApi.EFTHelpers;
 using SettingsModel = GamePanelHUDKill.Models.SettingsModel;
@@ -18,7 +18,10 @@ namespace GamePanelHUDKill
         private void Awake()
         {
             SettingsModel.Create(Config);
+        }
 
+        private void Start()
+        {
             var hudCoreModel = HUDCoreModel.Instance;
             var killHUDModel = KillHUDModel.Instance;
 
@@ -31,10 +34,7 @@ namespace GamePanelHUDKill
 
             killHUDModel.ScreenRect = hudCoreModel.GamePanelHUDPublic.GetComponent<RectTransform>();
             killHUDModel.KillPrefab = prefabs.Asset["Kill"].ReplaceAllFont(EFTFontHelper.BenderNormal);
-        }
 
-        private void Start()
-        {
             _PlayerHelper.OnBeenKilledByAggressor.Add(this, nameof(OnBeenKilledByAggressor));
         }
     }

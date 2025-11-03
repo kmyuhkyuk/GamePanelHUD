@@ -2,11 +2,11 @@
 
 using BepInEx;
 using EFT.HealthSystem;
-using KmyTarkovUtils;
 using GamePanelHUDCore.Attributes;
 using GamePanelHUDCore.Models;
 using GamePanelHUDHit.Models;
 using HarmonyLib;
+using KmyTarkovUtils;
 using UnityEngine;
 using static KmyTarkovApi.EFTHelpers;
 using SettingsModel = GamePanelHUDHit.Models.SettingsModel;
@@ -21,7 +21,10 @@ namespace GamePanelHUDHit
         private void Awake()
         {
             SettingsModel.Create(Config);
+        }
 
+        private void Start()
+        {
             var hudCoreModel = HUDCoreModel.Instance;
 
             foreach (var value in hudCoreModel.LoadHUD("gamepanelhithud.bundle", "GamePanelHitHUD").Init.Values)
@@ -30,10 +33,7 @@ namespace GamePanelHUDHit
             }
 
             HitHUDModel.Instance.ScreenRect = hudCoreModel.GamePanelHUDPublic.GetComponent<RectTransform>();
-        }
 
-        private void Start()
-        {
             _PlayerHelper.ApplyDamageInfo.Add(this, nameof(ApplyDamageInfo));
             _ArmorComponentHelper.ApplyDamage.Add(this, nameof(ApplyDamage),
                 HarmonyPatchType.ILManipulator);

@@ -5,11 +5,11 @@ using BepInEx;
 using EFT.Airdrop;
 using EFT.Interactive;
 using EFT.SynchronizableObjects;
-using KmyTarkovApi;
-using KmyTarkovUtils;
 using GamePanelHUDCompass.Models;
 using GamePanelHUDCore.Attributes;
 using GamePanelHUDCore.Models;
+using KmyTarkovApi;
+using KmyTarkovUtils;
 using UnityEngine;
 using static KmyTarkovApi.EFTHelpers;
 using SettingsModel = GamePanelHUDCompass.Models.SettingsModel;
@@ -24,7 +24,10 @@ namespace GamePanelHUDCompass
         private void Awake()
         {
             SettingsModel.Create(Config);
+        }
 
+        private void Start()
+        {
             var prefabs = HUDCoreModel.Instance.LoadHUD("gamepanelcompasshud.bundle", "GamePanelCompassHUD");
 
             foreach (var value in prefabs.Init.Values)
@@ -39,10 +42,7 @@ namespace GamePanelHUDCompass
 
             CompassStaticHUDModel.Instance.StaticPrefab =
                 prefabs.Asset["Point"].ReplaceAllFont(EFTFontHelper.BenderNormal);
-        }
 
-        private void Start()
-        {
             _FirearmControllerHelper.InitiateShot.Add(this, nameof(InitiateShot));
             _PlayerHelper.OnDead.Add(this, nameof(OnDead));
             _PlayerHelper.SetPropVisibility.Add(this, nameof(SetPropVisibility));

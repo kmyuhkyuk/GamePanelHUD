@@ -17,7 +17,7 @@ namespace Build
             var sha = Copy.GetTipSha(args.ElementAtOrDefault(1));
 
             const string modPath =
-                @"R:\Battlestate Games\Client.0.16.1.3.35392\BepInEx\plugins\kmyuhkyuk-GamePanelHUD";
+                @"R:\Battlestate Games\Client.0.16.9.0.40087\BepInEx\plugins\kmyuhkyuk-GamePanelHUD";
 
             var modDirectoryName = new DirectoryInfo(modPath).Name;
 

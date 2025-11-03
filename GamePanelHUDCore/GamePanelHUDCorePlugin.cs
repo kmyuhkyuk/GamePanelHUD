@@ -14,7 +14,10 @@ namespace GamePanelHUDCore
         private void Awake()
         {
             SettingsModel.Create(Config);
+        }
 
+        private void Start()
+        {
             HUDCoreModel.Create();
         }
     }
