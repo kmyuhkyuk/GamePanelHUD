@@ -21,7 +21,7 @@ namespace Build
 
             var modDirectoryName = new DirectoryInfo(modPath).Name;
 
-            const string versionName = "3.3.0";
+            const string versionName = "3.4.0";
 
             var releaseName = $"{modDirectoryName}(Release_{versionName}).7z";
 
