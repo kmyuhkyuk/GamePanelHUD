@@ -70,7 +70,8 @@ namespace GamePanelHUDCompass.Controllers
                 return;
 
             ShowQuest(hudCoreModel.YourPlayer.Profile, hudCoreModel.TheGame, compassStaticHUDModel.ShowStatic);
-            ShowExfiltration(hudCoreModel.YourPlayer.Profile, hudCoreModel.YourPlayer.ProfileId, compassStaticHUDModel.ShowStatic);
+            ShowExfiltration(hudCoreModel.YourPlayer.Profile, hudCoreModel.YourPlayer.ProfileId,
+                compassStaticHUDModel.ShowStatic);
         }
 
         // ReSharper disable once SuggestBaseTypeForParameter
