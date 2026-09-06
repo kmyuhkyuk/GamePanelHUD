@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 #if !UNITY_EDITOR
 using KmyTarkovApi;
 using GamePanelHUDCore.Models;
@@ -13,7 +13,7 @@ namespace GamePanelHUDHealth.Controllers
 {
     public class HealthHUDController : MonoBehaviour
 #if !UNITY_EDITOR
-        , IUpdate
+        , KmyTarkovUtils.IUpdate
 #endif
     {
 #if !UNITY_EDITOR

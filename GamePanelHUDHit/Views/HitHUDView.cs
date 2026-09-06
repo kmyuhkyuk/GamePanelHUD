@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 #if !UNITY_EDITOR
 using KmyTarkovUtils;
@@ -12,7 +12,7 @@ namespace GamePanelHUDHit.Views
 {
     public class HitHUDView : MonoBehaviour
 #if !UNITY_EDITOR
-        , IUpdate
+        , KmyTarkovUtils.IUpdate
 #endif
     {
         [SerializeField] private HitUIView hitUIView;

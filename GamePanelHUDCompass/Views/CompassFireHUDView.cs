@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using TMPro;
@@ -15,7 +15,7 @@ namespace GamePanelHUDCompass.Views
 {
     public class CompassFireHUDView : MonoBehaviour
 #if !UNITY_EDITOR
-        , IUpdate
+        , KmyTarkovUtils.IUpdate
 #endif
     {
         private readonly ConcurrentDictionary<string, CompassFireUIView> _compassFires =

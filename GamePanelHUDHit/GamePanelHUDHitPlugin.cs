@@ -1,4 +1,4 @@
-﻿#if !UNITY_EDITOR
+#if !UNITY_EDITOR
 
 using BepInEx;
 using EFT.HealthSystem;
@@ -10,11 +10,12 @@ using KmyTarkovUtils;
 using UnityEngine;
 using static KmyTarkovApi.EFTHelpers;
 using SettingsModel = GamePanelHUDHit.Models.SettingsModel;
+using EFT.Ballistics;
 
 namespace GamePanelHUDHit
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDHit", "GamePanelHUDHit", "3.4.0")]
-    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "3.4.0")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDHit", "GamePanelHUDHit", "4.0.0")]
+    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "4.0.0")]
     [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", @"localized\hit")]
     public partial class GamePanelHUDHitPlugin : BaseUnityPlugin
     {
@@ -42,7 +43,7 @@ namespace GamePanelHUDHit
             _PlayerHelper.ObservedCoopApplyShot?.Add(this, nameof(CoopApplyShot));
         }
 
-        private static void BaseApplyDamageInfo(DamageInfoStruct damageInfo, EBodyPart bodyPartType,
+        private static void BaseApplyDamageInfo(DamageInfo damageInfo, EBodyPart bodyPartType,
             IHealthController healthController)
         {
             var armorModel = ArmorModel.Instance;

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 #if !UNITY_EDITOR
 using KmyTarkovUtils;
 using GamePanelHUDCore.Models;
@@ -11,7 +11,7 @@ namespace GamePanelHUDHit.Controllers
 {
     public class HitHUDController : MonoBehaviour
 #if !UNITY_EDITOR
-        , IUpdate
+        , KmyTarkovUtils.IUpdate
 #endif
     {
 #if !UNITY_EDITOR
