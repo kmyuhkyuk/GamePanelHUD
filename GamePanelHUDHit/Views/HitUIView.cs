@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,7 +14,7 @@ namespace GamePanelHUDHit.Views
 {
     public class HitUIView : MonoBehaviour
 #if !UNITY_EDITOR
-        , IUpdate
+        , KmyTarkovUtils.IUpdate
 #endif
     {
         public bool damageHUDSw;

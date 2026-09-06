@@ -1,4 +1,4 @@
-﻿using GamePanelHUDCore;
+using GamePanelHUDCore;
 using GamePanelHUDCore.Utils;
 using UnityEngine;
 
@@ -7,7 +7,7 @@ namespace GamePanelHUDMap
     public class GamePanelHUDMapUI : MonoBehaviour
 #if !UNITY_EDITOR
 
-        , IUpdate
+        , KmyTarkovUtils.IUpdate
 
 #endif
     {

@@ -1,4 +1,4 @@
-﻿#if !UNITY_EDITOR
+#if !UNITY_EDITOR
 using BepInEx;
 using GamePanelHUDCore.Attributes;
 using GamePanelHUDCore.Models;
@@ -10,8 +10,8 @@ using SettingsModel = GamePanelHUDKill.Models.SettingsModel;
 
 namespace GamePanelHUDKill
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDKill", "GamePanelHUDKill", "3.4.0")]
-    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "3.4.0")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDKill", "GamePanelHUDKill", "4.0.0")]
+    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "4.0.0")]
     [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", @"localized\kill")]
     public partial class GamePanelHUDKillPlugin : BaseUnityPlugin
     {

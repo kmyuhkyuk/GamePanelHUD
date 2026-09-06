@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 #if !UNITY_EDITOR
 using EFT;
 using EFT.InventoryLogic;
@@ -16,7 +16,7 @@ namespace GamePanelHUDWeapon.Controllers
 {
     public class WeaponHUDController : MonoBehaviour
 #if !UNITY_EDITOR
-        , IUpdate
+        , KmyTarkovUtils.IUpdate
 #endif
     {
 #if !UNITY_EDITOR
@@ -27,11 +27,11 @@ namespace GamePanelHUDWeapon.Controllers
 
 #endif
 
-        private LauncherItemClass _currentLauncher;
+        private Launcher _currentLauncher;
 
-        private MagazineItemClass _currentMag;
+        private Magazine _currentMag;
 
-        private MagazineItemClass _oldMag;
+        private Magazine _oldMag;
 
         private Animator _animatorWeapon;
 

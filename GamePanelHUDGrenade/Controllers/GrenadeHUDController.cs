@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 #if !UNITY_EDITOR
 using GamePanelHUDCore.Models;
@@ -14,7 +14,7 @@ namespace GamePanelHUDGrenade.Controllers
 {
     public class GrenadeHUDController : MonoBehaviour
 #if !UNITY_EDITOR
-        , IUpdate
+        , KmyTarkovUtils.IUpdate
 #endif
     {
 #if !UNITY_EDITOR
@@ -86,7 +86,7 @@ namespace GamePanelHUDGrenade.Controllers
                 {
                     foreach (var item in grid.Items)
                     {
-                        if (item is ThrowWeapItemClass throwWeapItem)
+                        if (item is ThrowWeap throwWeapItem)
                         {
                             var throwType = throwWeapItem.ThrowType;
 
@@ -123,7 +123,7 @@ namespace GamePanelHUDGrenade.Controllers
                     // ReSharper disable once LoopCanBeConvertedToQuery
                     foreach (var item in grid.Items)
                     {
-                        if (item is ThrowWeapItemClass)
+                        if (item is ThrowWeap)
                         {
                             frag++;
                         }

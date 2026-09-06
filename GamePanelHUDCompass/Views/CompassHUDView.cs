@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 #if !UNITY_EDITOR
 using KmyTarkovUtils;
 using GamePanelHUDCore.Models;
@@ -11,7 +11,7 @@ namespace GamePanelHUDCompass.Views
 {
     public class CompassHUDView : MonoBehaviour
 #if !UNITY_EDITOR
-        , IUpdate
+        , KmyTarkovUtils.IUpdate
 #endif
     {
         [SerializeField] private CompassUIView compassUIView;
