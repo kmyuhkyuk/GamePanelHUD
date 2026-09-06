@@ -1,6 +1,8 @@
-﻿#if !UNITY_EDITOR
+#if !UNITY_EDITOR
 
 using EFT;
+using EFT.Ballistics;
+using EFT.HealthSystem;
 using GamePanelHUDCore.Models;
 using static KmyTarkovApi.EFTHelpers;
 
@@ -8,7 +10,7 @@ namespace GamePanelHUDHit
 {
     public partial class GamePanelHUDHitPlugin
     {
-        private static void CoopApplyShot(Player __instance, DamageInfoStruct damageInfo, EBodyPart bodyPartType,
+        private static void CoopApplyShot(Player __instance, DamageInfo damageInfo, EBodyPart bodyPartType,
             EBodyPartColliderType colliderType)
         {
             if ((Player)damageInfo.Player?.iPlayer != HUDCoreModel.Instance.YourPlayer)
@@ -16,7 +18,7 @@ namespace GamePanelHUDHit
 
             //Clone HealthController to do local compute
             var store = _HealthControllerHelper.ObservedCoopStore(
-                (NetworkHealthControllerAbstractClass)__instance.HealthController);
+                (NetworkHealthController)__instance.HealthController);
             var inventoryController = __instance.InventoryController;
             var skillManager = __instance.Skills;
             var coopHealthController = _HealthControllerHelper.CoopHealthControllerCreate(store, __instance,

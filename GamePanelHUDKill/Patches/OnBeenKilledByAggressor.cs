@@ -1,16 +1,17 @@
-﻿#if !UNITY_EDITOR
+#if !UNITY_EDITOR
 
 using EFT;
 using GamePanelHUDCore.Models;
 using GamePanelHUDKill.Models;
 using UnityEngine;
+using EFT.Ballistics;
 
 namespace GamePanelHUDKill
 {
     public partial class GamePanelHUDKillPlugin
     {
         // ReSharper disable once SuggestBaseTypeForParameter
-        private static void OnBeenKilledByAggressor(Player __instance, Player aggressor, DamageInfoStruct damageInfo,
+        private static void OnBeenKilledByAggressor(Player __instance, IPlayer aggressor, DamageInfo damageInfo,
             EBodyPart bodyPart)
         {
             if (aggressor != HUDCoreModel.Instance.YourPlayer)

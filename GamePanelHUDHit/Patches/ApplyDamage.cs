@@ -1,10 +1,11 @@
-﻿#if !UNITY_EDITOR
+#if !UNITY_EDITOR
 
 using EFT.InventoryLogic;
 using GamePanelHUDHit.Models;
 using HarmonyLib;
 using MonoMod.Cil;
 using MonoMod.Utils;
+using EFT.Ballistics;
 
 namespace GamePanelHUDHit
 {
@@ -31,7 +32,7 @@ namespace GamePanelHUDHit
                     //Get DamageInfo
                     processor.Create(Mono.Cecil.Cil.OpCodes.Ldarg_1),
                     //Convert ref struct
-                    processor.Create(Mono.Cecil.Cil.OpCodes.Ldobj, typeof(DamageInfoStruct)),
+                    processor.Create(Mono.Cecil.Cil.OpCodes.Ldobj, typeof(DamageInfo)),
                     //Get ApplyDurabilityDamage first parameter
                     callApplyDurabilityDamage.Prev.Previous,
                     processor.Create(Mono.Cecil.Cil.OpCodes.Callvirt,

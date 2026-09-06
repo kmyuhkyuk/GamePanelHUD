@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 #if !UNITY_EDITOR
 using SettingsModel = GamePanelHUDGrenade.Models.SettingsModel;
 using KmyTarkovUtils;
@@ -11,7 +11,7 @@ namespace GamePanelHUDGrenade.Views
 {
     public class GrenadeHUDView : MonoBehaviour
 #if !UNITY_EDITOR
-        , IUpdate
+        , KmyTarkovUtils.IUpdate
 #endif
     {
         [SerializeField] private GrenadeUIView fragUIView;
