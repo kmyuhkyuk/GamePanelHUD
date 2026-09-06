@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 #if !UNITY_EDITOR
 using KmyTarkovApi;
 using KmyTarkovUtils;
@@ -12,7 +12,7 @@ namespace GamePanelHUDCompass.Controllers
 {
     public class CompassFireHUDController : MonoBehaviour
 #if !UNITY_EDITOR
-        , IUpdate
+        , KmyTarkovUtils.IUpdate
 #endif
     {
 #if !UNITY_EDITOR

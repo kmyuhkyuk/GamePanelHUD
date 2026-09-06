@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 #if !UNITY_EDITOR
@@ -13,7 +13,7 @@ namespace GamePanelHUDCompass.Views
 {
     public class CompassStaticUIView : MonoBehaviour
 #if !UNITY_EDITOR
-        , IUpdate
+        , KmyTarkovUtils.IUpdate
 #endif
     {
 #if !UNITY_EDITOR

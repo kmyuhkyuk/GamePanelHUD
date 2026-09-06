@@ -1,4 +1,4 @@
-﻿using TMPro;
+using TMPro;
 using UnityEngine;
 #if !UNITY_EDITOR
 using KmyTarkovUtils;
@@ -10,7 +10,7 @@ namespace GamePanelHUDGrenade.Views
 {
     public class GrenadeUIView : MonoBehaviour
 #if !UNITY_EDITOR
-        , IUpdate
+        , KmyTarkovUtils.IUpdate
 #endif
     {
         public bool zeroWarning;

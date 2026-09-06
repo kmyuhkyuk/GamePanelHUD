@@ -1,4 +1,4 @@
-﻿using TMPro;
+using TMPro;
 using UnityEngine;
 #if !UNITY_EDITOR
 using System.Collections;
@@ -13,7 +13,7 @@ namespace GamePanelHUDKill.Views
 {
     public class KillUIView : MonoBehaviour
 #if !UNITY_EDITOR
-        , IUpdate
+        , KmyTarkovUtils.IUpdate
 #endif
     {
         public bool active;

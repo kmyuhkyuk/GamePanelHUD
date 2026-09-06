@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
@@ -19,7 +19,7 @@ namespace GamePanelHUDCompass.Views
 {
     public class CompassStaticHUDView : MonoBehaviour
 #if !UNITY_EDITOR
-        , IUpdate
+        , KmyTarkovUtils.IUpdate
 #endif
     {
         private static readonly ConcurrentDictionary<string, List<CompassStaticUIView>> CompassStatics =

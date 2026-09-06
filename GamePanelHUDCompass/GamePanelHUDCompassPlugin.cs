@@ -1,9 +1,10 @@
-﻿#if !UNITY_EDITOR
+#if !UNITY_EDITOR
 
 using System;
 using BepInEx;
 using EFT.Airdrop;
 using EFT.Interactive;
+using EFT.InventoryLogic;
 using EFT.SynchronizableObjects;
 using GamePanelHUDCompass.Models;
 using GamePanelHUDCore.Attributes;
@@ -16,8 +17,8 @@ using SettingsModel = GamePanelHUDCompass.Models.SettingsModel;
 
 namespace GamePanelHUDCompass
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCompass", "GamePanelHUDCompass", "3.4.0")]
-    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "3.4.0")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDCompass", "GamePanelHUDCompass", "4.0.0")]
+    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "4.0.0")]
     [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", @"localized\compass")]
     public partial class GamePanelHUDCompassPlugin : BaseUnityPlugin
     {
@@ -87,7 +88,7 @@ namespace GamePanelHUDCompass
 
             var controller = container.ItemOwner;
 
-            var item = (SearchableItemItemClass)controller.RootItem;
+            var item = (SearchableItem)controller.RootItem;
 
             var staticModel = new StaticModel
             {
