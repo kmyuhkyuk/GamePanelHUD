@@ -5,6 +5,7 @@ using BepInEx;
 using BepInEx.Configuration;
 using EFT;
 using GamePanelHUDCore;
+using GamePanelHUDCore.Models;
 using HarmonyLib;
 
 namespace GamePanelHUDDebug.MagDebug
@@ -13,10 +14,7 @@ namespace GamePanelHUDDebug.MagDebug
     [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore")]
     public class OperationRecord : BaseUnityPlugin
     {
-        private GamePanelHUDCorePlugin.HUDCoreClass HUDCore
-        {
-            get { return GamePanelHUDCorePlugin.HUDCore; }
-        }
+        private HUDCoreModel HUDCore => HUDCoreModel.Instance;
 
         public Player.FirearmController firearmController;
 

@@ -1,10 +1,10 @@
 #if !UNITY_EDITOR
 
-using System;
-using System.IO;
 using BepInEx;
 using GamePanelHUDCore;
-using GamePanelHUDCore.Utils;
+using GamePanelHUDCore.Models;
+using System;
+using System.IO;
 using UnityEngine;
 
 namespace GamePanelHUDMap
@@ -13,13 +13,9 @@ namespace GamePanelHUDMap
     [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore")]
     public class GamePanelHUDMapPlugin : BaseUnityPlugin, KmyTarkovUtils.IUpdate
     {
-        private GamePanelHUDCorePlugin.HUDCoreClass HUDCore
-        {
-            get { return GamePanelHUDCorePlugin.HUDCore; }
-        }
+        private HUDCoreModel HUDCore => HUDCoreModel.Instance;
 
-        internal static readonly GamePanelHUDCorePlugin.HUDClass<MapData, SettingsData> HUD =
-            new GamePanelHUDCorePlugin.HUDClass<MapData, SettingsData>();
+        internal static readonly HUDClass<MapData, SettingsData> HUD = new HUDClass<MapData, SettingsData>();
 
         private string _mapPath;
 
@@ -94,6 +90,22 @@ namespace GamePanelHUDMap
 
         public class SettingsData
         {
+        }
+
+        public class HUDClass<TData, TSettings>
+        {
+            public TData Info { get; private set; }
+
+            public TSettings Settings { get; private set; }
+
+            public bool HUDSw { get; private set; }
+
+            public void Set(TData info, TSettings settings, bool hudSw)
+            {
+                Info = info;
+                Settings = settings;
+                HUDSw = hudSw;
+            }
         }
     }
 }

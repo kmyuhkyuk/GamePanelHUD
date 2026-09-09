@@ -7,6 +7,7 @@ using BepInEx.Configuration;
 using EFT;
 using EFT.InventoryLogic;
 using GamePanelHUDCore;
+using GamePanelHUDCore.Models;
 using HarmonyLib;
 using UnityEngine;
 
@@ -16,10 +17,7 @@ namespace GamePanelHUDDebug.MagDebug
     [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore")]
     public class AnimatorStateRecord : BaseUnityPlugin
     {
-        private GamePanelHUDCorePlugin.HUDCoreClass HUDCore
-        {
-            get { return GamePanelHUDCorePlugin.HUDCore; }
-        }
+        private HUDCoreModel HUDCore => HUDCoreModel.Instance;
 
         public static Player.FirearmController Firearmcontroller;
 
