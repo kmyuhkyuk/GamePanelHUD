@@ -9,8 +9,8 @@ using SettingsModel = GamePanelHUDHealth.Models.SettingsModel;
 
 namespace GamePanelHUDHealth
 {
-    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDHealth", "GamePanelHUDHealth", "4.0.0")]
-    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "4.0.0")]
+    [BepInPlugin("com.kmyuhkyuk.GamePanelHUDHealth", "GamePanelHUDHealth", "4.1.5")]
+    [BepInDependency("com.kmyuhkyuk.GamePanelHUDCore", "4.1.5")]
     [EFTConfigurationPluginAttributes("https://hub.sp-tarkov.com/files/file/652-game-panel-hud", @"localized\health")]
     public partial class GamePanelHUDHealthPlugin : BaseUnityPlugin
     {
