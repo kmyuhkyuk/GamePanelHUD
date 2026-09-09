@@ -7,9 +7,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("GamePanelHUDWeapon")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("https://hub.sp-tarkov.com/files/file/652-game-panel-hud")]
+[assembly: AssemblyCompany("https://sp-mod.com/mod/456/game-panel-hud")]
 [assembly: AssemblyProduct("GamePanelHUDWeapon")]
-[assembly: AssemblyCopyright("Copyright ©  2022")]
+[assembly: AssemblyCopyright("Copyright ©  2026")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -34,6 +34,6 @@ using System.Runtime.InteropServices;
 #if Preview
 [assembly: AssemblyVersion("4.0.0.*")]
 #else
-[assembly: AssemblyVersion("4.0.0.0")]
-[assembly: AssemblyFileVersion("4.0.0.0")]
+[assembly: AssemblyVersion("4.1.5.0")]
+[assembly: AssemblyFileVersion("4.1.5.0")]
 #endif
