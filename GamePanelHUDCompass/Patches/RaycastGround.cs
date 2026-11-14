@@ -9,12 +9,12 @@ namespace GamePanelHUDCompass
     {
         // ReSharper disable once SuggestBaseTypeForParameter
         // ReSharper disable once InconsistentNaming
-        private static void RaycastGround(AirdropSynchronizableObject ___airdropSynchronizableObject_0)
+        private static void RaycastGround(AirdropSynchronizableObject ____syncObject)
         {
-            GetNameDescriptionKey(___airdropSynchronizableObject_0, out var nameKey, out var descriptionKey);
+            GetNameDescriptionKey(____syncObject, out var nameKey, out var descriptionKey);
 
-            ShowAirdrop(___airdropSynchronizableObject_0.transform.position, nameKey, descriptionKey,
-                ___airdropSynchronizableObject_0.GetComponentInChildren<LootableContainer>());
+            ShowAirdrop(____syncObject.transform.position, nameKey, descriptionKey,
+                ____syncObject.GetComponentInChildren<LootableContainer>());
         }
     }
 }
